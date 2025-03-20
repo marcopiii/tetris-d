@@ -9,10 +9,24 @@ body {
 }
 
 .game-container {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-#game-board {
+.game-boards {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.game-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.game-board {
   background-color: #000;
   border: 2px solid #fff;
 }
