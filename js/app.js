@@ -3,7 +3,6 @@ import {Game} from "./Game.js";
 import {Clock} from "./Clock.js";
 import {renderBoard} from "./render/renderBoard.js";
 import {renderPiece} from "./render/renderPiece.js";
-import {detectCollision} from "./detectCollision.js";
 
 const contexts = [
     document.getElementById("game-board-1").getContext('2d'),
@@ -39,36 +38,18 @@ function onPause() {
 }
 
 function onMove(direction: "left" | "right") {
-    direction === "left" ? game.currentPiece.shiftLeft() : game.currentPiece.shiftRight();
-    if (detectCollision(game.activeBoard, game.currentPiece)) {
-        game.currentPiece.rollback();
-        return;
-    }
+    game.movePiece("shift", direction);
     renderFrame(game, contexts);
 }
 
 function onRotate(direction: "left" | "right") {
-    direction === "left" ? game.currentPiece.rotateLeft() : game.currentPiece.rotateRight();
-    if (detectCollision(game.activeBoard, game.currentPiece)) {
-        game.currentPiece.rollback();
-        return;
-    }
+    game.movePiece("rotate", direction);
     renderFrame(game, contexts);
 }
 
 function onJump(direction: "left" | "right") {
-    direction === "left" ? game.jumpBoardLeft() : game.jumpBoardRight();
-    if (detectCollision(game.activeBoard, game.currentPiece)) {
-        game.currentPiece.rollback();
-        return;
-    }
+    game.movePiece("jump", direction);
     renderFrame(game, contexts);
-}
-
-function onHardDrop() {
-    while (!detectCollision(game.activeBoard, game.currentPiece)) {
-        frame();
-    }
 }
 
 function controlsHandler(event) {
@@ -84,9 +65,6 @@ function controlsHandler(event) {
             break;
         case 'ArrowDown':
             frame();
-            break;
-        case ' ':
-            onHardDrop();
             break;
     }
 }

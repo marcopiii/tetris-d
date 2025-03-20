@@ -3,7 +3,7 @@ export class Clock {
     this._interval = undefined;
   }
 
-  #SPEED = 100;
+  #SPEED = 500;
 
   pause() {
     clearInterval(this._interval);
