@@ -4,7 +4,7 @@ import {detectCollision} from "./detectCollision";
 
 export class Game {
   constructor() {
-    this._boards = Array(3).fill(new Board())
+    this._boards = Array(3).fill().map(() => new Board());
     this._activeBoardIndex = 0;
     this._currentPiece = new Piece();
   }
