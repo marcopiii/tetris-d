@@ -1,8 +1,6 @@
-// @flow
 import {Game} from "./Game.js";
 import {Clock} from "./Clock.js";
-import {renderBoard} from "./render/renderBoard.js";
-import {renderPiece} from "./render/renderPiece.js";
+import {renderScene} from "./render/renderScene.js";
 
 const contexts = [
     document.getElementById("game-board-1").getContext('2d'),
@@ -13,15 +11,9 @@ const contexts = [
 const game = new Game();
 const clock = new Clock();
 
-function renderFrame(game: Game, ctxs) {
-    game.boards.forEach((board, i) => renderBoard(ctxs[i], board));
-    const k = game.activeBoardIndex;
-    renderPiece(ctxs[k], game.currentPiece);
-}
-
 function frame() {
     const gameOver = game.tick();
-    renderFrame(game, contexts);
+    renderScene(game, contexts);
     if (gameOver) {
         clock.pause();
         alert('Game Over');
@@ -39,17 +31,17 @@ function onPause() {
 
 function onMove(direction: "left" | "right") {
     game.movePiece("shift", direction);
-    renderFrame(game, contexts);
+    renderScene(game, contexts);
 }
 
 function onRotate(direction: "left" | "right") {
     game.movePiece("rotate", direction);
-    renderFrame(game, contexts);
+    renderScene(game, contexts);
 }
 
 function onJump(direction: "left" | "right") {
     game.movePiece("jump", direction);
-    renderFrame(game, contexts);
+    renderScene(game, contexts);
 }
 
 function controlsHandler(event) {
