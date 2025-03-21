@@ -1,6 +1,6 @@
-import {COLS} from "./params.js";
-import {generateRandomPiece} from "./pieces/generateRandomPiece.js";
-import {copy} from "./utils";
+import {COLS} from "../params.js";
+import {generateRandomPiece} from "../pieces/generateRandomPiece.js";
+import {copy} from "../utils";
 
 export class Piece {
   constructor() {

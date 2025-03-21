@@ -1,4 +1,4 @@
-import {COLS, ROWS} from "./params.js";
+import {COLS, ROWS} from "../params.js";
 import type {Piece} from "./Piece.js";
 
 export class Board {

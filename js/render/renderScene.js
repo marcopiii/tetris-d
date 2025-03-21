@@ -1,4 +1,4 @@
-import {Game} from "../Game";
+import {Game} from "../models/Game";
 import {renderBoard} from "./renderBoard";
 import {renderPiece} from "./renderPiece";
 

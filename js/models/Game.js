@@ -1,6 +1,6 @@
 import {Piece} from "./Piece";
 import {Board} from "./Board";
-import {detectCollision} from "./detectCollision";
+import {detectCollision} from "../detectCollision";
 
 export class Game {
     constructor() {

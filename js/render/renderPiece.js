@@ -1,5 +1,5 @@
 import {renderBlock, renderShadow} from "./renderBlock.js";
-import type {Piece} from "../Piece";
+import type {Piece} from "../models/Piece";
 
 export function renderPiece(ctx, piece: Piece, shadow = false) {
   const {shape, color, position} = piece;

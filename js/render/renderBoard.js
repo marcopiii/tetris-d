@@ -1,5 +1,5 @@
 import {renderBlock} from "./renderBlock.js";
-import type {Board} from "../Board.js";
+import type {Board} from "../models/Board.js";
 
 export function renderBoard(ctx, board: Board) {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);

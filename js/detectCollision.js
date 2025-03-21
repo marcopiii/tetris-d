@@ -1,6 +1,6 @@
 import {COLS, ROWS} from "./params.js";
-import type {Piece} from "./Piece.js";
-import type {Board} from "./Board";
+import type {Piece} from "./models/Piece.js";
+import type {Board} from "./models/Board";
 
 export function detectCollision(board: Board, piece: Piece) {
   for (let shapeY = 0; shapeY < piece.shape.length; shapeY++) {

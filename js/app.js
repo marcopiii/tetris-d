@@ -1,5 +1,5 @@
-import {Game} from "./Game.js";
-import {Clock} from "./Clock.js";
+import {Game} from "./models/Game.js";
+import {Clock} from "./models/Clock.js";
 import {renderScene} from "./render/renderScene.js";
 
 const contexts = [
