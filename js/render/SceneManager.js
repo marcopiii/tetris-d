@@ -56,9 +56,7 @@ export class SceneManager {
     update(board: Board) {
         this.reset();
         board.forEachBlock((color, y, x, z) => {
-            if (color) {
-                renderBlock(this._scene, color, y, x, z, this.#BLOCK_SIZE)
-            }
+            renderBlock(this._scene, color, y, x, z, this.#BLOCK_SIZE)
         })
     }
 

@@ -15,11 +15,20 @@ export class Board {
         );
     }
 
-    forEachBlock(callback: (color: string | null, y: number, x: number, z: number) => void) {
+    blockAt(y: number, x: number, z: number) {
+        return this._matrix[y][x][z];
+    }
+
+    /**
+     * Applies the given callback to each existing block of the board.
+     * @param callback
+     */
+    forEachBlock(callback: (color: string, y: number, x: number, z: number) => void) {
         this._matrix.forEach((layer, y) =>
             layer.forEach((xRow, x) =>
-                xRow.forEach((color, z) =>
-                    callback(color, y, x, z)
+                xRow.forEach((color, z) => {
+                        if (color) callback(color, y, x, z)
+                    }
                 )
             )
         );
