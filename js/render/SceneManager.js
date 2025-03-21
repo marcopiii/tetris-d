@@ -1,7 +1,8 @@
+import {COLS, ROWS} from "../params";
 import * as THREE from "three";
 import type {Board} from "../models/3DBoard";
+import type {Piece} from "../models/3DPiece";
 import {renderBlock} from "./renderBlock";
-import {COLS, ROWS} from "../params";
 
 export class SceneManager {
 
@@ -53,10 +54,15 @@ export class SceneManager {
         return this._scene;
     }
 
-    update(board: Board) {
+    update(board: Board, piece: Piece) {
         this.reset();
         board.forEachBlock((color, y, x, z) => {
-            renderBlock(this._scene, color, y, x, z, this.#BLOCK_SIZE)
+            const cube = renderBlock(color, y, x, z, this.#BLOCK_SIZE)
+            this._scene.add(cube);
+        })
+        piece.forEachBlock((y, x, z) => {
+            const cube = renderBlock(piece.color, y, x, z, this.#BLOCK_SIZE)
+            this._scene.add(cube);
         })
     }
 

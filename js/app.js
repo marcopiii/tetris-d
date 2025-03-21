@@ -30,7 +30,7 @@ renderer.setAnimationLoop(() => {
 
 function processGameFrame() {
     const gameOver = game.tick();
-    sceneManager.update(game.board);
+    sceneManager.update(game.board, game.piece);
     if (gameOver) {
         clock.pause();
         alert('Game Over');
