@@ -1,44 +1,28 @@
 import {Game} from "./models/Game.js";
-import {Clock} from "./models/Clock.js";
-import {renderBoard} from "./render/renderBoard.js";
+import {SceneManager} from "./render/SceneManager.js";
+import {render} from "./render/render.js";
+import * as THREE from "three";
 
-const ctx_y = [
-    document.getElementById("plane-y0").getContext('2d'),
-    document.getElementById("plane-y1").getContext('2d'),
-    document.getElementById("plane-y2").getContext('2d'),
-    document.getElementById("plane-y3").getContext('2d'),
-    document.getElementById("plane-y4").getContext('2d'),
-    document.getElementById("plane-y5").getContext('2d'),
-    document.getElementById("plane-y6").getContext('2d'),
-    document.getElementById("plane-y7").getContext('2d'),
-    document.getElementById("plane-y8").getContext('2d'),
-    document.getElementById("plane-y9").getContext('2d'),
-];
-const ctx_x = [
-    document.getElementById("plane-x0").getContext('2d'),
-    document.getElementById("plane-x1").getContext('2d'),
-    document.getElementById("plane-x2").getContext('2d'),
-    document.getElementById("plane-x3").getContext('2d'),
-    document.getElementById("plane-x4").getContext('2d'),
-    document.getElementById("plane-x5").getContext('2d'),
-    document.getElementById("plane-x6").getContext('2d'),
-    document.getElementById("plane-x7").getContext('2d'),
-    document.getElementById("plane-x8").getContext('2d'),
-    document.getElementById("plane-x9").getContext('2d')
-];
+const ctnr = document.getElementById('scene-container');
 
 const game = new Game();
-const clock = new Clock();
+const sceneManager = new SceneManager()
 
-function frame() {
-    renderBoard(game, ctx_x, ctx_y);
-}
+const camera = new THREE.PerspectiveCamera(75, ctnr.clientWidth / ctnr.clientHeight, 0.1, 1000);
+camera.position.z = 20;
+
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(ctnr.clientWidth, ctnr.clientHeight);
+ctnr.appendChild(renderer.domElement);
 
 function onStart() {
     game.reset();
-    clock.resume(frame);
+    game.board.fixPiece(game.currentPiece);
+    render(game.board, sceneManager);
+
+    renderer.setAnimationLoop(() => {
+        renderer.render(sceneManager.scene, camera)
+    });
 }
 
 document.getElementById('start-btn').addEventListener('click', onStart);
-
-

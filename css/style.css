@@ -8,41 +8,10 @@ body {
   background-color: #222;
 }
 
-.game-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.x-planes {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: -3px;
-}
-
-.y-planes {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: -3px;
-}
-
-.plane-container {
-
-}
-
-.plane {
-  background-color: rgba(50, 50, 50, 0.85);
-  border: 2px solid #fff;
-  opacity: 0.5;
-}
-
-.x-planes .plane {
-  transform: rotateX(15deg) rotateY(20deg);
-}
-.y-planes .plane {
-  transform: rotateX(-15deg) rotateY(20deg);
+#scene-container {
+  height: 900px;
+  width: 600px;
+  background-color: #333;
 }
 
 .game-controls {

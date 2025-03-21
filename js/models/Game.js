@@ -1,5 +1,5 @@
-import {Piece} from "./3DPiece";
 import {Board} from "./3DBoard";
+import {Piece} from "./3DPiece";
 
 export class Game {
     constructor() {

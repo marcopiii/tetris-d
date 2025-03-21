@@ -1,7 +1,12 @@
 import {COLS, ROWS} from "../params";
+import type {Piece} from "./3DPiece";
 
 export class Board {
-    // construction order is z > y > x
+
+    /*
+    The board is a 3D matrix of colors. Each cell can be null or a color.
+    The first dimension is the Y axis (vertical), the second is the X axis (horizontal) and the third is the Z axis (depth).
+     */
     constructor() {
         this._matrix = Array(ROWS).fill().map(
             () => Array(COLS).fill().map(
@@ -10,53 +15,37 @@ export class Board {
         );
     }
 
-    fixPiece(piece) {
-        for (let shapeZ = 0; shapeZ < piece.shape.length; shapeZ++) {
-            for (let shapeY = 0; shapeY < piece.shape[shapeZ].length; shapeY++) {
-                for (let shapeX = 0; shapeX < piece.shape[shapeZ][shapeY].length; shapeX++) {
-                    if (piece.shape[shapeZ][shapeY][shapeX] !== null) {
-                        this._matrix[piece.position.z + shapeZ][piece.position.y + shapeY][piece.position.x + shapeX] = piece.color;
+    forEachBlock(callback: (color: string | null, y: number, x: number, z: number) => void) {
+        this._matrix.forEach((layer, y) =>
+            layer.forEach((xRow, x) =>
+                xRow.forEach((color, z) =>
+                    callback(color, y, x, z)
+                )
+            )
+        );
+    }
+
+    /**
+     * Inserts a piece into the board.
+     * @param piece
+     */
+    fixPiece(piece: Piece) {
+        const {shape, position, color} = piece;
+        for (let y = 0; y < shape.length; y++) {
+            for (let x = 0; x < shape[y].length; x++) {
+                for (let z = 0; z < shape[y][x].length; z++) {
+                    if (shape[y][x][z]) {
+                        this._matrix[y + position.y][x + position.x][z + position.z] = color;
                     }
                 }
             }
         }
     }
 
-    plane(
-        side: "x" | "y",
-        index: number,
-    ): Array<Array<string | null>> {
-        return Array(ROWS).fill().map((_, z) => {
-            if (side === "x") {
-                return Array(COLS).fill().map((_, y) => this._matrix[z][y][index]);
-            } else {
-                return this._matrix[z][index];
-            }
-        });
-    }
-
-    check() {
-        function checkPlane(plane: Array<Array<string | null>>) {
-            const bottomRowIndex = plane.length - 1;
-            for (let row = bottomRowIndex; row >= 0; row--) {
-                if (plane[row].every(cell => cell !== null)) {
-                    plane.splice(row, 1);
-                    plane.unshift(Array(COLS).fill(null));
-                    row++; // Recheck the same row after clearing
-                }
-            }
-        }
-        Array("x", "y").forEach(side => {
-            Array(COLS).fill().forEach((_, i) => {
-                checkPlane(this.plane(side, i));
-            });
-        });
-    }
-
     clean() {
-        this._matrix.forEach(
-            layer => layer.forEach(
-                yRow => yRow.fill(null)
+        this._matrix = Array(ROWS).fill().map(
+            () => Array(COLS).fill().map(
+                () => Array(COLS).fill(null)
             )
         );
     }

@@ -3,12 +3,16 @@ import {generateRandomPiece} from "../pieces/generateRandomPiece";
 
 export class Piece {
     constructor() {
-        const {shape, color} = generateRandomPiece()
+        const {shape, color, name} = generateRandomPiece()
+
+        console.log(`${name} spawned`)
+
+        this._name = name;
         this._shape = shape;
         this._position = {
             x: Math.floor(COLS / 2) - 1,
-            y: Math.floor(COLS / 2) - 1,
-            z: 0
+            z: Math.floor(COLS / 2) - 1,
+            y: 0
         };
         this._color = color;
     }
