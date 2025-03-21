@@ -32,15 +32,19 @@ export class Piece {
 
     /**
      * Applies the given callback to each existing block of the piece.
-     * @param callback
+     * @param callback - The callback to apply to each block, given its coordinates in the board.
      */
-    forEachBlock(callback: (y: number, x: number, z: number) => void) {
+    forEachBlock(callback: (number, number, number) => void) {
         this._shape.forEach((layer, y) =>
             layer.forEach((xRow, x) =>
                 xRow.forEach((exists, z) => {
-                        if (exists !== 0) callback(y, x, z)
-                    }
-                )
+                    if (!exists) return;
+                    callback(
+                        this._position.y + y,
+                        this._position.x + x,
+                        this._position.z + z
+                    );
+                })
             )
         );
     }

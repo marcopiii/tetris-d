@@ -24,15 +24,11 @@ export class Game {
     #detectCollision(): boolean {
         let collisionDetected = false;
         this._piece.forEachBlock((y, x, z) => {
-            const blockY = this._piece.position.y + y;
-            const blockX = this._piece.position.x + x;
-            const blockZ = this._piece.position.z + z;
-            if (blockY >= ROWS
-                || blockX + x < 0
-                || blockX + x >= COLS
-                || blockZ + z < 0
-                || blockZ + z >= COLS
-                || this._board.blockAt(blockY, blockX, blockZ) !== null) {
+            const floorCollision = y >= ROWS;
+            const wallCollision = x < 0 || x >= COLS || z < 0 || z >= COLS;
+            // avoid calling .blockAt() if one of the index is out of bounds
+            const stackCollision = !(floorCollision || wallCollision) && this._board.blockAt(y, x, z) !== null;
+            if (floorCollision || wallCollision || stackCollision) {
                 collisionDetected = true;
             }
         })
