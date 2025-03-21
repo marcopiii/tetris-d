@@ -28,7 +28,6 @@ function onStart() {
     sceneManager.update(game.board);
 
     renderer.setAnimationLoop(() => {
-        sceneManager.scene.rotation.y += 0.01;
         renderer.render(sceneManager.scene, camera)
     });
 }
