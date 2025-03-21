@@ -1,4 +1,4 @@
-import {COLS} from "../params";
+import {COLS, ROWS} from "../params";
 import {generateRandomPiece} from "../pieces/generateRandomPiece";
 
 export class Piece {

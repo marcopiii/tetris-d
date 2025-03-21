@@ -33,14 +33,12 @@ function getMeshMaterials(color) {
   ];
 }
 
-const BLOCK_SIZE = 1
+export function renderBlock(scene: THREE.Scene, color, y, x, z, blockSize) {
+  const translateX = (n) => (n - (COLS / 2)) * blockSize;
+  const translateY = (n) => -(n + 1 - (ROWS / 2)) * blockSize;
+  const translateZ = (n) => -(n - (COLS / 2)) * blockSize
 
-const translateX = (n) => (n - (COLS / 2)) * BLOCK_SIZE;
-const translateY = (n) => -(n - (ROWS / 2)) * BLOCK_SIZE;
-const translateZ = (n) => -(n - (COLS / 2)) * BLOCK_SIZE
-
-export function renderBlock(scene: THREE.Scene, color, y, x, z) {
-  const geometry = new THREE.BoxGeometry(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+  const geometry = new THREE.BoxGeometry(blockSize, blockSize, blockSize);
   const materials = getMeshMaterials(color)
   const cube = new THREE.Mesh(geometry, materials);
   cube.position.set(translateX(x), translateY(y), translateZ(z));

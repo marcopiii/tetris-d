@@ -8,14 +8,14 @@ const game = new Game();
 const sceneManager = new SceneManager()
 
 const aspect = ctnr.clientWidth / ctnr.clientHeight
-const frustumSize = 50;
+const frustumSize = 25;
 const camera = new THREE.OrthographicCamera(
     frustumSize * aspect / - 2,
     frustumSize * aspect / 2,
     frustumSize / 2,
     frustumSize / - 2
 );
-camera.position.z = 20;
+camera.position.z = 10;
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(ctnr.clientWidth, ctnr.clientHeight);
