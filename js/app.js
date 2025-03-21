@@ -34,6 +34,7 @@ function processGameFrame() {
     if (gameOver) {
         clock.pause();
         alert('Game Over');
+        sceneManager.reset()
     }
 }
 
