@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import {COLS, ROWS} from "../params";
 
 function adjustBrightness(hex, factor) {
   const rgb = parseInt(hex.slice(1), 16);
@@ -33,14 +32,8 @@ function getMeshMaterials(color) {
   ];
 }
 
-export function renderBlock(color, y, x, z, blockSize) {
-  const translateX = (n) => (n - (COLS / 2)) * blockSize;
-  const translateY = (n) => -(n + 1 - (ROWS / 2)) * blockSize;
-  const translateZ = (n) => -(n - (COLS / 2)) * blockSize
-
+export function createBlock(color, blockSize) {
   const geometry = new THREE.BoxGeometry(blockSize, blockSize, blockSize);
   const materials = getMeshMaterials(color)
-  const cube = new THREE.Mesh(geometry, materials);
-  cube.position.set(translateX(x), translateY(y), translateZ(z));
-  return cube;
+  return new THREE.Mesh(geometry, materials);
 }

@@ -2,7 +2,7 @@ import {COLS, ROWS} from "../params";
 import * as THREE from "three";
 import type {Board} from "../models/3DBoard";
 import type {Piece} from "../models/3DPiece";
-import {renderBlock} from "./renderBlock";
+import {createBlock} from "./createBlock";
 
 export class SceneManager {
 
@@ -50,25 +50,36 @@ export class SceneManager {
         this.#config(this._scene);
     }
 
-    get scene() {
-        return this._scene;
-    }
-
-    update(board: Board, piece: Piece) {
-        this.reset();
-        board.forEachBlock((color, y, x, z) => {
-            const cube = renderBlock(color, y, x, z, this.#BLOCK_SIZE)
-            this._scene.add(cube);
-        })
-        piece.forEachBlock((y, x, z) => {
-            const cube = renderBlock(piece.color, y, x, z, this.#BLOCK_SIZE)
-            this._scene.add(cube);
-        })
-    }
-
     reset() {
         this._scene = new THREE.Scene();
         this.#config(this._scene);
     }
+
+    get scene() {
+        return this._scene;
+    }
+
+
+
+    update(board: Board, piece: Piece) {
+        // translation from the Board coord system to the Scene coord system
+        const translateX = (n) => (n - (COLS / 2)) * this.#BLOCK_SIZE;
+        const translateY = (n) => -(n + 1 - (ROWS / 2)) * this.#BLOCK_SIZE;
+        const translateZ = (n) => -(n - (COLS / 2)) * this.#BLOCK_SIZE
+
+        this.reset();
+        board.forEachBlock((color, y, x, z) => {
+            const cube = createBlock(color, this.#BLOCK_SIZE)
+            cube.position.set(translateX(x), translateY(y), translateZ(z));
+            this._scene.add(cube);
+        })
+        piece.forEachBlock((y, x, z) => {
+            const cube = createBlock(piece.color, this.#BLOCK_SIZE)
+            cube.position.set(translateX(x), translateY(y), translateZ(z));
+            this._scene.add(cube);
+        })
+    }
+
+
 
 }

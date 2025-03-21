@@ -1,6 +1,6 @@
 import {Clock} from "./models/Clock";
 import {Game} from "./models/Game.js";
-import {SceneManager} from "./render/SceneManager.js";
+import {SceneManager} from "./scene/SceneManager.js";
 import * as THREE from "three";
 
 const ctnr = document.getElementById('scene-container');
