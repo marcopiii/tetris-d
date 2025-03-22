@@ -52,7 +52,7 @@ export class Game {
         return false;
     }
 
-    tryMove(type: "shiftL" | "shiftR" | "shiftB" | "shiftF") {
+    tryMove(type: "shiftL" | "shiftR" | "shiftB" | "shiftF" | "rotateL" | "rotateR"): boolean {
         switch (type) {
             case "shiftL":
                 this._piece.shiftLeft();
@@ -65,6 +65,12 @@ export class Game {
                 break;
             case "shiftF":
                 this._piece.shiftForward();
+                break;
+            case "rotateL":
+                this._piece.rotateLeft();
+                break;
+            case "rotateR":
+                this._piece.rotateRight();
                 break;
         }
         if (this.#detectCollision()) {

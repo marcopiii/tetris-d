@@ -63,10 +63,10 @@ function controller(event) {
     let success;
     switch (event.key) {
         case 'ArrowLeft':
-            success = game.tryMove('shiftL');
+            success = event.shiftKey ? game.tryMove("rotateL") : game.tryMove('shiftL');
             break;
         case 'ArrowRight':
-            success = game.tryMove('shiftR');
+            success = event.shiftKey ? game.tryMove("rotateR") : game.tryMove('shiftR');
             break;
         case 'ArrowDown':
             success = game.tryMove('shiftF');
