@@ -43,4 +43,41 @@ function onStart() {
     clock.resume(processGameFrame);
 }
 
+function onResume() {
+    clock.resume(processGameFrame);
+    const pauseBtn = document.getElementById('pause-btn');
+    pauseBtn.textContent = 'Pause';
+    pauseBtn.removeEventListener('click', onResume);
+    pauseBtn.addEventListener('click', onPause);
+}
+
+function onPause() {
+    clock.pause();
+    const pauseBtn = document.getElementById('pause-btn');
+    pauseBtn.textContent = 'Resume';
+    pauseBtn.removeEventListener('click', onPause);
+    pauseBtn.addEventListener('click', onResume);
+}
+
+function controller(event) {
+    let success;
+    switch (event.key) {
+        case 'ArrowLeft':
+            success = game.tryMove('shiftL');
+            break;
+        case 'ArrowRight':
+            success = game.tryMove('shiftR');
+            break;
+        case 'ArrowDown':
+            success = game.tryMove('shiftF');
+            break;
+        case 'ArrowUp':
+            success = game.tryMove('shiftB');
+            break;
+    }
+    if (success) sceneManager.update(game.board, game.piece);
+}
+
 document.getElementById('start-btn').addEventListener('click', onStart);
+document.getElementById('pause-btn').addEventListener('click', onPause);
+document.addEventListener('keydown', controller);

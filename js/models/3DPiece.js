@@ -66,4 +66,24 @@ export class Piece {
         this._position.y++;
     }
 
+    shiftRight() {
+        this.#checkpoint();
+        this._position.z--;
+    }
+
+    shiftLeft() {
+        this.#checkpoint();
+        this._position.z++;
+    }
+
+    shiftForward() {
+        this.#checkpoint();
+        this._position.x--;
+    }
+
+    shiftBackward() {
+        this.#checkpoint();
+        this._position.x++;
+    }
+
 }

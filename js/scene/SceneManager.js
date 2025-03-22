@@ -59,7 +59,7 @@ export class SceneManager {
     get scene() {
         return this._scene;
     }
-    
+
     update(board: Board, piece: Piece) {
         // translation from the Board coord system to the Scene coord system
         const translateX = (n) => (n - (COLS / 2)) * this.#BLOCK_SIZE;

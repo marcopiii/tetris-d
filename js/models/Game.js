@@ -52,5 +52,27 @@ export class Game {
         return false;
     }
 
+    tryMove(type: "shiftL" | "shiftR" | "shiftB" | "shiftF") {
+        switch (type) {
+            case "shiftL":
+                this._piece.shiftLeft();
+                break;
+            case "shiftR":
+                this._piece.shiftRight();
+                break;
+            case "shiftB":
+                this._piece.shiftBackward();
+                break;
+            case "shiftF":
+                this._piece.shiftForward();
+                break;
+        }
+        if (this.#detectCollision()) {
+            this._piece.rollback();
+            return false;
+        }
+        return true;
+    }
+
 
 }
