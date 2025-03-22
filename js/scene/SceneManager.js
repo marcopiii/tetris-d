@@ -3,6 +3,7 @@ import * as THREE from "three";
 import type {Board} from "../models/3DBoard";
 import type {Piece} from "../models/3DPiece";
 import {createBlock} from "./createBlock";
+import {createShadow} from "./createShadow";
 
 export class SceneManager {
 
@@ -12,7 +13,7 @@ export class SceneManager {
     #config(scene: THREE.Scene) {
         scene.background = new THREE.Color("#b5c5d2");
         scene.rotation.y = THREE.MathUtils.degToRad(45);
-        scene.rotation.x = THREE.MathUtils.degToRad(15);
+        scene.rotation.x = THREE.MathUtils.degToRad(20);
 
         const yGrid = new THREE.GridHelper(COLS * this.#BLOCK_SIZE, COLS, this.#GRID_COLOR, this.#GRID_COLOR);
         yGrid.position.set(
@@ -28,7 +29,7 @@ export class SceneManager {
         const xGrid = new THREE.LineSegments(edges, material);
         xGrid.rotateY(THREE.MathUtils.degToRad(90));
         xGrid.position.set(
-            ((COLS + 1) * this.#BLOCK_SIZE) / 2 ,
+            ((COLS + 1) * this.#BLOCK_SIZE) / 2,
             -this.#BLOCK_SIZE / 2,
             this.#BLOCK_SIZE / 2
         );
@@ -58,9 +59,7 @@ export class SceneManager {
     get scene() {
         return this._scene;
     }
-
-
-
+    
     update(board: Board, piece: Piece) {
         // translation from the Board coord system to the Scene coord system
         const translateX = (n) => (n - (COLS / 2)) * this.#BLOCK_SIZE;
@@ -76,10 +75,26 @@ export class SceneManager {
         piece.forEachBlock((y, x, z) => {
             const cube = createBlock(piece.color, this.#BLOCK_SIZE)
             cube.position.set(translateX(x), translateY(y), translateZ(z));
+
+            const xShadow = createShadow(piece.color, this.#BLOCK_SIZE)
+            xShadow.rotateY(THREE.MathUtils.degToRad(-90))
+            xShadow.position.set(
+                ((COLS + 1) * this.#BLOCK_SIZE) / 2,
+                translateY(y),
+                translateZ(z)
+            )
+
+            const zShadow = createShadow(piece.color, this.#BLOCK_SIZE)
+            zShadow.position.set(
+                translateX(x),
+                translateY(y),
+                -((COLS - 1) * this.#BLOCK_SIZE) / 2
+            )
+
             this._scene.add(cube);
+            this._scene.add(xShadow);
+            this._scene.add(zShadow);
         })
     }
-
-
 
 }
