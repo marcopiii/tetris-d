@@ -1,30 +1,55 @@
+/**
+ * The definitions of the shapes and colors of the tetriminos.
+ * The first level is the Y dimension (vertical), the second level is the X dimension (horizontal) and the third level is the Z dimension (horizontal).
+ * The "natural" shape is flattened in the Y and X dimensions (meaning that they have size 1 in the Z dimension).
+ */
 export const tetrimino = {
   I: {
-    shape: [[1, 1, 1, 1]],
-    color: '#FF5733'
+    shape: [
+        [[1, 1, 1, 1]]
+    ],
+    color: '#FFB3BA'
   },
   O: {
-    shape: [[1, 1], [1, 1]],
-    color: '#33FF57'
+    shape: [
+        [[1, 1]],
+        [[1, 1]]
+    ],
+    color: '#FFDFBA'
   },
   T: {
-    shape: [[0, 1, 0], [1, 1, 1]],
-    color: '#3357FF'
+    shape: [
+        [[0, 1, 0]],
+        [[1, 1, 1]]
+    ],
+    color: '#FFFFBA'
   },
   L: {
-    shape: [[1, 0, 0], [1, 1, 1]],
-    color: '#9B59B6'
+    shape: [
+        [[1, 0, 0]],
+        [[1, 1, 1]]
+    ],
+    color: '#BAFFC9'
   },
   J: {
-    shape: [[0, 0, 1], [1, 1, 1]],
-    color: '#F1C40F'
+    shape: [
+        [[0, 0, 1]],
+        [[1, 1, 1]]
+    ],
+    color: '#BAE1FF'
   },
   S: {
-    shape: [[0, 1, 1], [1, 1, 0]],
-    color: '#E74C3C'
+    shape: [
+        [[0, 1, 1]],
+        [[1, 1, 0]]
+    ],
+    color: '#D4BAFF'
   },
   Z: {
-    shape: [[1, 1, 0], [0, 1, 1]],
-    color: '#2ECC71'
+    shape: [
+        [[1, 1, 0]],
+        [[0, 1, 1]]
+    ],
+    color: '#FFBADD'
   },
 };

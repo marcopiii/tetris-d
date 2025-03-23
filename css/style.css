@@ -8,46 +8,16 @@ body {
   background-color: #222;
 }
 
-.game-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.game-boards {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
+#scene-container {
+  height: 900px;
+  width: 600px;
+  background-color: #333;
 }
 
 .game-controls {
   display: flex;
   justify-content: center;
   gap: 10px;
-}
-
-#board-container-1 {
-  z-index: 3;
-  transform: translate(70px, 45px);
-}
-#board-container-2 {
-  z-index: 2;
-}
-#board-container-3 {
-  z-index: 1;
-  transform: translate(-70px, -45px);
-}
-
-.game-board {
-  background-color: rgba(50, 50, 50, 0.85);
-  border: 2px solid #fff;
-  transform: rotateX(15deg) rotateY(20deg);
-  opacity: 0.75;
-}
-
-#score {
-  color: white;
-  margin-top: 10px;
 }
 
 button {

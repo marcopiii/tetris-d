@@ -1,85 +1,90 @@
-import {Piece} from "./Piece";
-import {Board} from "./Board";
-import {detectCollision} from "../detectCollision";
+import {Board} from "./3DBoard";
+import {Piece} from "./3DPiece";
+import {COLS, ROWS} from "../params";
 
 export class Game {
     constructor() {
-        this._boards = Array(3).fill().map(() => new Board());
-        this._activeBoardIndex = 0;
-        this._currentPiece = new Piece();
+        this._board = new Board();
+        this._piece = new Piece();
     }
 
-    get boards() {
-        return this._boards;
+    get board() {
+        return this._board;
     }
 
-    get activeBoard(): Board {
-        return this._boards[this._activeBoardIndex];
-    }
-
-    get activeBoardIndex() {
-        return this._activeBoardIndex;
-    }
-
-    get currentPiece() {
-        return this._currentPiece;
-    }
-
-    movePiece(type: "shift" | "rotate" | "jump", direction: "left" | "right") {
-        const prevBoard = this._activeBoardIndex.valueOf();
-        switch (type) {
-            case "shift":
-                direction === "left"
-                    ? this.currentPiece.shiftLeft()
-                    : this.currentPiece.shiftRight();
-                break;
-            case "rotate":
-                direction === "left"
-                    ? this.currentPiece.rotateLeft()
-                    : this.currentPiece.rotateRight();
-                break;
-            case "jump":
-                direction === "left"
-                    ? this._activeBoardIndex = (this._activeBoardIndex + 2) % 3
-                    : this._activeBoardIndex = (this._activeBoardIndex + 1) % 3;
-                break;
-        }
-        if (detectCollision(this.activeBoard, this.currentPiece)) {
-            switch (type) {
-                case "shift":
-                    this.currentPiece.rollback();
-                    break;
-                case "rotate":
-                    this.currentPiece.rollback();
-                    break;
-                case "jump":
-                    this._activeBoardIndex = prevBoard;
-                    break;
-            }
-        }
+    get piece() {
+        return this._piece;
     }
 
     reset() {
-        this._boards.forEach(board => board.clean());
-        this._currentPiece = new Piece();
-        this._activeBoardIndex = 0;
+        this._board.clean();
+        this._piece = new Piece();
+    }
+
+    #detectCollision(): boolean {
+        let collisionDetected = false;
+        this._piece.forEachBlock((y, x, z) => {
+            const floorCollision = y >= ROWS;
+            const wallCollision = x < 0 || x >= COLS || z < 0 || z >= COLS;
+            // avoid calling .blockAt() if one of the index is out of bounds
+            const stackCollision = !(floorCollision || wallCollision) && this._board.blockAt(y, x, z) !== null;
+            if (floorCollision || wallCollision || stackCollision) {
+                collisionDetected = true;
+            }
+        })
+        return collisionDetected;
     }
 
     /** Progresses the game by one tick.
      * @return {boolean} - Whether the game is over
      */
     tick() {
-        this.currentPiece.drop()
-        if (detectCollision(this.activeBoard, this.currentPiece)) {
-            this.currentPiece.rollback();
-            this.activeBoard.fixPiece(this.currentPiece);
-            this.activeBoard.checkRows();
-            this._currentPiece = new Piece();
-            if (detectCollision(this.activeBoard, this.currentPiece)) {
+        this._piece.drop();
+        if (this.#detectCollision()) {
+            this._piece.rollback();
+            this._board.fixPiece(this._piece);
+            this._board.checkRows();
+            this._piece = new Piece();
+            if (this.#detectCollision()) {
                 return true;
             }
         }
         return false;
     }
+
+    tryMove(type: "shiftL" | "shiftR" | "shiftB" | "shiftF" | "rotateL" | "rotateR" | "twistL" | "twistR"): boolean {
+        switch (type) {
+            case "shiftL":
+                this._piece.shiftLeft();
+                break;
+            case "shiftR":
+                this._piece.shiftRight();
+                break;
+            case "shiftB":
+                this._piece.shiftBackward();
+                break;
+            case "shiftF":
+                this._piece.shiftForward();
+                break;
+            case "rotateL":
+                this._piece.rotateLeft();
+                break;
+            case "rotateR":
+                this._piece.rotateRight();
+                break;
+            case "twistL":
+                this._piece.twistLeft();
+                break;
+            case "twistR":
+                this._piece.twistRight();
+                break
+        }
+        if (this.#detectCollision()) {
+            this._piece.rollback();
+            return false;
+        }
+        return true;
+    }
+
 
 }
