@@ -1,5 +1,6 @@
 import {COLS, ROWS} from "../params";
 import type {Piece} from "./3DPiece";
+import {range} from "three/tsl";
 
 export class Board {
 
@@ -46,6 +47,58 @@ export class Board {
                     if (shape[y][x][z]) {
                         this._matrix[y + position.y][x + position.x][z + position.z] = color;
                     }
+                }
+            }
+        }
+    }
+
+    checkRows() {
+        const checkZAxisRow = (y: number, x: number) => {
+            for (let z = 0; z < COLS; z++) {
+                if (!this._matrix[y][x][z]) return false;
+            }
+            return true;
+        }
+
+        const checkXAxisRow = (y: number, z: number) => {
+            for (let x = 0; x < COLS; x++) {
+                if (!this._matrix[y][x][z]) return false;
+            }
+            return true;
+        }
+
+        const deleteBlock = (y: number, x: number, z: number) => {
+            for (let dy = y; dy > 0; dy--) {
+                this._matrix[dy][x][z] = this._matrix[dy - 1][x][z];
+            }
+            this._matrix[0][x][z] = null;
+        }
+
+        for (let y = 0; y < ROWS; y++) {
+            for (let z = 0; z < COLS; z++) {
+                if (checkXAxisRow(y, z)) {
+                    for (let x = 0; x < COLS; x++) {
+                        this._matrix[y][x][z] = "DELETE";
+                    }
+                }
+            }
+            for (let x = 0; x < COLS; x++) {
+                if (checkZAxisRow(y, x)) {
+                    for (let z = 0; z < COLS; z++) {
+                        this._matrix[y][x][z] = "DELETE";
+                    }
+                }
+            }
+        }
+
+        for (let x = 0; x < COLS; x++) {
+            for (let z = 0; z < COLS; z++) {
+                let y = ROWS - 1;
+                while (y >= 0) {
+                    if (this._matrix[y][x][z] === "DELETE")
+                        deleteBlock(y, x, z);
+                    else
+                        y--;
                 }
             }
         }

@@ -43,7 +43,7 @@ export class Game {
         if (this.#detectCollision()) {
             this._piece.rollback();
             this._board.fixPiece(this._piece);
-            // todo: check rows
+            this._board.checkRows();
             this._piece = new Piece();
             if (this.#detectCollision()) {
                 return true;
