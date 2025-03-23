@@ -71,7 +71,7 @@ export class Piece {
         this.#checkpoint();
         switch (this._plane) {
             case "x":
-                this._position.z--;
+                this._position.z++;
                 break;
             case "z":
                 this._position.x++;
@@ -83,7 +83,7 @@ export class Piece {
         this.#checkpoint();
         switch (this._plane) {
             case "x":
-                this._position.z++;
+                this._position.z--;
                 break;
             case "z":
                 this._position.x--;
@@ -98,7 +98,7 @@ export class Piece {
                 this._position.x--;
                 break;
             case "z":
-                this._position.z--;
+                this._position.z++;
                 break;
         }
     }
@@ -110,7 +110,7 @@ export class Piece {
                 this._position.x++;
                 break;
             case "z":
-                this._position.z++;
+                this._position.z--;
                 break;
         }
     }
@@ -141,7 +141,6 @@ export class Piece {
                 this._position.z--;
                 break;
         }
-        this._shape = this._shape.map(row => row.reverse());
     }
 
 

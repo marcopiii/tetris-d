@@ -62,9 +62,9 @@ export class SceneManager {
 
     update(board: Board, piece: Piece) {
         // translation from the Board coord system to the Scene coord system
-        const translateX = (n) => (n + 1 - (COLS / 2)) * this.#BLOCK_SIZE;
-        const translateY = (n) => -(n + 1 - (ROWS / 2)) * this.#BLOCK_SIZE;
-        const translateZ = (n) => -(n - (COLS / 2)) * this.#BLOCK_SIZE
+        const translateY = (y) => -(y + 1 - (ROWS / 2)) * this.#BLOCK_SIZE;
+        const translateX = (x) => (x + 1 - (COLS / 2)) * this.#BLOCK_SIZE;
+        const translateZ = (z) => (z + 1 - (COLS / 2)) * this.#BLOCK_SIZE
 
         this.reset();
         board.forEachBlock((color, y, x, z) => {
