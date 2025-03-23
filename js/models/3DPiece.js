@@ -14,7 +14,8 @@ export class Piece {
         this._color = color;
         this._prev = {
             position: copy(this._position),
-            shape: copy(this._shape)
+            shape: copy(this._shape),
+            plane: copy(this._plane)
         };
     }
 
@@ -35,30 +36,32 @@ export class Piece {
      * @param callback - The callback to apply to each block, given its coordinates in the board.
      */
     forEachBlock(callback: (number, number, number) => void) {
-        this._shape.forEach((layer, y) =>
-            layer.forEach((xRow, x) =>
-                xRow.forEach((exists, z) => {
-                    if (!exists) return;
-                    callback(
-                        this._position.y + y,
-                        this._position.x + x,
-                        this._position.z + z
-                    );
-                })
-            )
+        this._shape.forEach((layer, dy) =>
+            layer.forEach((exists, h) => {
+                if (!exists) return;
+                const dx = this._plane === "x" ? h : 0;
+                const dz = this._plane === "z" ? h : 0;
+                callback(
+                    this._position.y + dy,
+                    this._position.x + dx,
+                    this._position.z + dz
+                );
+            })
         );
     }
 
     #checkpoint() {
         this._prev = {
             position: copy(this._position),
-            shape: copy(this._shape)
+            shape: copy(this._shape),
+            plane: copy(this._plane)
         };
     }
 
     rollback() {
         this._position = copy(this._prev.position);
         this._shape = copy(this._prev.shape);
+        this._plane = copy(this._prev.plane);
     }
 
     drop() {
