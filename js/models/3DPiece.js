@@ -29,6 +29,10 @@ export class Piece {
         return this._color;
     }
 
+    get plane() {
+        return this._plane;
+    }
+
     /**
      * Applies the given callback to each existing block of the piece.
      * @param callback - The callback to apply to each block, given its coordinates in the board.
@@ -126,22 +130,5 @@ export class Piece {
         // 90deg counterclockwise rotation
         this._shape =  this._shape[0].map((_, i) =>  this._shape.map(row => row[row.length - 1 - i]))
     }
-
-    twist() {
-        this.#checkpoint();
-        switch (this._plane) {
-            case "x":
-                this._plane = "z";
-                this._position.x--;
-                this._position.z++;
-                break;
-            case "z":
-                this._plane = "x";
-                this._position.x++;
-                this._position.z--;
-                break;
-        }
-    }
-
 
 }

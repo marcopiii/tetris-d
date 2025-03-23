@@ -74,9 +74,6 @@ function controller(event) {
         case 'ArrowUp':
             success = game.tryMove('shiftB');
             break;
-        case ' ':
-            success = game.tryMove('twist');
-            break;
     }
     if (success) sceneManager.update(game.board, game.piece);
 }

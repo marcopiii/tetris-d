@@ -44,7 +44,9 @@ export class Game {
             this._piece.rollback();
             this._board.fixPiece(this._piece);
             this._board.checkRows();
-            this._piece = new Piece();
+            this._piece = this._piece.plane === "x"
+                ? new Piece("z")
+                : new Piece("x");
             if (this.#detectCollision()) {
                 return true;
             }
@@ -52,7 +54,7 @@ export class Game {
         return false;
     }
 
-    tryMove(type: "shiftL" | "shiftR" | "shiftB" | "shiftF" | "rotateL" | "rotateR" | "twist"): boolean {
+    tryMove(type: "shiftL" | "shiftR" | "shiftB" | "shiftF" | "rotateL" | "rotateR"): boolean {
         switch (type) {
             case "shiftL":
                 this._piece.shiftLeft();
@@ -71,9 +73,6 @@ export class Game {
                 break;
             case "rotateR":
                 this._piece.rotateRight();
-                break;
-            case "twist":
-                this._piece.twist();
                 break;
         }
         if (this.#detectCollision()) {
