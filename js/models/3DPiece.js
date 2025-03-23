@@ -3,14 +3,20 @@ import {generateRandomPiece} from "../pieces/generateRandomPiece";
 import {copy} from "../utils";
 
 export class Piece {
-    constructor() {
+    constructor(plane: "x" | "z" = "z") {
         const {shape, color} = generateRandomPiece()
         this._shape = shape;
-        this._position = {
-            x: Math.floor(COLS / 2) - 1,
-            z: Math.floor(COLS / 2) - 1,
-            y: 0
-        };
+        this._position = plane === "x"
+            ? {
+                x: Math.floor((COLS - 1) / 2),
+                z: Math.ceil((COLS - 1 - shape.length) / 2),
+                y: 0
+            } : {
+                x: Math.ceil((COLS - 1 - shape.length) / 2),
+                z: Math.floor((COLS - 1) / 2),
+                y: 0
+            };
+        this._plane = plane;
         this._color = color;
         this._prev = {
             position: copy(this._position),
