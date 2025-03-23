@@ -1,3 +1,4 @@
+import {BLOCK_SIZE} from "./params.js";
 import {Clock} from "./models/Clock";
 import {Game} from "./models/Game.js";
 import {SceneManager} from "./scene/SceneManager.js";
@@ -17,7 +18,18 @@ const camera = new THREE.OrthographicCamera(
     frustumSize / 2,
     frustumSize / - 2
 );
-camera.position.z = 10;
+
+// Z plane camera
+// camera.position.set(0.5 * BLOCK_SIZE, 0, 10);
+// camera.lookAt(0.5 * BLOCK_SIZE,0,0)
+
+// X plane camera
+// camera.position.set(10, 0, 0.5 * BLOCK_SIZE);
+// camera.lookAt(0, 0, 0.5 * BLOCK_SIZE)
+
+// isometric camera
+camera.position.set(-10, 5, 10 + BLOCK_SIZE );
+camera.lookAt(0, 0, BLOCK_SIZE)
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(ctnr.clientWidth, ctnr.clientHeight);
