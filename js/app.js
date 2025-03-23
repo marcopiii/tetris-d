@@ -69,10 +69,10 @@ function controller(event) {
             success = event.shiftKey ? game.tryMove("rotateR") : game.tryMove('shiftR');
             break;
         case 'ArrowDown':
-            success = game.tryMove('shiftF');
+            success = event.shiftKey ? game.tryMove("twistL") : game.tryMove('shiftF');
             break;
         case 'ArrowUp':
-            success = game.tryMove('shiftB');
+            success = event.shiftKey ? game.tryMove("twistR") : game.tryMove('shiftB');
             break;
     }
     if (success) sceneManager.update(game.board, game.piece);

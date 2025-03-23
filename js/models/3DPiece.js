@@ -86,28 +86,6 @@ export class Piece {
         this._position.x++;
     }
 
-    twistRight() {
-        const yLength = this._shape.length;
-        const xLength = this._shape[0].length;
-        const zLength = this._shape[0][0].length;
-
-        const rotatedShape = Array.from({ length: yLength }, () =>
-            Array.from({ length: zLength }, () =>
-                Array(xLength).fill(0)
-            )
-        );
-
-        for (let y = 0; y < yLength; y++) {
-            for (let x = 0; x < xLength; x++) {
-                for (let z = 0; z < zLength; z++) {
-                    rotatedShape[y][zLength - 1 - z][x] = this._shape[y][x][z];
-                }
-            }
-        }
-
-        this._shape = rotatedShape;
-    }
-
     rotateRight() {
         const yLength = this._shape.length;
         const xLength = this._shape[0].length;
@@ -151,5 +129,50 @@ export class Piece {
 
         this._shape = rotatedShape;
     }
+
+    twistRight() {
+        const yLength = this._shape.length;
+        const xLength = this._shape[0].length;
+        const zLength = this._shape[0][0].length;
+
+        const rotatedShape = Array.from({ length: yLength }, () =>
+            Array.from({ length: zLength }, () =>
+                Array(xLength).fill(0)
+            )
+        );
+
+        for (let y = 0; y < yLength; y++) {
+            for (let x = 0; x < xLength; x++) {
+                for (let z = 0; z < zLength; z++) {
+                    rotatedShape[y][zLength - 1 - z][x] = this._shape[y][x][z];
+                }
+            }
+        }
+
+        this._shape = rotatedShape;
+    }
+
+    twistLeft() {
+        const yLength = this._shape.length;
+        const xLength = this._shape[0].length;
+        const zLength = this._shape[0][0].length;
+
+        const rotatedShape = Array.from({ length: yLength }, () =>
+            Array.from({ length: zLength }, () =>
+                Array(xLength).fill(0)
+            )
+        );
+
+        for (let y = 0; y < yLength; y++) {
+            for (let x = 0; x < xLength; x++) {
+                for (let z = 0; z < zLength; z++) {
+                    rotatedShape[y][z][xLength - 1 - x] = this._shape[y][x][z];
+                }
+            }
+        }
+
+        this._shape = rotatedShape;
+    }
+
 
 }
