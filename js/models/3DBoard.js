@@ -40,16 +40,9 @@ export class Board {
      * @param piece
      */
     fixPiece(piece: Piece) {
-        const {shape, position, color} = piece;
-        for (let y = 0; y < shape.length; y++) {
-            for (let x = 0; x < shape[y].length; x++) {
-                for (let z = 0; z < shape[y][x].length; z++) {
-                    if (shape[y][x][z]) {
-                        this._matrix[y + position.y][x + position.x][z + position.z] = color;
-                    }
-                }
-            }
-        }
+        piece.forEachBlock((y, x, z) => {
+            this._matrix[y][x][z] = piece.color
+        })
     }
 
     checkRows() {

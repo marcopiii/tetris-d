@@ -25,14 +25,6 @@ export class Piece {
         };
     }
 
-    get shape() {
-        return this._shape;
-    }
-
-    get position() {
-        return this._position;
-    }
-
     get color() {
         return this._color;
     }
@@ -43,10 +35,10 @@ export class Piece {
      */
     forEachBlock(callback: (number, number, number) => void) {
         this._shape.forEach((layer, dy) =>
-            layer.forEach((exists, h) => {
+            layer.forEach((exists, k) => {
                 if (!exists) return;
-                const dx = this._plane === "x" ? h : 0;
-                const dz = this._plane === "z" ? h : 0;
+                const dx = this._plane === "x" ? 0 : k;
+                const dz = this._plane === "z" ? 0 : k;
                 callback(
                     this._position.y + dy,
                     this._position.x + dx,
@@ -77,110 +69,79 @@ export class Piece {
 
     shiftRight() {
         this.#checkpoint();
-        this._position.z--;
+        switch (this._plane) {
+            case "x":
+                this._position.z--;
+                break;
+            case "z":
+                this._position.x++;
+                break;
+        }
     }
 
     shiftLeft() {
         this.#checkpoint();
-        this._position.z++;
+        switch (this._plane) {
+            case "x":
+                this._position.z++;
+                break;
+            case "z":
+                this._position.x--;
+                break;
+        }
     }
 
     shiftForward() {
         this.#checkpoint();
-        this._position.x--;
+        switch (this._plane) {
+            case "x":
+                this._position.x--;
+                break;
+            case "z":
+                this._position.z--;
+                break;
+        }
     }
 
     shiftBackward() {
         this.#checkpoint();
-        this._position.x++;
+        switch (this._plane) {
+            case "x":
+                this._position.x++;
+                break;
+            case "z":
+                this._position.z++;
+                break;
+        }
     }
 
     rotateRight() {
-        const yLength = this._shape.length;
-        const xLength = this._shape[0].length;
-        const zLength = this._shape[0][0].length;
-
-        const rotatedShape = Array.from({ length: zLength }, () =>
-            Array.from({ length: xLength }, () =>
-                Array(yLength).fill(0)
-            )
-        );
-
-        for (let y = 0; y < yLength; y++) {
-            for (let x = 0; x < xLength; x++) {
-                for (let z = 0; z < zLength; z++) {
-                    rotatedShape[zLength - 1 - z][x][y] = this._shape[y][x][z];
-                }
-            }
-        }
-
-        this._shape = rotatedShape;
+        this.#checkpoint();
+        // 90deg clockwise rotation
+        this._shape = this._shape[0].map((_, i) => this._shape.map(row => row[i]).reverse())
     }
 
     rotateLeft() {
-        const yLength = this._shape.length;
-        const xLength = this._shape[0].length;
-        const zLength = this._shape[0][0].length;
-
-        const rotatedShape = Array.from({ length: zLength }, () =>
-            Array.from({ length: xLength }, () =>
-                Array(yLength).fill(0)
-            )
-        );
-
-        for (let y = 0; y < yLength; y++) {
-            for (let x = 0; x < xLength; x++) {
-                for (let z = 0; z < zLength; z++) {
-                    rotatedShape[z][x][yLength - 1 - y] = this._shape[y][x][z];
-                }
-            }
-        }
-
-        this._shape = rotatedShape;
+        this.#checkpoint();
+        // 90deg counterclockwise rotation
+        this._shape =  this._shape[0].map((_, i) =>  this._shape.map(row => row[row.length - 1 - i]))
     }
 
-    twistRight() {
-        const yLength = this._shape.length;
-        const xLength = this._shape[0].length;
-        const zLength = this._shape[0][0].length;
-
-        const rotatedShape = Array.from({ length: yLength }, () =>
-            Array.from({ length: zLength }, () =>
-                Array(xLength).fill(0)
-            )
-        );
-
-        for (let y = 0; y < yLength; y++) {
-            for (let x = 0; x < xLength; x++) {
-                for (let z = 0; z < zLength; z++) {
-                    rotatedShape[y][zLength - 1 - z][x] = this._shape[y][x][z];
-                }
-            }
+    twist() {
+        this.#checkpoint();
+        switch (this._plane) {
+            case "x":
+                this._plane = "z";
+                this._position.x--;
+                this._position.z++;
+                break;
+            case "z":
+                this._plane = "x";
+                this._position.x++;
+                this._position.z--;
+                break;
         }
-
-        this._shape = rotatedShape;
-    }
-
-    twistLeft() {
-        const yLength = this._shape.length;
-        const xLength = this._shape[0].length;
-        const zLength = this._shape[0][0].length;
-
-        const rotatedShape = Array.from({ length: yLength }, () =>
-            Array.from({ length: zLength }, () =>
-                Array(xLength).fill(0)
-            )
-        );
-
-        for (let y = 0; y < yLength; y++) {
-            for (let x = 0; x < xLength; x++) {
-                for (let z = 0; z < zLength; z++) {
-                    rotatedShape[y][z][xLength - 1 - x] = this._shape[y][x][z];
-                }
-            }
-        }
-
-        this._shape = rotatedShape;
+        this._shape = this._shape.map(row => row.reverse());
     }
 
 
