@@ -1,35 +1,15 @@
-import {BLOCK_SIZE} from "./params.js";
 import {Clock} from "./models/Clock";
 import {Game} from "./models/Game.js";
 import {SceneManager} from "./scene/SceneManager.js";
+import {CameraManager} from "./CameraManager.js";
 import * as THREE from "three";
 
 const ctnr = document.getElementById('scene-container');
 
 const clock = new Clock();
 const game = new Game();
-const sceneManager = new SceneManager()
-
-const aspect = ctnr.clientWidth / ctnr.clientHeight
-const frustumSize = 25;
-const camera = new THREE.OrthographicCamera(
-    frustumSize * aspect / - 2,
-    frustumSize * aspect / 2,
-    frustumSize / 2,
-    frustumSize / - 2
-);
-
-// Z plane camera
-// camera.position.set(0.5 * BLOCK_SIZE, 0, 10);
-// camera.lookAt(0.5 * BLOCK_SIZE,0,0)
-
-// X plane camera
-// camera.position.set(10, 0, 0.5 * BLOCK_SIZE);
-// camera.lookAt(0, 0, 0.5 * BLOCK_SIZE)
-
-// isometric camera
-camera.position.set(-10, 5, 10 + BLOCK_SIZE );
-camera.lookAt(0, 0, BLOCK_SIZE)
+const sceneManager = new SceneManager();
+const cameraManager = new CameraManager(ctnr);
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(ctnr.clientWidth, ctnr.clientHeight);
@@ -37,7 +17,7 @@ renderer.setSize(ctnr.clientWidth, ctnr.clientHeight);
 ctnr.appendChild(renderer.domElement);
 
 renderer.setAnimationLoop(() => {
-    renderer.render(sceneManager.scene, camera)
+    renderer.render(sceneManager.scene, cameraManager.camera)
 });
 
 function processGameFrame() {
