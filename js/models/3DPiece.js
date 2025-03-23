@@ -3,31 +3,34 @@ import {generateRandomPiece} from "../pieces/generateRandomPiece";
 import {copy} from "../utils";
 
 export class Piece {
-    constructor() {
+    constructor(plane: "x" | "z" = "z") {
         const {shape, color} = generateRandomPiece()
         this._shape = shape;
-        this._position = {
-            x: Math.floor(COLS / 2) - 1,
-            z: Math.floor(COLS / 2) - 1,
-            y: 0
-        };
+        this._position = plane === "x"
+            ? {
+                x: Math.floor((COLS - 1) / 2),
+                z: Math.ceil((COLS - 1 - shape.length) / 2),
+                y: 0
+            } : {
+                x: Math.ceil((COLS - 1 - shape.length) / 2),
+                z: Math.floor((COLS - 1) / 2),
+                y: 0
+            };
+        this._plane = plane;
         this._color = color;
         this._prev = {
             position: copy(this._position),
-            shape: copy(this._shape)
+            shape: copy(this._shape),
+            plane: copy(this._plane)
         };
-    }
-
-    get shape() {
-        return this._shape;
-    }
-
-    get position() {
-        return this._position;
     }
 
     get color() {
         return this._color;
+    }
+
+    get plane() {
+        return this._plane;
     }
 
     /**
@@ -35,30 +38,32 @@ export class Piece {
      * @param callback - The callback to apply to each block, given its coordinates in the board.
      */
     forEachBlock(callback: (number, number, number) => void) {
-        this._shape.forEach((layer, y) =>
-            layer.forEach((xRow, x) =>
-                xRow.forEach((exists, z) => {
-                    if (!exists) return;
-                    callback(
-                        this._position.y + y,
-                        this._position.x + x,
-                        this._position.z + z
-                    );
-                })
-            )
+        this._shape.forEach((layer, dy) =>
+            layer.forEach((exists, k) => {
+                if (!exists) return;
+                const dx = this._plane === "x" ? 0 : k;
+                const dz = this._plane === "z" ? 0 : k;
+                callback(
+                    this._position.y + dy,
+                    this._position.x + dx,
+                    this._position.z + dz
+                );
+            })
         );
     }
 
     #checkpoint() {
         this._prev = {
             position: copy(this._position),
-            shape: copy(this._shape)
+            shape: copy(this._shape),
+            plane: copy(this._plane)
         };
     }
 
     rollback() {
         this._position = copy(this._prev.position);
         this._shape = copy(this._prev.shape);
+        this._plane = copy(this._prev.plane);
     }
 
     drop() {
@@ -68,111 +73,62 @@ export class Piece {
 
     shiftRight() {
         this.#checkpoint();
-        this._position.z--;
+        switch (this._plane) {
+            case "x":
+                this._position.z++;
+                break;
+            case "z":
+                this._position.x++;
+                break;
+        }
     }
 
     shiftLeft() {
         this.#checkpoint();
-        this._position.z++;
+        switch (this._plane) {
+            case "x":
+                this._position.z--;
+                break;
+            case "z":
+                this._position.x--;
+                break;
+        }
     }
 
     shiftForward() {
         this.#checkpoint();
-        this._position.x--;
+        switch (this._plane) {
+            case "x":
+                this._position.x--;
+                break;
+            case "z":
+                this._position.z++;
+                break;
+        }
     }
 
     shiftBackward() {
         this.#checkpoint();
-        this._position.x++;
+        switch (this._plane) {
+            case "x":
+                this._position.x++;
+                break;
+            case "z":
+                this._position.z--;
+                break;
+        }
     }
 
     rotateRight() {
-        const yLength = this._shape.length;
-        const xLength = this._shape[0].length;
-        const zLength = this._shape[0][0].length;
-
-        const rotatedShape = Array.from({ length: zLength }, () =>
-            Array.from({ length: xLength }, () =>
-                Array(yLength).fill(0)
-            )
-        );
-
-        for (let y = 0; y < yLength; y++) {
-            for (let x = 0; x < xLength; x++) {
-                for (let z = 0; z < zLength; z++) {
-                    rotatedShape[zLength - 1 - z][x][y] = this._shape[y][x][z];
-                }
-            }
-        }
-
-        this._shape = rotatedShape;
+        this.#checkpoint();
+        // 90deg clockwise rotation
+        this._shape = this._shape[0].map((_, i) => this._shape.map(row => row[i]).reverse())
     }
 
     rotateLeft() {
-        const yLength = this._shape.length;
-        const xLength = this._shape[0].length;
-        const zLength = this._shape[0][0].length;
-
-        const rotatedShape = Array.from({ length: zLength }, () =>
-            Array.from({ length: xLength }, () =>
-                Array(yLength).fill(0)
-            )
-        );
-
-        for (let y = 0; y < yLength; y++) {
-            for (let x = 0; x < xLength; x++) {
-                for (let z = 0; z < zLength; z++) {
-                    rotatedShape[z][x][yLength - 1 - y] = this._shape[y][x][z];
-                }
-            }
-        }
-
-        this._shape = rotatedShape;
+        this.#checkpoint();
+        // 90deg counterclockwise rotation
+        this._shape =  this._shape[0].map((_, i) =>  this._shape.map(row => row[row.length - 1 - i]))
     }
-
-    twistRight() {
-        const yLength = this._shape.length;
-        const xLength = this._shape[0].length;
-        const zLength = this._shape[0][0].length;
-
-        const rotatedShape = Array.from({ length: yLength }, () =>
-            Array.from({ length: zLength }, () =>
-                Array(xLength).fill(0)
-            )
-        );
-
-        for (let y = 0; y < yLength; y++) {
-            for (let x = 0; x < xLength; x++) {
-                for (let z = 0; z < zLength; z++) {
-                    rotatedShape[y][zLength - 1 - z][x] = this._shape[y][x][z];
-                }
-            }
-        }
-
-        this._shape = rotatedShape;
-    }
-
-    twistLeft() {
-        const yLength = this._shape.length;
-        const xLength = this._shape[0].length;
-        const zLength = this._shape[0][0].length;
-
-        const rotatedShape = Array.from({ length: yLength }, () =>
-            Array.from({ length: zLength }, () =>
-                Array(xLength).fill(0)
-            )
-        );
-
-        for (let y = 0; y < yLength; y++) {
-            for (let x = 0; x < xLength; x++) {
-                for (let z = 0; z < zLength; z++) {
-                    rotatedShape[y][z][xLength - 1 - x] = this._shape[y][x][z];
-                }
-            }
-        }
-
-        this._shape = rotatedShape;
-    }
-
 
 }

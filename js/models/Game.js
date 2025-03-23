@@ -44,7 +44,9 @@ export class Game {
             this._piece.rollback();
             this._board.fixPiece(this._piece);
             this._board.checkRows();
-            this._piece = new Piece();
+            this._piece = this._piece.plane === "x"
+                ? new Piece("z")
+                : new Piece("x");
             if (this.#detectCollision()) {
                 return true;
             }
@@ -52,7 +54,17 @@ export class Game {
         return false;
     }
 
-    tryMove(type: "shiftL" | "shiftR" | "shiftB" | "shiftF" | "rotateL" | "rotateR" | "twistL" | "twistR"): boolean {
+    #hardDrop() {
+        while (!this.#detectCollision()) {
+            this._piece.drop();
+        }
+        this._piece.rollback();
+        this._board.fixPiece(this._piece);
+        // fix the piece to avoid further moving
+        // this will cause a collision since we don't spawn a new piece here
+    }
+
+    tryMove(type: "shiftL" | "shiftR" | "shiftB" | "shiftF" | "rotateL" | "rotateR" | "hardDrop"): boolean {
         switch (type) {
             case "shiftL":
                 this._piece.shiftLeft();
@@ -72,12 +84,10 @@ export class Game {
             case "rotateR":
                 this._piece.rotateRight();
                 break;
-            case "twistL":
-                this._piece.twistLeft();
-                break;
-            case "twistR":
-                this._piece.twistRight();
-                break
+            case "hardDrop":
+                this.#hardDrop();
+                // escape the collision detection
+                return true;
         }
         if (this.#detectCollision()) {
             this._piece.rollback();
