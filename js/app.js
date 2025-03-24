@@ -53,36 +53,51 @@ function onPause() {
 }
 
 function controller(event) {
-    let success;
-    switch (event.key) {
-        case 'ArrowLeft':
-            success = event.shiftKey ? game.tryMove("rotateL") : game.tryMove('shiftL');
+    let sceneNeedsUpdate = false;
+    switch (event.type) {
+        case 'keydown':
+            switch (event.key) {
+                case 'ArrowLeft':
+                    sceneNeedsUpdate = event.shiftKey
+                        ? game.tryMove("rotateL")
+                        : game.tryMove('shiftL');
+                    break;
+                case 'ArrowRight':
+                    sceneNeedsUpdate = event.shiftKey
+                        ? game.tryMove("rotateR")
+                        : game.tryMove('shiftR');
+                    break;
+                case 'ArrowDown':
+                    sceneNeedsUpdate = game.tryMove('shiftF');
+                    break;
+                case 'ArrowUp':
+                    sceneNeedsUpdate = game.tryMove('shiftB');
+                    break;
+                case ' ':
+                    sceneNeedsUpdate = game.tryMove('hardDrop');
+                    break;
+                case 'q':
+                    cameraManager.move("x-plane");
+                    break;
+                case 'e':
+                    cameraManager.move("z-plane");
+                    break;
+            }
             break;
-        case 'ArrowRight':
-            success = event.shiftKey ? game.tryMove("rotateR") : game.tryMove('shiftR');
+        case 'keyup':
+            switch (event.key) {
+                case 'q':
+                case 'e':
+                    cameraManager.move("isometric");
+                    break;
+            }
             break;
-        case 'ArrowDown':
-            success = game.tryMove('shiftF');
-            break;
-        case 'ArrowUp':
-            success = game.tryMove('shiftB');
-            break;
-        case ' ':
-            success = game.tryMove('hardDrop');
-            break;
-        case 'q':
-            cameraManager.move("x-plane");
-            return;
-        case 'w':
-            cameraManager.move("isometric");
-            return;
-        case 'e':
-            cameraManager.move("z-plane");
-            return;
     }
-    if (success) sceneManager.update(game.board, game.piece);
+    if (sceneNeedsUpdate) sceneManager.update(game.board, game.piece);
 }
 
 document.getElementById('start-btn').addEventListener('click', onStart);
 document.getElementById('pause-btn').addEventListener('click', onPause);
+
 document.addEventListener('keydown', controller);
+document.addEventListener('keyup', controller);
