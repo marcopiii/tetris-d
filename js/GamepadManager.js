@@ -1,8 +1,8 @@
 export class GamepadManager {
 
     constructor(
-        onPress: (button: GamepadButton) => void,
-        onRelease: (button: GamepadButton) => void
+        onPress: (button?: "LT" | "RT") => void,
+        onRelease: (button?: "LT" | "RT") => void
     ) {
         this._onPress = onPress;
         this._onRelease = onRelease;
@@ -20,22 +20,26 @@ export class GamepadManager {
     }
 
     poll() {
-        if (this._gamepadIndex === undefined) {
+        if (this._gamepadIndex === undefined)
             return;
-        }
+
         const gamepad = navigator.getGamepads()[this._gamepadIndex];
 
-        for (let i = 0; i < gamepad.buttons.length; i++) {
-            if (gamepad.buttons[i].pressed && !this._buffer[i]?.pressed) {
-                this._onPress(gamepad.buttons[i]);
-                break;
-            }
-            if (!gamepad.buttons[i].pressed && this._buffer[i]?.pressed) {
-                this._onRelease(gamepad.buttons[i]);
-                break;
-            }
-        }
+        gamepad.buttons.forEach((button, i) => {
+            if (button.pressed && !this._buffer[i]?.pressed)
+                this._onPress(buttonMapping(i));
+            if (!button.pressed && this._buffer[i]?.pressed)
+                this._onRelease(buttonMapping(i));
+        })
         this._buffer = gamepad.buttons;
     }
 
+}
+
+function buttonMapping(i: number) {
+    switch (i) {
+        case 6: return "LT";
+        case 7: return "RT";
+        default: return undefined;
+    }
 }
