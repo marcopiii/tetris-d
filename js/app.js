@@ -17,6 +17,7 @@ renderer.setSize(ctnr.clientWidth, ctnr.clientHeight);
 ctnr.appendChild(renderer.domElement);
 
 renderer.setAnimationLoop(() => {
+    cameraManager.tween.update();
     renderer.render(sceneManager.scene, cameraManager.camera)
 });
 
@@ -69,6 +70,15 @@ function controller(event) {
         case ' ':
             success = game.tryMove('hardDrop');
             break;
+        case 'q':
+            cameraManager.move("x-plane");
+            return;
+        case 'w':
+            cameraManager.move("isometric");
+            return;
+        case 'e':
+            cameraManager.move("z-plane");
+            return;
     }
     if (success) sceneManager.update(game.board, game.piece);
 }
