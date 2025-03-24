@@ -1,23 +1,15 @@
 import {Clock} from "./models/Clock";
 import {Game} from "./models/Game.js";
 import {SceneManager} from "./scene/SceneManager.js";
+import {CameraManager} from "./CameraManager.js";
 import * as THREE from "three";
 
 const ctnr = document.getElementById('scene-container');
 
 const clock = new Clock();
 const game = new Game();
-const sceneManager = new SceneManager()
-
-const aspect = ctnr.clientWidth / ctnr.clientHeight
-const frustumSize = 25;
-const camera = new THREE.OrthographicCamera(
-    frustumSize * aspect / - 2,
-    frustumSize * aspect / 2,
-    frustumSize / 2,
-    frustumSize / - 2
-);
-camera.position.z = 10;
+const sceneManager = new SceneManager();
+const cameraManager = new CameraManager(ctnr);
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(ctnr.clientWidth, ctnr.clientHeight);
@@ -25,7 +17,8 @@ renderer.setSize(ctnr.clientWidth, ctnr.clientHeight);
 ctnr.appendChild(renderer.domElement);
 
 renderer.setAnimationLoop(() => {
-    renderer.render(sceneManager.scene, camera)
+    cameraManager.tween.update();
+    renderer.render(sceneManager.scene, cameraManager.camera)
 });
 
 function processGameFrame() {
@@ -60,27 +53,51 @@ function onPause() {
 }
 
 function controller(event) {
-    let success;
-    switch (event.key) {
-        case 'ArrowLeft':
-            success = event.shiftKey ? game.tryMove("rotateL") : game.tryMove('shiftL');
+    let sceneNeedsUpdate = false;
+    switch (event.type) {
+        case 'keydown':
+            switch (event.key) {
+                case 'ArrowLeft':
+                    sceneNeedsUpdate = event.shiftKey
+                        ? game.tryMove("rotateL")
+                        : game.tryMove('shiftL');
+                    break;
+                case 'ArrowRight':
+                    sceneNeedsUpdate = event.shiftKey
+                        ? game.tryMove("rotateR")
+                        : game.tryMove('shiftR');
+                    break;
+                case 'ArrowDown':
+                    sceneNeedsUpdate = game.tryMove('shiftF');
+                    break;
+                case 'ArrowUp':
+                    sceneNeedsUpdate = game.tryMove('shiftB');
+                    break;
+                case ' ':
+                    sceneNeedsUpdate = game.tryMove('hardDrop');
+                    break;
+                case 'q':
+                    cameraManager.move("x-plane");
+                    break;
+                case 'e':
+                    cameraManager.move("z-plane");
+                    break;
+            }
             break;
-        case 'ArrowRight':
-            success = event.shiftKey ? game.tryMove("rotateR") : game.tryMove('shiftR');
-            break;
-        case 'ArrowDown':
-            success = game.tryMove('shiftF');
-            break;
-        case 'ArrowUp':
-            success = game.tryMove('shiftB');
-            break;
-        case ' ':
-            success = game.tryMove('hardDrop');
+        case 'keyup':
+            switch (event.key) {
+                case 'q':
+                case 'e':
+                    cameraManager.move("isometric");
+                    break;
+            }
             break;
     }
-    if (success) sceneManager.update(game.board, game.piece);
+    if (sceneNeedsUpdate) sceneManager.update(game.board, game.piece);
 }
 
 document.getElementById('start-btn').addEventListener('click', onStart);
 document.getElementById('pause-btn').addEventListener('click', onPause);
+
 document.addEventListener('keydown', controller);
+document.addEventListener('keyup', controller);
