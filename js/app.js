@@ -2,6 +2,7 @@ import {Clock} from "./models/Clock";
 import {Game} from "./models/Game.js";
 import {SceneManager} from "./scene/SceneManager.js";
 import {CameraManager} from "./CameraManager.js";
+import {GamepadManager} from "./GamepadManager.js";
 import * as THREE from "three";
 
 const ctnr = document.getElementById('scene-container');
@@ -10,6 +11,10 @@ const clock = new Clock();
 const game = new Game();
 const sceneManager = new SceneManager();
 const cameraManager = new CameraManager(ctnr);
+const gamepadManager = new GamepadManager(
+    btn => console.log("pressed", btn),
+    btn => console.log("released", btn)
+)
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(ctnr.clientWidth, ctnr.clientHeight);
@@ -18,7 +23,8 @@ ctnr.appendChild(renderer.domElement);
 
 renderer.setAnimationLoop(() => {
     cameraManager.tween.update();
-    renderer.render(sceneManager.scene, cameraManager.camera)
+    renderer.render(sceneManager.scene, cameraManager.camera);
+    gamepadManager.poll();
 });
 
 function processGameFrame() {
@@ -53,6 +59,7 @@ function onPause() {
 }
 
 function controller(event) {
+    console.log(event)
     let sceneNeedsUpdate = false;
     switch (event.type) {
         case 'keydown':
@@ -101,3 +108,6 @@ document.getElementById('pause-btn').addEventListener('click', onPause);
 
 document.addEventListener('keydown', controller);
 document.addEventListener('keyup', controller);
+
+window.addEventListener("gamepadconnected", e => gamepadManager.connect(e.gamepad));
+window.addEventListener("gamepaddisconnected", () => gamepadManager.disconnect());
