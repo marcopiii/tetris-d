@@ -1,11 +1,7 @@
 export class GamepadManager {
 
-    constructor(
-        onPress: (button?: "LT" | "RT") => void,
-        onRelease: (button?: "LT" | "RT") => void
-    ) {
-        this._onPress = onPress;
-        this._onRelease = onRelease;
+    constructor(handler: (event: "press" | "release", button: "padL" | "padD" | "padR" | "padU" | "A" | "B" | "X" | "LT" | "RT") => void) {
+        this._handler = handler;
         this._gamepadIndex = undefined;
         this._buffer = [];
     }
@@ -26,10 +22,13 @@ export class GamepadManager {
         const gamepad = navigator.getGamepads()[this._gamepadIndex];
 
         gamepad.buttons.forEach((button, i) => {
+            const buttonCode = buttonMapping(i)
+            if (!buttonCode)
+                return;
             if (button.pressed && !this._buffer[i]?.pressed)
-                this._onPress(buttonMapping(i));
+                this._handler("press", buttonCode);
             if (!button.pressed && this._buffer[i]?.pressed)
-                this._onRelease(buttonMapping(i));
+                this._handler("release", buttonCode);
         })
         this._buffer = gamepad.buttons;
     }
@@ -38,8 +37,15 @@ export class GamepadManager {
 
 function buttonMapping(i: number) {
     switch (i) {
+        case 0: return "A";
+        case 1: return "B";
+        case 2: return "X";
         case 6: return "LT";
         case 7: return "RT";
+        case 12: return "padU";
+        case 13: return "padD";
+        case 14: return "padL";
+        case 15: return "padR";
         default: return undefined;
     }
 }
