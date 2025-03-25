@@ -1,23 +1,27 @@
 export class Clock {
-  constructor(callback) {
-    this._callback = callback;
-    this._interval = undefined;
-  }
+    constructor(callback) {
+        this._callback = callback;
+        this._interval = undefined;
+    }
 
-  #SPEED = 500;
+    #SPEED = 500;
 
-   toggle() {
-     if (this._interval) {
-       clearInterval(this._interval);
-       this._interval = undefined;
-     } else {
-       this._interval = setInterval(this._callback, this.#SPEED);
-     }
-  }
+    get isRunning() {
+        return this._interval !== undefined
+    }
 
-  start() {
-    clearInterval(this._interval)
-    this._interval = setInterval(this._callback, this.#SPEED);
-  }
+    toggle() {
+        if (this._interval) {
+            clearInterval(this._interval);
+            this._interval = undefined;
+        } else {
+            this._interval = setInterval(this._callback, this.#SPEED);
+        }
+    }
+
+    start() {
+        clearInterval(this._interval)
+        this._interval = setInterval(this._callback, this.#SPEED);
+    }
 
 }

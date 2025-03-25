@@ -40,6 +40,7 @@ function onStart() {
 }
 
 function commandHandler(command: "rotateL" | "rotateR" | "shiftL" | "shiftR" | "shiftF" | "shiftB" | "hardDrop") {
+    if (!clock.isRunning) return;
     const sceneNeedsUpdate = game.tryMove(command);
     if (sceneNeedsUpdate) sceneManager.update(game.board, game.piece);
 }
