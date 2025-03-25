@@ -1,4 +1,5 @@
 import {Clock} from "./gameplay/Clock";
+import {Progress} from "./gameplay/Progress";
 import {Game} from "./gameplay/Game.js";
 import {SceneManager} from "./scene/SceneManager.js";
 import {CameraManager} from "./CameraManager.js";
@@ -28,6 +29,7 @@ renderer.setAnimationLoop(() => {
 
 function processGameFrame() {
     const [lineClear, gameOver] = game.tick();
+    progress.add(lineClear);
     sceneManager.update(game.board, game.piece);
     if (gameOver) {
         clock.toggle();

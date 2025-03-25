@@ -1,4 +1,4 @@
-class Progress {
+export class Progress {
 
     constructor() {
         this._level = 1;
@@ -13,13 +13,15 @@ class Progress {
         return this._level;
     }
 
-    add(rows: number) {
-        this._score += BASE_POINTS_PER_ROW[rows] * this._level;
+    add(lineClear: number) {
+        const base = LINE_CLEAR_BASE_POINTS[lineClear] ?? 0
+        const gain = base * this._level
+        this._score += gain;
     }
 
 }
 
-const BASE_POINTS_PER_ROW = [
+const LINE_CLEAR_BASE_POINTS = [
     0,
     100,
     300,
