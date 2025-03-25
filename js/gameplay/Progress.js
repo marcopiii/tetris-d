@@ -13,6 +13,11 @@ export class Progress {
         return Math.floor(this._lineClear / LINE_CLEAR_PER_LEVEL) + 1;
     }
 
+    reset() {
+        this._lineClear = 0;
+        this._score = 0;
+    }
+
     add(lineClear: number) {
         const base = LINE_CLEAR_BASE_POINTS[lineClear] ?? 0
         const gain = base * this.level

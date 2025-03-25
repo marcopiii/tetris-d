@@ -40,6 +40,7 @@ function processGameFrame() {
 
 function onStart() {
     game.reset();
+    progress.reset();
     clock.start();
 }
 
