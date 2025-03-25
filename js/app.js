@@ -30,7 +30,7 @@ renderer.setAnimationLoop(() => {
 function processGameFrame() {
     const [lineClear, gameOver] = game.tick();
     progress.add(lineClear);
-    sceneManager.update(game.board, game.piece);
+    sceneManager.update(game.board, game.piece, progress.score);
     if (gameOver) {
         clock.toggle();
         alert('Game Over');
@@ -47,7 +47,7 @@ function onStart() {
 function commandHandler(command: "rotateL" | "rotateR" | "shiftL" | "shiftR" | "shiftF" | "shiftB" | "hardDrop") {
     if (!clock.isRunning) return;
     const sceneNeedsUpdate = game.tryMove(command);
-    if (sceneNeedsUpdate) sceneManager.update(game.board, game.piece);
+    if (sceneNeedsUpdate) sceneManager.update(game.board, game.piece, progress.score);
 }
 
 function keyboardHandler(event) {

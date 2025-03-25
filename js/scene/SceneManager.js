@@ -2,8 +2,9 @@ import {COLS, ROWS, BLOCK_SIZE} from "../params";
 import * as THREE from "three";
 import type {Board} from "../gameplay/3DBoard";
 import type {Piece} from "../gameplay/3DPiece";
-import {createBlock} from "./createBlock";
+import {createVoxel} from "./createVoxel";
 import {createShadow} from "./createShadow";
+import {createScoreboard} from "./createScoreboard";
 
 export class SceneManager {
 
@@ -57,20 +58,18 @@ export class SceneManager {
         return this._scene;
     }
 
-    update(board: Board, piece: Piece) {
-        // translation from the Board coord system to the Scene coord system
-        const translateY = (y) => -(y + 1 - (ROWS / 2)) * BLOCK_SIZE;
-        const translateX = (x) => (x + 1 - (COLS / 2)) * BLOCK_SIZE;
-        const translateZ = (z) => (z + 1 - (COLS / 2)) * BLOCK_SIZE
-
+    update(board: Board, piece: Piece, score: number) {
         this.reset();
+
         board.forEachBlock((color, y, x, z) => {
-            const cube = createBlock(color, BLOCK_SIZE)
+            const cube = createVoxel(color, BLOCK_SIZE)
             cube.position.set(translateX(x), translateY(y), translateZ(z));
+
             this._scene.add(cube);
         })
+
         piece.forEachBlock((y, x, z) => {
-            const cube = createBlock(piece.color)
+            const cube = createVoxel(piece.color, BLOCK_SIZE)
             cube.position.set(translateX(x), translateY(y), translateZ(z));
 
             const xShadow = createShadow(piece.color)
@@ -92,6 +91,14 @@ export class SceneManager {
             this._scene.add(xShadow);
             this._scene.add(zShadow);
         })
+
+        const scoreboard = createScoreboard(score)
+        this._scene.add(scoreboard);
     }
 
 }
+
+// translation from the Board coord system to the Scene coord system
+const translateY = (y) => -(y + 1 - (ROWS / 2)) * BLOCK_SIZE;
+const translateX = (x) => (x + 1 - (COLS / 2)) * BLOCK_SIZE;
+const translateZ = (z) => (z + 1 - (COLS / 2)) * BLOCK_SIZE
