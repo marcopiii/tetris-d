@@ -1,6 +1,6 @@
 export class GamepadManager {
 
-    constructor(handler: (event: "press" | "release", button: "padL" | "padD" | "padR" | "padU" | "A" | "B" | "X" | "LT" | "RT") => void) {
+    constructor(handler: (event: "press" | "release", button: "start" | "padL" | "padD" | "padR" | "padU" | "A" | "B" | "X" | "LT" | "RT") => void) {
         this._handler = handler;
         this._gamepadIndex = undefined;
         this._buffer = [];
@@ -42,6 +42,7 @@ function buttonMapping(i: number) {
         case 2: return "X";
         case 6: return "LT";
         case 7: return "RT";
+        case 9: return "start";
         case 12: return "padU";
         case 13: return "padD";
         case 14: return "padL";

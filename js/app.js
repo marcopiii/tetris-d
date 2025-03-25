@@ -7,7 +7,7 @@ import * as THREE from "three";
 
 const ctnr = document.getElementById('scene-container');
 
-const clock = new Clock();
+const clock = new Clock(processGameFrame);
 const game = new Game();
 const sceneManager = new SceneManager();
 const cameraManager = new CameraManager(ctnr);
@@ -28,7 +28,7 @@ function processGameFrame() {
     const gameOver = game.tick();
     sceneManager.update(game.board, game.piece);
     if (gameOver) {
-        clock.pause();
+        clock.toggle();
         alert('Game Over');
         sceneManager.reset()
     }
@@ -36,23 +36,7 @@ function processGameFrame() {
 
 function onStart() {
     game.reset();
-    clock.resume(processGameFrame);
-}
-
-function onResume() {
-    clock.resume(processGameFrame);
-    const pauseBtn = document.getElementById('pause-btn');
-    pauseBtn.textContent = 'Pause';
-    pauseBtn.removeEventListener('click', onResume);
-    pauseBtn.addEventListener('click', onPause);
-}
-
-function onPause() {
-    clock.pause();
-    const pauseBtn = document.getElementById('pause-btn');
-    pauseBtn.textContent = 'Resume';
-    pauseBtn.removeEventListener('click', onPause);
-    pauseBtn.addEventListener('click', onResume);
+    clock.start();
 }
 
 function commandHandler(command: "rotateL" | "rotateR" | "shiftL" | "shiftR" | "shiftF" | "shiftB" | "hardDrop") {
@@ -71,6 +55,7 @@ function keyboardHandler(event) {
         if (event.key === ' ') commandHandler('hardDrop');
         if (event.key === 'q') cameraManager.move('x-plane');
         if (event.key === 'e') cameraManager.move('z-plane');
+        if (event.key === 'p') clock.toggle();
     }
     if (event.type === 'keyup') {
         if (event.key === 'q' || event.key === 'e') cameraManager.move("isometric");
@@ -79,9 +64,10 @@ function keyboardHandler(event) {
 
 function controllerHandler(
     event: "press" | "release",
-    btn: "padR" | "padL" | "padU" | "padD" | "LT" | "RT"
+    btn: "start" | "padR" | "padL" | "padU" | "padD" | "X" | "B" | "A" | "LT" | "RT"
 ) {
     if (event === "press") {
+        if (btn === "start") clock.toggle();
         if (btn === "padL") commandHandler('shiftL');
         if (btn === "padR") commandHandler('shiftR');
         if (btn === "padD") commandHandler('shiftF');
@@ -98,7 +84,6 @@ function controllerHandler(
 }
 
 document.getElementById('start-btn').addEventListener('click', onStart);
-document.getElementById('pause-btn').addEventListener('click', onPause);
 
 document.addEventListener('keydown', keyboardHandler);
 document.addEventListener('keyup', keyboardHandler);
