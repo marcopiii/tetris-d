@@ -1,7 +1,7 @@
 export class Progress {
 
     constructor() {
-        this._level = 1;
+        this._lineClear = 0;
         this._score = 0;
     }
 
@@ -10,16 +10,19 @@ export class Progress {
     }
 
     get level() {
-        return this._level;
+        return Math.floor(this._lineClear / LINE_CLEAR_PER_LEVEL) + 1;
     }
 
     add(lineClear: number) {
         const base = LINE_CLEAR_BASE_POINTS[lineClear] ?? 0
-        const gain = base * this._level
+        const gain = base * this.level
         this._score += gain;
+        this._lineClear += lineClear
     }
 
 }
+
+const LINE_CLEAR_PER_LEVEL = 10;
 
 const LINE_CLEAR_BASE_POINTS = [
     0,
