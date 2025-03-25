@@ -93,6 +93,12 @@ export class SceneManager {
         })
 
         const scoreboard = createScoreboard(score)
+        scoreboard.position.set(
+            -(COLS + 1) * BLOCK_SIZE / 2,
+            (ROWS - 3) * BLOCK_SIZE / 2 ,
+            -(COLS - 1) * BLOCK_SIZE / 2
+        );
+        scoreboard.rotateY(THREE.MathUtils.degToRad(180));
         this._scene.add(scoreboard);
     }
 
