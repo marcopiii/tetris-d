@@ -1,7 +1,7 @@
 import {COLS, ROWS, BLOCK_SIZE} from "../params";
 import * as THREE from "three";
-import type {Board} from "../models/3DBoard";
-import type {Piece} from "../models/3DPiece";
+import type {Board} from "../gameplay/3DBoard";
+import type {Piece} from "../gameplay/3DPiece";
 import {createBlock} from "./createBlock";
 import {createShadow} from "./createShadow";
 

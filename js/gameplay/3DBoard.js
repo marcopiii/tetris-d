@@ -6,7 +6,7 @@ export class Board {
 
     /*
     The board is a 3D matrix of colors. Each cell can be null or a color.
-    The first dimension is the Y axis (vertical), the second is the X axis (horizontal) and the third is the Z axis (depth).
+    The first dimension is the Y axis (vertical), the second is the X axis (horizontal) and the third is the Z axis (horizontal).
      */
     constructor() {
         this._matrix = Array(ROWS).fill().map(
