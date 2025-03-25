@@ -36,22 +36,21 @@ export class Game {
     }
 
     /** Progresses the game by one tick.
-     * @return {boolean} - Whether the game is over
+     * @return {[number, boolean]} - A tuple containing the number of cleared lines and whether the game is over
      */
     tick() {
         this._piece.drop();
         if (this.#detectCollision()) {
             this._piece.rollback();
             this._board.fixPiece(this._piece);
-            this._board.checkRows();
+            const lineClear = this._board.checkLines();
             this._piece = this._piece.plane === "x"
                 ? new Piece("z")
                 : new Piece("x");
-            if (this.#detectCollision()) {
-                return true;
-            }
+            const gameOver = this.#detectCollision();
+            return [lineClear, gameOver];
         }
-        return false;
+        return [0, false];
     }
 
     #hardDrop() {

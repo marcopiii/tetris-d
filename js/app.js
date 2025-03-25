@@ -8,7 +8,9 @@ import * as THREE from "three";
 const ctnr = document.getElementById('scene-container');
 
 const clock = new Clock(processGameFrame);
+const progress = new Progress();
 const game = new Game();
+
 const sceneManager = new SceneManager();
 const cameraManager = new CameraManager(ctnr);
 const gamepadManager = new GamepadManager(controllerHandler)
@@ -25,7 +27,7 @@ renderer.setAnimationLoop(() => {
 });
 
 function processGameFrame() {
-    const gameOver = game.tick();
+    const [lineClear, gameOver] = game.tick();
     sceneManager.update(game.board, game.piece);
     if (gameOver) {
         clock.toggle();

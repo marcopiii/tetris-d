@@ -45,14 +45,20 @@ export class Board {
         })
     }
 
-    checkRows() {
+    #deleteBlock(y: number, x: number, z: number) {
+        for (let dy = y; dy > 0; dy--) {
+            this._matrix[dy][x][z] = this._matrix[dy - 1][x][z];
+        }
+        this._matrix[0][x][z] = null;
+    }
+
+    checkLines() {
         const checkZAxisRow = (y: number, x: number) => {
             for (let z = 0; z < COLS; z++) {
                 if (!this._matrix[y][x][z]) return false;
             }
             return true;
         }
-
         const checkXAxisRow = (y: number, z: number) => {
             for (let x = 0; x < COLS; x++) {
                 if (!this._matrix[y][x][z]) return false;
@@ -60,12 +66,7 @@ export class Board {
             return true;
         }
 
-        const deleteBlock = (y: number, x: number, z: number) => {
-            for (let dy = y; dy > 0; dy--) {
-                this._matrix[dy][x][z] = this._matrix[dy - 1][x][z];
-            }
-            this._matrix[0][x][z] = null;
-        }
+        let clearedLines = 0;
 
         for (let y = 0; y < ROWS; y++) {
             for (let z = 0; z < COLS; z++) {
@@ -73,6 +74,7 @@ export class Board {
                     for (let x = 0; x < COLS; x++) {
                         this._matrix[y][x][z] = "DELETE";
                     }
+                    clearedLines++;
                 }
             }
             for (let x = 0; x < COLS; x++) {
@@ -80,6 +82,7 @@ export class Board {
                     for (let z = 0; z < COLS; z++) {
                         this._matrix[y][x][z] = "DELETE";
                     }
+                    clearedLines++;
                 }
             }
         }
@@ -89,12 +92,14 @@ export class Board {
                 let y = ROWS - 1;
                 while (y >= 0) {
                     if (this._matrix[y][x][z] === "DELETE")
-                        deleteBlock(y, x, z);
+                        this.#deleteBlock(y, x, z);
                     else
                         y--;
                 }
             }
         }
+
+        return clearedLines;
     }
 
     clean() {
