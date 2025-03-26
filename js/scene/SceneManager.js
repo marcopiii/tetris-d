@@ -2,7 +2,7 @@ import {COLS, ROWS, BLOCK_SIZE} from "../params";
 import * as THREE from "three";
 import type {Board} from "../gameplay/3DBoard";
 import type {Piece} from "../gameplay/3DPiece";
-import {createVoxel} from "./createVoxel";
+import {createBlock, createBloomingBlock, createGhostBlock, createVoxel} from "./createVoxel";
 import {createShadow} from "./createShadow";
 import {createLevelHUD, createScoreHUD} from "./createHUD";
 
@@ -62,19 +62,19 @@ export class SceneManager {
         this.reset();
 
         board.forEachBlock((color, y, x, z) => {
-            const cube = createVoxel(color, BLOCK_SIZE)
+            const cube = color === "DELETE" ? createBloomingBlock() : createBlock(color)
             cube.position.set(translateX(x), translateY(y), translateZ(z));
             this._scene.add(cube);
         })
 
         ghost.forEachBlock((y, x, z) => {
-            const cube = createVoxel("#000000", BLOCK_SIZE)
+            const cube = createGhostBlock(ghost.color)
             cube.position.set(translateX(x), translateY(y), translateZ(z));
             this._scene.add(cube)
         })
 
         piece.forEachBlock((y, x, z) => {
-            const cube = createVoxel(piece.color, BLOCK_SIZE)
+            const cube = createBlock(piece.color)
             cube.position.set(translateX(x), translateY(y), translateZ(z));
             this._scene.add(cube);
 
