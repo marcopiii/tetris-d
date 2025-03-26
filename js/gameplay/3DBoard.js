@@ -89,21 +89,17 @@ export class Board {
     }
 
     clearLines() {
-        let clearedLines = false;
         for (let x = 0; x < COLS; x++) {
             for (let z = 0; z < COLS; z++) {
                 let y = ROWS - 1;
                 while (y >= 0) {
-                    if (this._matrix[y][x][z] === "DELETE") {
+                    if (this._matrix[y][x][z] === "DELETE")
                         this.#deleteBlock(y, x, z);
-                        clearedLines = true;
-                    } else {
+                    else
                         y--;
-                    }
                 }
             }
         }
-        return clearedLines;
     }
 
     clean() {

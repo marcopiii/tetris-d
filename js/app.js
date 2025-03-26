@@ -42,10 +42,11 @@ function animate() {
 }
 
 function processGameFrame() {
-    const [lineClear, gameOver] = game.tick();
-    progress.add(lineClear);
+    const lineClear = game.tick();
+    if (lineClear > 0)
+        progress.add(lineClear);
     sceneManager.update(game.board, game.piece, progress.score, progress.level);
-    if (gameOver) {
+    if (lineClear < 0) {
         clock.toggle();
         alert('Game Over');
         sceneManager.reset()

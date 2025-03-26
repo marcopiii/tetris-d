@@ -33,6 +33,15 @@ export class Piece {
         return this._plane;
     }
 
+    // this allows to remove the piece from the board while preserving all the info about it
+    remove() {
+        this._shape = []
+    }
+
+    get isPlaced() {
+        return this._shape.length > 0;
+    }
+
     /**
      * Applies the given callback to each existing block of the piece.
      * @param callback - The callback to apply to each block, given its coordinates in the board.
