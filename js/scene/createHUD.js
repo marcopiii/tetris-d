@@ -12,7 +12,7 @@ function colorMap(digit: number) {
     return "#7C444F";
 }
 
-export function createScoreboard(score: number) {
+export function createScoreHUD(score: number) {
     const chars = score.toString().split('');
     const charShapes= chars.map(char => font[char])
 
@@ -54,8 +54,58 @@ export function createScoreboard(score: number) {
 
     const scoreboard = new THREE.Group();
     labelGroup.position.set(0,0,0);
-    scoreGroup.position.set(0, -6 * LABEL_PIXEL_SIZE, 0);
+    scoreGroup.position.set(0, -8 * LABEL_PIXEL_SIZE, 0);
     scoreboard.add(labelGroup);
     scoreboard.add(scoreGroup);
+    scoreboard.rotateY(THREE.MathUtils.degToRad(180))
     return scoreboard;
+}
+
+export function createLevelHUD(level: number) {
+    const chars = level.toString().split('');
+    const charShapes = chars.map(char => font[char])
+
+    const levelGroup = new THREE.Group();
+    charShapes.forEach((shape, i) => {
+        const charGroup = new THREE.Group();
+        shape.map((row, y) => {
+            row.map((pixel, x) => {
+                if (pixel) {
+                    const color = colorMap(i)
+                    const voxel = createVoxel(color, SCORE_PIXEL_SIZE)
+                    voxel.position.set(x * SCORE_PIXEL_SIZE, -y * SCORE_PIXEL_SIZE, 0);
+                    charGroup.add(voxel);
+                }
+            })
+        })
+        levelGroup.position.set(i * 4 * SCORE_PIXEL_SIZE, 0, 0);
+        levelGroup.add(charGroup);
+    })
+
+    const labelGroup = new THREE.Group();
+    "LEVEL".split('')
+        .map(char => font[char])
+        .forEach((shape, i ) => {
+        const charGroup = new THREE.Group();
+        shape.map((row, y) => {
+            row.map((pixel, x) => {
+                if (pixel) {
+                    const color = "#78ABA8";
+                    const voxel = createVoxel(color, LABEL_PIXEL_SIZE);
+                    voxel.position.set(x * LABEL_PIXEL_SIZE, -y * LABEL_PIXEL_SIZE, 0);
+                    charGroup.add(voxel);
+                }
+            })
+        })
+        charGroup.position.set(i * 6 * LABEL_PIXEL_SIZE, 0, 0);
+        labelGroup.add(charGroup);
+    });
+
+    const levelboard = new THREE.Group();
+    labelGroup.position.set(0,0,0);
+    levelGroup.position.set(0, -8 * LABEL_PIXEL_SIZE, 0);
+    levelboard.add(labelGroup);
+    levelboard.add(levelGroup);
+    levelboard.rotateY(THREE.MathUtils.degToRad(-90))
+    return levelboard;
 }

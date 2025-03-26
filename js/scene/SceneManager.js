@@ -4,7 +4,7 @@ import type {Board} from "../gameplay/3DBoard";
 import type {Piece} from "../gameplay/3DPiece";
 import {createVoxel} from "./createVoxel";
 import {createShadow} from "./createShadow";
-import {createScoreboard} from "./createScoreboard";
+import {createLevelHUD, createScoreHUD} from "./createHUD";
 
 export class SceneManager {
 
@@ -58,7 +58,7 @@ export class SceneManager {
         return this._scene;
     }
 
-    update(board: Board, piece: Piece, score: number) {
+    update(board: Board, piece: Piece, score: number, level: number) {
         this.reset();
 
         board.forEachBlock((color, y, x, z) => {
@@ -92,14 +92,20 @@ export class SceneManager {
             this._scene.add(zShadow);
         })
 
-        const scoreboard = createScoreboard(score)
-        scoreboard.position.set(
+        const scoreHUD = createScoreHUD(score)
+        scoreHUD.position.set(
             -(COLS) * BLOCK_SIZE / 2,
-            (ROWS - 3) * BLOCK_SIZE / 2 ,
+            (ROWS - 3) * BLOCK_SIZE / 2,
             -(COLS - 1) * BLOCK_SIZE / 2
         );
-        scoreboard.rotateY(THREE.MathUtils.degToRad(180));
-        this._scene.add(scoreboard);
+        const levelHUD = createLevelHUD(level)
+        levelHUD.position.set(
+            (COLS - 1) * BLOCK_SIZE / 2,
+            (ROWS - 3) * BLOCK_SIZE / 2,
+            (COLS) * BLOCK_SIZE / 2
+        );
+        this._scene.add(scoreHUD);
+        this._scene.add(levelHUD);
     }
 
 }
