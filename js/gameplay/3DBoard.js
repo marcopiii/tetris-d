@@ -67,7 +67,6 @@ export class Board {
         }
 
         let clearedLines = 0;
-
         for (let y = 0; y < ROWS; y++) {
             for (let z = 0; z < COLS; z++) {
                 if (checkXAxisRow(y, z)) {
@@ -86,19 +85,24 @@ export class Board {
                 }
             }
         }
+        return clearedLines;
+    }
 
+    clearLines() {
+        let clearedLines = false;
         for (let x = 0; x < COLS; x++) {
             for (let z = 0; z < COLS; z++) {
                 let y = ROWS - 1;
                 while (y >= 0) {
-                    if (this._matrix[y][x][z] === "DELETE")
+                    if (this._matrix[y][x][z] === "DELETE") {
                         this.#deleteBlock(y, x, z);
-                    else
+                        clearedLines = true;
+                    } else {
                         y--;
+                    }
                 }
             }
         }
-
         return clearedLines;
     }
 
