@@ -18,7 +18,7 @@ const sceneManager = new SceneManager();
 const cameraManager = new CameraManager(ctnr);
 const gamepadManager = new GamepadManager(controllerHandler)
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(ctnr.clientWidth, ctnr.clientHeight);
 ctnr.appendChild(renderer.domElement);
 
@@ -26,25 +26,18 @@ const composer = new EffectComposer(renderer);
 const renderPass = new RenderPass(sceneManager.scene, cameraManager.camera);
 composer.addPass(renderPass);
 
-// Initialize bloom pass
 const bloomPass = new UnrealBloomPass(
     new THREE.Vector2(ctnr.clientWidth, ctnr.clientHeight),
+    0.3,
     0.5,
-    0.1,
-    0.85
+    1
 );
 composer.addPass(bloomPass);
 
-// renderer.setAnimationLoop(() => {
-//     cameraManager.tween.update();
-//     renderer.render(sceneManager.scene, cameraManager.camera);
-//     gamepadManager.poll();
-// });
-
 function animate() {
     requestAnimationFrame(animate);
-    composer.render();
     cameraManager.tween.update();
+    composer.render();
     gamepadManager.poll();
 }
 

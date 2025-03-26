@@ -42,12 +42,6 @@ export class SceneManager {
         scene.add(yGrid);
         scene.add(xGrid);
         scene.add(zGrid);
-
-        // Create a glowing mesh
-        const g = new THREE.BoxGeometry();
-        const m = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-        const cube = new THREE.Mesh(g, m);
-        scene.add(cube);
     }
 
     constructor() {
@@ -56,7 +50,7 @@ export class SceneManager {
     }
 
     reset() {
-        this._scene = new THREE.Scene();
+        this._scene.clear();
         this.#config(this._scene);
     }
 
