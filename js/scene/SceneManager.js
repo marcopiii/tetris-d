@@ -100,9 +100,9 @@ export class SceneManager {
         );
         const levelHUD = createLevelHUD(level)
         levelHUD.position.set(
-            (COLS - 1) * BLOCK_SIZE / 2,
+            (COLS + 1) * BLOCK_SIZE / 2,
             (ROWS - 3) * BLOCK_SIZE / 2,
-            (COLS) * BLOCK_SIZE / 2
+            (COLS + 2) * BLOCK_SIZE / 2
         );
         this._scene.add(scoreHUD);
         this._scene.add(levelHUD);

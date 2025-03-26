@@ -12,23 +12,27 @@ function colorMap(digit: number) {
     return "#7C444F";
 }
 
+function createChar(shape, color, pixelSize, align = "left") {
+    const charGroup = new THREE.Group();
+    shape.map((row, y) => {
+        (align === "left" ? row : row.toReversed()).map((pixel, x) => {
+            if (pixel) {
+                const voxel = createVoxel(color, pixelSize)
+                voxel.position.set(x * pixelSize, -y * pixelSize, 0);
+                charGroup.add(voxel);
+            }
+        })
+    })
+    return charGroup
+}
+
 export function createScoreHUD(score: number) {
     const chars = score.toString().split('');
     const charShapes= chars.map(char => font[char])
 
     const scoreGroup = new THREE.Group();
     charShapes.toReversed().forEach((shape, i) => {
-        const charGroup = new THREE.Group();
-        shape.map((row, y) => {
-            row.toReversed().map((pixel, x) => {
-                if (pixel) {
-                    const color = colorMap(i)
-                    const voxel = createVoxel(color, SCORE_PIXEL_SIZE)
-                    voxel.position.set(x * SCORE_PIXEL_SIZE, -y * SCORE_PIXEL_SIZE, 0);
-                    charGroup.add(voxel);
-                }
-            })
-        })
+        const charGroup = createChar(shape, colorMap(i), SCORE_PIXEL_SIZE, "right");
         charGroup.position.set(i * 4 * SCORE_PIXEL_SIZE, 0, 0);
         scoreGroup.add(charGroup);
     })
@@ -37,17 +41,7 @@ export function createScoreHUD(score: number) {
     "SCORE".split('')
         .map(char => font[char])
         .toReversed().forEach((shape, i ) => {
-            const charGroup = new THREE.Group();
-            shape.map((row, y) => {
-                row.toReversed().map((pixel, x) => {
-                    if (pixel) {
-                        const color = "#78ABA8";
-                        const voxel = createVoxel(color, LABEL_PIXEL_SIZE);
-                        voxel.position.set(x * LABEL_PIXEL_SIZE, -y * LABEL_PIXEL_SIZE, 0);
-                        charGroup.add(voxel);
-                    }
-                })
-            })
+            const charGroup = createChar(shape, "#78ABA8", LABEL_PIXEL_SIZE, "right");
             charGroup.position.set(i * 6 * LABEL_PIXEL_SIZE, 0, 0);
             labelGroup.add(charGroup);
         });
@@ -67,17 +61,7 @@ export function createLevelHUD(level: number) {
 
     const levelGroup = new THREE.Group();
     charShapes.forEach((shape, i) => {
-        const charGroup = new THREE.Group();
-        shape.map((row, y) => {
-            row.map((pixel, x) => {
-                if (pixel) {
-                    const color = colorMap(i)
-                    const voxel = createVoxel(color, SCORE_PIXEL_SIZE)
-                    voxel.position.set(x * SCORE_PIXEL_SIZE, -y * SCORE_PIXEL_SIZE, 0);
-                    charGroup.add(voxel);
-                }
-            })
-        })
+        const charGroup = createChar(shape, colorMap(i), SCORE_PIXEL_SIZE);
         levelGroup.position.set(i * 4 * SCORE_PIXEL_SIZE, 0, 0);
         levelGroup.add(charGroup);
     })
@@ -86,17 +70,7 @@ export function createLevelHUD(level: number) {
     "LEVEL".split('')
         .map(char => font[char])
         .forEach((shape, i ) => {
-        const charGroup = new THREE.Group();
-        shape.map((row, y) => {
-            row.map((pixel, x) => {
-                if (pixel) {
-                    const color = "#78ABA8";
-                    const voxel = createVoxel(color, LABEL_PIXEL_SIZE);
-                    voxel.position.set(x * LABEL_PIXEL_SIZE, -y * LABEL_PIXEL_SIZE, 0);
-                    charGroup.add(voxel);
-                }
-            })
-        })
+        const charGroup = createChar(shape, "#78ABA8", LABEL_PIXEL_SIZE);
         charGroup.position.set(i * 6 * LABEL_PIXEL_SIZE, 0, 0);
         labelGroup.add(charGroup);
     });
