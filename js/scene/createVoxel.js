@@ -1,4 +1,3 @@
-import {BLOCK_SIZE} from "../params";
 import * as THREE from "three";
 import {adjustBrightness} from "./adjustBrightness";
 
@@ -23,8 +22,8 @@ function getMeshMaterials(color) {
   ];
 }
 
-export function createBlock(color) {
-  const geometry = new THREE.BoxGeometry(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+export function createVoxel(color, size) {
+  const geometry = new THREE.BoxGeometry(size, size, size);
   const materials = getMeshMaterials(color)
   return new THREE.Mesh(geometry, materials);
 }

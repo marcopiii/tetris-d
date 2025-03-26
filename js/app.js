@@ -1,5 +1,6 @@
-import {Clock} from "./models/Clock";
-import {Game} from "./models/Game.js";
+import {Clock} from "./gameplay/Clock";
+import {Progress} from "./gameplay/Progress";
+import {Game} from "./gameplay/Game.js";
 import {SceneManager} from "./scene/SceneManager.js";
 import {CameraManager} from "./CameraManager.js";
 import {GamepadManager} from "./GamepadManager.js";
@@ -8,7 +9,9 @@ import * as THREE from "three";
 const ctnr = document.getElementById('scene-container');
 
 const clock = new Clock(processGameFrame);
+const progress = new Progress();
 const game = new Game();
+
 const sceneManager = new SceneManager();
 const cameraManager = new CameraManager(ctnr);
 const gamepadManager = new GamepadManager(controllerHandler)
@@ -25,8 +28,9 @@ renderer.setAnimationLoop(() => {
 });
 
 function processGameFrame() {
-    const gameOver = game.tick();
-    sceneManager.update(game.board, game.piece);
+    const [lineClear, gameOver] = game.tick();
+    progress.add(lineClear);
+    sceneManager.update(game.board, game.piece, progress.score, progress.level);
     if (gameOver) {
         clock.toggle();
         alert('Game Over');
@@ -36,13 +40,16 @@ function processGameFrame() {
 
 function onStart() {
     game.reset();
+    progress.reset();
     clock.start();
 }
 
 function commandHandler(command: "rotateL" | "rotateR" | "shiftL" | "shiftR" | "shiftF" | "shiftB" | "hardDrop") {
-    if (!clock.isRunning) return;
+    if (!clock.isRunning)
+        return;
     const sceneNeedsUpdate = game.tryMove(command);
-    if (sceneNeedsUpdate) sceneManager.update(game.board, game.piece);
+    if (sceneNeedsUpdate)
+        sceneManager.update(game.board, game.piece, progress.score, progress.level);
 }
 
 function keyboardHandler(event) {
