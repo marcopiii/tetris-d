@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import {adjustBrightness} from "./adjustBrightness";
 
-function getMeshMaterials(color) {
+function getFakeShadedMaterial(color) {
   const factor = 20;
 
   const colorX = color
@@ -22,8 +22,15 @@ function getMeshMaterials(color) {
   ];
 }
 
+function getBloomingMaterial() {
+  const bloom = new THREE.Color(1.01, 1.01,1.01)
+  return new THREE.MeshBasicMaterial({ color: bloom })
+}
+
 export function createVoxel(color, size) {
   const geometry = new THREE.BoxGeometry(size, size, size);
-  const materials = getMeshMaterials(color)
-  return new THREE.Mesh(geometry, materials);
+  const material = color === "DELETE"
+        ? getBloomingMaterial()
+        : getFakeShadedMaterial(color);
+  return new THREE.Mesh(geometry, material);
 }

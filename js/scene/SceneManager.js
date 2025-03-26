@@ -50,7 +50,7 @@ export class SceneManager {
     }
 
     reset() {
-        this._scene = new THREE.Scene();
+        this._scene.clear();
         this.#config(this._scene);
     }
 

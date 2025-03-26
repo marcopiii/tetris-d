@@ -39,6 +39,7 @@ export class Game {
      * @return {[number, boolean]} - A tuple containing the number of cleared lines and whether the game is over
      */
     tick() {
+        this._board.clearLines()
         this._piece.drop();
         if (this.#detectCollision()) {
             this._piece.rollback();
