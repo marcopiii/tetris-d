@@ -33,6 +33,15 @@ export class Piece {
         return this._plane;
     }
 
+    clone() {
+        const piece = new Piece(this._plane);
+        piece._shape = copy(this._shape);
+        piece._position = copy(this._position);
+        piece._prev = copy(this._prev);
+        piece._color = this._color;
+        return piece;
+    }
+
     /**
      * Applies the given callback to each existing block of the piece.
      * @param callback - The callback to apply to each block, given its coordinates in the board.

@@ -20,42 +20,27 @@ export class Game {
         this._board.clean();
         this._piece = new Piece();
     }
-
-    #detectCollision(): boolean {
-        let collisionDetected = false;
-        this._piece.forEachBlock((y, x, z) => {
-            const floorCollision = y >= ROWS;
-            const wallCollision = x < 0 || x >= COLS || z < 0 || z >= COLS;
-            // avoid calling .blockAt() if one of the index is out of bounds
-            const stackCollision = !(floorCollision || wallCollision) && this._board.blockAt(y, x, z) !== null;
-            if (floorCollision || wallCollision || stackCollision) {
-                collisionDetected = true;
-            }
-        })
-        return collisionDetected;
-    }
-
     /** Progresses the game by one tick.
      * @return {[number, boolean]} - A tuple containing the number of cleared lines and whether the game is over
      */
     tick() {
         this._board.clearLines()
         this._piece.drop();
-        if (this.#detectCollision()) {
+        if (detectCollision(this._piece, this._board)) {
             this._piece.rollback();
             this._board.fixPiece(this._piece);
             const lineClear = this._board.checkLines();
             this._piece = this._piece.plane === "x"
                 ? new Piece("z")
                 : new Piece("x");
-            const gameOver = this.#detectCollision();
+            const gameOver = detectCollision(this._piece, this._board);
             return [lineClear, gameOver];
         }
         return [0, false];
     }
 
     #hardDrop() {
-        while (!this.#detectCollision()) {
+        while (!detectCollision(this._piece, this._board)) {
             this._piece.drop();
         }
         this._piece.rollback();
@@ -89,12 +74,34 @@ export class Game {
                 // escape the collision detection
                 return true;
         }
-        if (this.#detectCollision()) {
+        if (detectCollision(this._piece, this._board)) {
             this._piece.rollback();
             return false;
         }
         return true;
     }
 
+    get ghostPiece() {
+        const ghost = this._piece.clone();
+        while (!detectCollision(ghost, this._board)) {
+            ghost.drop();
+        }
+        ghost.rollback();
+        return ghost;
+    }
 
+}
+
+function detectCollision(piece: Piece, board: Board): boolean {
+    let collisionDetected = false;
+    piece.forEachBlock((y, x, z) => {
+        const floorCollision = y >= ROWS;
+        const wallCollision = x < 0 || x >= COLS || z < 0 || z >= COLS;
+        // avoid calling .blockAt() if one of the index is out of bounds
+        const stackCollision = !(floorCollision || wallCollision) && board.blockAt(y, x, z) !== null;
+        if (floorCollision || wallCollision || stackCollision) {
+            collisionDetected = true;
+        }
+    })
+    return collisionDetected;
 }
