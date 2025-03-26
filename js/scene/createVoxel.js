@@ -1,4 +1,3 @@
-import {BLOCK_SIZE} from "../params";
 import * as THREE from "three";
 import {adjustBrightness} from "./adjustBrightness";
 
