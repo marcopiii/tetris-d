@@ -26,29 +26,26 @@ function createChar(shape, color, pixelSize, align = "left") {
     return charGroup
 }
 
-export function createScoreHUD(score: number) {
-    const chars = score.toString().split('');
-    const charShapes= chars.map(char => font[char])
-
-    const scoreGroup = new THREE.Group();
-    charShapes.toReversed().forEach((shape, i) => {
-        const charGroup = createChar(shape, colorMap(i), SCORE_PIXEL_SIZE, "right");
-        charGroup.position.set(i * 4 * SCORE_PIXEL_SIZE, 0, 0);
-        scoreGroup.add(charGroup);
+function createWord(word: string, colorMap, pixelSize, align = "left") {
+    const shapes = word.split('').map(char => font[char]);
+    const wordGroup = new THREE.Group();
+    let offset = 0;
+    (align === "left" ? shapes : shapes.toReversed()).forEach((shape, i) => {
+        const charGroup = createChar(shape, colorMap(i), pixelSize, align);
+        charGroup.position.set(offset * pixelSize, 0, 0);
+        wordGroup.add(charGroup);
+        offset += shape[0].length + 1;
     })
+    return wordGroup;
+}
 
-    const labelGroup = new THREE.Group();
-    "SCORE".split('')
-        .map(char => font[char])
-        .toReversed().forEach((shape, i ) => {
-            const charGroup = createChar(shape, "#78ABA8", LABEL_PIXEL_SIZE, "right");
-            charGroup.position.set(i * 6 * LABEL_PIXEL_SIZE, 0, 0);
-            labelGroup.add(charGroup);
-        });
+export function createScoreHUD(score: number) {
+    const labelGroup = createWord("SCORE", () => "#78ABA8", LABEL_PIXEL_SIZE, "right");
+    const scoreGroup = createWord(score.toString(), colorMap, SCORE_PIXEL_SIZE, "right");
 
     const scoreboard = new THREE.Group();
     labelGroup.position.set(0,0,0);
-    scoreGroup.position.set(0, -8 * LABEL_PIXEL_SIZE, 0);
+    scoreGroup.position.set(0, -9 * LABEL_PIXEL_SIZE, 0);
     scoreboard.add(labelGroup);
     scoreboard.add(scoreGroup);
     scoreboard.rotateY(THREE.MathUtils.degToRad(180))
@@ -56,28 +53,12 @@ export function createScoreHUD(score: number) {
 }
 
 export function createLevelHUD(level: number) {
-    const chars = level.toString().split('');
-    const charShapes = chars.map(char => font[char])
-
-    const levelGroup = new THREE.Group();
-    charShapes.forEach((shape, i) => {
-        const charGroup = createChar(shape, colorMap(i), SCORE_PIXEL_SIZE);
-        levelGroup.position.set(i * 4 * SCORE_PIXEL_SIZE, 0, 0);
-        levelGroup.add(charGroup);
-    })
-
-    const labelGroup = new THREE.Group();
-    "LEVEL".split('')
-        .map(char => font[char])
-        .forEach((shape, i ) => {
-        const charGroup = createChar(shape, "#78ABA8", LABEL_PIXEL_SIZE);
-        charGroup.position.set(i * 6 * LABEL_PIXEL_SIZE, 0, 0);
-        labelGroup.add(charGroup);
-    });
+    const labelGroup = createWord("LEVEL", () => "#78ABA8", LABEL_PIXEL_SIZE);
+    const levelGroup = createWord(level.toString(), colorMap, SCORE_PIXEL_SIZE);
 
     const levelboard = new THREE.Group();
     labelGroup.position.set(0,0,0);
-    levelGroup.position.set(0, -8 * LABEL_PIXEL_SIZE, 0);
+    levelGroup.position.set(0, -9 * LABEL_PIXEL_SIZE, 0);
     levelboard.add(labelGroup);
     levelboard.add(levelGroup);
     levelboard.rotateY(THREE.MathUtils.degToRad(-90))
