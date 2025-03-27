@@ -1,7 +1,7 @@
 /**
  * @see https://tetris.wiki/Super_Rotation_System#Wall_Kicks
  */
-function wallKickData(piece: "I" | "J" | "L" | "O" | "S" | "T" | "Z") {
+export function wallKickData(piece: "I" | "J" | "L" | "O" | "S" | "T" | "Z") {
     switch (piece) {
         case "I":
             return [

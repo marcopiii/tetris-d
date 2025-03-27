@@ -1,10 +1,12 @@
 import {COLS} from "../params";
 import {generateRandomPiece} from "../pieces/generateRandomPiece";
 import {copy} from "../utils";
+import {wallKickData} from "../pieces/wallKickData";
 
 export class Piece {
     constructor(plane: "x" | "z" = "z") {
-        const {shape, color} = generateRandomPiece()
+        const {type, shape, color} = generateRandomPiece()
+        this._type = type;
         this._shape = shape;
         this._rotationState = "0";
         this._position = plane === "x"
@@ -132,24 +134,48 @@ export class Piece {
         }
     }
 
-    rotateRight() {
-        this.#checkpoint();
-        // 90deg clockwise rotation
-        this._shape = this._shape[0].map((_, i) => this._shape.map(row => row[i]).reverse())
-        if (this._rotationState === "0") this._rotationState = "R"
-        else if (this._rotationState === "R") this._rotationState = "2"
-        else if (this._rotationState === "2") this._rotationState = "L"
-        else if (this._rotationState === "L") this._rotationState = "0"
+    #applyWallKick(offset: [number, number]) {
+        if (this._plane === "x")
+            this._position.z += offset[0];
+        if (this._plane === "z")
+            this._position.x += offset[0];
+        this ._position.y -= offset[1];
     }
 
-    rotateLeft() {
+    rotateRight(wallKickTest: number) {
         this.#checkpoint();
-        // 90deg counterclockwise rotation
-        this._shape =  this._shape[0].map((_, i) =>  this._shape.map(row => row[row.length - 1 - i]))
-        if (this._rotationState === "0") this._rotationState = "L"
-        else if (this._rotationState === "L") this._rotationState = "2"
-        else if (this._rotationState === "2") this._rotationState = "R"
-        else if (this._rotationState === "R") this._rotationState = "0"
+
+        let finalRotationState;
+        if (this._rotationState === "0") finalRotationState = "R"
+        else if (this._rotationState === "R") finalRotationState = "2"
+        else if (this._rotationState === "2") finalRotationState = "L"
+        else if (this._rotationState === "L") finalRotationState = "0"
+
+        const wallKick = wallKickData(this._type)
+            .find(wkd => wkd.initial === this._rotationState && wkd.final === finalRotationState)
+            .tests[wallKickTest];
+
+        this._shape = this._shape[0].map((_, i) => this._shape.map(row => row[i]).reverse())
+        this.#applyWallKick(wallKick)
+        this._rotationState = finalRotationState;
+    }
+
+    rotateLeft(wallKickTest: number) {
+        this.#checkpoint();
+
+        let finalRotationState;
+        if (this._rotationState === "0") finalRotationState = "L"
+        else if (this._rotationState === "L") finalRotationState = "2"
+        else if (this._rotationState === "2") finalRotationState = "R"
+        else if (this._rotationState === "R") finalRotationState = "0"
+
+        const wallKick = wallKickData(this._type)
+            .find(wkd => wkd.initial === this._rotationState && wkd.final === finalRotationState)
+            .tests[wallKickTest];
+
+        this._shape = this._shape[0].map((_, i) => this._shape.map(row => row[row.length - 1 - i]))
+        this.#applyWallKick(wallKick)
+        this._rotationState = finalRotationState;
     }
 
 }
