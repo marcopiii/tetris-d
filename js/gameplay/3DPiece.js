@@ -6,6 +6,7 @@ export class Piece {
     constructor(plane: "x" | "z" = "z") {
         const {shape, color} = generateRandomPiece()
         this._shape = shape;
+        this._rotationState = "0";
         this._position = plane === "x"
             ? {
                 x: Math.floor((COLS - 1) / 2),
@@ -20,6 +21,7 @@ export class Piece {
         this._color = color;
         this._prev = {
             position: copy(this._position),
+            rotationState: copy(this._rotationState),
             shape: copy(this._shape),
             plane: copy(this._plane)
         };
@@ -65,6 +67,7 @@ export class Piece {
         this._prev = {
             position: copy(this._position),
             shape: copy(this._shape),
+            rotationState: copy(this._rotationState),
             plane: copy(this._plane)
         };
     }
@@ -72,6 +75,7 @@ export class Piece {
     rollback() {
         this._position = copy(this._prev.position);
         this._shape = copy(this._prev.shape);
+        this._rotationState = copy(this._prev.rotationState);
         this._plane = copy(this._prev.plane);
     }
 
@@ -132,12 +136,20 @@ export class Piece {
         this.#checkpoint();
         // 90deg clockwise rotation
         this._shape = this._shape[0].map((_, i) => this._shape.map(row => row[i]).reverse())
+        if (this._rotationState === "0") this._rotationState = "R"
+        else if (this._rotationState === "R") this._rotationState = "2"
+        else if (this._rotationState === "2") this._rotationState = "L"
+        else if (this._rotationState === "L") this._rotationState = "0"
     }
 
     rotateLeft() {
         this.#checkpoint();
         // 90deg counterclockwise rotation
         this._shape =  this._shape[0].map((_, i) =>  this._shape.map(row => row[row.length - 1 - i]))
+        if (this._rotationState === "0") this._rotationState = "L"
+        else if (this._rotationState === "L") this._rotationState = "2"
+        else if (this._rotationState === "2") this._rotationState = "R"
+        else if (this._rotationState === "R") this._rotationState = "0"
     }
 
 }
