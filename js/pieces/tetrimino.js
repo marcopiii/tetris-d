@@ -1,8 +1,3 @@
-/**
- * The definitions of the shapes and colors of the tetriminos.
- * The first level is the Y dimension (vertical), the second level is the X dimension (horizontal) and the third level is the Z dimension (horizontal).
- * The "natural" shape is flattened in the Y and X dimensions (meaning that they have size 1 in the Z dimension).
- */
 export const tetrimino = {
   I: {
     shape: [
