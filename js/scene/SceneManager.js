@@ -2,7 +2,7 @@ import {COLS, ROWS, BLOCK_SIZE} from "../params";
 import * as THREE from "three";
 import type {Board} from "../gameplay/3DBoard";
 import type {Piece} from "../gameplay/3DPiece";
-import {createVoxel} from "./createVoxel";
+import {createBlock, createBloomingBlock, createGhostBlock, createVoxel} from "./createVoxel";
 import {createShadow} from "./createShadow";
 import {createLevelHUD, createScoreHUD} from "./createHUD";
 
@@ -58,19 +58,25 @@ export class SceneManager {
         return this._scene;
     }
 
-    update(board: Board, piece: Piece, score: number, level: number) {
+    update(board: Board, piece: Piece, ghost: Piece, score: number, level: number) {
         this.reset();
 
         board.forEachBlock((color, y, x, z) => {
-            const cube = createVoxel(color, BLOCK_SIZE)
+            const cube = color === "DELETE" ? createBloomingBlock() : createBlock(color)
             cube.position.set(translateX(x), translateY(y), translateZ(z));
-
             this._scene.add(cube);
         })
 
-        piece.forEachBlock((y, x, z) => {
-            const cube = createVoxel(piece.color, BLOCK_SIZE)
+        ghost.forEachBlock((y, x, z) => {
+            const cube = createGhostBlock(ghost.color)
             cube.position.set(translateX(x), translateY(y), translateZ(z));
+            this._scene.add(cube)
+        })
+
+        piece.forEachBlock((y, x, z) => {
+            const cube = createBlock(piece.color)
+            cube.position.set(translateX(x), translateY(y), translateZ(z));
+            this._scene.add(cube);
 
             const xShadow = createShadow(piece.color)
             xShadow.rotateY(THREE.MathUtils.degToRad(-90))
@@ -79,6 +85,7 @@ export class SceneManager {
                 translateY(y),
                 translateZ(z)
             )
+            this._scene.add(xShadow);
 
             const zShadow = createShadow(piece.color)
             zShadow.position.set(
@@ -86,9 +93,6 @@ export class SceneManager {
                 translateY(y),
                 -((COLS - 1) * BLOCK_SIZE) / 2
             )
-
-            this._scene.add(cube);
-            this._scene.add(xShadow);
             this._scene.add(zShadow);
         })
 
