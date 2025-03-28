@@ -10,19 +10,7 @@ export class Hold {
         this._color = color;
     }
 
-    get color() {
-        return this._color;
-    }
-
-    get shape() {
-        return this._shape;
-    }
-
-    get type() {
-        return this._type;
-    }
-
-    store(piece: Piece) {
+    replace(piece: Piece) {
         const hold = {
             type: this._type,
             shape: this._shape,

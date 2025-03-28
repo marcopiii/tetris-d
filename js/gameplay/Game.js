@@ -1,11 +1,13 @@
 import {Board} from "./3DBoard";
 import {Piece} from "./3DPiece";
 import {COLS, ROWS} from "../params";
+import {Hold} from "./Hold";
 
 export class Game {
     constructor() {
         this._board = new Board();
         this._piece = new Piece();
+        this._hold = new Hold();
     }
 
     get board() {
@@ -40,6 +42,11 @@ export class Game {
         return [0, false];
     }
 
+    #hold() {
+        const hold = this._hold.replace(this._piece);
+        this._piece.replace(hold);
+    }
+
     #hardDrop() {
         while (!detectCollision(this._piece, this._board)) {
             this._piece.drop();
@@ -50,7 +57,10 @@ export class Game {
         // this will cause a collision since we don't spawn a new piece here
     }
 
-    tryMove(type: "shiftL" | "shiftR" | "shiftB" | "shiftF" | "rotateL" | "rotateR" | "hardDrop"): boolean {
+    /**
+     * @returns {boolean} - Whether the move had success
+     */
+    tryMove(type: "hold" | "shiftL" | "shiftR" | "shiftB" | "shiftF" | "rotateL" | "rotateR" | "hardDrop"): boolean {
         let wallKickTest = 0;
         switch (type) {
             case "shiftL":
@@ -85,6 +95,9 @@ export class Game {
                 return false;
             case "hardDrop":
                 this.#hardDrop();
+                return true;
+            case "hold":
+                this.#hold();
                 return true;
         }
         if (detectCollision(this._piece, this._board)) {
