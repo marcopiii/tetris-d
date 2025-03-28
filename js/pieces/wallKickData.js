@@ -26,8 +26,8 @@ export function wallKickData(piece: "I" | "J" | "L" | "O" | "S" | "T" | "Z") {
                 { initial: "L", final: "0", tests: [[0, 0],	[-1, 0], [-1, -1], [0, +2], [-1, +2]] },
                 { initial: "0", final: "L", tests: [[0, 0],	[+1, 0], [+1, +1], [0, -2], [+1, -2]] },
                 { initial: "L", final: "2", tests: [[0, 0],	[-1, 0], [-1, -1], [0, +2], [-1, +2]] },
-                { initial: "2", final: "R", tests: [[0, 0],	[+1, 0], [+1, -1], [0, +2], [+1, +2]] },
-                { initial: "R", final: "0", tests: [[0, 0],	[-1, 0], [-1, +1], [0, -2], [-1, -2]] }
+                { initial: "2", final: "R", tests: [[0, 0],	[-1, 0], [-1, +1], [0, -2], [-1, -2]] },
+                { initial: "R", final: "0", tests: [[0, 0],	[+1, 0], [+1, -1], [0, +2], [+1, +2]] }
             ];
         case "O":
             return [
