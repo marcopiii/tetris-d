@@ -50,28 +50,40 @@ export class Game {
     }
 
     tryMove(type: "shiftL" | "shiftR" | "shiftB" | "shiftF" | "rotateL" | "rotateR" | "hardDrop"): boolean {
+        let wallKickTest = 0;
         switch (type) {
             case "shiftL":
                 this._piece.shiftLeft();
-                break;
+                break; // go to collision detection
             case "shiftR":
                 this._piece.shiftRight();
-                break;
+                break; // go to collision detection
             case "shiftB":
                 this._piece.shiftBackward();
-                break;
+                break; // go to collision detection
             case "shiftF":
                 this._piece.shiftForward();
-                break;
+                break; // go to collision detection
             case "rotateL":
-                this._piece.rotateLeft();
-                break;
+                while (wallKickTest < 5) {
+                    this._piece.rotateLeft(wallKickTest);
+                    if (!detectCollision(this._piece, this._board))
+                        return true;
+                    this._piece.rollback();
+                    wallKickTest++;
+                }
+                return false;
             case "rotateR":
-                this._piece.rotateRight();
-                break;
+                while (wallKickTest < 5) {
+                    this._piece.rotateRight(wallKickTest);
+                    if (!detectCollision(this._piece, this._board))
+                        return true;
+                    this._piece.rollback();
+                    wallKickTest++;
+                }
+                return false;
             case "hardDrop":
                 this.#hardDrop();
-                // escape the collision detection
                 return true;
         }
         if (detectCollision(this._piece, this._board)) {
