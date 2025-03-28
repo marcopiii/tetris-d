@@ -9,16 +9,7 @@ export class Piece {
         this._type = type;
         this._shape = shape;
         this._rotationState = "0";
-        this._position = plane === "x"
-            ? {
-                x: Math.floor((COLS - 1) / 2),
-                z: Math.ceil((COLS - 1 - shape.length) / 2),
-                y: 0
-            } : {
-                x: Math.ceil((COLS - 1 - shape.length) / 2),
-                z: Math.floor((COLS - 1) / 2),
-                y: 0
-            };
+        this._position = initPosition(plane, shape);
         this._plane = plane;
         this._color = color;
         this._prev = {
@@ -33,6 +24,14 @@ export class Piece {
         return this._color;
     }
 
+    get shape() {
+        return this._shape;
+    }
+
+    get type() {
+        return this._type;
+    }
+
     get plane() {
         return this._plane;
     }
@@ -44,6 +43,23 @@ export class Piece {
         piece._prev = copy(this._prev);
         piece._color = this._color;
         return piece;
+    }
+
+    /**
+     * @param hold {{type, shape, color}}
+     */
+    replace(hold) {
+        this._type = hold.type;
+        this._shape = hold.shape;
+        this._color = hold.color;
+        this._rotationState = "0";
+        this._position = initPosition(this._plane, hold.shape);
+        this._prev = {
+            position: copy(this._position),
+            rotationState: copy(this._rotationState),
+            shape: copy(this._shape),
+            plane: copy(this._plane)
+        };
     }
 
     /**
@@ -178,4 +194,17 @@ export class Piece {
         this._rotationState = finalRotationState;
     }
 
+}
+
+function initPosition(plane, shape) {
+    return plane === "x"
+        ? {
+            x: Math.floor((COLS - 1) / 2),
+            z: Math.ceil((COLS - 1 - shape.length) / 2),
+            y: 0
+        } : {
+            x: Math.ceil((COLS - 1 - shape.length) / 2),
+            z: Math.floor((COLS - 1) / 2),
+            y: 0
+        }
 }

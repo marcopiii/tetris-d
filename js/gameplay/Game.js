@@ -20,6 +20,7 @@ export class Game {
         this._board.clean();
         this._piece = new Piece();
     }
+
     /** Progresses the game by one tick.
      * @return {[number, boolean]} - A tuple containing the number of cleared lines and whether the game is over
      */
