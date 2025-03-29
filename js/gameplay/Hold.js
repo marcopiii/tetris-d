@@ -10,6 +10,14 @@ export class Hold {
         this._color = color;
     }
 
+    get piece() {
+        return {
+            type: this._type,
+            shape: this._shape,
+            color: this._color
+        }
+    }
+
     replace(piece: Piece) {
         const hold = {
             type: this._type,

@@ -44,7 +44,7 @@ function animate() {
 function processGameFrame() {
     const [lineClear, gameOver] = game.tick();
     progress.add(lineClear);
-    sceneManager.update(game.board, game.piece, game.ghostPiece, progress.score, progress.level);
+    sceneManager.update(game.board, game.piece, game.ghostPiece, game.hold, progress.score, progress.level);
     if (gameOver) {
         clock.toggle();
         alert('Game Over');
@@ -63,7 +63,7 @@ function commandHandler(command: "hold" | "rotateL" | "rotateR" | "shiftL" | "sh
         return;
     const sceneNeedsUpdate = game.tryMove(command);
     if (sceneNeedsUpdate)
-        sceneManager.update(game.board, game.piece, game.ghostPiece, progress.score, progress.level);
+        sceneManager.update(game.board, game.piece, game.ghostPiece, game.hold, progress.score, progress.level);
 }
 
 function keyboardHandler(event) {

@@ -18,6 +18,10 @@ export class Game {
         return this._piece;
     }
 
+    get hold() {
+        return this._hold;
+    }
+
     reset() {
         this._board.clean();
         this._piece = new Piece();

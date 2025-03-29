@@ -58,7 +58,7 @@ export class SceneManager {
         return this._scene;
     }
 
-    update(board: Board, piece: Piece, ghost: Piece, score: number, level: number) {
+    update(board: Board, piece: Piece, ghost: Piece, hold: Hold, score: number, level: number) {
         this.reset();
 
         board.forEachBlock((color, y, x, z) => {
