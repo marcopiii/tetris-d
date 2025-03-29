@@ -4,7 +4,8 @@ import type {Board} from "../gameplay/3DBoard";
 import type {Piece} from "../gameplay/3DPiece";
 import {createBlock, createBloomingBlock, createGhostBlock, createVoxel} from "./createVoxel";
 import {createShadow} from "./createShadow";
-import {createLevelHUD, createScoreHUD} from "./createHUD";
+import {createHoldHUD, createLevelHUD, createScoreHUD} from "./createHUD";
+import type {Hold} from "../gameplay/Hold";
 
 export class SceneManager {
 
@@ -58,7 +59,7 @@ export class SceneManager {
         return this._scene;
     }
 
-    update(board: Board, piece: Piece, ghost: Piece, score: number, level: number) {
+    update(board: Board, piece: Piece, ghost: Piece, hold: Hold, score: number, level: number) {
         this.reset();
 
         board.forEachBlock((color, y, x, z) => {
@@ -104,12 +105,20 @@ export class SceneManager {
         );
         const levelHUD = createLevelHUD(level)
         levelHUD.position.set(
-            (COLS + 1) * BLOCK_SIZE / 2,
-            (ROWS - 3) * BLOCK_SIZE / 2,
-            (COLS + 2) * BLOCK_SIZE / 2
+            -(COLS) * BLOCK_SIZE / 2,
+            (ROWS / 2) * BLOCK_SIZE / 2,
+            -(COLS - 1) * BLOCK_SIZE / 2
         );
         this._scene.add(scoreHUD);
         this._scene.add(levelHUD);
+
+        const holdHUD = createHoldHUD(hold.piece.shape, hold.piece.color, piece.isHoldable)
+        holdHUD.position.set(
+            (COLS + 1) * BLOCK_SIZE / 2,
+            (ROWS - 3) * BLOCK_SIZE / 2,
+            (COLS + 2) * BLOCK_SIZE / 2
+        )
+        this._scene.add(holdHUD);
     }
 
 }

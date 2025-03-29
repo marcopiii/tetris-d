@@ -44,7 +44,7 @@ function animate() {
 function processGameFrame() {
     const [lineClear, gameOver] = game.tick();
     progress.add(lineClear);
-    sceneManager.update(game.board, game.piece, game.ghostPiece, progress.score, progress.level);
+    sceneManager.update(game.board, game.piece, game.ghostPiece, game.hold, progress.score, progress.level);
     if (gameOver) {
         clock.toggle();
         alert('Game Over');
@@ -58,16 +58,17 @@ function onStart() {
     clock.start();
 }
 
-function commandHandler(command: "rotateL" | "rotateR" | "shiftL" | "shiftR" | "shiftF" | "shiftB" | "hardDrop") {
+function commandHandler(command: "hold" | "rotateL" | "rotateR" | "shiftL" | "shiftR" | "shiftF" | "shiftB" | "hardDrop") {
     if (!clock.isRunning)
         return;
     const sceneNeedsUpdate = game.tryMove(command);
     if (sceneNeedsUpdate)
-        sceneManager.update(game.board, game.piece, game.ghostPiece, progress.score, progress.level);
+        sceneManager.update(game.board, game.piece, game.ghostPiece, game.hold, progress.score, progress.level);
 }
 
 function keyboardHandler(event) {
     if (event.type === 'keydown') {
+        if (event.key === 'a') commandHandler('hold')
         if (event.key === 'ArrowLeft')
             event.shiftKey ? commandHandler('rotateL') : commandHandler('shiftL');
         if (event.key === 'ArrowRight')
@@ -86,7 +87,7 @@ function keyboardHandler(event) {
 
 function controllerHandler(
     event: "press" | "release",
-    btn: "start" | "padR" | "padL" | "padU" | "padD" | "X" | "B" | "A" | "LT" | "RT"
+    btn: "start" | "padR" | "padL" | "padU" | "padD" | "X" | "B" | "A" | "Y" | "LT" | "RT"
 ) {
     if (event === "press") {
         if (btn === "start") clock.toggle();
@@ -97,6 +98,7 @@ function controllerHandler(
         if (btn === "X") commandHandler('rotateL');
         if (btn === "B") commandHandler('rotateR');
         if (btn === "A") commandHandler('hardDrop');
+        if (btn === "Y") commandHandler('hold');
         if (btn === "LT") cameraManager.move('x-plane');
         if (btn === "RT") cameraManager.move('z-plane');
     }
