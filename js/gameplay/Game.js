@@ -43,6 +43,8 @@ export class Game {
     }
 
     #hold() {
+        if (!this._piece.isHoldable)
+            return;
         const hold = this._hold.replace(this._piece);
         this._piece.replace(hold);
     }

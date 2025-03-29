@@ -18,6 +18,7 @@ export class Piece {
             shape: copy(this._shape),
             plane: copy(this._plane)
         };
+        this._holdable = true;
     }
 
     get color() {
@@ -36,6 +37,10 @@ export class Piece {
         return this._plane;
     }
 
+    get isHoldable() {
+        return this._holdable;
+    }
+
     clone() {
         const piece = new Piece(this._plane);
         piece._shape = copy(this._shape);
@@ -49,6 +54,8 @@ export class Piece {
      * @param hold {{type, shape, color}}
      */
     replace(hold) {
+        if (!this._holdable)
+            throw new Error("Piece is not holdable");
         this._type = hold.type;
         this._shape = hold.shape;
         this._color = hold.color;
@@ -60,6 +67,7 @@ export class Piece {
             shape: copy(this._shape),
             plane: copy(this._plane)
         };
+        this._holdable = false;
     }
 
     /**
