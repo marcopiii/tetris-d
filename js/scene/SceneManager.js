@@ -1,11 +1,10 @@
 import {COLS, ROWS, BLOCK_SIZE} from "../params";
 import * as THREE from "three";
-import type {Board} from "../gameplay/3DBoard";
-import type {Piece} from "../gameplay/3DPiece";
-import {createBlock, createBloomingBlock, createGhostBlock, createVoxel} from "./createVoxel";
+import {createBlock, createBloomingBlock, createGhostBlock} from "./createVoxel";
 import {createShadow} from "./createShadow";
 import {createHoldHUD, createLevelHUD, createScoreHUD} from "./createHUD";
-import type {Hold} from "../gameplay/Hold";
+import type {Game} from "../gameplay/Game";
+import type {Progress} from "../gameplay/Progress";
 
 export class SceneManager {
 
@@ -75,30 +74,30 @@ export class SceneManager {
         return this._scene;
     }
 
-    update(board: Board, piece: Piece, ghost: Piece, hold: Hold, score: number, level: number) {
+    update(game: Game, progress: Progress) {
         this.reset();
 
-        board.forEachBlock((color, y, x, z) => {
+        game.board.forEachBlock((color, y, x, z) => {
             const cube = color === "DELETE" ? createBloomingBlock() : createBlock(color)
             cube.position.set(translateX(x), translateY(y), translateZ(z));
             this._scene.add(cube);
         })
 
-        ghost.forEachBlock((y, x, z) => {
-            const cube = createGhostBlock(ghost.color)
+        game.ghostPiece.forEachBlock((y, x, z) => {
+            const cube = createGhostBlock(game.ghostPiece.color)
             cube.position.set(translateX(x), translateY(y), translateZ(z));
             this._scene.add(cube)
         })
 
-        piece.forEachBlock((y, x, z) => {
-            const cube = createBlock(piece.color)
+        game.piece.forEachBlock((y, x, z) => {
+            const cube = createBlock(game.piece.color)
             cube.position.set(translateX(x), translateY(y), translateZ(z));
             this._scene.add(cube);
 
-            const xrShadow = createShadow(piece.color)
-            const xlShadow = createShadow(piece.color)
-            const zlShadow = createShadow(piece.color)
-            const zrShadow = createShadow(piece.color)
+            const xrShadow = createShadow(game.piece.color)
+            const xlShadow = createShadow(game.piece.color)
+            const zlShadow = createShadow(game.piece.color)
+            const zrShadow = createShadow(game.piece.color)
 
             xrShadow.rotateY(THREE.MathUtils.degToRad(-90))
             xlShadow.rotateY(THREE.MathUtils.degToRad(90))
@@ -131,13 +130,13 @@ export class SceneManager {
             this._scene.add(zrShadow);
         })
 
-        const scoreHUD = createScoreHUD(score)
+        const scoreHUD = createScoreHUD(progress.score)
         scoreHUD.position.set(
             -(COLS) * BLOCK_SIZE / 2,
             (ROWS - 3) * BLOCK_SIZE / 2,
             -(COLS - 1) * BLOCK_SIZE / 2
         );
-        const levelHUD = createLevelHUD(level)
+        const levelHUD = createLevelHUD(progress.level)
         levelHUD.position.set(
             -(COLS) * BLOCK_SIZE / 2,
             (ROWS / 2) * BLOCK_SIZE / 2,
@@ -146,7 +145,11 @@ export class SceneManager {
         this._scene.add(scoreHUD);
         this._scene.add(levelHUD);
 
-        const holdHUD = createHoldHUD(hold.piece.shape, hold.piece.color, piece.isHoldable)
+        const holdHUD = createHoldHUD(
+            game.hold.piece.shape,
+            game.hold.piece.color,
+            game.piece.isHoldable
+        )
         holdHUD.position.set(
             (COLS + 1) * BLOCK_SIZE / 2,
             (ROWS - 3) * BLOCK_SIZE / 2,
