@@ -40,6 +40,7 @@ function buttonMapping(i: number) {
         case 0: return "A";
         case 1: return "B";
         case 2: return "X";
+        case 3: return "Y";
         case 6: return "LT";
         case 7: return "RT";
         case 9: return "start";
