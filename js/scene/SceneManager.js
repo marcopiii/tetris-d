@@ -85,9 +85,8 @@ export class SceneManager {
     update(game: Game, progress: Progress) {
         this.reset();
 
-        const currentPlane: "x"| "z" = game.piece.plane;
         const isCutOut = (y, x, z) => {
-            return currentPlane === "x"
+            return game.piece.plane === "x"
                 ? this._cutter.below && x < game.piece.planePosition || this._cutter.above && x > game.piece.planePosition
                 : this._cutter.below && z < game.piece.planePosition || this._cutter.above && z > game.piece.planePosition;
         }

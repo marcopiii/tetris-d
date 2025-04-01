@@ -76,7 +76,7 @@ function cuttingHandler(action: "start" | "end", side: "below" | "above") {
 
 function keyboardHandler(event) {
     if (event.type === 'keydown') {
-        if (event.key === 'a') commandHandler('hold')
+        if (event.key === 'w') commandHandler('hold')
         if (event.key === 'ArrowLeft')
             event.shiftKey ? commandHandler('rotateL') : commandHandler('shiftL');
         if (event.key === 'ArrowRight')
@@ -86,7 +86,13 @@ function keyboardHandler(event) {
         if (event.key === ' ') commandHandler('hardDrop');
         if (event.key === 'q') cameraManager.move('left');
         if (event.key === 'e') cameraManager.move('right');
+        if (event.key === 'a') cuttingHandler('start', 'below');
+        if (event.key === 'd') cuttingHandler('start', 'above');
         if (event.key === 'p') clock.toggle();
+    }
+    if (event.type === 'keyup') {
+        if (event.key === 'a') cuttingHandler('end', 'below');
+        if (event.key === 'd') cuttingHandler('end', 'above');
     }
 }
 
