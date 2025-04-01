@@ -75,6 +75,13 @@ export class SceneManager {
         return this._scene;
     }
 
+    set cutter(cutter: { below: boolean | undefined, above: boolean | undefined}) {
+        this._cutter = {
+            below: cutter.below ?? this._cutter.below,
+            above: cutter.above ?? this._cutter.above
+        };
+    }
+
     update(game: Game, progress: Progress) {
         this.reset();
 
@@ -82,7 +89,7 @@ export class SceneManager {
         const isCutOut = (y, x, z) => {
             return currentPlane === "x"
                 ? this._cutter.below && x < game.piece.planePosition || this._cutter.above && x > game.piece.planePosition
-                : this._cutter.below && z > game.piece.planePosition || this._cutter.above && z < game.piece.planePosition;
+                : this._cutter.below && z < game.piece.planePosition || this._cutter.above && z > game.piece.planePosition;
         }
 
         game.board.forEachBlock((color, y, x, z) => {

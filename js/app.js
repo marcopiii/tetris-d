@@ -66,6 +66,14 @@ function commandHandler(command: "hold" | "rotateL" | "rotateR" | "shiftL" | "sh
         sceneManager.update(game, progress);
 }
 
+function cuttingHandler(action: "start" | "end", side: "below" | "above") {
+    sceneManager.cutter = {
+        below: side === 'below' ? action === 'start' : undefined,
+        above: side === 'above' ? action === 'start' : undefined
+    };
+    sceneManager.update(game, progress);
+}
+
 function keyboardHandler(event) {
     if (event.type === 'keydown') {
         if (event.key === 'a') commandHandler('hold')
@@ -98,6 +106,12 @@ function controllerHandler(
         if (btn === "Y") commandHandler('hold');
         if (btn === "LT") cameraManager.move('left');
         if (btn === "RT") cameraManager.move('right');
+        if (btn === "LB") cuttingHandler('start', 'below');
+        if (btn === "RB") cuttingHandler('start', 'above');
+    }
+    if (event === "release") {
+        if (btn === "LB") cuttingHandler('end', 'below');
+        if (btn === "RB") cuttingHandler('end', 'above');
     }
 }
 
