@@ -17,8 +17,8 @@ export class CameraManager {
             lookAt: new Vector3(0, 0, BLOCK_SIZE)
         },
         "xL_zL": {
-            position: new Vector3(10, 5, -10 - BLOCK_SIZE),
-            lookAt: new Vector3(0, 0, -BLOCK_SIZE)
+            position: new Vector3(10, 4, -10 + BLOCK_SIZE),
+            lookAt: new Vector3(0, -1, + BLOCK_SIZE)
         },
         "xR_zL": {
             position: new Vector3(-10, 5, -10 - BLOCK_SIZE),
