@@ -76,12 +76,9 @@ function keyboardHandler(event) {
         if (event.key === 'ArrowDown') commandHandler('shiftF');
         if (event.key === 'ArrowUp') commandHandler('shiftB');
         if (event.key === ' ') commandHandler('hardDrop');
-        if (event.key === 'q') cameraManager.move('x-plane');
-        if (event.key === 'e') cameraManager.move('z-plane');
+        if (event.key === 'q') cameraManager.move('left');
+        if (event.key === 'e') cameraManager.move('right');
         if (event.key === 'p') clock.toggle();
-    }
-    if (event.type === 'keyup') {
-        if (event.key === 'q' || event.key === 'e') cameraManager.move("isometric");
     }
 }
 
@@ -99,11 +96,8 @@ function controllerHandler(
         if (btn === "B") commandHandler('rotateR');
         if (btn === "A") commandHandler('hardDrop');
         if (btn === "Y") commandHandler('hold');
-        if (btn === "LT") cameraManager.move('x-plane');
-        if (btn === "RT") cameraManager.move('z-plane');
-    }
-    if (event === "release") {
-        if (btn === "LT" || btn === "RT") cameraManager.move("isometric");
+        if (btn === "LT") cameraManager.move('left');
+        if (btn === "RT") cameraManager.move('right');
     }
 }
 

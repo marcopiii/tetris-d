@@ -7,7 +7,7 @@ export class CameraManager {
 
     #frustumSize = 25;
 
-    #setup = {
+    #config = {
         "x-plane": {
             position: new Vector3( -10, 0, 0.5 * BLOCK_SIZE),
             lookAt: new Vector3(0,0,0.5 * BLOCK_SIZE),
@@ -16,22 +16,37 @@ export class CameraManager {
             position: new Vector3(0.5 * BLOCK_SIZE, 0, 10),
             lookAt: new Vector3(0.5 * BLOCK_SIZE, 0, 0)
         },
-        "isometric": {
+        "isometric_X+Z+": {
             position: new Vector3(-10, 5, 10 + BLOCK_SIZE),
             lookAt: new Vector3(0, 0, BLOCK_SIZE)
-        }
+        },
+        "isometric_X-Z+": {
+            position: new Vector3(10, 5, 10 + BLOCK_SIZE),
+            lookAt: new Vector3(0, 0, BLOCK_SIZE)
+        },
+        "isometric_X-Z-": {
+            position: new Vector3(10, 5, -10 - BLOCK_SIZE),
+            lookAt: new Vector3(0, 0, -BLOCK_SIZE)
+        },
+        "isometric_X+Z-": {
+            position: new Vector3(-10, 5, -10 - BLOCK_SIZE),
+            lookAt: new Vector3(0, 0, -BLOCK_SIZE)
+        },
     }
 
     constructor(container: HTMLElement) {
         const aspect = container.clientWidth / container.clientHeight
         this._tweenGroup = new TWEEN.Group();
+        this._position = "isometric_X+Z+"
         this._camera = new THREE.OrthographicCamera(
             - this.#frustumSize * aspect / 2,
             this.#frustumSize * aspect / 2,
             this.#frustumSize / 2,
             - this.#frustumSize / 2
         );
-        this.move("isometric");
+        const initPosition = this.#config[this._position];
+        this._camera.position.set(initPosition.position.x, initPosition.position.y, initPosition.position.z);
+        this._camera.lookAt(this.#config[this._position].lookAt);
     }
 
     get camera() {
@@ -42,19 +57,22 @@ export class CameraManager {
         return this._tweenGroup;
     }
 
-    move(position: "x-plane" | "z-plane" | "isometric") {
-        let target;
-        switch (position) {
-            case "x-plane":
-                target = this.#setup["x-plane"];
+    move(direction: "right" | "left") {
+        switch (this._position) {
+            case "isometric_X+Z+":
+                this._position = direction === "right" ? "isometric_X-Z+" : "isometric_X+Z-";
                 break;
-            case "z-plane":
-                target = this.#setup["z-plane"];
+            case "isometric_X-Z+":
+                this._position = direction === "right" ? "isometric_X-Z-" : "isometric_X+Z+";
                 break;
-            case "isometric":
-                target = this.#setup["isometric"];
+            case "isometric_X-Z-":
+                this._position = direction === "right" ? "isometric_X+Z-" : "isometric_X-Z+";
+                break;
+            case "isometric_X+Z-":
+                this._position = direction === "right" ? "isometric_X+Z+" : "isometric_X-Z-";
                 break;
         }
+        const target = this.#config[this._position];
         new TWEEN.Tween(this._camera.position, this._tweenGroup)
             .to(target.position, 500)
             .easing(TWEEN.Easing.Exponential.Out)
