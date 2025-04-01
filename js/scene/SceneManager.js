@@ -25,24 +25,40 @@ export class SceneManager {
         const edges = new THREE.EdgesGeometry(geometry);
         const material = new THREE.LineBasicMaterial({ color: this.#GRID_COLOR, transparent: true, opacity: 0.5 });
 
-        const xGrid = new THREE.LineSegments(edges, material);
-        xGrid.rotateY(THREE.MathUtils.degToRad(90));
-        xGrid.position.set(
+        const xlGrid = new THREE.LineSegments(edges, material);
+        xlGrid.rotateY(THREE.MathUtils.degToRad(90));
+        xlGrid.position.set(
             ((COLS + 1) * BLOCK_SIZE) / 2,
             -BLOCK_SIZE / 2,
             BLOCK_SIZE / 2
         );
+        const xrGrid = new THREE.LineSegments(edges, material);
+        xrGrid.rotateY(THREE.MathUtils.degToRad(-90));
+        xrGrid.position.set(
+            -((COLS - 1) * BLOCK_SIZE) / 2,
+            -BLOCK_SIZE / 2,
+            BLOCK_SIZE / 2
+        );
 
-        const zGrid = new THREE.LineSegments(edges, material);
-        zGrid.position.set(
+        const zlGrid = new THREE.LineSegments(edges, material);
+        zlGrid.position.set(
             BLOCK_SIZE / 2,
             -BLOCK_SIZE / 2,
             -((COLS - 1) * BLOCK_SIZE) / 2
         );
+        const zrGrid = new THREE.LineSegments(edges, material);
+        zrGrid.rotateY(THREE.MathUtils.degToRad(180));
+        zrGrid.position.set(
+            BLOCK_SIZE / 2,
+            -BLOCK_SIZE / 2,
+            ((COLS + 1) * BLOCK_SIZE) / 2
+        );
 
         scene.add(yGrid);
-        scene.add(xGrid);
-        scene.add(zGrid);
+        scene.add(xlGrid);
+        scene.add(xrGrid);
+        scene.add(zlGrid);
+        scene.add(zrGrid);
     }
 
     constructor() {
