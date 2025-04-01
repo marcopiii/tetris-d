@@ -23,20 +23,22 @@ function getFakeShadedMaterial(color) {
   ];
 }
 
+const blockGeometry = new THREE.BoxGeometry(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+
 export function createBlock(color) {
-  const geometry = new THREE.BoxGeometry(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+  const geometry = blockGeometry;
   const material = getFakeShadedMaterial(color)
   return new THREE.Mesh(geometry, material);
 }
 
 export function createGhostBlock(color) {
-  const geometry = new THREE.BoxGeometry(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+  const geometry = blockGeometry;
   const material = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.5 });
   return new THREE.Mesh(geometry, material);
 }
 
 export function createBloomingBlock() {
-  const geometry = new THREE.BoxGeometry(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+  const geometry = blockGeometry;
   const material = new THREE.MeshBasicMaterial({ color: new THREE.Color(1.01, 1.01,1.01) })
   return new THREE.Mesh(geometry, material);
 }
