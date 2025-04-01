@@ -95,22 +95,40 @@ export class SceneManager {
             cube.position.set(translateX(x), translateY(y), translateZ(z));
             this._scene.add(cube);
 
-            const xShadow = createShadow(piece.color)
-            xShadow.rotateY(THREE.MathUtils.degToRad(-90))
-            xShadow.position.set(
+            const xrShadow = createShadow(piece.color)
+            const xlShadow = createShadow(piece.color)
+            const zlShadow = createShadow(piece.color)
+            const zrShadow = createShadow(piece.color)
+
+            xrShadow.rotateY(THREE.MathUtils.degToRad(-90))
+            xlShadow.rotateY(THREE.MathUtils.degToRad(90))
+            zrShadow.rotateY(THREE.MathUtils.degToRad(180))
+
+            xrShadow.position.set(
                 ((COLS + 1) * BLOCK_SIZE) / 2,
                 translateY(y),
                 translateZ(z)
             )
-            this._scene.add(xShadow);
-
-            const zShadow = createShadow(piece.color)
-            zShadow.position.set(
+            xlShadow.position.set(
+                -((COLS - 1) * BLOCK_SIZE) / 2,
+                translateY(y),
+                translateZ(z)
+            )
+            zlShadow.position.set(
                 translateX(x),
                 translateY(y),
                 -((COLS - 1) * BLOCK_SIZE) / 2
             )
-            this._scene.add(zShadow);
+            zrShadow.position.set(
+                translateX(x),
+                translateY(y),
+                ((COLS + 1) * BLOCK_SIZE) / 2
+            )
+
+            this._scene.add(xrShadow);
+            this._scene.add(xlShadow);
+            this._scene.add(zlShadow);
+            this._scene.add(zrShadow);
         })
 
         const scoreHUD = createScoreHUD(score)
