@@ -62,6 +62,7 @@ export class SceneManager {
 
     constructor() {
         this._scene = new THREE.Scene();
+        this._cutter = { below: false, above: false};
         this.#config(this._scene);
     }
 
@@ -77,7 +78,15 @@ export class SceneManager {
     update(game: Game, progress: Progress) {
         this.reset();
 
+        const currentPlane: "x"| "z" = game.piece.plane;
+        const isCutOut = (y, x, z) => {
+            return currentPlane === "x"
+                ? this._cutter.below && x < game.piece.planePosition || this._cutter.above && x > game.piece.planePosition
+                : this._cutter.below && z > game.piece.planePosition || this._cutter.above && z < game.piece.planePosition;
+        }
+
         game.board.forEachBlock((color, y, x, z) => {
+            if (isCutOut(y, x, z)) return;
             const cube = color === "DELETE" ? createBloomingBlock() : createBlock(color)
             cube.position.set(translateX(x), translateY(y), translateZ(z));
             this._scene.add(cube);

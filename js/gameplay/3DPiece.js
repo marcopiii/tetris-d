@@ -37,6 +37,12 @@ export class Piece {
         return this._plane;
     }
 
+    get planePosition() {
+        return this._plane === "x"
+            ? this._position.x
+            : this._position.z;
+    }
+
     get isHoldable() {
         return this._holdable;
     }
