@@ -4,7 +4,7 @@ export class Clock {
         this._interval = undefined;
     }
 
-    #SPEED = 500;
+    #SPEED = 1000;
 
     get isRunning() {
         return this._interval !== undefined
