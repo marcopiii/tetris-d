@@ -4,17 +4,15 @@ import type {Piece} from "./3DPiece";
 export class Hold {
 
     constructor() {
-        const {type, shape, color} = generateRandomPiece()
+        const {type, shape} = generateRandomPiece()
         this._type = type;
         this._shape = shape;
-        this._color = color;
     }
 
     get piece() {
         return {
             type: this._type,
             shape: this._shape,
-            color: this._color
         }
     }
 
@@ -22,11 +20,9 @@ export class Hold {
         const hold = {
             type: this._type,
             shape: this._shape,
-            color: this._color
         }
         this._type = piece.type;
         this._shape = piece.shape;
-        this._color = piece.color;
         return hold
     }
 
