@@ -97,7 +97,13 @@ export class SceneManager {
                 new THREE.MeshBasicMaterial({color: "#cfcfcf"})
             );
             if (game.piece.plane === "x") {
-                belowCutShadow.rotateZ(THREE.MathUtils.degToRad(-90));
+                belowCutShadow.rotateZ(THREE.MathUtils.degToRad(90));
+                belowCutShadow.rotateY(THREE.MathUtils.degToRad(90));
+                belowCutShadow.position.set(
+                    (game.piece.planePosition - COLS + 1) * BLOCK_SIZE / 2,
+                    -(ROWS + BLOCK_SIZE) / 2,
+                    BLOCK_SIZE / 2
+                )
             } else {
                 belowCutShadow.rotateX(THREE.MathUtils.degToRad(-90));
                 belowCutShadow.position.set(
@@ -115,7 +121,13 @@ export class SceneManager {
                 new THREE.MeshBasicMaterial({color: "#cfcfcf"})
             );
             if (game.piece.plane === "x") {
-                aboveCutShadow.rotateZ(THREE.MathUtils.degToRad(-90));
+                aboveCutShadow.rotateZ(THREE.MathUtils.degToRad(90));
+                aboveCutShadow.rotateY(THREE.MathUtils.degToRad(90));
+                aboveCutShadow.position.set(
+                    -(game.piece.planePosition - COLS - 1) * BLOCK_SIZE / 2,
+                    -(ROWS + BLOCK_SIZE) / 2,
+                    BLOCK_SIZE / 2,
+                )
             } else {
                 aboveCutShadow.rotateX(THREE.MathUtils.degToRad(-90));
                 aboveCutShadow.position.set(
