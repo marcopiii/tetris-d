@@ -62,6 +62,7 @@ export class SceneManager {
 
     constructor() {
         this._scene = new THREE.Scene();
+        this._cutter = { below: false, above: false};
         this.#config(this._scene);
     }
 
@@ -74,10 +75,72 @@ export class SceneManager {
         return this._scene;
     }
 
+    set cutter(cutter: { below: boolean | undefined, above: boolean | undefined}) {
+        this._cutter = {
+            below: cutter.below ?? this._cutter.below,
+            above: cutter.above ?? this._cutter.above
+        };
+    }
+
     update(game: Game, progress: Progress) {
         this.reset();
 
+        const isCutOut = (y, x, z) => {
+            return game.piece.plane === "x"
+                ? this._cutter.below && x < game.piece.planePosition || this._cutter.above && x > game.piece.planePosition
+                : this._cutter.below && z < game.piece.planePosition || this._cutter.above && z > game.piece.planePosition;
+        }
+
+        if (this._cutter.below) {
+            const belowCutShadow = new THREE.Mesh(
+                new THREE.PlaneGeometry(COLS * BLOCK_SIZE, game.piece.planePosition * BLOCK_SIZE),
+                new THREE.MeshBasicMaterial({color: "#808080"})
+            );
+            if (game.piece.plane === "x") {
+                belowCutShadow.rotateZ(THREE.MathUtils.degToRad(90));
+                belowCutShadow.rotateY(THREE.MathUtils.degToRad(90));
+                belowCutShadow.position.set(
+                    (game.piece.planePosition - COLS + 1) * BLOCK_SIZE / 2,
+                    -(ROWS + BLOCK_SIZE) / 2,
+                    BLOCK_SIZE / 2
+                )
+            } else {
+                belowCutShadow.rotateX(THREE.MathUtils.degToRad(-90));
+                belowCutShadow.position.set(
+                    BLOCK_SIZE / 2,
+                    -(ROWS + BLOCK_SIZE) / 2,
+                    (game.piece.planePosition - COLS + 1) * BLOCK_SIZE / 2
+                )
+            }
+            this._scene.add(belowCutShadow);
+        }
+
+        if (this._cutter.above) {
+            const aboveCutShadow = new THREE.Mesh(
+                new THREE.PlaneGeometry(COLS * BLOCK_SIZE, (COLS - 1 - game.piece.planePosition) * BLOCK_SIZE),
+                new THREE.MeshBasicMaterial({color: "#808080"})
+            );
+            if (game.piece.plane === "x") {
+                aboveCutShadow.rotateZ(THREE.MathUtils.degToRad(90));
+                aboveCutShadow.rotateY(THREE.MathUtils.degToRad(90));
+                aboveCutShadow.position.set(
+                    (game.piece.planePosition + 2) * BLOCK_SIZE / 2,
+                    -(ROWS + BLOCK_SIZE) / 2,
+                    BLOCK_SIZE / 2,
+                )
+            } else {
+                aboveCutShadow.rotateX(THREE.MathUtils.degToRad(-90));
+                aboveCutShadow.position.set(
+                    BLOCK_SIZE / 2,
+                    -(ROWS + BLOCK_SIZE) / 2,
+                    (game.piece.planePosition + 2) * BLOCK_SIZE / 2
+                )
+            }
+            this._scene.add(aboveCutShadow);
+        }
+
         game.board.forEachBlock((color, y, x, z) => {
+            if (isCutOut(y, x, z)) return;
             const cube = color === "DELETE" ? createBloomingBlock() : createBlock(color)
             cube.position.set(translateX(x), translateY(y), translateZ(z));
             this._scene.add(cube);
