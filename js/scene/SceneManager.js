@@ -94,7 +94,7 @@ export class SceneManager {
         if (this._cutter.below) {
             const belowCutShadow = new THREE.Mesh(
                 new THREE.PlaneGeometry(COLS * BLOCK_SIZE, game.piece.planePosition * BLOCK_SIZE),
-                new THREE.MeshBasicMaterial({color: "#cfcfcf"})
+                new THREE.MeshBasicMaterial({color: "#808080"})
             );
             if (game.piece.plane === "x") {
                 belowCutShadow.rotateZ(THREE.MathUtils.degToRad(90));
@@ -118,7 +118,7 @@ export class SceneManager {
         if (this._cutter.above) {
             const aboveCutShadow = new THREE.Mesh(
                 new THREE.PlaneGeometry(COLS * BLOCK_SIZE, (COLS - 1 - game.piece.planePosition) * BLOCK_SIZE),
-                new THREE.MeshBasicMaterial({color: "#cfcfcf"})
+                new THREE.MeshBasicMaterial({color: "#808080"})
             );
             if (game.piece.plane === "x") {
                 aboveCutShadow.rotateZ(THREE.MathUtils.degToRad(90));
