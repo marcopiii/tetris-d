@@ -124,7 +124,7 @@ export class SceneManager {
                 aboveCutShadow.rotateZ(THREE.MathUtils.degToRad(90));
                 aboveCutShadow.rotateY(THREE.MathUtils.degToRad(90));
                 aboveCutShadow.position.set(
-                    -(game.piece.planePosition - COLS - 1) * BLOCK_SIZE / 2,
+                    (game.piece.planePosition + 2) * BLOCK_SIZE / 2,
                     -(ROWS + BLOCK_SIZE) / 2,
                     BLOCK_SIZE / 2,
                 )
@@ -133,7 +133,7 @@ export class SceneManager {
                 aboveCutShadow.position.set(
                     BLOCK_SIZE / 2,
                     -(ROWS + BLOCK_SIZE) / 2,
-                    -(game.piece.planePosition - COLS - 1) * BLOCK_SIZE / 2
+                    (game.piece.planePosition + 2) * BLOCK_SIZE / 2
                 )
             }
             this._scene.add(aboveCutShadow);
