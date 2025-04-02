@@ -1,4 +1,4 @@
-import {BLOCK_SIZE} from "./params";
+import {MINO_SIZE} from "./params";
 import * as THREE from "three";
 import TWEEN from "@tweenjs/tween.js";
 import {Vector3} from "three";
@@ -9,36 +9,36 @@ export class CameraManager {
 
     #config = {
         "xR_zR": {
-            position: new Vector3(-10, 5, 10 + BLOCK_SIZE),
-            lookAt: new Vector3(0, 0, BLOCK_SIZE)
+            position: new Vector3(-10, 5, 10 + MINO_SIZE),
+            lookAt: new Vector3(0, 0, MINO_SIZE)
         },
         "xL_zR": {
-            position: new Vector3(10, 5, 10 + BLOCK_SIZE),
-            lookAt: new Vector3(0, 0, BLOCK_SIZE)
+            position: new Vector3(10, 5, 10 + MINO_SIZE),
+            lookAt: new Vector3(0, 0, MINO_SIZE)
         },
         "xL_zL": {
-            position: new Vector3(10, 4, -10 + BLOCK_SIZE),
-            lookAt: new Vector3(0, -1, + BLOCK_SIZE)
+            position: new Vector3(10, 4, -10 + MINO_SIZE),
+            lookAt: new Vector3(0, -1, + MINO_SIZE)
         },
         "xR_zL": {
-            position: new Vector3(-10, 5, -10 - BLOCK_SIZE),
-            lookAt: new Vector3(0, 0, -BLOCK_SIZE)
+            position: new Vector3(-10, 5, -10 - MINO_SIZE),
+            lookAt: new Vector3(0, 0, -MINO_SIZE)
         },
         "x0_zR": {
-            position: new Vector3( -10, 0, 0.5 * BLOCK_SIZE),
-            lookAt: new Vector3(0,0,0.5 * BLOCK_SIZE),
+            position: new Vector3( -10, 0, 0.5 * MINO_SIZE),
+            lookAt: new Vector3(0,0,0.5 * MINO_SIZE),
         },
         "x0_zL": {
-            position: new Vector3( 10, 0, 0.5 * BLOCK_SIZE),
-            lookAt: new Vector3(0,0,0.5 * BLOCK_SIZE),
+            position: new Vector3( 10, 0, 0.5 * MINO_SIZE),
+            lookAt: new Vector3(0,0,0.5 * MINO_SIZE),
         },
         "xR_z0": {
-            position: new Vector3(0.5 * BLOCK_SIZE, 0, 10),
-            lookAt: new Vector3(0.5 * BLOCK_SIZE, 0, 0)
+            position: new Vector3(0.5 * MINO_SIZE, 0, 10),
+            lookAt: new Vector3(0.5 * MINO_SIZE, 0, 0)
         },
         "xL_z0": {
-            position: new Vector3(0.5 * BLOCK_SIZE, 0, -10),
-            lookAt: new Vector3(0.5 * BLOCK_SIZE, 0, 0)
+            position: new Vector3(0.5 * MINO_SIZE, 0, -10),
+            lookAt: new Vector3(0.5 * MINO_SIZE, 0, 0)
         }
     }
 

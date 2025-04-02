@@ -1,14 +1,15 @@
 import * as THREE from "three";
-import {createVoxel} from "./createVoxel";
+import {createVoxel} from "./createMesh";
 import {font} from "./font";
+import {VOXEL_SIZE} from "../params";
 
-function createChar(shape, color, pixelSize, align = "left") {
+function createChar(shape, size: "primary" | "secondary", align = "left") {
     const charGroup = new THREE.Group();
     shape.map((row, y) => {
         (align === "left" ? row : row.toReversed()).map((pixel, x) => {
             if (pixel) {
-                const voxel = createVoxel(color, pixelSize)
-                voxel.position.set(x * pixelSize, -y * pixelSize, 0);
+                const voxel = createVoxel(size)
+                voxel.position.set(x * VOXEL_SIZE[size], -y * VOXEL_SIZE[size], 0);
                 charGroup.add(voxel);
             }
         })
@@ -16,13 +17,13 @@ function createChar(shape, color, pixelSize, align = "left") {
     return charGroup
 }
 
-export function createWord(word: string, colorMap, pixelSize, align = "left") {
+export function createWord(word: string, size: "primary" | "secondary", align = "left") {
     const shapes = word.split('').map(char => font[char]);
     const wordGroup = new THREE.Group();
     let offset = 0;
     (align === "left" ? shapes : shapes.toReversed()).forEach((shape, i) => {
-        const charGroup = createChar(shape, colorMap(i), pixelSize, align);
-        charGroup.position.set(offset * pixelSize, 0, 0);
+        const charGroup = createChar(shape, size, align);
+        charGroup.position.set(offset * VOXEL_SIZE[size], 0, 0);
         wordGroup.add(charGroup);
         offset += shape[0].length + 1;
     })

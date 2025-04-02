@@ -5,7 +5,7 @@ import {range} from "three/tsl";
 export class Board {
 
     /*
-    The board is a 3D matrix of colors. Each cell can be null or a color.
+    The board is a 3D matrix of colors. Each cell can be null or a tetramino type.
     The first dimension is the Y axis (vertical), the second is the X axis (horizontal) and the third is the Z axis (horizontal).
      */
     constructor() {
@@ -24,11 +24,11 @@ export class Board {
      * Applies the given callback to each existing block of the board.
      * @param callback
      */
-    forEachBlock(callback: (color: string, y: number, x: number, z: number) => void) {
+    forEachBlock(callback: (type: string, y: number, x: number, z: number) => void) {
         this._matrix.forEach((layer, y) =>
             layer.forEach((xRow, x) =>
-                xRow.forEach((color, z) => {
-                        if (color) callback(color, y, x, z)
+                xRow.forEach((type, z) => {
+                        if (type) callback(type, y, x, z)
                     }
                 )
             )
@@ -41,7 +41,7 @@ export class Board {
      */
     fixPiece(piece: Piece) {
         piece.forEachBlock((y, x, z) => {
-            this._matrix[y][x][z] = piece.color
+            this._matrix[y][x][z] = piece.type
         })
     }
 

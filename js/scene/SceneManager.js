@@ -1,56 +1,57 @@
-import {COLS, ROWS, BLOCK_SIZE} from "../params";
+import {COLS, ROWS, MINO_SIZE} from "../params";
 import * as THREE from "three";
-import {createBlock, createBloomingBlock, createGhostBlock} from "./createVoxel";
-import {createShadow} from "./createShadow";
+import {
+    createMino,
+    createMinoShade,
+    createBloomingMino,
+    createGhostMino,
+    createTetrionWall,
+    tetrionFloor
+} from "./createMesh";
 import {createHoldHUD, createLevelHUD, createScoreHUD} from "./createHUD";
 import type {Game} from "../gameplay/Game";
 import type {Progress} from "../gameplay/Progress";
+import {cuttingShadowMaterial} from "./materials";
 
 export class SceneManager {
-
-    #GRID_COLOR = "#8797a4"
 
     #config(scene: THREE.Scene) {
         scene.background = new THREE.Color("#b5c5d2");
 
-        const yGrid = new THREE.GridHelper(COLS * BLOCK_SIZE, COLS, this.#GRID_COLOR, this.#GRID_COLOR);
+        const yGrid = tetrionFloor
         yGrid.position.set(
-            BLOCK_SIZE / 2,
-            -(ROWS + BLOCK_SIZE) / 2,
-            BLOCK_SIZE / 2
+            MINO_SIZE / 2,
+            -(ROWS + MINO_SIZE) / 2,
+            MINO_SIZE / 2
         )
 
-        const geometry = new THREE.PlaneGeometry(COLS * BLOCK_SIZE, ROWS * BLOCK_SIZE);
-        const edges = new THREE.EdgesGeometry(geometry);
-        const material = new THREE.LineBasicMaterial({ color: this.#GRID_COLOR, transparent: true, opacity: 0.5 });
-
-        const xlGrid = new THREE.LineSegments(edges, material);
+        const xlGrid = createTetrionWall();
         xlGrid.rotateY(THREE.MathUtils.degToRad(90));
         xlGrid.position.set(
-            ((COLS + 1) * BLOCK_SIZE) / 2,
-            -BLOCK_SIZE / 2,
-            BLOCK_SIZE / 2
+            ((COLS + 1) * MINO_SIZE) / 2,
+            -MINO_SIZE / 2,
+            MINO_SIZE / 2
         );
-        const xrGrid = new THREE.LineSegments(edges, material);
+        const xrGrid = createTetrionWall();
         xrGrid.rotateY(THREE.MathUtils.degToRad(-90));
         xrGrid.position.set(
-            -((COLS - 1) * BLOCK_SIZE) / 2,
-            -BLOCK_SIZE / 2,
-            BLOCK_SIZE / 2
+            -((COLS - 1) * MINO_SIZE) / 2,
+            -MINO_SIZE / 2,
+            MINO_SIZE / 2
         );
 
-        const zlGrid = new THREE.LineSegments(edges, material);
+        const zlGrid = createTetrionWall();
         zlGrid.position.set(
-            BLOCK_SIZE / 2,
-            -BLOCK_SIZE / 2,
-            -((COLS - 1) * BLOCK_SIZE) / 2
+            MINO_SIZE / 2,
+            -MINO_SIZE / 2,
+            -((COLS - 1) * MINO_SIZE) / 2
         );
-        const zrGrid = new THREE.LineSegments(edges, material);
+        const zrGrid = createTetrionWall();
         zrGrid.rotateY(THREE.MathUtils.degToRad(180));
         zrGrid.position.set(
-            BLOCK_SIZE / 2,
-            -BLOCK_SIZE / 2,
-            ((COLS + 1) * BLOCK_SIZE) / 2
+            MINO_SIZE / 2,
+            -MINO_SIZE / 2,
+            ((COLS + 1) * MINO_SIZE) / 2
         );
 
         scene.add(yGrid);
@@ -93,23 +94,23 @@ export class SceneManager {
 
         if (this._cutter.below) {
             const belowCutShadow = new THREE.Mesh(
-                new THREE.PlaneGeometry(COLS * BLOCK_SIZE, game.piece.planePosition * BLOCK_SIZE),
-                new THREE.MeshBasicMaterial({color: "#808080"})
+                new THREE.PlaneGeometry(COLS * MINO_SIZE, game.piece.planePosition * MINO_SIZE),
+                cuttingShadowMaterial
             );
             if (game.piece.plane === "x") {
                 belowCutShadow.rotateZ(THREE.MathUtils.degToRad(90));
                 belowCutShadow.rotateY(THREE.MathUtils.degToRad(90));
                 belowCutShadow.position.set(
-                    (game.piece.planePosition - COLS + 1) * BLOCK_SIZE / 2,
-                    -(ROWS + BLOCK_SIZE) / 2,
-                    BLOCK_SIZE / 2
+                    (game.piece.planePosition - COLS + 1) * MINO_SIZE / 2,
+                    -(ROWS + MINO_SIZE) / 2,
+                    MINO_SIZE / 2
                 )
             } else {
                 belowCutShadow.rotateX(THREE.MathUtils.degToRad(-90));
                 belowCutShadow.position.set(
-                    BLOCK_SIZE / 2,
-                    -(ROWS + BLOCK_SIZE) / 2,
-                    (game.piece.planePosition - COLS + 1) * BLOCK_SIZE / 2
+                    MINO_SIZE / 2,
+                    -(ROWS + MINO_SIZE) / 2,
+                    (game.piece.planePosition - COLS + 1) * MINO_SIZE / 2
                 )
             }
             this._scene.add(belowCutShadow);
@@ -117,74 +118,75 @@ export class SceneManager {
 
         if (this._cutter.above) {
             const aboveCutShadow = new THREE.Mesh(
-                new THREE.PlaneGeometry(COLS * BLOCK_SIZE, (COLS - 1 - game.piece.planePosition) * BLOCK_SIZE),
-                new THREE.MeshBasicMaterial({color: "#808080"})
+                new THREE.PlaneGeometry(COLS * MINO_SIZE, (COLS - 1 - game.piece.planePosition) * MINO_SIZE),
+                cuttingShadowMaterial
             );
             if (game.piece.plane === "x") {
                 aboveCutShadow.rotateZ(THREE.MathUtils.degToRad(90));
                 aboveCutShadow.rotateY(THREE.MathUtils.degToRad(90));
                 aboveCutShadow.position.set(
-                    (game.piece.planePosition + 2) * BLOCK_SIZE / 2,
-                    -(ROWS + BLOCK_SIZE) / 2,
-                    BLOCK_SIZE / 2,
+                    (game.piece.planePosition + 2) * MINO_SIZE / 2,
+                    -(ROWS + MINO_SIZE) / 2,
+                    MINO_SIZE / 2,
                 )
             } else {
                 aboveCutShadow.rotateX(THREE.MathUtils.degToRad(-90));
                 aboveCutShadow.position.set(
-                    BLOCK_SIZE / 2,
-                    -(ROWS + BLOCK_SIZE) / 2,
-                    (game.piece.planePosition + 2) * BLOCK_SIZE / 2
+                    MINO_SIZE / 2,
+                    -(ROWS + MINO_SIZE) / 2,
+                    (game.piece.planePosition + 2) * MINO_SIZE / 2
                 )
             }
             this._scene.add(aboveCutShadow);
         }
 
-        game.board.forEachBlock((color, y, x, z) => {
-            if (isCutOut(y, x, z)) return;
-            const cube = color === "DELETE" ? createBloomingBlock() : createBlock(color)
-            cube.position.set(translateX(x), translateY(y), translateZ(z));
-            this._scene.add(cube);
+        game.board.forEachBlock((type, y, x, z) => {
+            if (isCutOut(y, x, z))
+                return;
+            const mino = type === "DELETE" ? createBloomingMino() : createMino(type)
+            mino.position.set(translateX(x), translateY(y), translateZ(z));
+            this._scene.add(mino);
         })
 
         game.ghostPiece.forEachBlock((y, x, z) => {
-            const cube = createGhostBlock(game.ghostPiece.color)
-            cube.position.set(translateX(x), translateY(y), translateZ(z));
-            this._scene.add(cube)
+            const mino = createGhostMino(game.ghostPiece.type)
+            mino.position.set(translateX(x), translateY(y), translateZ(z));
+            this._scene.add(mino)
         })
 
         game.piece.forEachBlock((y, x, z) => {
-            const cube = createBlock(game.piece.color)
-            cube.position.set(translateX(x), translateY(y), translateZ(z));
-            this._scene.add(cube);
+            const mino = createMino(game.piece.type)
+            mino.position.set(translateX(x), translateY(y), translateZ(z));
+            this._scene.add(mino);
 
-            const xrShadow = createShadow(game.piece.color)
-            const xlShadow = createShadow(game.piece.color)
-            const zlShadow = createShadow(game.piece.color)
-            const zrShadow = createShadow(game.piece.color)
+            const xrShadow = createMinoShade(game.piece.type)
+            const xlShadow = createMinoShade(game.piece.type)
+            const zlShadow = createMinoShade(game.piece.type)
+            const zrShadow = createMinoShade(game.piece.type)
 
             xrShadow.rotateY(THREE.MathUtils.degToRad(-90))
             xlShadow.rotateY(THREE.MathUtils.degToRad(90))
             zrShadow.rotateY(THREE.MathUtils.degToRad(180))
 
             xrShadow.position.set(
-                ((COLS + 1) * BLOCK_SIZE) / 2,
+                ((COLS + 1) * MINO_SIZE) / 2,
                 translateY(y),
                 translateZ(z)
             )
             xlShadow.position.set(
-                -((COLS - 1) * BLOCK_SIZE) / 2,
+                -((COLS - 1) * MINO_SIZE) / 2,
                 translateY(y),
                 translateZ(z)
             )
             zlShadow.position.set(
                 translateX(x),
                 translateY(y),
-                -((COLS - 1) * BLOCK_SIZE) / 2
+                -((COLS - 1) * MINO_SIZE) / 2
             )
             zrShadow.position.set(
                 translateX(x),
                 translateY(y),
-                ((COLS + 1) * BLOCK_SIZE) / 2
+                ((COLS + 1) * MINO_SIZE) / 2
             )
 
             this._scene.add(xrShadow);
@@ -195,28 +197,28 @@ export class SceneManager {
 
         const scoreHUD = createScoreHUD(progress.score)
         scoreHUD.position.set(
-            -(COLS) * BLOCK_SIZE / 2,
-            (ROWS - 3) * BLOCK_SIZE / 2,
-            -(COLS - 1) * BLOCK_SIZE / 2
+            -(COLS) * MINO_SIZE / 2,
+            (ROWS - 3) * MINO_SIZE / 2,
+            -(COLS - 1) * MINO_SIZE / 2
         );
         const levelHUD = createLevelHUD(progress.level)
         levelHUD.position.set(
-            -(COLS) * BLOCK_SIZE / 2,
-            (ROWS / 2) * BLOCK_SIZE / 2,
-            -(COLS - 1) * BLOCK_SIZE / 2
+            -(COLS) * MINO_SIZE / 2,
+            (ROWS / 2) * MINO_SIZE / 2,
+            -(COLS - 1) * MINO_SIZE / 2
         );
         this._scene.add(scoreHUD);
         this._scene.add(levelHUD);
 
         const holdHUD = createHoldHUD(
             game.hold.piece.shape,
-            game.hold.piece.color,
+            game.hold.piece.type,
             game.piece.isHoldable
         )
         holdHUD.position.set(
-            (COLS + 1) * BLOCK_SIZE / 2,
-            (ROWS - 3) * BLOCK_SIZE / 2,
-            (COLS + 2) * BLOCK_SIZE / 2
+            (COLS + 1) * MINO_SIZE / 2,
+            (ROWS - 3) * MINO_SIZE / 2,
+            (COLS + 2) * MINO_SIZE / 2
         )
         this._scene.add(holdHUD);
     }
@@ -224,6 +226,6 @@ export class SceneManager {
 }
 
 // translation from the Board coord system to the Scene coord system
-const translateY = (y) => -(y + 1 - (ROWS / 2)) * BLOCK_SIZE;
-const translateX = (x) => (x + 1 - (COLS / 2)) * BLOCK_SIZE;
-const translateZ = (z) => (z + 1 - (COLS / 2)) * BLOCK_SIZE
+const translateY = (y) => -(y + 1 - (ROWS / 2)) * MINO_SIZE;
+const translateX = (x) => (x + 1 - (COLS / 2)) * MINO_SIZE;
+const translateZ = (z) => (z + 1 - (COLS / 2)) * MINO_SIZE

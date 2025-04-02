@@ -5,13 +5,12 @@ import {wallKickData} from "../pieces/wallKickData";
 
 export class Piece {
     constructor(plane: "x" | "z" = "z") {
-        const {type, shape, color} = generateRandomPiece()
+        const {type, shape} = generateRandomPiece()
         this._type = type;
         this._shape = shape;
         this._rotationState = "0";
         this._position = initPosition(plane, shape);
         this._plane = plane;
-        this._color = color;
         this._prev = {
             position: copy(this._position),
             rotationState: copy(this._rotationState),
@@ -19,10 +18,6 @@ export class Piece {
             plane: copy(this._plane)
         };
         this._holdable = true;
-    }
-
-    get color() {
-        return this._color;
     }
 
     get shape() {
@@ -52,19 +47,18 @@ export class Piece {
         piece._shape = copy(this._shape);
         piece._position = copy(this._position);
         piece._prev = copy(this._prev);
-        piece._color = this._color;
+        piece._type = this._type;
         return piece;
     }
 
     /**
-     * @param hold {{type, shape, color}}
+     * @param hold {{type, shape}}
      */
     replace(hold) {
         if (!this._holdable)
             throw new Error("Piece is not holdable");
         this._type = hold.type;
         this._shape = hold.shape;
-        this._color = hold.color;
         this._rotationState = "0";
         this._position = initPosition(this._plane, hold.shape);
         this._prev = {
