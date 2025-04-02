@@ -35,7 +35,7 @@ export function createHoldHUD(shape: number[][], type: string, available: boolea
     shape.forEach((row, y) => {
         row.forEach((exists, x) => {
             if (exists) {
-                const cube = createMino(available ? type : "#cfcfcf");
+                const cube = createMino(available ? type : "disabled");
                 cube.position.set(x, -y, 0);
                 holdGroup.add(cube);
             }

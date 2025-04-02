@@ -40,6 +40,11 @@ export const minoMaterials = {
         x: new THREE.MeshBasicMaterial({color: tetrimino.Z.color}),
         y: new THREE.MeshBasicMaterial({color: adj(tetrimino.Z.color, k)}),
         z: new THREE.MeshBasicMaterial({color: adj(tetrimino.Z.color, -k)})
+    },
+    disabled: {
+        x: new THREE.MeshBasicMaterial({color: "#cfcfcf"}),
+        y: new THREE.MeshBasicMaterial({color: adj("#cfcfcf", k)}),
+        z: new THREE.MeshBasicMaterial({color: adj("#cfcfcf", -k)})
     }
 }
 
