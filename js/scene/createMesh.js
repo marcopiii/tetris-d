@@ -1,6 +1,14 @@
 import * as THREE from "three";
-import {minoGeometry, minoShadeGeometry, voxelGeometries} from "./geometries";
-import {bloomingMaterial, minoMaterials, minoShadeMaterials, minoTransMaterials, voxelMaterials} from "./materials";
+import {minoGeometry, minoShadeGeometry, tetrionWallGeometry, voxelGeometries} from "./geometries";
+import {
+  bloomingMaterial,
+  minoMaterials,
+  minoShadeMaterials,
+  minoTransMaterials,
+  tetrionMaterial,
+  voxelMaterials
+} from "./materials";
+import {COLS, MINO_SIZE} from "../params";
 
 export function createMino(type) {
   const { x, y, z } = minoMaterials[type]
@@ -22,4 +30,12 @@ export function createMinoShade(type) {
 export function createVoxel(size: "primary" | "secondary") {
   const { x, y, z, } = voxelMaterials[size]
   return new THREE.Mesh(voxelGeometries[size], [x, x, y, y, z, z]);
+}
+
+export const tetrionFloor = new THREE.GridHelper(
+    COLS * MINO_SIZE, COLS, "#8797a4", "#8797a4"
+);
+
+export function createTetrionWall() {
+  return new THREE.LineSegments(tetrionWallGeometry, tetrionMaterial);
 }
