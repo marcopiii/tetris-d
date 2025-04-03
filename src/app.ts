@@ -108,8 +108,6 @@ function controllerHandler(event: GamepadEvent, btn: GamepadButton) {
   }
 }
 
-document.getElementById('start-btn')!.addEventListener('click', onStart);
-
 document.addEventListener('keydown', keyboardHandler);
 document.addEventListener('keyup', keyboardHandler);
 
