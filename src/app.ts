@@ -1,15 +1,13 @@
-import * as THREE from 'three';
-import { EffectComposer, RenderPass, UnrealBloomPass } from 'three/addons';
 import {
   Button as GamepadButton,
   Event as GamepadEvent,
   GamepadManager,
 } from './gamepad';
 import { Game, Clock, Progress } from './gameplay';
+import { RenderManager } from './render';
 import { SceneManager } from './scene/SceneManager';
 import { CameraManager } from './camera';
 import { Command } from './types';
-
 import './style.css';
 
 const container = document.getElementById('scene-container')!;
@@ -20,28 +18,18 @@ const game = new Game();
 
 const sceneManager = new SceneManager();
 const cameraManager = new CameraManager(container);
-const gamepadManager = new GamepadManager(controllerHandler);
-
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(container.clientWidth, container.clientHeight);
-container.appendChild(renderer.domElement);
-
-const composer = new EffectComposer(renderer);
-const renderPass = new RenderPass(sceneManager.scene, cameraManager.camera);
-composer.addPass(renderPass);
-
-const bloomPass = new UnrealBloomPass(
-  new THREE.Vector2(container.clientWidth, container.clientHeight),
-  0.3,
-  0.5,
-  1,
+const renderManager = new RenderManager(
+  container,
+  sceneManager.scene,
+  cameraManager.camera,
 );
-composer.addPass(bloomPass);
+
+const gamepadManager = new GamepadManager(controllerHandler);
 
 function animate() {
   requestAnimationFrame(animate);
   cameraManager.tween.update();
-  composer.render();
+  renderManager.render();
   gamepadManager.poll();
 }
 
