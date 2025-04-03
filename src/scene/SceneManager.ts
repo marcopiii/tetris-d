@@ -10,7 +10,7 @@ import {
 } from './createMesh';
 import { createHoldHUD, createLevelHUD, createScoreHUD } from './createHUD';
 import type { Game, Progress } from '../gameplay';
-import { cuttingShadowMaterial } from './materials';
+import { cuttingShadowMaterial } from './assets/materials';
 import { translateX, translateY, translateZ } from './utils';
 
 export class SceneManager {

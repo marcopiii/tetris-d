@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { adjustBrightness as adj } from './adjustBrightness';
-import { colors } from '../theme';
+import { adjustBrightness as adj } from '../utils';
+import { colors } from '../../theme';
 
 const k = 20;
 const j = 80;

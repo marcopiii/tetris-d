@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { COLS, MINO_SIZE, ROWS, VOXEL_SIZE } from '../params';
+import { COLS, MINO_SIZE, ROWS, VOXEL_SIZE } from '../../params';
 
 /** geometry used to represent a mino */
 export const minoGeometry = new THREE.BoxGeometry(
