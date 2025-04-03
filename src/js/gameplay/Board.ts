@@ -4,7 +4,7 @@ import {BoardBlock} from "./types";
 
 export class Board {
 
-    private _matrix: BoardBlock[][][];
+    private _matrix: (BoardBlock | null)[][][];
 
     constructor() {
         this._matrix = Array(ROWS).fill(null).map(
@@ -14,7 +14,7 @@ export class Board {
         );
     }
 
-    blockAt(y: number, x: number, z: number): BoardBlock {
+    blockAt(y: number, x: number, z: number): BoardBlock | null {
         return this._matrix[y][x][z];
     }
 
@@ -22,7 +22,7 @@ export class Board {
      * Applies the given callback to each existing block of the board.
      * @param callback
      */
-    forEachBlock(callback: (type: string, y: number, x: number, z: number) => void) {
+    forEachBlock(callback: (type: BoardBlock, y: number, x: number, z: number) => void) {
         this._matrix.forEach((layer, y) =>
             layer.forEach((xRow, x) =>
                 xRow.forEach((type, z) => {

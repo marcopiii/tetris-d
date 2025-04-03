@@ -1,13 +1,18 @@
-import {MINO_SIZE} from "./params";
 import * as THREE from "three";
-import TWEEN from "@tweenjs/tween.js";
+import TWEEN, {Group as TWEENGroup} from "@tweenjs/tween.js";
+import {MINO_SIZE} from "./params";
 import {Vector3} from "three";
+import {CameraConfiguration, Position} from "./types";
 
 export class CameraManager {
 
-    #frustumSize = 25;
+    private readonly _camera: THREE.Camera;
+    private readonly _tweenGroup: TWEENGroup;
+    private _position: Position
 
-    #config = {
+    private frustumSize = 25;
+
+    config: Record<Position, CameraConfiguration> = {
         "xR_zR": {
             position: new Vector3(-10, 5, 10 + MINO_SIZE),
             lookAt: new Vector3(0, 0, MINO_SIZE)
@@ -47,14 +52,14 @@ export class CameraManager {
         this._tweenGroup = new TWEEN.Group();
         this._position = "xR_zR"
         this._camera = new THREE.OrthographicCamera(
-            - this.#frustumSize * aspect / 2,
-            this.#frustumSize * aspect / 2,
-            this.#frustumSize / 2,
-            - this.#frustumSize / 2
+            - this.frustumSize * aspect / 2,
+            this.frustumSize * aspect / 2,
+            this.frustumSize / 2,
+            - this.frustumSize / 2
         );
-        const initPosition = this.#config[this._position];
+        const initPosition = this.config[this._position];
         this._camera.position.set(initPosition.position.x, initPosition.position.y, initPosition.position.z);
-        this._camera.lookAt(this.#config[this._position].lookAt);
+        this._camera.lookAt(this.config[this._position].lookAt);
     }
 
     get camera() {
@@ -80,7 +85,7 @@ export class CameraManager {
                 this._position = direction === "right" ? "xR_zR" : "xL_zL";
                 break;
         }
-        const target = this.#config[this._position];
+        const target = this.config[this._position];
         new TWEEN.Tween(this._camera.position, this._tweenGroup)
             .to(target.position, 500)
             .easing(TWEEN.Easing.Exponential.Out)

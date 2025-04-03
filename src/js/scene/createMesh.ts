@@ -11,7 +11,7 @@ import {
 import {COLS, MINO_SIZE} from "../params";
 import { Name as Tetrimino} from "../tetrimino"
 
-export function createMino(type: Tetrimino) {
+export function createMino(type: Tetrimino | "disabled") {
   const { x, y, z } = minoMaterials[type]
   return new THREE.Mesh(minoGeometry, [x, x, y, y, z, z]);
 }

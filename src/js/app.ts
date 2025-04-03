@@ -1,33 +1,31 @@
-import {Clock} from "./gameplay/Clock";
-import {Progress} from "./gameplay/Progress";
-import {Game} from "./gameplay/Game.js";
+import {Button as GamepadButton, Event as GamepadEvent, GamepadManager} from "./gamepad";
+import {Game, Clock, Progress} from "./gameplay";
 import {SceneManager} from "./scene/SceneManager.js";
 import {CameraManager} from "./CameraManager.js";
-import {GamepadManager} from "./GamepadManager.js";
 import * as THREE from "three";
 import {EffectComposer, RenderPass, UnrealBloomPass} from "three/addons";
+import {Command} from "./types";
 
-
-const ctnr = document.getElementById('scene-container');
+const container = document.getElementById('scene-container')!;
 
 const clock = new Clock(processGameFrame);
 const progress = new Progress();
 const game = new Game();
 
 const sceneManager = new SceneManager();
-const cameraManager = new CameraManager(ctnr);
+const cameraManager = new CameraManager(container);
 const gamepadManager = new GamepadManager(controllerHandler)
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(ctnr.clientWidth, ctnr.clientHeight);
-ctnr.appendChild(renderer.domElement);
+renderer.setSize(container.clientWidth, container.clientHeight);
+container.appendChild(renderer.domElement);
 
 const composer = new EffectComposer(renderer);
 const renderPass = new RenderPass(sceneManager.scene, cameraManager.camera);
 composer.addPass(renderPass);
 
 const bloomPass = new UnrealBloomPass(
-    new THREE.Vector2(ctnr.clientWidth, ctnr.clientHeight),
+    new THREE.Vector2(container.clientWidth, container.clientHeight),
     0.3,
     0.5,
     1
@@ -58,7 +56,7 @@ function onStart() {
     clock.start();
 }
 
-function commandHandler(command: "hold" | "rotateL" | "rotateR" | "shiftL" | "shiftR" | "shiftF" | "shiftB" | "hardDrop") {
+function commandHandler(command: Command) {
     if (!clock.isRunning)
         return;
     const sceneNeedsUpdate = game.tryMove(command);
@@ -74,7 +72,7 @@ function cuttingHandler(action: "start" | "end", side: "below" | "above") {
     sceneManager.update(game, progress);
 }
 
-function keyboardHandler(event) {
+function keyboardHandler(event: KeyboardEvent) {
     if (event.type === 'keydown') {
         if (event.key === 'w') commandHandler('hold')
         if (event.key === 'ArrowLeft')
@@ -97,8 +95,8 @@ function keyboardHandler(event) {
 }
 
 function controllerHandler(
-    event: "press" | "release",
-    btn: "start" | "padR" | "padL" | "padU" | "padD" | "X" | "B" | "A" | "Y" | "LT" | "RT"
+    event: GamepadEvent,
+    btn: GamepadButton
 ) {
     if (event === "press") {
         if (btn === "start") clock.toggle();
@@ -121,7 +119,7 @@ function controllerHandler(
     }
 }
 
-document.getElementById('start-btn').addEventListener('click', onStart);
+document.getElementById('start-btn')!.addEventListener('click', onStart);
 
 document.addEventListener('keydown', keyboardHandler);
 document.addEventListener('keyup', keyboardHandler);

@@ -4,4 +4,4 @@ export type Plane = "x" | "z";
 
 export type Coord = { x: number, y: number, z: number}
 
-export type BoardBlock = Tetrimino | "DELETE" | null;
+export type BoardBlock = Tetrimino | "DELETE";
