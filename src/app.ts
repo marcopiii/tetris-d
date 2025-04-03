@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+import { EffectComposer, RenderPass, UnrealBloomPass } from 'three/addons';
 import {
   Button as GamepadButton,
   Event as GamepadEvent,
@@ -5,9 +7,7 @@ import {
 } from './gamepad';
 import { Game, Clock, Progress } from './gameplay';
 import { SceneManager } from './scene/SceneManager';
-import { CameraManager } from './CameraManager';
-import * as THREE from 'three';
-import { EffectComposer, RenderPass, UnrealBloomPass } from 'three/addons';
+import { CameraManager } from './camera';
 import { Command } from './types';
 
 import './style.css';
