@@ -4,6 +4,7 @@ import {
   GamepadManager,
 } from './gamepad';
 import { Game, Clock, Progress } from './gameplay';
+import { PlayerManager } from './player';
 import { RenderManager } from './render';
 import { SceneManager } from './scene';
 import { CameraManager } from './camera';
@@ -23,19 +24,18 @@ const renderManager = new RenderManager(
   cameraManager.camera,
 );
 
-let currentPlayer: 'P1' | 'P2' = 'P2';
+const playerManager = new PlayerManager();
 const progressP1 = new Progress();
 const progressP2 = new Progress();
-
-const gamepadManagerP1 = new GamepadManager(0, controllerHandler);
-const gamepadManagerP2 = new GamepadManager(1, controllerHandler);
+const gamepadP1 = new GamepadManager(0, controllerHandler);
+const gamepadP2 = new GamepadManager(1, controllerHandler);
 
 function animate() {
   requestAnimationFrame(animate);
   cameraManager.tween.update();
   renderManager.render();
-  gamepadManagerP1.poll();
-  gamepadManagerP2.poll();
+  gamepadP1.poll();
+  gamepadP2.poll();
 }
 
 function processGameFrame() {
@@ -51,15 +51,9 @@ function processGameFrame() {
 }
 
 function onNewPiece() {
-  if (currentPlayer === 'P1') {
-    currentPlayer = 'P2';
-    gamepadManagerP1.active = false;
-    gamepadManagerP2.active = true;
-  } else {
-    currentPlayer = 'P1';
-    gamepadManagerP1.active = true;
-    gamepadManagerP2.active = false;
-  }
+  playerManager.switchPlayer();
+  gamepadP1.active = playerManager.activePlayer === 'P1';
+  gamepadP2.active = playerManager.activePlayer === 'P2';
 }
 
 function onStart() {
