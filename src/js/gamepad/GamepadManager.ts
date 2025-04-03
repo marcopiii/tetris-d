@@ -1,13 +1,17 @@
-export class GamepadManager {
+import {Button, Event} from "./types";
 
-    constructor(handler: (event: "press" | "release", button: "start" | "padL" | "padD" | "padR" | "padU" | "A" | "B" | "X" | "LB" | "RB" | "LT" | "RT") => void) {
+export class GamepadManager {
+    private readonly _handler: (event: Event, button: Button) => void;
+    private _gamepadIndex: number | undefined;
+    private _buffer: readonly GamepadButton[];
+
+    constructor(handler: (event: Event, button: Button) => void) {
         this._handler = handler;
         this._gamepadIndex = undefined;
         this._buffer = [];
     }
 
     connect(gamepad: Gamepad) {
-        console.log("connecting gamepad", gamepad);
         this._gamepadIndex = gamepad.index;
     }
 
@@ -20,6 +24,9 @@ export class GamepadManager {
             return;
 
         const gamepad = navigator.getGamepads()[this._gamepadIndex];
+
+        if (!gamepad)
+            return;
 
         gamepad.buttons.forEach((button, i) => {
             const buttonCode = buttonMapping(i)
@@ -35,7 +42,7 @@ export class GamepadManager {
 
 }
 
-function buttonMapping(i: number) {
+function buttonMapping(i: number): Button | undefined {
     switch (i) {
         case 0: return "A";
         case 1: return "B";
