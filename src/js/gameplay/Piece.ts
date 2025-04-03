@@ -1,11 +1,26 @@
 import {COLS} from "../params";
-import {generateRandomPiece} from "../pieces/generateRandomPiece";
+import {Name as Tetrimino, getRandomTetrimino, Shape, RotationState, wallKickData} from "../tetrimino";
 import {copy} from "../utils";
-import {wallKickData} from "../pieces/wallKickData";
+import {Coord, Plane} from "./types";
 
 export class Piece {
-    constructor(plane: "x" | "z" = "z") {
-        const {type, shape} = generateRandomPiece()
+
+    private _type: Tetrimino;
+    private _plane: Plane;
+    private _position: Coord;
+    private _shape: Shape;
+    private _rotationState: RotationState;
+    private _holdable: boolean;
+
+    private _prev: {
+        position: Coord;
+        rotationState: RotationState;
+        shape: Shape;
+        plane: Plane;
+    }
+
+    constructor(plane: Plane = "z") {
+        const {type, shape} = getRandomTetrimino()
         this._type = type;
         this._shape = shape;
         this._rotationState = "0";
@@ -24,7 +39,7 @@ export class Piece {
         return this._shape;
     }
 
-    get type() {
+    get type(): Tetrimino {
         return this._type;
     }
 
@@ -54,7 +69,7 @@ export class Piece {
     /**
      * @param hold {{type, shape}}
      */
-    replace(hold) {
+    replace(hold: {type: Tetrimino, shape: Shape}) {
         if (!this._holdable)
             throw new Error("Piece is not holdable");
         this._type = hold.type;
@@ -74,7 +89,7 @@ export class Piece {
      * Applies the given callback to each existing block of the piece.
      * @param callback - The callback to apply to each block, given its coordinates in the board.
      */
-    forEachBlock(callback: (number, number, number) => void) {
+    forEachBlock(callback: (y: number, x: number, z: number) => void) {
         this._shape.forEach((layer, dy) =>
             layer.forEach((exists, k) => {
                 if (!exists) return;
@@ -89,7 +104,7 @@ export class Piece {
         );
     }
 
-    #checkpoint() {
+    private checkpoint() {
         this._prev = {
             position: copy(this._position),
             shape: copy(this._shape),
@@ -106,12 +121,12 @@ export class Piece {
     }
 
     drop() {
-        this.#checkpoint();
+        this.checkpoint();
         this._position.y++;
     }
 
     shiftRight() {
-        this.#checkpoint();
+        this.checkpoint();
         switch (this._plane) {
             case "x":
                 this._position.z++;
@@ -123,7 +138,7 @@ export class Piece {
     }
 
     shiftLeft() {
-        this.#checkpoint();
+        this.checkpoint();
         switch (this._plane) {
             case "x":
                 this._position.z--;
@@ -135,7 +150,7 @@ export class Piece {
     }
 
     shiftForward() {
-        this.#checkpoint();
+        this.checkpoint();
         switch (this._plane) {
             case "x":
                 this._position.x--;
@@ -147,7 +162,7 @@ export class Piece {
     }
 
     shiftBackward() {
-        this.#checkpoint();
+        this.checkpoint();
         switch (this._plane) {
             case "x":
                 this._position.x++;
@@ -167,16 +182,16 @@ export class Piece {
     }
 
     rotateRight(wallKickTest: number) {
-        this.#checkpoint();
+        this.checkpoint();
 
-        let finalRotationState;
+        let finalRotationState: RotationState;
         if (this._rotationState === "0") finalRotationState = "R"
         else if (this._rotationState === "R") finalRotationState = "2"
         else if (this._rotationState === "2") finalRotationState = "L"
-        else if (this._rotationState === "L") finalRotationState = "0"
+        else finalRotationState = "0"
 
         const wallKick = wallKickData(this._type)
-            .find(wkd => wkd.initial === this._rotationState && wkd.final === finalRotationState)
+            .find(wkd => wkd.initial === this._rotationState && wkd.final === finalRotationState)!
             .tests[wallKickTest];
 
         this._shape = this._shape[0].map((_, i) => this._shape.map(row => row[i]).reverse())
@@ -185,16 +200,16 @@ export class Piece {
     }
 
     rotateLeft(wallKickTest: number) {
-        this.#checkpoint();
+        this.checkpoint();
 
-        let finalRotationState;
+        let finalRotationState: RotationState;
         if (this._rotationState === "0") finalRotationState = "L"
         else if (this._rotationState === "L") finalRotationState = "2"
         else if (this._rotationState === "2") finalRotationState = "R"
-        else if (this._rotationState === "R") finalRotationState = "0"
+        else finalRotationState = "0"
 
         const wallKick = wallKickData(this._type)
-            .find(wkd => wkd.initial === this._rotationState && wkd.final === finalRotationState)
+            .find(wkd => wkd.initial === this._rotationState && wkd.final === finalRotationState)!
             .tests[wallKickTest];
 
         this._shape = this._shape[0].map((_, i) => this._shape.map(row => row[row.length - 1 - i]))
@@ -204,7 +219,7 @@ export class Piece {
 
 }
 
-function initPosition(plane, shape) {
+function initPosition(plane: Plane, shape: Shape) {
     return plane === "x"
         ? {
             x: Math.floor((COLS - 1) / 2),

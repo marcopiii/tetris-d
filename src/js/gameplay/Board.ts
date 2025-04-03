@@ -1,22 +1,20 @@
 import {COLS, ROWS} from "../params";
-import type {Piece} from "./3DPiece";
-import {range} from "three/tsl";
+import type {Piece} from "./Piece";
+import {BoardBlock} from "./types";
 
 export class Board {
 
-    /*
-    The board is a 3D matrix of colors. Each cell can be null or a tetramino type.
-    The first dimension is the Y axis (vertical), the second is the X axis (horizontal) and the third is the Z axis (horizontal).
-     */
+    private _matrix: BoardBlock[][][];
+
     constructor() {
-        this._matrix = Array(ROWS).fill().map(
-            () => Array(COLS).fill().map(
+        this._matrix = Array(ROWS).fill(null).map(
+            () => Array(COLS).fill(null).map(
                 () => Array(COLS).fill(null)
             )
         );
     }
 
-    blockAt(y: number, x: number, z: number) {
+    blockAt(y: number, x: number, z: number): BoardBlock {
         return this._matrix[y][x][z];
     }
 
@@ -45,7 +43,7 @@ export class Board {
         })
     }
 
-    #deleteBlock(y: number, x: number, z: number) {
+    private deleteBlock(y: number, x: number, z: number) {
         for (let dy = y; dy > 0; dy--) {
             this._matrix[dy][x][z] = this._matrix[dy - 1][x][z];
         }
@@ -95,7 +93,7 @@ export class Board {
                 let y = ROWS - 1;
                 while (y >= 0) {
                     if (this._matrix[y][x][z] === "DELETE") {
-                        this.#deleteBlock(y, x, z);
+                        this.deleteBlock(y, x, z);
                         clearedLines = true;
                     } else {
                         y--;
@@ -107,8 +105,8 @@ export class Board {
     }
 
     clean() {
-        this._matrix = Array(ROWS).fill().map(
-            () => Array(COLS).fill().map(
+        this._matrix = Array(ROWS).fill(null).map(
+            () => Array(COLS).fill(null).map(
                 () => Array(COLS).fill(null)
             )
         );

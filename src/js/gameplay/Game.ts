@@ -1,9 +1,14 @@
-import {Board} from "./3DBoard";
-import {Piece} from "./3DPiece";
+import {Board} from "./Board";
+import {Piece} from "./Piece";
 import {COLS, ROWS} from "../params";
 import {Hold} from "./Hold";
 
 export class Game {
+
+    private readonly _board: Board;
+    private _piece: Piece;
+    private readonly _hold: Hold;
+
     constructor() {
         this._board = new Board();
         this._piece = new Piece();
@@ -28,9 +33,9 @@ export class Game {
     }
 
     /** Progresses the game by one tick.
-     * @return {[number, boolean]} - A tuple containing the number of cleared lines and whether the game is over
+     * @return A tuple containing the number of cleared lines and whether the game is over
      */
-    tick() {
+    tick(): [number, boolean] {
         this._board.clearLines()
         this._piece.drop();
         if (detectCollision(this._piece, this._board)) {
@@ -46,14 +51,14 @@ export class Game {
         return [0, false];
     }
 
-    #hold() {
+    private holdPiece() {
         if (!this._piece.isHoldable)
             return;
         const hold = this._hold.replace(this._piece);
         this._piece.replace(hold);
     }
 
-    #hardDrop() {
+    private hardDrop() {
         while (!detectCollision(this._piece, this._board)) {
             this._piece.drop();
         }
@@ -100,10 +105,10 @@ export class Game {
                 }
                 return false;
             case "hardDrop":
-                this.#hardDrop();
+                this.hardDrop();
                 return true;
             case "hold":
-                this.#hold();
+                this.holdPiece();
                 return true;
         }
         if (detectCollision(this._piece, this._board)) {

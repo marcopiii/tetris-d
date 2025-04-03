@@ -1,10 +1,12 @@
-import {generateRandomPiece} from "../pieces/generateRandomPiece";
-import type {Piece} from "./3DPiece";
+import {Shape, Name as Tetrimino, getRandomTetrimino} from "../tetrimino";
+import type {Piece} from "./Piece";
 
 export class Hold {
+    private _type: Tetrimino;
+    private _shape: Shape;
 
     constructor() {
-        const {type, shape} = generateRandomPiece()
+        const {type, shape} = getRandomTetrimino()
         this._type = type;
         this._shape = shape;
     }
