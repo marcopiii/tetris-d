@@ -3,6 +3,7 @@
     "target": "ES6",
     "module": "commonjs",
     "moduleResolution": "node16",
+    "lib": ["es2023"],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

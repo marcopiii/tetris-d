@@ -1,3 +1,3 @@
-export function copy(x) {
-    return JSON.parse( JSON.stringify(x) );
+export function copy<T>(t: T) {
+    return JSON.parse( JSON.stringify(t) );
 }

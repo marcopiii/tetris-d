@@ -9,11 +9,14 @@ import {
     tetrionFloor
 } from "./createMesh";
 import {createHoldHUD, createLevelHUD, createScoreHUD} from "./createHUD";
-import type {Game} from "../gameplay/Game";
-import type {Progress} from "../gameplay/Progress";
+import type {Game, Progress} from "../gameplay";
 import {cuttingShadowMaterial} from "./materials";
+import {translateX, translateY, translateZ} from "./utils";
 
 export class SceneManager {
+
+    private readonly _scene: THREE.Scene;
+    private _cutter: { below: boolean, above: boolean}
 
     #config(scene: THREE.Scene) {
         scene.background = new THREE.Color("#b5c5d2");
@@ -86,7 +89,7 @@ export class SceneManager {
     update(game: Game, progress: Progress) {
         this.reset();
 
-        const isCutOut = (y, x, z) => {
+        const isCutOut = (y: number, x: number, z: number) => {
             return game.piece.plane === "x"
                 ? this._cutter.below && x < game.piece.planePosition || this._cutter.above && x > game.piece.planePosition
                 : this._cutter.below && z < game.piece.planePosition || this._cutter.above && z > game.piece.planePosition;
@@ -225,7 +228,3 @@ export class SceneManager {
 
 }
 
-// translation from the Board coord system to the Scene coord system
-const translateY = (y) => -(y + 1 - (ROWS / 2)) * MINO_SIZE;
-const translateX = (x) => (x + 1 - (COLS / 2)) * MINO_SIZE;
-const translateZ = (z) => (z + 1 - (COLS / 2)) * MINO_SIZE

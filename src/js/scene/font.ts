@@ -1,7 +1,9 @@
+import {Shape} from "./types";
+
 /**
  * @see https://www.dafont.com/minecraft-standard.font
  */
-export const font = {
+export const font: Record<string, Shape> = {
     0: [
         [1, 1, 1],
         [1, 0, 1],

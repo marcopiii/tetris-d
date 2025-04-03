@@ -1,45 +1,45 @@
 import * as THREE from "three";
-import {tetrimino} from "../tetrimino/tetrimino";
 import {adjustBrightness as adj} from "./adjustBrightness";
+import { colors } from "../theme"
 
 const k = 20;
 const j = 80;
 
 export const minoMaterials = {
     I: {
-        x: new THREE.MeshBasicMaterial({color: tetrimino.I.color}),
-        y: new THREE.MeshBasicMaterial({color: adj(tetrimino.I.color, k)}),
-        z: new THREE.MeshBasicMaterial({color: adj(tetrimino.I.color, -k)})
+        x: new THREE.MeshBasicMaterial({color: colors.tetrimino.I}),
+        y: new THREE.MeshBasicMaterial({color: adj(colors.tetrimino.I, k)}),
+        z: new THREE.MeshBasicMaterial({color: adj(colors.tetrimino.I, -k)})
     },
     O: {
-        x: new THREE.MeshBasicMaterial({color: tetrimino.O.color}),
-        y: new THREE.MeshBasicMaterial({color: adj(tetrimino.O.color, k)}),
-        z: new THREE.MeshBasicMaterial({color: adj(tetrimino.O.color, -k)})
+        x: new THREE.MeshBasicMaterial({color: colors.tetrimino.O}),
+        y: new THREE.MeshBasicMaterial({color: adj(colors.tetrimino.O, k)}),
+        z: new THREE.MeshBasicMaterial({color: adj(colors.tetrimino.O, -k)})
     },
     T: {
-        x: new THREE.MeshBasicMaterial({color: tetrimino.T.color}),
-        y: new THREE.MeshBasicMaterial({color: adj(tetrimino.T.color, k)}),
-        z: new THREE.MeshBasicMaterial({color: adj(tetrimino.T.color, -k)})
+        x: new THREE.MeshBasicMaterial({color: colors.tetrimino.T}),
+        y: new THREE.MeshBasicMaterial({color: adj(colors.tetrimino.T, k)}),
+        z: new THREE.MeshBasicMaterial({color: adj(colors.tetrimino.T, -k)})
     },
     J: {
-        x: new THREE.MeshBasicMaterial({color: tetrimino.J.color}),
-        y: new THREE.MeshBasicMaterial({color: adj(tetrimino.J.color, k)}),
-        z: new THREE.MeshBasicMaterial({color: adj(tetrimino.J.color, -k)})
+        x: new THREE.MeshBasicMaterial({color: colors.tetrimino.J}),
+        y: new THREE.MeshBasicMaterial({color: adj(colors.tetrimino.J, k)}),
+        z: new THREE.MeshBasicMaterial({color: adj(colors.tetrimino.J, -k)})
     },
     L: {
-        x: new THREE.MeshBasicMaterial({color: tetrimino.L.color}),
-        y: new THREE.MeshBasicMaterial({color: adj(tetrimino.L.color, k)}),
-        z: new THREE.MeshBasicMaterial({color: adj(tetrimino.L.color, -k)})
+        x: new THREE.MeshBasicMaterial({color: colors.tetrimino.L}),
+        y: new THREE.MeshBasicMaterial({color: adj(colors.tetrimino.L, k)}),
+        z: new THREE.MeshBasicMaterial({color: adj(colors.tetrimino.L, -k)})
     },
     S: {
-        x: new THREE.MeshBasicMaterial({color: tetrimino.S.color}),
-        y: new THREE.MeshBasicMaterial({color: adj(tetrimino.S.color, k)}),
-        z: new THREE.MeshBasicMaterial({color: adj(tetrimino.S.color, -k)})
+        x: new THREE.MeshBasicMaterial({color: colors.tetrimino.S}),
+        y: new THREE.MeshBasicMaterial({color: adj(colors.tetrimino.S, k)}),
+        z: new THREE.MeshBasicMaterial({color: adj(colors.tetrimino.S, -k)})
     },
     Z: {
-        x: new THREE.MeshBasicMaterial({color: tetrimino.Z.color}),
-        y: new THREE.MeshBasicMaterial({color: adj(tetrimino.Z.color, k)}),
-        z: new THREE.MeshBasicMaterial({color: adj(tetrimino.Z.color, -k)})
+        x: new THREE.MeshBasicMaterial({color: colors.tetrimino.Z}),
+        y: new THREE.MeshBasicMaterial({color: adj(colors.tetrimino.Z, k)}),
+        z: new THREE.MeshBasicMaterial({color: adj(colors.tetrimino.Z, -k)})
     },
     disabled: {
         x: new THREE.MeshBasicMaterial({color: "#cfcfcf"}),
@@ -49,23 +49,23 @@ export const minoMaterials = {
 }
 
 export const minoShadeMaterials = {
-    I: new THREE.MeshBasicMaterial({color: adj(tetrimino.I.color, -j) }),
-    O: new THREE.MeshBasicMaterial({color: adj(tetrimino.O.color, -j) }),
-    T: new THREE.MeshBasicMaterial({color: adj(tetrimino.T.color, -j) }),
-    J: new THREE.MeshBasicMaterial({color: adj(tetrimino.J.color, -j) }),
-    L: new THREE.MeshBasicMaterial({color: adj(tetrimino.L.color, -j) }),
-    S: new THREE.MeshBasicMaterial({color: adj(tetrimino.S.color, -j) }),
-    Z: new THREE.MeshBasicMaterial({color: adj(tetrimino.Z.color, -j) })
+    I: new THREE.MeshBasicMaterial({color: adj(colors.tetrimino.I, -j) }),
+    O: new THREE.MeshBasicMaterial({color: adj(colors.tetrimino.O, -j) }),
+    T: new THREE.MeshBasicMaterial({color: adj(colors.tetrimino.T, -j) }),
+    J: new THREE.MeshBasicMaterial({color: adj(colors.tetrimino.J, -j) }),
+    L: new THREE.MeshBasicMaterial({color: adj(colors.tetrimino.L, -j) }),
+    S: new THREE.MeshBasicMaterial({color: adj(colors.tetrimino.S, -j) }),
+    Z: new THREE.MeshBasicMaterial({color: adj(colors.tetrimino.Z, -j) })
 }
 
 export const minoTransMaterials = {
-    I: new THREE.MeshBasicMaterial({ color: tetrimino.I.color, transparent: true, opacity: 0.5 }),
-    O: new THREE.MeshBasicMaterial({ color: tetrimino.O.color, transparent: true, opacity: 0.5 }),
-    T: new THREE.MeshBasicMaterial({ color: tetrimino.T.color, transparent: true, opacity: 0.5 }),
-    J: new THREE.MeshBasicMaterial({ color: tetrimino.J.color, transparent: true, opacity: 0.5 }),
-    L: new THREE.MeshBasicMaterial({ color: tetrimino.L.color, transparent: true, opacity: 0.5 }),
-    S: new THREE.MeshBasicMaterial({ color: tetrimino.S.color, transparent: true, opacity: 0.5 }),
-    Z: new THREE.MeshBasicMaterial({ color: tetrimino.Z.color, transparent: true, opacity: 0.5 })
+    I: new THREE.MeshBasicMaterial({ color: colors.tetrimino.I, transparent: true, opacity: 0.5 }),
+    O: new THREE.MeshBasicMaterial({ color: colors.tetrimino.O, transparent: true, opacity: 0.5 }),
+    T: new THREE.MeshBasicMaterial({ color: colors.tetrimino.T, transparent: true, opacity: 0.5 }),
+    J: new THREE.MeshBasicMaterial({ color: colors.tetrimino.J, transparent: true, opacity: 0.5 }),
+    L: new THREE.MeshBasicMaterial({ color: colors.tetrimino.L, transparent: true, opacity: 0.5 }),
+    S: new THREE.MeshBasicMaterial({ color: colors.tetrimino.S, transparent: true, opacity: 0.5 }),
+    Z: new THREE.MeshBasicMaterial({ color: colors.tetrimino.Z, transparent: true, opacity: 0.5 })
 }
 
 export const voxelMaterials = {

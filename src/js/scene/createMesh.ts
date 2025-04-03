@@ -9,13 +9,14 @@ import {
   voxelMaterials
 } from "./materials";
 import {COLS, MINO_SIZE} from "../params";
+import { Name as Tetrimino} from "../tetrimino"
 
-export function createMino(type) {
+export function createMino(type: Tetrimino) {
   const { x, y, z } = minoMaterials[type]
   return new THREE.Mesh(minoGeometry, [x, x, y, y, z, z]);
 }
 
-export function createGhostMino(type) {
+export function createGhostMino(type: Tetrimino) {
   return new THREE.Mesh(minoGeometry, minoTransMaterials[type]);
 }
 
@@ -23,7 +24,7 @@ export function createBloomingMino() {
   return new THREE.Mesh(minoGeometry, bloomingMaterial);
 }
 
-export function createMinoShade(type) {
+export function createMinoShade(type: Tetrimino) {
   return new THREE.Mesh(minoShadeGeometry, minoShadeMaterials[type]);
 }
 

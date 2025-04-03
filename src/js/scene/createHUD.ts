@@ -2,6 +2,8 @@ import * as THREE from "three";
 import {createWord} from "./createWord";
 import {createMino} from "./createMesh";
 import {VOXEL_SIZE} from "../params";
+import {Shape} from "./types";
+import { Name as Tetrimino} from "../tetrimino"
 
 export function createScoreHUD(score: number) {
     const labelGroup = createWord("SCORE", "secondary", "right");
@@ -29,7 +31,7 @@ export function createLevelHUD(level: number) {
     return levelHUD;
 }
 
-export function createHoldHUD(shape: number[][], type: string, available: boolean) {
+export function createHoldHUD(shape: Shape, type: Tetrimino, available: boolean) {
     const labelGroup = createWord("HOLD", "secondary");
     const holdGroup = new THREE.Group();
     shape.forEach((row, y) => {

@@ -2,8 +2,9 @@ import * as THREE from "three";
 import {createVoxel} from "./createMesh";
 import {font} from "./font";
 import {VOXEL_SIZE} from "../params";
+import {Shape} from "./types";
 
-function createChar(shape, size: "primary" | "secondary", align = "left") {
+function createChar(shape: Shape, size: "primary" | "secondary", align = "left") {
     const charGroup = new THREE.Group();
     shape.map((row, y) => {
         (align === "left" ? row : row.toReversed()).map((pixel, x) => {
@@ -18,7 +19,7 @@ function createChar(shape, size: "primary" | "secondary", align = "left") {
 }
 
 export function createWord(word: string, size: "primary" | "secondary", align = "left") {
-    const shapes = word.split('').map(char => font[char]);
+    const shapes: Array<Shape> = word.split('').map(char => font[char]);
     const wordGroup = new THREE.Group();
     let offset = 0;
     (align === "left" ? shapes : shapes.toReversed()).forEach((shape, i) => {
