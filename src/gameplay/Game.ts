@@ -4,11 +4,13 @@ import { COLS, ROWS } from '../params';
 import { Hold } from './Hold';
 
 export class Game {
+  private readonly _onNewPiece: () => void;
   private readonly _board: Board;
   private _piece: Piece;
   private readonly _hold: Hold;
 
-  constructor() {
+  constructor(onNewPiece: () => void) {
+    this._onNewPiece = onNewPiece;
     this._board = new Board();
     this._piece = new Piece();
     this._hold = new Hold();
@@ -20,10 +22,6 @@ export class Game {
 
   get piece() {
     return this._piece;
-  }
-
-  get hold() {
-    return this._hold;
   }
 
   reset() {
@@ -42,6 +40,7 @@ export class Game {
       this._board.fixPiece(this._piece);
       const [lineClearP1, lineClearP2] = this._board.checkLines();
       this._piece = this._piece.plane === 'x' ? new Piece('z') : new Piece('x');
+      this._onNewPiece();
       const gameOver = detectCollision(this._piece, this._board);
       return [lineClearP1, lineClearP2, gameOver];
     }

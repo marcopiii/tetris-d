@@ -13,9 +13,7 @@ import './style.css';
 const container = document.getElementById('scene-container')!;
 
 const clock = new Clock(processGameFrame);
-const progressP1 = new Progress();
-const progressP2 = new Progress();
-const game = new Game();
+const game = new Game(onNewPiece);
 
 const sceneManager = new SceneManager();
 const cameraManager = new CameraManager(container);
@@ -25,13 +23,19 @@ const renderManager = new RenderManager(
   cameraManager.camera,
 );
 
-const gamepadManager = new GamepadManager(controllerHandler);
+let currentPlayer: 'P1' | 'P2' = 'P2';
+const progressP1 = new Progress();
+const progressP2 = new Progress();
+
+const gamepadManagerP1 = new GamepadManager(0, controllerHandler);
+const gamepadManagerP2 = new GamepadManager(1, controllerHandler);
 
 function animate() {
   requestAnimationFrame(animate);
   cameraManager.tween.update();
   renderManager.render();
-  gamepadManager.poll();
+  gamepadManagerP1.poll();
+  gamepadManagerP2.poll();
 }
 
 function processGameFrame() {
@@ -43,6 +47,18 @@ function processGameFrame() {
     clock.toggle();
     alert('Game Over');
     sceneManager.reset();
+  }
+}
+
+function onNewPiece() {
+  if (currentPlayer === 'P1') {
+    currentPlayer = 'P2';
+    gamepadManagerP1.active = false;
+    gamepadManagerP2.active = true;
+  } else {
+    currentPlayer = 'P1';
+    gamepadManagerP1.active = true;
+    gamepadManagerP2.active = false;
   }
 }
 
@@ -68,31 +84,6 @@ function cuttingHandler(
   sceneManager.update(game, progressP1, progressP2);
 }
 
-function keyboardHandler(event: KeyboardEvent) {
-  if (event.type === 'keydown') {
-    if (event.key === 'Enter') onStart();
-    if (event.key === 'w') commandHandler('hold');
-    if (event.key === 'ArrowLeft')
-      event.shiftKey ? commandHandler('rotateL') : commandHandler('shiftL');
-    if (event.key === 'ArrowRight')
-      event.shiftKey ? commandHandler('rotateR') : commandHandler('shiftR');
-    if (event.key === 'ArrowDown') commandHandler('shiftF');
-    if (event.key === 'ArrowUp') commandHandler('shiftB');
-    if (event.key === ' ') commandHandler('hardDrop');
-    if (event.key === 'q')
-      cameraManager.move({ type: 'move', direction: 'left' });
-    if (event.key === 'e')
-      cameraManager.move({ type: 'move', direction: 'right' });
-    if (event.key === 'a') cuttingHandler({ type: 'cut', side: 'below' });
-    if (event.key === 'd') cuttingHandler({ type: 'cut', side: 'above' });
-    if (event.key === 'p') clock.toggle();
-  }
-  if (event.type === 'keyup') {
-    if (event.key === 'a') cuttingHandler({ type: 'uncut', side: 'below' });
-    if (event.key === 'd') cuttingHandler({ type: 'uncut', side: 'above' });
-  }
-}
-
 function controllerHandler(event: GamepadEvent, btn: GamepadButton) {
   if (event === 'press') {
     if (btn === 'start') clock.toggle();
@@ -115,8 +106,5 @@ function controllerHandler(event: GamepadEvent, btn: GamepadButton) {
     if (btn === 'RB') cuttingHandler({ type: 'uncut', side: 'above' });
   }
 }
-
-document.addEventListener('keydown', keyboardHandler);
-document.addEventListener('keyup', keyboardHandler);
 
 animate();
