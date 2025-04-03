@@ -113,11 +113,4 @@ function controllerHandler(event: GamepadEvent, btn: GamepadButton) {
 document.addEventListener('keydown', keyboardHandler);
 document.addEventListener('keyup', keyboardHandler);
 
-window.addEventListener('gamepadconnected', (e) =>
-  gamepadManager.connect(e.gamepad),
-);
-window.addEventListener('gamepaddisconnected', () =>
-  gamepadManager.disconnect(),
-);
-
 animate();
