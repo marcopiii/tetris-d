@@ -10,21 +10,21 @@ export class GamepadManager {
     this._handler = handler;
     this._gamepadIndex = undefined;
     this._buffer = [];
-  }
 
-  connect(gamepad: Gamepad) {
-    this._gamepadIndex = gamepad.index;
-  }
-
-  disconnect() {
-    this._gamepadIndex = undefined;
+    window.addEventListener(
+      'gamepadconnected',
+      (e) => (this._gamepadIndex = e.gamepad.index),
+    );
+    window.addEventListener(
+      'gamepaddisconnected',
+      () => (this._gamepadIndex = undefined),
+    );
   }
 
   poll() {
     if (this._gamepadIndex === undefined) return;
 
     const gamepad = navigator.getGamepads()[this._gamepadIndex];
-
     if (!gamepad) return;
 
     gamepad.buttons.forEach((button, i) => {

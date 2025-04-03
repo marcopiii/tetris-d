@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import TWEEN, { Group as TWEENGroup } from '@tweenjs/tween.js';
+import { CameraAction } from '../action';
 import type { Position } from './types';
 import { cameraSetup } from './cameraSetup';
 
@@ -37,19 +38,19 @@ export class CameraManager {
     return this._tweenGroup;
   }
 
-  move(direction: 'right' | 'left') {
+  move(action: Extract<CameraAction, { type: 'move' }>) {
     switch (this._position) {
       case 'xR_zR':
-        this._position = direction === 'right' ? 'xL_zR' : 'xR_zL';
+        this._position = action.direction === 'right' ? 'xL_zR' : 'xR_zL';
         break;
       case 'xL_zR':
-        this._position = direction === 'right' ? 'xL_zL' : 'xR_zR';
+        this._position = action.direction === 'right' ? 'xL_zL' : 'xR_zR';
         break;
       case 'xL_zL':
-        this._position = direction === 'right' ? 'xR_zL' : 'xL_zR';
+        this._position = action.direction === 'right' ? 'xR_zL' : 'xL_zR';
         break;
       case 'xR_zL':
-        this._position = direction === 'right' ? 'xR_zR' : 'xL_zL';
+        this._position = action.direction === 'right' ? 'xR_zR' : 'xL_zL';
         break;
     }
     const target = cameraSetup[this._position];
