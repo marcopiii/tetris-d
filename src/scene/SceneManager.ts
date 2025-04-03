@@ -8,7 +8,7 @@ import {
   createTetrionWall,
   tetrionFloor,
 } from './createMesh';
-import { createHoldHUD, createHUD } from './createHUD';
+import { createHUD } from './createHUD';
 import type { Game, Progress } from '../gameplay';
 import { cuttingShadowMaterial } from './assets/materials';
 import { translateX, translateY, translateZ } from './utils';
@@ -84,7 +84,7 @@ export class SceneManager {
     };
   }
 
-  update(game: Game, progress: Progress) {
+  update(game: Game, progressP1: Progress, progressP2: Progress) {
     this.reset();
 
     const isCutOut = (x: number, z: number) => {
@@ -203,24 +203,21 @@ export class SceneManager {
       this._scene.add(zrShadow);
     });
 
-    const hud = createHUD(progress, 'right');
-    hud.position.set(
+    const hudP1 = createHUD(progressP1, 'right');
+    hudP1.position.set(
       (-COLS * MINO_SIZE) / 2,
       ((ROWS - 3) * MINO_SIZE) / 2,
       (-(COLS - 1) * MINO_SIZE) / 2,
     );
-    this._scene.add(hud);
+    this._scene.add(hudP1);
 
-    const holdHUD = createHoldHUD(
-      game.hold.piece.shape,
-      game.hold.piece.type,
-      game.piece.isHoldable,
-    );
-    holdHUD.position.set(
+    const hudP2 = createHUD(progressP2, 'left');
+    hudP2.position.set(
       ((COLS + 1) * MINO_SIZE) / 2,
       ((ROWS - 3) * MINO_SIZE) / 2,
       ((COLS + 2) * MINO_SIZE) / 2,
     );
-    this._scene.add(holdHUD);
+    hudP2.rotateY(THREE.MathUtils.degToRad(90));
+    this._scene.add(hudP2);
   }
 }

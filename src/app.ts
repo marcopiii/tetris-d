@@ -38,7 +38,7 @@ function processGameFrame() {
   const [lineClearP1, lineClearP2, gameOver] = game.tick();
   progressP1.add(lineClearP1);
   progressP2.add(lineClearP2);
-  sceneManager.update(game, progressP1);
+  sceneManager.update(game, progressP1, progressP2);
   if (gameOver) {
     clock.toggle();
     alert('Game Over');
@@ -55,7 +55,7 @@ function onStart() {
 function commandHandler(command: GameAction) {
   if (!clock.isRunning) return;
   const sceneNeedsUpdate = game.tryMove(command);
-  if (sceneNeedsUpdate) sceneManager.update(game, progressP1);
+  if (sceneNeedsUpdate) sceneManager.update(game, progressP1, progressP2);
 }
 
 function cuttingHandler(
@@ -65,7 +65,7 @@ function cuttingHandler(
     below: action.side === 'below' ? action.type === 'cut' : undefined,
     above: action.side === 'above' ? action.type === 'cut' : undefined,
   };
-  sceneManager.update(game, progressP1);
+  sceneManager.update(game, progressP1, progressP2);
 }
 
 function keyboardHandler(event: KeyboardEvent) {
