@@ -1,5 +1,6 @@
 export type Button =
   | 'start'
+  | 'select'
   | 'padL'
   | 'padD'
   | 'padR'

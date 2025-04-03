@@ -66,6 +66,7 @@ function cuttingHandler(action: 'start' | 'end', side: 'below' | 'above') {
 
 function keyboardHandler(event: KeyboardEvent) {
   if (event.type === 'keydown') {
+    if (event.key === 'Enter') onStart();
     if (event.key === 'w') commandHandler('hold');
     if (event.key === 'ArrowLeft')
       event.shiftKey ? commandHandler('rotateL') : commandHandler('shiftL');
@@ -89,6 +90,7 @@ function keyboardHandler(event: KeyboardEvent) {
 function controllerHandler(event: GamepadEvent, btn: GamepadButton) {
   if (event === 'press') {
     if (btn === 'start') clock.toggle();
+    if (btn === 'select') onStart();
     if (btn === 'padL') commandHandler('shiftL');
     if (btn === 'padR') commandHandler('shiftR');
     if (btn === 'padD') commandHandler('shiftF');
