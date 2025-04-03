@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { createVoxel } from './createMesh';
-import { font } from './font';
+import { font } from './assets/font';
 import { VOXEL_SIZE } from '../params';
 import { Shape } from './types';
 

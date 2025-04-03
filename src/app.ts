@@ -5,7 +5,7 @@ import {
 } from './gamepad';
 import { Game, Clock, Progress } from './gameplay';
 import { RenderManager } from './render';
-import { SceneManager } from './scene/SceneManager';
+import { SceneManager } from './scene';
 import { CameraManager } from './camera';
 import { Command } from './types';
 import './style.css';

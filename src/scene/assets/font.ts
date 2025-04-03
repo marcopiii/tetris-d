@@ -1,4 +1,4 @@
-import { Shape } from './types';
+import { Shape } from '../types';
 
 /**
  * @see https://www.dafont.com/minecraft-standard.font

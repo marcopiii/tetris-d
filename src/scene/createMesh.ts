@@ -4,7 +4,7 @@ import {
   minoShadeGeometry,
   tetrionWallGeometry,
   voxelGeometries,
-} from './geometries';
+} from './assets/geometries';
 import {
   bloomingMaterial,
   minoMaterials,
@@ -12,7 +12,7 @@ import {
   minoTransMaterials,
   tetrionMaterial,
   voxelMaterials,
-} from './materials';
+} from './assets/materials';
 import { COLS, MINO_SIZE } from '../params';
 import { Name as Tetrimino } from '../tetrimino';
 
