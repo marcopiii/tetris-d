@@ -8,7 +8,7 @@ import {
   createTetrionWall,
   tetrionFloor,
 } from './createMesh';
-import { createHoldHUD, createLevelHUD, createScoreHUD } from './createHUD';
+import { createHoldHUD, createHUD } from './createHUD';
 import type { Game, Progress } from '../gameplay';
 import { cuttingShadowMaterial } from './assets/materials';
 import { translateX, translateY, translateZ } from './utils';
@@ -203,20 +203,13 @@ export class SceneManager {
       this._scene.add(zrShadow);
     });
 
-    const scoreHUD = createScoreHUD(progress.score);
-    scoreHUD.position.set(
+    const hud = createHUD(progress, 'right');
+    hud.position.set(
       (-COLS * MINO_SIZE) / 2,
       ((ROWS - 3) * MINO_SIZE) / 2,
       (-(COLS - 1) * MINO_SIZE) / 2,
     );
-    const levelHUD = createLevelHUD(progress.level);
-    levelHUD.position.set(
-      (-COLS * MINO_SIZE) / 2,
-      ((ROWS / 2) * MINO_SIZE) / 2,
-      (-(COLS - 1) * MINO_SIZE) / 2,
-    );
-    this._scene.add(scoreHUD);
-    this._scene.add(levelHUD);
+    this._scene.add(hud);
 
     const holdHUD = createHoldHUD(
       game.hold.piece.shape,

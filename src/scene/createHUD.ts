@@ -1,13 +1,14 @@
 import * as THREE from 'three';
+import { Progress } from '../gameplay';
 import { createWord } from './createWord';
 import { createMino } from './createMesh';
 import { VOXEL_SIZE } from '../params';
 import { Shape } from './types';
 import { Name as Tetrimino } from '../tetrimino';
 
-export function createScoreHUD(score: number) {
-  const labelGroup = createWord('SCORE', 'secondary', 'right');
-  const scoreGroup = createWord(score.toString(), 'primary', 'right');
+function createScoreHUD(score: number, align: 'left' | 'right') {
+  const labelGroup = createWord('SCORE', 'secondary', align);
+  const scoreGroup = createWord(score.toString(), 'primary', align);
 
   const scoreHUD = new THREE.Group();
   labelGroup.position.set(0, 0, 0);
@@ -18,9 +19,9 @@ export function createScoreHUD(score: number) {
   return scoreHUD;
 }
 
-export function createLevelHUD(level: number) {
-  const labelGroup = createWord('LEVEL', 'secondary', 'right');
-  const levelGroup = createWord(level.toString(), 'primary', 'right');
+function createLevelHUD(level: number, align: 'left' | 'right') {
+  const labelGroup = createWord('LEVEL', 'secondary', align);
+  const levelGroup = createWord(level.toString(), 'primary', align);
 
   const levelHUD = new THREE.Group();
   labelGroup.position.set(0, 0, 0);
@@ -29,6 +30,21 @@ export function createLevelHUD(level: number) {
   levelHUD.add(levelGroup);
   levelHUD.rotateY(THREE.MathUtils.degToRad(180));
   return levelHUD;
+}
+
+export function createHUD(progress: Progress, align: 'left' | 'right') {
+  const hud = new THREE.Group();
+  const score = createScoreHUD(progress.score, align);
+  const level = createLevelHUD(progress.level, align);
+  score.position.set(0, 0, 0);
+  level.position.set(
+    0,
+    -(VOXEL_SIZE.secondary * 8 + VOXEL_SIZE.primary * 8),
+    0,
+  );
+  hud.add(score);
+  hud.add(level);
+  return hud;
 }
 
 export function createHoldHUD(
