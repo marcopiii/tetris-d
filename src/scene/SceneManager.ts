@@ -87,7 +87,7 @@ export class SceneManager {
   update(game: Game, progress: Progress) {
     this.reset();
 
-    const isCutOut = (y: number, x: number, z: number) => {
+    const isCutOut = (x: number, z: number) => {
       return game.piece.plane === 'x'
         ? (this._cutter.below && x < game.piece.planePosition) ||
             (this._cutter.above && x > game.piece.planePosition)
@@ -150,7 +150,7 @@ export class SceneManager {
     }
 
     game.board.forEachBlock((type, y, x, z) => {
-      if (isCutOut(y, x, z)) return;
+      if (isCutOut(x, z)) return;
       const mino = type === 'DELETE' ? createBloomingMino() : createMino(type);
       mino.position.set(translateX(x), translateY(y), translateZ(z));
       this._scene.add(mino);
