@@ -1,58 +1,40 @@
-export const tetrimino = {
-  I: {
-    shape: [
+import {Name, Shape} from "./types";
+
+export const tetrimino: Record<Name, Shape> = {
+  I: [
         [0, 0, 0, 0],
         [1, 1, 1, 1],
         [0, 0, 0, 0],
         [0, 0, 0, 0]
     ],
-    color: '#FFB3BA'
-  },
-  O: {
-    shape: [
+  O: [
         [1, 1],
         [1, 1]
     ],
-    color: '#FFDFBA'
-  },
-  T: {
-    shape: [
+  T: [
         [0, 1, 0],
         [1, 1, 1],
         [0, 0, 0]
-    ],
-    color: '#FFFFBA'
-  },
-  J: {
-    shape: [
+    ]
+  ,
+  J: [
         [1, 0, 0],
         [1, 1, 1],
         [0, 0, 0]
     ],
-    color: '#BAFFC9'
-  },
-  L: {
-    shape: [
+  L: [
         [0, 0, 1],
         [1, 1, 1],
         [0, 0, 0]
     ],
-    color: '#BAE1FF'
-  },
-  S: {
-    shape: [
+  S:  [
         [0, 1, 1],
         [1, 1, 0],
         [0, 0, 0]
     ],
-    color: '#D4BAFF'
-  },
-  Z: {
-    shape: [
+  Z: [
         [1, 1, 0],
         [0, 1, 1],
         [0, 0, 0]
-    ],
-    color: '#FFBADD'
-  },
-};
+    ]
+}

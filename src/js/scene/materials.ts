@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import {tetrimino} from "../pieces/tetrimino";
+import {tetrimino} from "../tetrimino/tetrimino";
 import {adjustBrightness as adj} from "./adjustBrightness";
 
 const k = 20;

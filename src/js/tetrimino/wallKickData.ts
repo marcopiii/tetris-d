@@ -1,8 +1,10 @@
+import {Name, WallKickData} from "./types";
+
 /**
  * @see https://tetris.wiki/Super_Rotation_System#Wall_Kicks
  */
-export function wallKickData(piece: "I" | "J" | "L" | "O" | "S" | "T" | "Z") {
-    switch (piece) {
+export function wallKickData(tetrimino: Name): WallKickData {
+    switch (tetrimino) {
         case "I":
             return [
                 { initial: "0", final: "R", tests: [[0, 0],	[-2, 0], [+1, 0], [-2, -1], [+1, +2]] },
