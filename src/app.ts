@@ -7,7 +7,7 @@ import { Game, Clock, Progress } from './gameplay';
 import { RenderManager } from './render';
 import { SceneManager } from './scene';
 import { CameraManager } from './camera';
-import { Command } from './types';
+import type { GameAction, CameraAction } from './action';
 import './style.css';
 
 const container = document.getElementById('scene-container')!;
@@ -50,16 +50,16 @@ function onStart() {
   clock.start();
 }
 
-function commandHandler(command: Command) {
+function commandHandler(command: GameAction) {
   if (!clock.isRunning) return;
   const sceneNeedsUpdate = game.tryMove(command);
   if (sceneNeedsUpdate) sceneManager.update(game, progress);
 }
 
-function cuttingHandler(action: 'start' | 'end', side: 'below' | 'above') {
+function cuttingHandler(action: Extract<CameraAction, { type: "cut" | "uncut" }>) {
   sceneManager.cutter = {
-    below: side === 'below' ? action === 'start' : undefined,
-    above: side === 'above' ? action === 'start' : undefined,
+    below: action.side === 'below' ? action.type === 'cut' : undefined,
+    above: action.side === 'above' ? action.type === 'cut' : undefined,
   };
   sceneManager.update(game, progress);
 }
@@ -77,13 +77,13 @@ function keyboardHandler(event: KeyboardEvent) {
     if (event.key === ' ') commandHandler('hardDrop');
     if (event.key === 'q') cameraManager.move('left');
     if (event.key === 'e') cameraManager.move('right');
-    if (event.key === 'a') cuttingHandler('start', 'below');
-    if (event.key === 'd') cuttingHandler('start', 'above');
+    if (event.key === 'a') cuttingHandler({ type: "cut", side: 'below' });
+    if (event.key === 'd') cuttingHandler({ type: "cut", side: 'above' });
     if (event.key === 'p') clock.toggle();
   }
   if (event.type === 'keyup') {
-    if (event.key === 'a') cuttingHandler('end', 'below');
-    if (event.key === 'd') cuttingHandler('end', 'above');
+    if (event.key === 'a') cuttingHandler({ type: "uncut", side: 'below' });
+    if (event.key === 'd') cuttingHandler({ type: "uncut", side: 'above' });
   }
 }
 
@@ -101,12 +101,12 @@ function controllerHandler(event: GamepadEvent, btn: GamepadButton) {
     if (btn === 'Y') commandHandler('hold');
     if (btn === 'LT') cameraManager.move('left');
     if (btn === 'RT') cameraManager.move('right');
-    if (btn === 'LB') cuttingHandler('start', 'below');
-    if (btn === 'RB') cuttingHandler('start', 'above');
+    if (btn === 'LB') cuttingHandler({ type: "cut", side: 'below' });
+    if (btn === 'RB') cuttingHandler({ type: "cut", side: 'above' });
   }
   if (event === 'release') {
-    if (btn === 'LB') cuttingHandler('end', 'below');
-    if (btn === 'RB') cuttingHandler('end', 'above');
+    if (btn === 'LB') cuttingHandler({ type: "uncut", side: 'below' });
+    if (btn === 'RB') cuttingHandler({ type: "uncut", side: 'above' });
   }
 }
 
