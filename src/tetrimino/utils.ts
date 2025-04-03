@@ -1,4 +1,4 @@
-import {tetrimino} from "./tetrimino.js";
+import {tetrimino} from "./tetrimino";
 
 export function getRandomTetrimino() {
   const keys = Object.keys(tetrimino) as (keyof typeof tetrimino)[];

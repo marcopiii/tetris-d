@@ -1,10 +1,12 @@
 import {Button as GamepadButton, Event as GamepadEvent, GamepadManager} from "./gamepad";
 import {Game, Clock, Progress} from "./gameplay";
-import {SceneManager} from "./scene/SceneManager.js";
-import {CameraManager} from "./CameraManager.js";
+import {SceneManager} from "./scene/SceneManager";
+import {CameraManager} from "./CameraManager";
 import * as THREE from "three";
 import {EffectComposer, RenderPass, UnrealBloomPass} from "three/addons";
 import {Command} from "./types";
+
+import "./style.css";
 
 const container = document.getElementById('scene-container')!;
 

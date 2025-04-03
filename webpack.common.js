@@ -1,26 +1,23 @@
-const path = require('path');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
   entry: {
-    app: './js/app.js',
-  },
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    clean: true,
-    filename: './js/app.js',
+    app: './src/app.ts',
   },
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.tsx?$/,
+        use: 'ts-loader',
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-flow']
-          }
-        }
+      },
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, "css-loader"]
       }
-    ]
-  }
+    ],
+  },
+  resolve: {
+    extensions: ['.ts', '.js'],
+  },
 };
