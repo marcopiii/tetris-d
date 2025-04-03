@@ -8,13 +8,16 @@ export type GameAction =
   | 'shiftB'
   | 'hardDrop';
 
-export type CameraAction = {
-  type: "move";
-  direction: "left" | "right";
-} | {
-  type: "cut";
-  side: "above" | "below";
-} | {
-  type: "uncut";
-  side: "above" | "below";
-}
+export type CameraAction =
+  | {
+      type: 'move';
+      direction: 'left' | 'right';
+    }
+  | {
+      type: 'cut';
+      side: 'above' | 'below';
+    }
+  | {
+      type: 'uncut';
+      side: 'above' | 'below';
+    };

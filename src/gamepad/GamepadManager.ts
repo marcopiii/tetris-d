@@ -11,11 +11,13 @@ export class GamepadManager {
     this._gamepadIndex = undefined;
     this._buffer = [];
 
-    window.addEventListener('gamepadconnected', (e) =>
-      this._gamepadIndex = e.gamepad.index
+    window.addEventListener(
+      'gamepadconnected',
+      (e) => (this._gamepadIndex = e.gamepad.index),
     );
-    window.addEventListener('gamepaddisconnected', () =>
-      this._gamepadIndex = undefined
+    window.addEventListener(
+      'gamepaddisconnected',
+      () => (this._gamepadIndex = undefined),
     );
   }
 
