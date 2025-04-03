@@ -1,144 +1,148 @@
-import {Board} from "./Board";
-import {Piece} from "./Piece";
-import {COLS, ROWS} from "../params";
-import {Hold} from "./Hold";
+import { Board } from './Board';
+import { Piece } from './Piece';
+import { COLS, ROWS } from '../params';
+import { Hold } from './Hold';
 
 export class Game {
+  private readonly _board: Board;
+  private _piece: Piece;
+  private readonly _hold: Hold;
 
-    private readonly _board: Board;
-    private _piece: Piece;
-    private readonly _hold: Hold;
+  constructor() {
+    this._board = new Board();
+    this._piece = new Piece();
+    this._hold = new Hold();
+  }
 
-    constructor() {
-        this._board = new Board();
-        this._piece = new Piece();
-        this._hold = new Hold();
+  get board() {
+    return this._board;
+  }
+
+  get piece() {
+    return this._piece;
+  }
+
+  get hold() {
+    return this._hold;
+  }
+
+  reset() {
+    this._board.clean();
+    this._piece = new Piece();
+  }
+
+  /** Progresses the game by one tick.
+   * @return A tuple containing the number of cleared lines and whether the game is over
+   */
+  tick(): [number, boolean] {
+    this._board.clearLines();
+    this._piece.drop();
+    if (detectCollision(this._piece, this._board)) {
+      this._piece.rollback();
+      this._board.fixPiece(this._piece);
+      const lineClear = this._board.checkLines();
+      this._piece = this._piece.plane === 'x' ? new Piece('z') : new Piece('x');
+      const gameOver = detectCollision(this._piece, this._board);
+      return [lineClear, gameOver];
     }
+    return [0, false];
+  }
 
-    get board() {
-        return this._board;
+  private holdPiece() {
+    if (!this._piece.isHoldable) return;
+    const hold = this._hold.replace(this._piece);
+    this._piece.replace(hold);
+  }
+
+  private hardDrop() {
+    while (!detectCollision(this._piece, this._board)) {
+      this._piece.drop();
     }
+    this._piece.rollback();
+    this._board.fixPiece(this._piece);
+    // fix the piece to avoid further moving
+    // this will cause a collision since we don't spawn a new piece here
+  }
 
-    get piece() {
-        return this._piece;
-    }
-
-    get hold() {
-        return this._hold;
-    }
-
-    reset() {
-        this._board.clean();
-        this._piece = new Piece();
-    }
-
-    /** Progresses the game by one tick.
-     * @return A tuple containing the number of cleared lines and whether the game is over
-     */
-    tick(): [number, boolean] {
-        this._board.clearLines()
-        this._piece.drop();
-        if (detectCollision(this._piece, this._board)) {
-            this._piece.rollback();
-            this._board.fixPiece(this._piece);
-            const lineClear = this._board.checkLines();
-            this._piece = this._piece.plane === "x"
-                ? new Piece("z")
-                : new Piece("x");
-            const gameOver = detectCollision(this._piece, this._board);
-            return [lineClear, gameOver];
+  /**
+   * @returns {boolean} - Whether the move had success
+   */
+  tryMove(
+    type:
+      | 'hold'
+      | 'shiftL'
+      | 'shiftR'
+      | 'shiftB'
+      | 'shiftF'
+      | 'rotateL'
+      | 'rotateR'
+      | 'hardDrop',
+  ): boolean {
+    let wallKickTest = 0;
+    switch (type) {
+      case 'shiftL':
+        this._piece.shiftLeft();
+        break; // go to collision detection
+      case 'shiftR':
+        this._piece.shiftRight();
+        break; // go to collision detection
+      case 'shiftB':
+        this._piece.shiftBackward();
+        break; // go to collision detection
+      case 'shiftF':
+        this._piece.shiftForward();
+        break; // go to collision detection
+      case 'rotateL':
+        while (wallKickTest < 5) {
+          this._piece.rotateLeft(wallKickTest);
+          if (!detectCollision(this._piece, this._board)) return true;
+          this._piece.rollback();
+          wallKickTest++;
         }
-        return [0, false];
-    }
-
-    private holdPiece() {
-        if (!this._piece.isHoldable)
-            return;
-        const hold = this._hold.replace(this._piece);
-        this._piece.replace(hold);
-    }
-
-    private hardDrop() {
-        while (!detectCollision(this._piece, this._board)) {
-            this._piece.drop();
+        return false;
+      case 'rotateR':
+        while (wallKickTest < 5) {
+          this._piece.rotateRight(wallKickTest);
+          if (!detectCollision(this._piece, this._board)) return true;
+          this._piece.rollback();
+          wallKickTest++;
         }
-        this._piece.rollback();
-        this._board.fixPiece(this._piece);
-        // fix the piece to avoid further moving
-        // this will cause a collision since we don't spawn a new piece here
-    }
-
-    /**
-     * @returns {boolean} - Whether the move had success
-     */
-    tryMove(type: "hold" | "shiftL" | "shiftR" | "shiftB" | "shiftF" | "rotateL" | "rotateR" | "hardDrop"): boolean {
-        let wallKickTest = 0;
-        switch (type) {
-            case "shiftL":
-                this._piece.shiftLeft();
-                break; // go to collision detection
-            case "shiftR":
-                this._piece.shiftRight();
-                break; // go to collision detection
-            case "shiftB":
-                this._piece.shiftBackward();
-                break; // go to collision detection
-            case "shiftF":
-                this._piece.shiftForward();
-                break; // go to collision detection
-            case "rotateL":
-                while (wallKickTest < 5) {
-                    this._piece.rotateLeft(wallKickTest);
-                    if (!detectCollision(this._piece, this._board))
-                        return true;
-                    this._piece.rollback();
-                    wallKickTest++;
-                }
-                return false;
-            case "rotateR":
-                while (wallKickTest < 5) {
-                    this._piece.rotateRight(wallKickTest);
-                    if (!detectCollision(this._piece, this._board))
-                        return true;
-                    this._piece.rollback();
-                    wallKickTest++;
-                }
-                return false;
-            case "hardDrop":
-                this.hardDrop();
-                return true;
-            case "hold":
-                this.holdPiece();
-                return true;
-        }
-        if (detectCollision(this._piece, this._board)) {
-            this._piece.rollback();
-            return false;
-        }
+        return false;
+      case 'hardDrop':
+        this.hardDrop();
+        return true;
+      case 'hold':
+        this.holdPiece();
         return true;
     }
-
-    get ghostPiece() {
-        const ghost = this._piece.clone();
-        while (!detectCollision(ghost, this._board)) {
-            ghost.drop();
-        }
-        ghost.rollback();
-        return ghost;
+    if (detectCollision(this._piece, this._board)) {
+      this._piece.rollback();
+      return false;
     }
+    return true;
+  }
 
+  get ghostPiece() {
+    const ghost = this._piece.clone();
+    while (!detectCollision(ghost, this._board)) {
+      ghost.drop();
+    }
+    ghost.rollback();
+    return ghost;
+  }
 }
 
 function detectCollision(piece: Piece, board: Board): boolean {
-    let collisionDetected = false;
-    piece.forEachBlock((y, x, z) => {
-        const floorCollision = y >= ROWS;
-        const wallCollision = x < 0 || x >= COLS || z < 0 || z >= COLS;
-        // avoid calling .blockAt() if one of the index is out of bounds
-        const stackCollision = !(floorCollision || wallCollision) && board.blockAt(y, x, z) !== null;
-        if (floorCollision || wallCollision || stackCollision) {
-            collisionDetected = true;
-        }
-    })
-    return collisionDetected;
+  let collisionDetected = false;
+  piece.forEachBlock((y, x, z) => {
+    const floorCollision = y >= ROWS;
+    const wallCollision = x < 0 || x >= COLS || z < 0 || z >= COLS;
+    // avoid calling .blockAt() if one of the index is out of bounds
+    const stackCollision =
+      !(floorCollision || wallCollision) && board.blockAt(y, x, z) !== null;
+    if (floorCollision || wallCollision || stackCollision) {
+      collisionDetected = true;
+    }
+  });
+  return collisionDetected;
 }
