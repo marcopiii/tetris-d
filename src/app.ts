@@ -24,7 +24,7 @@ const renderManager = new RenderManager(
   cameraManager.camera,
 );
 
-const playerManager = new PlayerManager("P1", "P2");
+const playerManager = new PlayerManager('P1', 'P2');
 const progressP1 = new Progress();
 const progressP2 = new Progress();
 const gamepadP1 = new GamepadManager(0, controllerHandler);
@@ -66,12 +66,7 @@ function commandHandler(command: GameAction) {
   if (!clock.isRunning) return;
   const sceneNeedsUpdate = game.tryMove(command);
   if (sceneNeedsUpdate)
-    sceneManager.update(
-      game,
-      progressP1,
-      progressP2,
-      playerManager.players,
-    );
+    sceneManager.update(game, progressP1, progressP2, playerManager.players);
 }
 
 function cuttingHandler(

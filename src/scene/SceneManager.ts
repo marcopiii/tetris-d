@@ -1,7 +1,7 @@
 import { COLS, ROWS, MINO_SIZE } from '../params';
 import * as THREE from 'three';
-import {PlayerTag} from '../player';
-import {Player} from "../player/types";
+import { PlayerTag } from '../player';
+import { Player } from '../player/types';
 import {
   createMino,
   createMinoShade,
