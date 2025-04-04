@@ -9,7 +9,7 @@ export class CameraManager {
   private readonly _tweenGroup: TWEENGroup;
   private _position: Position;
 
-  private frustumSize = 25;
+  private frustumSize = 22;
 
   constructor(container: HTMLElement) {
     const aspect = container.clientWidth / container.clientHeight;
