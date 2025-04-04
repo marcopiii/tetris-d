@@ -1,5 +1,7 @@
 import { COLS, ROWS, MINO_SIZE } from '../params';
 import * as THREE from 'three';
+import {PlayerTag} from '../player';
+import {Player} from "../player/types";
 import {
   createMino,
   createMinoShade,
@@ -11,6 +13,7 @@ import {
 import { createHUD } from './createHUD';
 import type { Game, Progress } from '../gameplay';
 import { cuttingShadowMaterial } from './assets/materials';
+import { createWord } from './createWord';
 import { translateX, translateY, translateZ } from './utils';
 
 export class SceneManager {
@@ -84,7 +87,12 @@ export class SceneManager {
     };
   }
 
-  update(game: Game, progressP1: Progress, progressP2: Progress) {
+  update(
+    game: Game,
+    progressP1: Progress,
+    progressP2: Progress,
+    players: Record<PlayerTag, Player>,
+  ) {
     this.reset();
 
     const isCutOut = (x: number, z: number) => {
@@ -203,7 +211,9 @@ export class SceneManager {
       this._scene.add(zrShadow);
     });
 
-    const hudP1 = createHUD(progressP1, 'right');
+    const { P1, P2 } = players;
+
+    const hudP1 = createHUD(P1, progressP1, 'right');
     hudP1.position.set(
       (-COLS * MINO_SIZE) / 2,
       ((ROWS - 3) * MINO_SIZE) / 2,
@@ -211,7 +221,7 @@ export class SceneManager {
     );
     this._scene.add(hudP1);
 
-    const hudP2 = createHUD(progressP2, 'left');
+    const hudP2 = createHUD(P2, progressP2, 'left');
     hudP2.position.set(
       ((COLS + 1) * MINO_SIZE) / 2,
       ((ROWS - 3) * MINO_SIZE) / 2,

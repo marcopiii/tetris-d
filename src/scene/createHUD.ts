@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { Progress } from '../gameplay';
+import {Player} from "../player";
 import { createWord } from './createWord';
 import { createMino } from './createMesh';
 import { VOXEL_SIZE } from '../params';
@@ -32,16 +33,22 @@ function createLevelHUD(level: number, align: 'left' | 'right') {
   return levelHUD;
 }
 
-export function createHUD(progress: Progress, align: 'left' | 'right') {
+export function createHUD(player: Player, progress: Progress, align: 'left' | 'right') {
   const hud = new THREE.Group();
+  const handle = createWord(player.name, 'main', align);
   const score = createScoreHUD(progress.score, align);
   const level = createLevelHUD(progress.level, align);
-  score.position.set(0, 0, 0);
+
+  handle.position.set(0, 0, 0);
+  handle.rotateY(THREE.MathUtils.degToRad(180));
+  score.position.set(0, -VOXEL_SIZE.main * 7, 0);
   level.position.set(
     0,
-    -(VOXEL_SIZE.secondary * 8 + VOXEL_SIZE.primary * 8),
+    -(VOXEL_SIZE.main * 7 + VOXEL_SIZE.secondary * 8 + VOXEL_SIZE.primary * 8),
     0,
   );
+
+  hud.add(handle);
   hud.add(score);
   hud.add(level);
   return hud;

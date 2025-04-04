@@ -33,7 +33,7 @@ export function createMinoShade(type: Tetrimino) {
   return new THREE.Mesh(minoShadeGeometry, minoShadeMaterials[type]);
 }
 
-export function createVoxel(size: 'primary' | 'secondary') {
+export function createVoxel(size: 'primary' | 'secondary' | 'main') {
   const { x, y, z } = voxelMaterials[size];
   return new THREE.Mesh(voxelGeometries[size], [x, x, y, y, z, z]);
 }

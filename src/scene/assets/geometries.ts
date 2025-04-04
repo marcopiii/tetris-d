@@ -23,6 +23,11 @@ export const voxelGeometries = {
     VOXEL_SIZE.secondary,
     VOXEL_SIZE.secondary,
   ),
+  main: new THREE.BoxGeometry(
+    VOXEL_SIZE.main,
+    VOXEL_SIZE.main,
+    VOXEL_SIZE.main,
+  ),
 };
 
 export const tetrionWallGeometry = new THREE.EdgesGeometry(

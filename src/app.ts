@@ -24,7 +24,7 @@ const renderManager = new RenderManager(
   cameraManager.camera,
 );
 
-const playerManager = new PlayerManager();
+const playerManager = new PlayerManager("P1", "P2");
 const progressP1 = new Progress();
 const progressP2 = new Progress();
 const gamepadP1 = new GamepadManager(0, controllerHandler);
@@ -42,7 +42,7 @@ function processGameFrame() {
   const [lineClearP1, lineClearP2, gameOver] = game.tick();
   progressP1.add(lineClearP1);
   progressP2.add(lineClearP2);
-  sceneManager.update(game, progressP1, progressP2);
+  sceneManager.update(game, progressP1, progressP2, playerManager.players);
   if (gameOver) {
     clock.toggle();
     alert('Game Over');
@@ -65,7 +65,13 @@ function onStart() {
 function commandHandler(command: GameAction) {
   if (!clock.isRunning) return;
   const sceneNeedsUpdate = game.tryMove(command);
-  if (sceneNeedsUpdate) sceneManager.update(game, progressP1, progressP2);
+  if (sceneNeedsUpdate)
+    sceneManager.update(
+      game,
+      progressP1,
+      progressP2,
+      playerManager.players,
+    );
 }
 
 function cuttingHandler(
@@ -75,7 +81,7 @@ function cuttingHandler(
     below: action.side === 'below' ? action.type === 'cut' : undefined,
     above: action.side === 'above' ? action.type === 'cut' : undefined,
   };
-  sceneManager.update(game, progressP1, progressP2);
+  sceneManager.update(game, progressP1, progressP2, playerManager.players);
 }
 
 function controllerHandler(event: GamepadEvent, btn: GamepadButton) {

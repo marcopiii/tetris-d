@@ -107,6 +107,11 @@ export const voxelMaterials = {
     y: new THREE.MeshBasicMaterial({ color: adj('#78ABA8', k) }),
     z: new THREE.MeshBasicMaterial({ color: adj('#78ABA8', -k) }),
   },
+  main: {
+    x: new THREE.MeshBasicMaterial({ color: '#E16A54' }),
+    y: new THREE.MeshBasicMaterial({ color: adj('#E16A54', k) }),
+    z: new THREE.MeshBasicMaterial({ color: adj('#E16A54', -k) }),
+  }
 };
 
 export const bloomingMaterial = new THREE.MeshBasicMaterial({
