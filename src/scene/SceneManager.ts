@@ -213,7 +213,7 @@ export class SceneManager {
 
     const { P1, P2 } = players;
 
-    const hudP1 = createHUD(P1, progressP1, 'right');
+    const hudP1 = createHUD(P1, progressP1, 'right', !P1.active);
     hudP1.position.set(
       (-COLS * MINO_SIZE) / 2,
       ((ROWS - 3) * MINO_SIZE) / 2,
@@ -221,7 +221,7 @@ export class SceneManager {
     );
     this._scene.add(hudP1);
 
-    const hudP2 = createHUD(P2, progressP2, 'left');
+    const hudP2 = createHUD(P2, progressP2, 'left', !P2.active);
     hudP2.position.set(
       ((COLS + 1) * MINO_SIZE) / 2,
       ((ROWS - 3) * MINO_SIZE) / 2,

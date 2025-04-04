@@ -33,9 +33,12 @@ export function createMinoShade(type: Tetrimino) {
   return new THREE.Mesh(minoShadeGeometry, minoShadeMaterials[type]);
 }
 
-export function createVoxel(size: 'primary' | 'secondary' | 'main') {
-  const { x, y, z } = voxelMaterials[size];
-  return new THREE.Mesh(voxelGeometries[size], [x, x, y, y, z, z]);
+export function createVoxel(
+  type: 'primary' | 'secondary' | 'main',
+  disabled = false,
+) {
+  const { x, y, z } = disabled ? voxelMaterials.disabled : voxelMaterials[type];
+  return new THREE.Mesh(voxelGeometries[type], [x, x, y, y, z, z]);
 }
 
 export const tetrionFloor = new THREE.GridHelper(
