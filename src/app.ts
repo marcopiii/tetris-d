@@ -4,6 +4,7 @@ import {
   GamepadManager,
 } from './gamepad';
 import { Game, Clock, Progress } from './gameplay';
+import { PlayerManager } from './player';
 import { RenderManager } from './render';
 import { SceneManager } from './scene';
 import { CameraManager } from './camera';
@@ -13,8 +14,7 @@ import './style.css';
 const container = document.getElementById('scene-container')!;
 
 const clock = new Clock(processGameFrame);
-const progress = new Progress();
-const game = new Game();
+const game = new Game(onNewPiece);
 
 const sceneManager = new SceneManager();
 const cameraManager = new CameraManager(container);
@@ -24,19 +24,25 @@ const renderManager = new RenderManager(
   cameraManager.camera,
 );
 
-const gamepadManager = new GamepadManager(controllerHandler);
+const playerManager = new PlayerManager('P1', 'P2');
+const progressP1 = new Progress();
+const progressP2 = new Progress();
+const gamepadP1 = new GamepadManager(0, controllerHandler);
+const gamepadP2 = new GamepadManager(1, controllerHandler);
 
 function animate() {
   requestAnimationFrame(animate);
   cameraManager.tween.update();
   renderManager.render();
-  gamepadManager.poll();
+  gamepadP1.poll();
+  gamepadP2.poll();
 }
 
 function processGameFrame() {
-  const [lineClear, gameOver] = game.tick();
-  progress.add(lineClear);
-  sceneManager.update(game, progress);
+  const [lineClearP1, lineClearP2, gameOver] = game.tick();
+  progressP1.add(lineClearP1);
+  progressP2.add(lineClearP2);
+  sceneManager.update(game, progressP1, progressP2, playerManager.players);
   if (gameOver) {
     clock.toggle();
     alert('Game Over');
@@ -44,16 +50,23 @@ function processGameFrame() {
   }
 }
 
+function onNewPiece() {
+  playerManager.switchPlayer();
+  gamepadP1.active = playerManager.activePlayer === 'P1';
+  gamepadP2.active = playerManager.activePlayer === 'P2';
+}
+
 function onStart() {
   game.reset();
-  progress.reset();
+  progressP1.reset();
   clock.start();
 }
 
 function commandHandler(command: GameAction) {
   if (!clock.isRunning) return;
   const sceneNeedsUpdate = game.tryMove(command);
-  if (sceneNeedsUpdate) sceneManager.update(game, progress);
+  if (sceneNeedsUpdate)
+    sceneManager.update(game, progressP1, progressP2, playerManager.players);
 }
 
 function cuttingHandler(
@@ -63,32 +76,7 @@ function cuttingHandler(
     below: action.side === 'below' ? action.type === 'cut' : undefined,
     above: action.side === 'above' ? action.type === 'cut' : undefined,
   };
-  sceneManager.update(game, progress);
-}
-
-function keyboardHandler(event: KeyboardEvent) {
-  if (event.type === 'keydown') {
-    if (event.key === 'Enter') onStart();
-    if (event.key === 'w') commandHandler('hold');
-    if (event.key === 'ArrowLeft')
-      event.shiftKey ? commandHandler('rotateL') : commandHandler('shiftL');
-    if (event.key === 'ArrowRight')
-      event.shiftKey ? commandHandler('rotateR') : commandHandler('shiftR');
-    if (event.key === 'ArrowDown') commandHandler('shiftF');
-    if (event.key === 'ArrowUp') commandHandler('shiftB');
-    if (event.key === ' ') commandHandler('hardDrop');
-    if (event.key === 'q')
-      cameraManager.move({ type: 'move', direction: 'left' });
-    if (event.key === 'e')
-      cameraManager.move({ type: 'move', direction: 'right' });
-    if (event.key === 'a') cuttingHandler({ type: 'cut', side: 'below' });
-    if (event.key === 'd') cuttingHandler({ type: 'cut', side: 'above' });
-    if (event.key === 'p') clock.toggle();
-  }
-  if (event.type === 'keyup') {
-    if (event.key === 'a') cuttingHandler({ type: 'uncut', side: 'below' });
-    if (event.key === 'd') cuttingHandler({ type: 'uncut', side: 'above' });
-  }
+  sceneManager.update(game, progressP1, progressP2, playerManager.players);
 }
 
 function controllerHandler(event: GamepadEvent, btn: GamepadButton) {
@@ -113,8 +101,5 @@ function controllerHandler(event: GamepadEvent, btn: GamepadButton) {
     if (btn === 'RB') cuttingHandler({ type: 'uncut', side: 'above' });
   }
 }
-
-document.addEventListener('keydown', keyboardHandler);
-document.addEventListener('keyup', keyboardHandler);
 
 animate();

@@ -42,9 +42,9 @@ export const minoMaterials = {
     z: new THREE.MeshBasicMaterial({ color: adj(colors.tetrimino.Z, -k) }),
   },
   disabled: {
-    x: new THREE.MeshBasicMaterial({ color: '#cfcfcf' }),
-    y: new THREE.MeshBasicMaterial({ color: adj('#cfcfcf', k) }),
-    z: new THREE.MeshBasicMaterial({ color: adj('#cfcfcf', -k) }),
+    x: new THREE.MeshBasicMaterial({ color: colors.disabled }),
+    y: new THREE.MeshBasicMaterial({ color: adj(colors.disabled, k) }),
+    z: new THREE.MeshBasicMaterial({ color: adj(colors.disabled, -k) }),
   },
 };
 
@@ -98,14 +98,24 @@ export const minoTransMaterials = {
 
 export const voxelMaterials = {
   primary: {
-    x: new THREE.MeshBasicMaterial({ color: '#F39E60' }),
-    y: new THREE.MeshBasicMaterial({ color: adj('#F39E60', k) }),
-    z: new THREE.MeshBasicMaterial({ color: adj('#F39E60', -k) }),
+    x: new THREE.MeshBasicMaterial({ color: colors.text.primary }),
+    y: new THREE.MeshBasicMaterial({ color: adj(colors.text.primary, k) }),
+    z: new THREE.MeshBasicMaterial({ color: adj(colors.text.primary, -k) }),
   },
   secondary: {
-    x: new THREE.MeshBasicMaterial({ color: '#78ABA8' }),
-    y: new THREE.MeshBasicMaterial({ color: adj('#78ABA8', k) }),
-    z: new THREE.MeshBasicMaterial({ color: adj('#78ABA8', -k) }),
+    x: new THREE.MeshBasicMaterial({ color: colors.text.secondary }),
+    y: new THREE.MeshBasicMaterial({ color: adj(colors.text.secondary, k) }),
+    z: new THREE.MeshBasicMaterial({ color: adj(colors.text.secondary, -k) }),
+  },
+  main: {
+    x: new THREE.MeshBasicMaterial({ color: colors.text.main }),
+    y: new THREE.MeshBasicMaterial({ color: adj(colors.text.main, k) }),
+    z: new THREE.MeshBasicMaterial({ color: adj(colors.text.main, -k) }),
+  },
+  disabled: {
+    x: new THREE.MeshBasicMaterial({ color: colors.disabled }),
+    y: new THREE.MeshBasicMaterial({ color: adj(colors.disabled, k) }),
+    z: new THREE.MeshBasicMaterial({ color: adj(colors.disabled, -k) }),
   },
 };
 
@@ -120,5 +130,5 @@ export const tetrionMaterial = new THREE.LineBasicMaterial({
 });
 
 export const cuttingShadowMaterial = new THREE.MeshBasicMaterial({
-  color: '#808080',
+  color: adj(colors.disabled, -60),
 });

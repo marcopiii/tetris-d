@@ -1,5 +1,7 @@
 import { COLS, ROWS, MINO_SIZE } from '../params';
 import * as THREE from 'three';
+import { PlayerTag } from '../player';
+import { Player } from '../player/types';
 import {
   createMino,
   createMinoShade,
@@ -8,9 +10,10 @@ import {
   createTetrionWall,
   tetrionFloor,
 } from './createMesh';
-import { createHoldHUD, createLevelHUD, createScoreHUD } from './createHUD';
+import { createHUD } from './createHUD';
 import type { Game, Progress } from '../gameplay';
 import { cuttingShadowMaterial } from './assets/materials';
+import { createWord } from './createWord';
 import { translateX, translateY, translateZ } from './utils';
 
 export class SceneManager {
@@ -84,10 +87,15 @@ export class SceneManager {
     };
   }
 
-  update(game: Game, progress: Progress) {
+  update(
+    game: Game,
+    progressP1: Progress,
+    progressP2: Progress,
+    players: Record<PlayerTag, Player>,
+  ) {
     this.reset();
 
-    const isCutOut = (y: number, x: number, z: number) => {
+    const isCutOut = (x: number, z: number) => {
       return game.piece.plane === 'x'
         ? (this._cutter.below && x < game.piece.planePosition) ||
             (this._cutter.above && x > game.piece.planePosition)
@@ -150,7 +158,7 @@ export class SceneManager {
     }
 
     game.board.forEachBlock((type, y, x, z) => {
-      if (isCutOut(y, x, z)) return;
+      if (isCutOut(x, z)) return;
       const mino = type === 'DELETE' ? createBloomingMino() : createMino(type);
       mino.position.set(translateX(x), translateY(y), translateZ(z));
       this._scene.add(mino);
@@ -203,31 +211,23 @@ export class SceneManager {
       this._scene.add(zrShadow);
     });
 
-    const scoreHUD = createScoreHUD(progress.score);
-    scoreHUD.position.set(
+    const { P1, P2 } = players;
+
+    const hudP1 = createHUD(P1, progressP1, 'right', !P1.active);
+    hudP1.position.set(
       (-COLS * MINO_SIZE) / 2,
       ((ROWS - 3) * MINO_SIZE) / 2,
       (-(COLS - 1) * MINO_SIZE) / 2,
     );
-    const levelHUD = createLevelHUD(progress.level);
-    levelHUD.position.set(
-      (-COLS * MINO_SIZE) / 2,
-      ((ROWS / 2) * MINO_SIZE) / 2,
-      (-(COLS - 1) * MINO_SIZE) / 2,
-    );
-    this._scene.add(scoreHUD);
-    this._scene.add(levelHUD);
+    this._scene.add(hudP1);
 
-    const holdHUD = createHoldHUD(
-      game.hold.piece.shape,
-      game.hold.piece.type,
-      game.piece.isHoldable,
-    );
-    holdHUD.position.set(
+    const hudP2 = createHUD(P2, progressP2, 'left', !P2.active);
+    hudP2.position.set(
       ((COLS + 1) * MINO_SIZE) / 2,
       ((ROWS - 3) * MINO_SIZE) / 2,
       ((COLS + 2) * MINO_SIZE) / 2,
     );
-    this._scene.add(holdHUD);
+    hudP2.rotateY(THREE.MathUtils.degToRad(90));
+    this._scene.add(hudP2);
   }
 }

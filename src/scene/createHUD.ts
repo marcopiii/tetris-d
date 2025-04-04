@@ -1,13 +1,19 @@
 import * as THREE from 'three';
+import { Progress } from '../gameplay';
+import { Player } from '../player';
 import { createWord } from './createWord';
 import { createMino } from './createMesh';
 import { VOXEL_SIZE } from '../params';
 import { Shape } from './types';
 import { Name as Tetrimino } from '../tetrimino';
 
-export function createScoreHUD(score: number) {
-  const labelGroup = createWord('SCORE', 'secondary', 'right');
-  const scoreGroup = createWord(score.toString(), 'primary', 'right');
+function createScoreHUD(
+  score: number,
+  align: 'left' | 'right',
+  disabled = false,
+) {
+  const labelGroup = createWord('SCORE', 'secondary', align, disabled);
+  const scoreGroup = createWord(score.toString(), 'primary', align, disabled);
 
   const scoreHUD = new THREE.Group();
   labelGroup.position.set(0, 0, 0);
@@ -18,9 +24,13 @@ export function createScoreHUD(score: number) {
   return scoreHUD;
 }
 
-export function createLevelHUD(level: number) {
-  const labelGroup = createWord('LEVEL', 'secondary', 'right');
-  const levelGroup = createWord(level.toString(), 'primary', 'right');
+function createLevelHUD(
+  level: number,
+  align: 'left' | 'right',
+  disabled = false,
+) {
+  const labelGroup = createWord('LEVEL', 'secondary', align, disabled);
+  const levelGroup = createWord(level.toString(), 'primary', align, disabled);
 
   const levelHUD = new THREE.Group();
   labelGroup.position.set(0, 0, 0);
@@ -29,6 +39,32 @@ export function createLevelHUD(level: number) {
   levelHUD.add(levelGroup);
   levelHUD.rotateY(THREE.MathUtils.degToRad(180));
   return levelHUD;
+}
+
+export function createHUD(
+  player: Player,
+  progress: Progress,
+  align: 'left' | 'right',
+  disabled: boolean = false,
+) {
+  const hud = new THREE.Group();
+  const handle = createWord(player.name, 'main', align, disabled);
+  const score = createScoreHUD(progress.score, align, disabled);
+  const level = createLevelHUD(progress.level, align, disabled);
+
+  handle.position.set(0, 0, 0);
+  handle.rotateY(THREE.MathUtils.degToRad(180));
+  score.position.set(0, -VOXEL_SIZE.main * 7, 0);
+  level.position.set(
+    0,
+    -(VOXEL_SIZE.main * 7 + VOXEL_SIZE.secondary * 8 + VOXEL_SIZE.primary * 8),
+    0,
+  );
+
+  hud.add(handle);
+  hud.add(score);
+  hud.add(level);
+  return hud;
 }
 
 export function createHoldHUD(

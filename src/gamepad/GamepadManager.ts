@@ -3,29 +3,26 @@ import { Button, Event } from './types';
 
 export class GamepadManager {
   private readonly _handler: (event: Event, button: Button) => void;
-  private _gamepadIndex: number | undefined;
+  private readonly _gamepadIndex: number;
   private _buffer: readonly GamepadButton[];
+  private _active: boolean;
 
-  constructor(handler: (event: Event, button: Button) => void) {
+  constructor(index: number, handler: (event: Event, button: Button) => void) {
     this._handler = handler;
-    this._gamepadIndex = undefined;
+    this._gamepadIndex = index;
     this._buffer = [];
+    this._active = index === 0;
+  }
 
-    window.addEventListener(
-      'gamepadconnected',
-      (e) => (this._gamepadIndex = e.gamepad.index),
-    );
-    window.addEventListener(
-      'gamepaddisconnected',
-      () => (this._gamepadIndex = undefined),
-    );
+  set active(active: boolean) {
+    this._buffer = [];
+    this._active = active;
   }
 
   poll() {
-    if (this._gamepadIndex === undefined) return;
-
     const gamepad = navigator.getGamepads()[this._gamepadIndex];
     if (!gamepad) return;
+    if (!this._active) return;
 
     gamepad.buttons.forEach((button, i) => {
       const buttonCode = mapping(i);

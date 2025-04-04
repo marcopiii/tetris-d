@@ -2,7 +2,7 @@ export class Clock {
   private readonly _callback: () => void;
   private _interval: NodeJS.Timeout | undefined;
 
-  private SPEED = 1000;
+  private SPEED = 1500;
 
   constructor(callback: () => void) {
     this._callback = callback;

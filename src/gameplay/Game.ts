@@ -4,11 +4,13 @@ import { COLS, ROWS } from '../params';
 import { Hold } from './Hold';
 
 export class Game {
+  private readonly _onNewPiece: () => void;
   private readonly _board: Board;
   private _piece: Piece;
   private readonly _hold: Hold;
 
-  constructor() {
+  constructor(onNewPiece: () => void) {
+    this._onNewPiece = onNewPiece;
     this._board = new Board();
     this._piece = new Piece();
     this._hold = new Hold();
@@ -22,30 +24,27 @@ export class Game {
     return this._piece;
   }
 
-  get hold() {
-    return this._hold;
-  }
-
   reset() {
     this._board.clean();
     this._piece = new Piece();
   }
 
   /** Progresses the game by one tick.
-   * @return A tuple containing the number of cleared lines and whether the game is over
+   * @return A tuple containing the number of cleared lines for each player and whether the game is over
    */
-  tick(): [number, boolean] {
+  tick(): [number, number, boolean] {
     this._board.clearLines();
     this._piece.drop();
     if (detectCollision(this._piece, this._board)) {
       this._piece.rollback();
       this._board.fixPiece(this._piece);
-      const lineClear = this._board.checkLines();
+      const [lineClearP1, lineClearP2] = this._board.checkLines();
       this._piece = this._piece.plane === 'x' ? new Piece('z') : new Piece('x');
+      this._onNewPiece();
       const gameOver = detectCollision(this._piece, this._board);
-      return [lineClear, gameOver];
+      return [lineClearP1, lineClearP2, gameOver];
     }
-    return [0, false];
+    return [0, 0, false];
   }
 
   private holdPiece() {

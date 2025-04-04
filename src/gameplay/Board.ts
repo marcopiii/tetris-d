@@ -52,7 +52,7 @@ export class Board {
     this._matrix[0][x][z] = null;
   }
 
-  checkLines() {
+  checkLines(): [number, number] {
     const checkZAxisRow = (y: number, x: number) => {
       for (let z = 0; z < COLS; z++) {
         if (!this._matrix[y][x][z]) return false;
@@ -66,14 +66,15 @@ export class Board {
       return true;
     };
 
-    let clearedLines = 0;
+    let clearedLinesP1 = 0;
+    let clearedLinesP2 = 0;
     for (let y = 0; y < ROWS; y++) {
       for (let z = 0; z < COLS; z++) {
         if (checkXAxisRow(y, z)) {
           for (let x = 0; x < COLS; x++) {
             this._matrix[y][x][z] = 'DELETE';
           }
-          clearedLines++;
+          clearedLinesP1++;
         }
       }
       for (let x = 0; x < COLS; x++) {
@@ -81,11 +82,11 @@ export class Board {
           for (let z = 0; z < COLS; z++) {
             this._matrix[y][x][z] = 'DELETE';
           }
-          clearedLines++;
+          clearedLinesP2++;
         }
       }
     }
-    return clearedLines;
+    return [clearedLinesP1, clearedLinesP2];
   }
 
   clearLines() {
