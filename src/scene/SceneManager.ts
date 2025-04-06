@@ -213,13 +213,39 @@ export class SceneManager {
 
     const { P1, P2 } = players;
 
-    const p1Align = ['c1', 'c2'].includes(cameraPosition) ? 'right' : 'left';
-    const hudP1 = createHUD(P1, progressP1, p1Align, !P1.active);
-    hudP1.position.set(
-      (-COLS * MINO_SIZE) / 2,
-      ((ROWS - 3) * MINO_SIZE) / 2,
-      (-(COLS - 1) * MINO_SIZE) / 2,
+    const hudP1 = createHUD(
+      P1,
+      progressP1,
+      ['c1', 'c3'].includes(cameraPosition) ? 'right' : 'left',
+      !P1.active,
     );
+    if (cameraPosition === 'c1') {
+      hudP1.position.set(
+        (-COLS * MINO_SIZE) / 2,
+        ((ROWS - 3) * MINO_SIZE) / 2,
+        (-(COLS - 1) * MINO_SIZE) / 2,
+      );
+    } else if (cameraPosition === 'c2') {
+      hudP1.position.set(
+        ((COLS + 2) * MINO_SIZE) / 2,
+        ((ROWS - 3) * MINO_SIZE) / 2,
+        (-(COLS - 1) * MINO_SIZE) / 2,
+      );
+      hudP1.rotateY(THREE.MathUtils.degToRad(180));
+    } else if (cameraPosition === 'c3') {
+      hudP1.position.set(
+        ((COLS + 1) * MINO_SIZE) / 2,
+        ((ROWS - 3) * MINO_SIZE) / 2,
+        ((COLS + 2) * MINO_SIZE) / 2,
+      );
+      hudP1.rotateY(THREE.MathUtils.degToRad(180));
+    } else if (cameraPosition === 'c4') {
+      hudP1.position.set(
+        (-(COLS - 1) * MINO_SIZE) / 2,
+        ((ROWS - 3) * MINO_SIZE) / 2,
+        ((COLS + 2) * MINO_SIZE) / 2,
+      );
+    }
     this._scene.add(hudP1);
 
     const p2Align = ['c1', 'c4'].includes(cameraPosition) ? 'left' : 'right';
