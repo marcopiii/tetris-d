@@ -42,19 +42,19 @@ export class CameraManager {
     return this._position;
   }
 
-  move(action: Extract<CameraAction, { type: 'move' }>) {
+  move(direction: 'left' | 'right') {
     switch (this._position) {
       case 'c1':
-        this._position = action.direction === 'right' ? 'c2' : 'c4';
+        this._position = direction === 'right' ? 'c2' : 'c4';
         break;
       case 'c2':
-        this._position = action.direction === 'right' ? 'c3' : 'c1';
+        this._position = direction === 'right' ? 'c3' : 'c1';
         break;
       case 'c3':
-        this._position = action.direction === 'right' ? 'c4' : 'c2';
+        this._position = direction === 'right' ? 'c4' : 'c2';
         break;
       case 'c4':
-        this._position = action.direction === 'right' ? 'c1' : 'c3';
+        this._position = direction === 'right' ? 'c1' : 'c3';
         break;
     }
     const target = cameraSetup[this._position];
