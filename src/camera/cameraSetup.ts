@@ -24,20 +24,4 @@ export const cameraSetup: Record<Position, CameraSetup> = {
     position: new THREE.Vector3(-10, 5, -10 - MINO_SIZE),
     lookAt: new THREE.Vector3(0, 0, -MINO_SIZE),
   },
-  x0_zR: {
-    position: new THREE.Vector3(-10, 0, 0.5 * MINO_SIZE),
-    lookAt: new THREE.Vector3(0, 0, 0.5 * MINO_SIZE),
-  },
-  x0_zL: {
-    position: new THREE.Vector3(10, 0, 0.5 * MINO_SIZE),
-    lookAt: new THREE.Vector3(0, 0, 0.5 * MINO_SIZE),
-  },
-  xR_z0: {
-    position: new THREE.Vector3(0.5 * MINO_SIZE, 0, 10),
-    lookAt: new THREE.Vector3(0.5 * MINO_SIZE, 0, 0),
-  },
-  xL_z0: {
-    position: new THREE.Vector3(0.5 * MINO_SIZE, 0, -10),
-    lookAt: new THREE.Vector3(0.5 * MINO_SIZE, 0, 0),
-  },
 };

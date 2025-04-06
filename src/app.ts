@@ -66,7 +66,7 @@ function commandHandler(command: GameAction) {
   if (!clock.isRunning) return;
   const sceneNeedsUpdate = game.tryMove(
     command,
-    cameraManager.relativeDirections,
+    cameraManager.position,
   );
   if (sceneNeedsUpdate)
     sceneManager.update(game, progressP1, progressP2, playerManager.players);

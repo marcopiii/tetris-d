@@ -1,4 +1,4 @@
-import { RelativeDirection } from '../camera';
+import {CameraPosition, relativeDirection} from '../camera';
 import { Board } from './Board';
 import { Piece } from './Piece';
 import { COLS, ROWS } from '../params';
@@ -68,10 +68,10 @@ export class Game {
   /**
    * @returns {boolean} - Whether the move had success
    */
-  tryMove(type: Move, relativeDirection: RelativeDirection): boolean {
+  tryMove(type: Move, cameraPosition: CameraPosition): boolean {
     const isInverted =
-      (this._piece.plane === 'x' && relativeDirection.z === 'negative') ||
-      (this._piece.plane === 'z' && relativeDirection.x === 'negative');
+      (this._piece.plane === 'x' && relativeDirection[cameraPosition].z === 'negative') ||
+      (this._piece.plane === 'z' && relativeDirection[cameraPosition].x === 'negative');
 
     let wallKickTest = 0;
     switch (type) {
@@ -82,14 +82,10 @@ export class Game {
         isInverted ? this._piece.shiftLeft() : this._piece.shiftRight();
         break; // go to collision detection
       case 'shiftB':
-        isInverted
-          ? this._piece.shiftForward()
-          : this._piece.shiftBackward();
+        isInverted ? this._piece.shiftForward() : this._piece.shiftBackward();
         break; // go to collision detection
       case 'shiftF':
-        isInverted
-          ? this._piece.shiftBackward()
-          : this._piece.shiftForward();
+        isInverted ? this._piece.shiftBackward() : this._piece.shiftForward();
         break; // go to collision detection
       case 'rotateL':
         while (wallKickTest < 5) {
