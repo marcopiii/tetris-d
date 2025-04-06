@@ -248,13 +248,40 @@ export class SceneManager {
     }
     this._scene.add(hudP1);
 
-    const p2Align = ['c1', 'c4'].includes(cameraPosition) ? 'left' : 'right';
-    const hudP2 = createHUD(P2, progressP2, p2Align, !P2.active);
-    hudP2.position.set(
-      ((COLS + 1) * MINO_SIZE) / 2,
-      ((ROWS - 3) * MINO_SIZE) / 2,
-      ((COLS + 2) * MINO_SIZE) / 2,
+    const hudP2 = createHUD(
+      P2,
+      progressP2,
+      ['c1', 'c3'].includes(cameraPosition) ? 'left' : 'right',
+      !P2.active,
     );
+    if (cameraPosition === 'c1') {
+      hudP2.position.set(
+        ((COLS + 1) * MINO_SIZE) / 2,
+        ((ROWS - 3) * MINO_SIZE) / 2,
+        ((COLS + 2) * MINO_SIZE) / 2,
+      );
+    } else if (cameraPosition === 'c2') {
+      hudP2.position.set(
+        (-(COLS - 1) * MINO_SIZE) / 2,
+        ((ROWS - 3) * MINO_SIZE) / 2,
+        ((COLS + 2) * MINO_SIZE) / 2,
+      );
+    } else if (cameraPosition === 'c3') {
+      hudP2.position.set(
+        (-COLS * MINO_SIZE) / 2,
+        ((ROWS - 3) * MINO_SIZE) / 2,
+        (-(COLS - 1) * MINO_SIZE) / 2,
+      );
+      hudP2.rotateY(THREE.MathUtils.degToRad(180));
+    } else if (cameraPosition === 'c4') {
+      hudP2.position.set(
+        ((COLS + 2) * MINO_SIZE) / 2,
+        ((ROWS - 3) * MINO_SIZE) / 2,
+        (-(COLS - 1) * MINO_SIZE) / 2,
+      );
+      hudP2.rotateY(THREE.MathUtils.degToRad(180));
+    }
+
     hudP2.rotateY(THREE.MathUtils.degToRad(90));
     this._scene.add(hudP2);
   }
