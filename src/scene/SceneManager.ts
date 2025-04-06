@@ -1,7 +1,6 @@
 import { COLS, ROWS, MINO_SIZE } from '../params';
 import * as THREE from 'three';
-import { PlayerTag } from '../player';
-import { Player } from '../player/types';
+import { PlayerTag, Player } from '../player';
 import {
   createMino,
   createMinoShade,
@@ -13,7 +12,6 @@ import {
 import { createHUD } from './createHUD';
 import type { Game, Progress } from '../gameplay';
 import { cuttingShadowMaterial } from './assets/materials';
-import { createWord } from './createWord';
 import { translateX, translateY, translateZ } from './utils';
 
 export class SceneManager {

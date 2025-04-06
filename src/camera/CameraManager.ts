@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import TWEEN, { Group as TWEENGroup } from '@tweenjs/tween.js';
 import { CameraAction } from '../action';
-import type { Position } from './types';
+import { Position, RelativeDirection } from './types';
 import { cameraSetup } from './cameraSetup';
 
 export class CameraManager {
@@ -36,6 +36,13 @@ export class CameraManager {
 
   get tween() {
     return this._tweenGroup;
+  }
+
+  get relativeDirections(): RelativeDirection {
+    return {
+      x: ['xR_zR', 'xR_zL'].includes(this._position) ? 'positive' : 'negative',
+      z: ['xR_zR', 'xL_zR'].includes(this._position) ? 'positive' : 'negative',
+    };
   }
 
   move(action: Extract<CameraAction, { type: 'move' }>) {

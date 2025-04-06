@@ -7,3 +7,8 @@ export type Position =
   | 'x0_zL'
   | 'xR_z0'
   | 'xL_z0';
+
+export type RelativeDirection = {
+  x: 'positive' | 'negative';
+  z: 'positive' | 'negative';
+};
