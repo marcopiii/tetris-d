@@ -1,7 +1,7 @@
+import { CameraPosition } from '../camera';
 import { COLS, ROWS, MINO_SIZE } from '../params';
 import * as THREE from 'three';
-import { PlayerTag } from '../player';
-import { Player } from '../player/types';
+import { PlayerTag, Player } from '../player';
 import {
   createMino,
   createMinoShade,
@@ -13,7 +13,6 @@ import {
 import { createHUD } from './createHUD';
 import type { Game, Progress } from '../gameplay';
 import { cuttingShadowMaterial } from './assets/materials';
-import { createWord } from './createWord';
 import { translateX, translateY, translateZ } from './utils';
 
 export class SceneManager {
@@ -92,6 +91,7 @@ export class SceneManager {
     progressP1: Progress,
     progressP2: Progress,
     players: Record<PlayerTag, Player>,
+    cameraPosition: CameraPosition,
   ) {
     this.reset();
 
@@ -213,20 +213,75 @@ export class SceneManager {
 
     const { P1, P2 } = players;
 
-    const hudP1 = createHUD(P1, progressP1, 'right', !P1.active);
-    hudP1.position.set(
-      (-COLS * MINO_SIZE) / 2,
-      ((ROWS - 3) * MINO_SIZE) / 2,
-      (-(COLS - 1) * MINO_SIZE) / 2,
+    const hudP1 = createHUD(
+      P1,
+      progressP1,
+      ['c1', 'c3'].includes(cameraPosition) ? 'right' : 'left',
+      !P1.active,
     );
+    if (cameraPosition === 'c1') {
+      hudP1.position.set(
+        (-COLS * MINO_SIZE) / 2,
+        ((ROWS - 3) * MINO_SIZE) / 2,
+        (-(COLS - 1) * MINO_SIZE) / 2,
+      );
+    } else if (cameraPosition === 'c2') {
+      hudP1.position.set(
+        ((COLS + 2) * MINO_SIZE) / 2,
+        ((ROWS - 3) * MINO_SIZE) / 2,
+        (-(COLS - 1) * MINO_SIZE) / 2,
+      );
+      hudP1.rotateY(THREE.MathUtils.degToRad(180));
+    } else if (cameraPosition === 'c3') {
+      hudP1.position.set(
+        ((COLS + 1) * MINO_SIZE) / 2,
+        ((ROWS - 3) * MINO_SIZE) / 2,
+        ((COLS + 2) * MINO_SIZE) / 2,
+      );
+      hudP1.rotateY(THREE.MathUtils.degToRad(180));
+    } else if (cameraPosition === 'c4') {
+      hudP1.position.set(
+        (-(COLS - 1) * MINO_SIZE) / 2,
+        ((ROWS - 3) * MINO_SIZE) / 2,
+        ((COLS + 2) * MINO_SIZE) / 2,
+      );
+    }
     this._scene.add(hudP1);
 
-    const hudP2 = createHUD(P2, progressP2, 'left', !P2.active);
-    hudP2.position.set(
-      ((COLS + 1) * MINO_SIZE) / 2,
-      ((ROWS - 3) * MINO_SIZE) / 2,
-      ((COLS + 2) * MINO_SIZE) / 2,
+    const hudP2 = createHUD(
+      P2,
+      progressP2,
+      ['c1', 'c3'].includes(cameraPosition) ? 'left' : 'right',
+      !P2.active,
     );
+    if (cameraPosition === 'c1') {
+      hudP2.position.set(
+        ((COLS + 1) * MINO_SIZE) / 2,
+        ((ROWS - 3) * MINO_SIZE) / 2,
+        ((COLS + 2) * MINO_SIZE) / 2,
+      );
+    } else if (cameraPosition === 'c2') {
+      hudP2.position.set(
+        (-(COLS - 1) * MINO_SIZE) / 2,
+        ((ROWS - 3) * MINO_SIZE) / 2,
+        ((COLS + 2) * MINO_SIZE) / 2,
+      );
+    } else if (cameraPosition === 'c3') {
+      hudP2.position.set(
+        (-COLS * MINO_SIZE) / 2,
+        ((ROWS - 3) * MINO_SIZE) / 2,
+        (-(COLS - 1) * MINO_SIZE) / 2,
+      );
+      hudP2.rotateY(THREE.MathUtils.degToRad(180));
+    } else if (cameraPosition === 'c4') {
+      hudP2.position.set(
+        ((COLS + 2) * MINO_SIZE) / 2,
+        ((ROWS - 3) * MINO_SIZE) / 2,
+        (-(COLS - 1) * MINO_SIZE) / 2,
+      );
+      hudP2.rotateY(THREE.MathUtils.degToRad(180));
+    }
+
     hudP2.rotateY(THREE.MathUtils.degToRad(90));
     this._scene.add(hudP2);
   }

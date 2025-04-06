@@ -42,7 +42,13 @@ function processGameFrame() {
   const [lineClearP1, lineClearP2, gameOver] = game.tick();
   progressP1.add(lineClearP1);
   progressP2.add(lineClearP2);
-  sceneManager.update(game, progressP1, progressP2, playerManager.players);
+  sceneManager.update(
+    game,
+    progressP1,
+    progressP2,
+    playerManager.players,
+    cameraManager.position,
+  );
   if (gameOver) {
     clock.toggle();
     alert('Game Over');
@@ -62,43 +68,73 @@ function onStart() {
   clock.start();
 }
 
-function commandHandler(command: GameAction) {
+function gameCommandHandler(command: GameAction) {
   if (!clock.isRunning) return;
-  const sceneNeedsUpdate = game.tryMove(command);
+  const sceneNeedsUpdate = game.tryMove(command, cameraManager.position);
   if (sceneNeedsUpdate)
-    sceneManager.update(game, progressP1, progressP2, playerManager.players);
+    sceneManager.update(
+      game,
+      progressP1,
+      progressP2,
+      playerManager.players,
+      cameraManager.position,
+    );
 }
 
-function cuttingHandler(
+function cameraCommandHandler(action: Extract<CameraAction, { type: 'move' }>) {
+  switch (action.direction) {
+    case 'left':
+      cameraManager.move('left');
+      break;
+    case 'right':
+      cameraManager.move('right');
+      break;
+  }
+  sceneManager.update(
+    game,
+    progressP1,
+    progressP2,
+    playerManager.players,
+    cameraManager.position,
+  );
+}
+
+function cuttingCommandHandler(
   action: Extract<CameraAction, { type: 'cut' | 'uncut' }>,
 ) {
   sceneManager.cutter = {
     below: action.side === 'below' ? action.type === 'cut' : undefined,
     above: action.side === 'above' ? action.type === 'cut' : undefined,
   };
-  sceneManager.update(game, progressP1, progressP2, playerManager.players);
+  sceneManager.update(
+    game,
+    progressP1,
+    progressP2,
+    playerManager.players,
+    cameraManager.position,
+  );
 }
 
 function controllerHandler(event: GamepadEvent, btn: GamepadButton) {
   if (event === 'press') {
     if (btn === 'start') clock.toggle();
     if (btn === 'select') onStart();
-    if (btn === 'padL') commandHandler('shiftL');
-    if (btn === 'padR') commandHandler('shiftR');
-    if (btn === 'padD') commandHandler('shiftF');
-    if (btn === 'padU') commandHandler('shiftB');
-    if (btn === 'X') commandHandler('rotateL');
-    if (btn === 'B') commandHandler('rotateR');
-    if (btn === 'A') commandHandler('hardDrop');
-    if (btn === 'Y') commandHandler('hold');
-    if (btn === 'LT') cameraManager.move({ type: 'move', direction: 'left' });
-    if (btn === 'RT') cameraManager.move({ type: 'move', direction: 'right' });
-    if (btn === 'LB') cuttingHandler({ type: 'cut', side: 'below' });
-    if (btn === 'RB') cuttingHandler({ type: 'cut', side: 'above' });
+    if (btn === 'padL') gameCommandHandler('shiftL');
+    if (btn === 'padR') gameCommandHandler('shiftR');
+    if (btn === 'padD') gameCommandHandler('shiftF');
+    if (btn === 'padU') gameCommandHandler('shiftB');
+    if (btn === 'X') gameCommandHandler('rotateL');
+    if (btn === 'B') gameCommandHandler('rotateR');
+    if (btn === 'A') gameCommandHandler('hardDrop');
+    if (btn === 'Y') gameCommandHandler('hold');
+    if (btn === 'LT') cameraCommandHandler({ type: 'move', direction: 'left' });
+    if (btn === 'RT') cameraCommandHandler({ type: 'move', direction: 'right' });
+    if (btn === 'LB') cuttingCommandHandler({ type: 'cut', side: 'below' });
+    if (btn === 'RB') cuttingCommandHandler({ type: 'cut', side: 'above' });
   }
   if (event === 'release') {
-    if (btn === 'LB') cuttingHandler({ type: 'uncut', side: 'below' });
-    if (btn === 'RB') cuttingHandler({ type: 'uncut', side: 'above' });
+    if (btn === 'LB') cuttingCommandHandler({ type: 'uncut', side: 'below' });
+    if (btn === 'RB') cuttingCommandHandler({ type: 'uncut', side: 'above' });
   }
 }
 

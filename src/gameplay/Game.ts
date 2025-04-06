@@ -1,7 +1,9 @@
+import { CameraPosition, relativeDirection } from '../camera';
 import { Board } from './Board';
 import { Piece } from './Piece';
 import { COLS, ROWS } from '../params';
 import { Hold } from './Hold';
+import { Move } from './types';
 
 export class Game {
   private readonly _onNewPiece: () => void;
@@ -66,34 +68,32 @@ export class Game {
   /**
    * @returns {boolean} - Whether the move had success
    */
-  tryMove(
-    type:
-      | 'hold'
-      | 'shiftL'
-      | 'shiftR'
-      | 'shiftB'
-      | 'shiftF'
-      | 'rotateL'
-      | 'rotateR'
-      | 'hardDrop',
-  ): boolean {
+  tryMove(type: Move, cameraPosition: CameraPosition): boolean {
+    const isInverted =
+      (this._piece.plane === 'x' &&
+        relativeDirection[cameraPosition].z === 'negative') ||
+      (this._piece.plane === 'z' &&
+        relativeDirection[cameraPosition].x === 'negative');
+
     let wallKickTest = 0;
     switch (type) {
       case 'shiftL':
-        this._piece.shiftLeft();
+        isInverted ? this._piece.shiftRight() : this._piece.shiftLeft();
         break; // go to collision detection
       case 'shiftR':
-        this._piece.shiftRight();
+        isInverted ? this._piece.shiftLeft() : this._piece.shiftRight();
         break; // go to collision detection
       case 'shiftB':
-        this._piece.shiftBackward();
+        isInverted ? this._piece.shiftForward() : this._piece.shiftBackward();
         break; // go to collision detection
       case 'shiftF':
-        this._piece.shiftForward();
+        isInverted ? this._piece.shiftBackward() : this._piece.shiftForward();
         break; // go to collision detection
       case 'rotateL':
         while (wallKickTest < 5) {
-          this._piece.rotateLeft(wallKickTest);
+          isInverted
+            ? this._piece.rotateRight(wallKickTest)
+            : this._piece.rotateLeft(wallKickTest);
           if (!detectCollision(this._piece, this._board)) return true;
           this._piece.rollback();
           wallKickTest++;
@@ -101,7 +101,9 @@ export class Game {
         return false;
       case 'rotateR':
         while (wallKickTest < 5) {
-          this._piece.rotateRight(wallKickTest);
+          isInverted
+            ? this._piece.rotateLeft(wallKickTest)
+            : this._piece.rotateRight(wallKickTest);
           if (!detectCollision(this._piece, this._board)) return true;
           this._piece.rollback();
           wallKickTest++;
