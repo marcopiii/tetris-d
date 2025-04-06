@@ -12,7 +12,7 @@ export const cameraSetup: Record<Position, CameraSetup> = {
     position: new THREE.Vector3(-10, 5, 10 + MINO_SIZE),
     lookAt: new THREE.Vector3(0, 0, MINO_SIZE),
   },
-  xL_zR: {
+  xR_zL: {
     position: new THREE.Vector3(10, 5, 10 + MINO_SIZE),
     lookAt: new THREE.Vector3(0, 0, MINO_SIZE),
   },
@@ -20,7 +20,7 @@ export const cameraSetup: Record<Position, CameraSetup> = {
     position: new THREE.Vector3(10, 4, -10 + MINO_SIZE),
     lookAt: new THREE.Vector3(0, -1, +MINO_SIZE),
   },
-  xR_zL: {
+  xL_zR: {
     position: new THREE.Vector3(-10, 5, -10 - MINO_SIZE),
     lookAt: new THREE.Vector3(0, 0, -MINO_SIZE),
   },
