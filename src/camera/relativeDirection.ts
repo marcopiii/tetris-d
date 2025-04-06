@@ -1,20 +1,20 @@
-import {Position, RelativeDirection} from './types';
+import { Position, RelativeDirection } from './types';
 
 export const relativeDirection: Record<Position, RelativeDirection> = {
-  xR_zR: {
+  c1: {
     x: 'positive',
     z: 'positive',
   },
-  xR_zL: {
+  c2: {
     x: 'positive',
     z: 'negative',
   },
-  xL_zL: {
+  c3: {
     x: 'negative',
     z: 'negative',
   },
-  xL_zR: {
+  c4: {
     x: 'negative',
     z: 'positive',
-  }
+  },
 };

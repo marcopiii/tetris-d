@@ -14,7 +14,7 @@ export class CameraManager {
   constructor(container: HTMLElement) {
     const aspect = container.clientWidth / container.clientHeight;
     this._tweenGroup = new TWEEN.Group();
-    this._position = 'xR_zR';
+    this._position = 'c1';
     this._camera = new THREE.OrthographicCamera(
       (-this.frustumSize * aspect) / 2,
       (this.frustumSize * aspect) / 2,
@@ -44,17 +44,17 @@ export class CameraManager {
 
   move(action: Extract<CameraAction, { type: 'move' }>) {
     switch (this._position) {
-      case 'xR_zR':
-        this._position = action.direction === 'right' ? 'xR_zL' : 'xL_zR';
+      case 'c1':
+        this._position = action.direction === 'right' ? 'c2' : 'c4';
         break;
-      case 'xR_zL':
-        this._position = action.direction === 'right' ? 'xL_zL' : 'xR_zR';
+      case 'c2':
+        this._position = action.direction === 'right' ? 'c3' : 'c1';
         break;
-      case 'xL_zL':
-        this._position = action.direction === 'right' ? 'xL_zR' : 'xR_zL';
+      case 'c3':
+        this._position = action.direction === 'right' ? 'c4' : 'c2';
         break;
-      case 'xL_zR':
-        this._position = action.direction === 'right' ? 'xR_zR' : 'xL_zL';
+      case 'c4':
+        this._position = action.direction === 'right' ? 'c1' : 'c3';
         break;
     }
     const target = cameraSetup[this._position];

@@ -8,19 +8,19 @@ type CameraSetup = {
 };
 
 export const cameraSetup: Record<Position, CameraSetup> = {
-  xR_zR: {
+  c1: {
     position: new THREE.Vector3(-10, 5, 10 + MINO_SIZE),
     lookAt: new THREE.Vector3(0, 0, MINO_SIZE),
   },
-  xR_zL: {
+  c2: {
     position: new THREE.Vector3(10, 5, 10 + MINO_SIZE),
     lookAt: new THREE.Vector3(0, 0, MINO_SIZE),
   },
-  xL_zL: {
+  c3: {
     position: new THREE.Vector3(10, 4, -10 + MINO_SIZE),
     lookAt: new THREE.Vector3(0, -1, +MINO_SIZE),
   },
-  xL_zR: {
+  c4: {
     position: new THREE.Vector3(-10, 5, -10 - MINO_SIZE),
     lookAt: new THREE.Vector3(0, 0, -MINO_SIZE),
   },

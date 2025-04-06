@@ -1,3 +1,4 @@
+import { CameraPosition } from '../camera';
 import { COLS, ROWS, MINO_SIZE } from '../params';
 import * as THREE from 'three';
 import { PlayerTag, Player } from '../player';
@@ -90,6 +91,7 @@ export class SceneManager {
     progressP1: Progress,
     progressP2: Progress,
     players: Record<PlayerTag, Player>,
+    cameraPosition: CameraPosition,
   ) {
     this.reset();
 
@@ -211,7 +213,8 @@ export class SceneManager {
 
     const { P1, P2 } = players;
 
-    const hudP1 = createHUD(P1, progressP1, 'right', !P1.active);
+    const p1Align = ['c1', 'c2'].includes(cameraPosition) ? 'right' : 'left';
+    const hudP1 = createHUD(P1, progressP1, p1Align, !P1.active);
     hudP1.position.set(
       (-COLS * MINO_SIZE) / 2,
       ((ROWS - 3) * MINO_SIZE) / 2,
@@ -219,7 +222,8 @@ export class SceneManager {
     );
     this._scene.add(hudP1);
 
-    const hudP2 = createHUD(P2, progressP2, 'left', !P2.active);
+    const p2Align = ['c1', 'c4'].includes(cameraPosition) ? 'left' : 'right';
+    const hudP2 = createHUD(P2, progressP2, p2Align, !P2.active);
     hudP2.position.set(
       ((COLS + 1) * MINO_SIZE) / 2,
       ((ROWS - 3) * MINO_SIZE) / 2,

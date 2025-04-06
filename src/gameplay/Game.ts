@@ -1,4 +1,4 @@
-import {CameraPosition, relativeDirection} from '../camera';
+import { CameraPosition, relativeDirection } from '../camera';
 import { Board } from './Board';
 import { Piece } from './Piece';
 import { COLS, ROWS } from '../params';
@@ -70,8 +70,10 @@ export class Game {
    */
   tryMove(type: Move, cameraPosition: CameraPosition): boolean {
     const isInverted =
-      (this._piece.plane === 'x' && relativeDirection[cameraPosition].z === 'negative') ||
-      (this._piece.plane === 'z' && relativeDirection[cameraPosition].x === 'negative');
+      (this._piece.plane === 'x' &&
+        relativeDirection[cameraPosition].z === 'negative') ||
+      (this._piece.plane === 'z' &&
+        relativeDirection[cameraPosition].x === 'negative');
 
     let wallKickTest = 0;
     switch (type) {

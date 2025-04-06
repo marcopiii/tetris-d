@@ -1,8 +1,4 @@
-export type Position =
-  | 'xR_zR'
-  | 'xL_zR'
-  | 'xL_zL'
-  | 'xR_zL'
+export type Position = 'c1' | 'c2' | 'c3' | 'c4';
 
 export type RelativeDirection = {
   x: 'positive' | 'negative';
