@@ -9,7 +9,7 @@ export class Game {
   private readonly _onNewPiece: () => void;
   private readonly _board: Board;
   private _piece: Piece;
-  private readonly _hold: Hold;
+  private _hold: Hold;
 
   constructor(onNewPiece: () => void) {
     this._onNewPiece = onNewPiece;
@@ -33,6 +33,7 @@ export class Game {
   reset() {
     this._board.clean();
     this._piece = new Piece();
+    this._hold = new Hold()
   }
 
   /** Progresses the game by one tick.

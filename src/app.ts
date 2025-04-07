@@ -65,6 +65,7 @@ function onNewPiece() {
 function onStart() {
   game.reset();
   progressP1.reset();
+  progressP2.reset();
   clock.start();
 }
 
