@@ -41,37 +41,7 @@ function createLevelHUD(
   return levelHUD;
 }
 
-export function createHUD(
-  player: Player,
-  progress: Progress,
-  align: 'left' | 'right',
-  disabled: boolean = false,
-) {
-  const hud = new THREE.Group();
-  const handle = createWord(player.name, 'main', align, disabled);
-  const score = createScoreHUD(progress.score, align, disabled);
-  const level = createLevelHUD(progress.level, align, disabled);
-
-  handle.position.set(0, 0, 0);
-  handle.rotateY(THREE.MathUtils.degToRad(180));
-  score.position.set(0, -VOXEL_SIZE.main * 7, 0);
-  level.position.set(
-    0,
-    -(VOXEL_SIZE.main * 7 + VOXEL_SIZE.secondary * 8 + VOXEL_SIZE.primary * 8),
-    0,
-  );
-
-  hud.add(handle);
-  hud.add(score);
-  hud.add(level);
-  return hud;
-}
-
-export function createHoldHUD(
-  shape: Shape,
-  type: Tetrimino,
-  available: boolean,
-) {
+function createHoldHUD(shape: Shape, type: Tetrimino, available: boolean) {
   const labelGroup = createWord('HOLD', 'secondary');
   const holdGroup = new THREE.Group();
   shape.forEach((row, y) => {
@@ -91,4 +61,44 @@ export function createHoldHUD(
   holdHUD.add(holdGroup);
   holdHUD.rotateY(THREE.MathUtils.degToRad(-90));
   return holdHUD;
+}
+
+export function createHUD(
+  player: Player,
+  progress: Progress,
+  hold: { shape: Shape; type: Tetrimino; available: boolean },
+  align: 'left' | 'right',
+  disabled: boolean = false,
+) {
+  const hud = new THREE.Group();
+  const handle = createWord(player.name, 'main', align, disabled);
+  const score = createScoreHUD(progress.score, align, disabled);
+  const level = createLevelHUD(progress.level, align, disabled);
+  const held = createHoldHUD(hold.shape, hold.type, hold.available);
+
+  handle.position.set(0, 0, 0);
+  handle.rotateY(THREE.MathUtils.degToRad(180));
+  score.position.set(0, -VOXEL_SIZE.main * 7, 0);
+  level.position.set(
+    0,
+    -(VOXEL_SIZE.main * 7 + VOXEL_SIZE.secondary * 8 + VOXEL_SIZE.primary * 8),
+    0,
+  );
+  held.position.set(
+    0,
+    -(
+      VOXEL_SIZE.main * 7 +
+      VOXEL_SIZE.secondary * 8 +
+      VOXEL_SIZE.primary * 8 +
+      VOXEL_SIZE.secondary * 8 +
+      VOXEL_SIZE.primary * 8
+    ),
+    0,
+  );
+
+  hud.add(handle);
+  hud.add(score);
+  hud.add(level);
+  hud.add(held);
+  return hud;
 }
