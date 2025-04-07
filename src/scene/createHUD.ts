@@ -41,13 +41,13 @@ function createLevelHUD(
   return levelHUD;
 }
 
-function createHoldHUD(shape: Shape, type: Tetrimino, available: boolean, align: 'left' | 'right') {
-  const labelGroup = createWord('HOLD', 'secondary', align);
+function createHoldHUD(shape: Shape, type: Tetrimino, available: boolean, align: 'left' | 'right', disabled = false) {
+  const labelGroup = createWord('HOLD', 'secondary', align, disabled);
   const holdGroup = new THREE.Group();
   shape.forEach((row, y) => {
     (align === 'left' ? row : row.toReversed()).forEach((exists, x) => {
       if (exists) {
-        const cube = createMino(available ? type : 'disabled');
+        const cube = createMino(!disabled && available ? type : 'disabled');
         cube.position.set(x, -y, 0);
         holdGroup.add(cube);
       }
@@ -73,7 +73,7 @@ export function createHUD(
   const handle = createWord(player.name, 'main', align, disabled);
   const score = createScoreHUD(progress.score, align, disabled);
   const level = createLevelHUD(progress.level, align, disabled);
-  const held = createHoldHUD(hold.shape, hold.type, hold.available, align);
+  const held = createHoldHUD(hold.shape, hold.type, hold.available, align, disabled);
 
   handle.position.set(0, 0, 0);
   handle.rotateY(THREE.MathUtils.degToRad(180));
