@@ -41,43 +41,13 @@ function createLevelHUD(
   return levelHUD;
 }
 
-export function createHUD(
-  player: Player,
-  progress: Progress,
-  align: 'left' | 'right',
-  disabled: boolean = false,
-) {
-  const hud = new THREE.Group();
-  const handle = createWord(player.name, 'main', align, disabled);
-  const score = createScoreHUD(progress.score, align, disabled);
-  const level = createLevelHUD(progress.level, align, disabled);
-
-  handle.position.set(0, 0, 0);
-  handle.rotateY(THREE.MathUtils.degToRad(180));
-  score.position.set(0, -VOXEL_SIZE.main * 7, 0);
-  level.position.set(
-    0,
-    -(VOXEL_SIZE.main * 7 + VOXEL_SIZE.secondary * 8 + VOXEL_SIZE.primary * 8),
-    0,
-  );
-
-  hud.add(handle);
-  hud.add(score);
-  hud.add(level);
-  return hud;
-}
-
-export function createHoldHUD(
-  shape: Shape,
-  type: Tetrimino,
-  available: boolean,
-) {
-  const labelGroup = createWord('HOLD', 'secondary');
+function createHoldHUD(shape: Shape, type: Tetrimino, available: boolean, align: 'left' | 'right', disabled = false) {
+  const labelGroup = createWord('HOLD', 'secondary', align, disabled);
   const holdGroup = new THREE.Group();
   shape.forEach((row, y) => {
-    row.forEach((exists, x) => {
+    (align === 'left' ? row : row.toReversed()).forEach((exists, x) => {
       if (exists) {
-        const cube = createMino(available ? type : 'disabled');
+        const cube = createMino(!disabled && available ? type : 'disabled');
         cube.position.set(x, -y, 0);
         holdGroup.add(cube);
       }
@@ -89,6 +59,46 @@ export function createHoldHUD(
   holdGroup.position.set(0.5, -12 * VOXEL_SIZE.secondary, 0);
   holdHUD.add(labelGroup);
   holdHUD.add(holdGroup);
-  holdHUD.rotateY(THREE.MathUtils.degToRad(-90));
   return holdHUD;
+}
+
+export function createHUD(
+  player: Player,
+  progress: Progress,
+  hold: { shape: Shape; type: Tetrimino; available: boolean },
+  align: 'left' | 'right',
+  disabled: boolean = false,
+) {
+  const hud = new THREE.Group();
+  const handle = createWord(player.name, 'main', align, disabled);
+  const score = createScoreHUD(progress.score, align, disabled);
+  const level = createLevelHUD(progress.level, align, disabled);
+  const held = createHoldHUD(hold.shape, hold.type, hold.available, align, disabled);
+
+  handle.position.set(0, 0, 0);
+  handle.rotateY(THREE.MathUtils.degToRad(180));
+  score.position.set(0, -VOXEL_SIZE.main * 7, 0);
+  level.position.set(
+    0,
+    -(VOXEL_SIZE.main * 7 + VOXEL_SIZE.secondary * 8 + VOXEL_SIZE.primary * 8),
+    0,
+  );
+  held.position.set(
+    0,
+    -(
+      VOXEL_SIZE.main * 7 +
+      VOXEL_SIZE.secondary * 8 +
+      VOXEL_SIZE.primary * 8 +
+      VOXEL_SIZE.secondary * 8 +
+      VOXEL_SIZE.primary * 8
+    ),
+    0,
+  );
+  held.rotateY(THREE.MathUtils.degToRad(180));
+
+  hud.add(handle);
+  hud.add(score);
+  hud.add(level);
+  hud.add(held);
+  return hud;
 }

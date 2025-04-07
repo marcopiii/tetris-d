@@ -26,6 +26,10 @@ export class Game {
     return this._piece;
   }
 
+  get held() {
+    return { ...this._hold.piece, available: this._piece.isHoldable };
+  }
+
   reset() {
     this._board.clean();
     this._piece = new Piece();

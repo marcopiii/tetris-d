@@ -216,6 +216,7 @@ export class SceneManager {
     const hudP1 = createHUD(
       P1,
       progressP1,
+      game.held,
       ['c1', 'c3'].includes(cameraPosition) ? 'right' : 'left',
       !P1.active,
     );
@@ -251,6 +252,7 @@ export class SceneManager {
     const hudP2 = createHUD(
       P2,
       progressP2,
+      game.held,
       ['c1', 'c3'].includes(cameraPosition) ? 'left' : 'right',
       !P2.active,
     );

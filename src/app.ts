@@ -128,7 +128,8 @@ function controllerHandler(event: GamepadEvent, btn: GamepadButton) {
     if (btn === 'A') gameCommandHandler('hardDrop');
     if (btn === 'Y') gameCommandHandler('hold');
     if (btn === 'LT') cameraCommandHandler({ type: 'move', direction: 'left' });
-    if (btn === 'RT') cameraCommandHandler({ type: 'move', direction: 'right' });
+    if (btn === 'RT')
+      cameraCommandHandler({ type: 'move', direction: 'right' });
     if (btn === 'LB') cuttingCommandHandler({ type: 'cut', side: 'below' });
     if (btn === 'RB') cuttingCommandHandler({ type: 'cut', side: 'above' });
   }
