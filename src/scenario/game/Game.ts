@@ -68,9 +68,6 @@ export class Game {
       this._piece.drop();
     }
     this._piece.rollback();
-    this._board.fixPiece(this._piece);
-    // fix the piece to avoid further moving
-    // this will cause a collision since we don't spawn a new piece here
   }
 
   /**
