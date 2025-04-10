@@ -33,7 +33,7 @@ export class Game {
   reset() {
     this._board.clean();
     this._piece = new Piece();
-    this._hold = new Hold()
+    this._hold = new Hold();
   }
 
   /** Progresses the game by one tick.
