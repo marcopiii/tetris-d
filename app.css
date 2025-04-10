@@ -1,0 +1,16 @@
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #222;
+}
+
+#scene-container {
+  height: 100%;
+  width: 100%;
+  background-color: #333;
+}
+
