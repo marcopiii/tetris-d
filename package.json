@@ -8,10 +8,27 @@
   ],
   "license": "",
   "author": "",
+  "main": "main.js",
+  "build": {
+    "appId": "dev.marcopiii.tetris-d",
+    "productName": "TetrisD",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "dist/**/*"
+    ],
+    "mac": {
+      "target": "dmg"
+    }
+  },
   "scripts": {
     "prettier": "prettier --write \"src/**/*.{js,ts,jsx,tsx,json,css,scss,md}\"",
     "start": "webpack-dev-server --config webpack.config.dev.js",
-    "build": "webpack --config webpack.config.prod.js"
+    "build": "webpack --config webpack.config.prod.js",
+    "build:desktop": "electron-builder"
   },
   "devDependencies": {
     "@babel/preset-flow": "^7.25.9",
@@ -21,6 +38,8 @@
     "babel-loader": "^10.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^7.1.2",
+    "electron": "^35.1.5",
+    "electron-builder": "^26.0.12",
     "flow-bin": "^0.265.3",
     "html-webpack-plugin": "^5.6.0",
     "mini-css-extract-plugin": "^2.9.2",
