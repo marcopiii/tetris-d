@@ -1,4 +1,4 @@
 export type MenuItem = {
-  label: string;
+  name: string;
   action: () => void;
 };
