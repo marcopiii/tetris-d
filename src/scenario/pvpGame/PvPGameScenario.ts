@@ -1,14 +1,39 @@
 import * as THREE from 'three';
-import type { CameraAction, GameAction } from '../action';
-import { CameraManager } from '../camera';
+import { CameraManager } from '../../camera';
 import {
   Button as GamepadButton,
   Event as GamepadEvent,
   GamepadManager,
-} from '../gamepad';
-import { Clock, Game, Progress } from '../gameplay';
-import { PlayerManager } from '../player';
-import { GameSceneManager } from '../scene';
+} from '../../gamepad';
+import { Clock } from './Clock';
+import { Game } from './Game';
+import { Progress } from './Progress';
+import { PlayerManager } from './PlayerManager';
+import { GameSceneManager } from './GameSceneManager';
+
+export type CameraAction =
+  | {
+  type: 'move';
+  direction: 'left' | 'right';
+}
+  | {
+  type: 'cut';
+  side: 'above' | 'below';
+}
+  | {
+  type: 'uncut';
+  side: 'above' | 'below';
+};
+
+type GameAction =
+  | 'hold'
+  | 'rotateL'
+  | 'rotateR'
+  | 'shiftL'
+  | 'shiftR'
+  | 'shiftF'
+  | 'shiftB'
+  | 'hardDrop';
 
 export class PvPGameScenario {
   private readonly _game: Game;

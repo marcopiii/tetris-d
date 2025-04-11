@@ -1,4 +1,4 @@
-import { Name as Tetrimino } from '../tetrimino';
+import { Name as Tetrimino } from '../../tetrimino';
 
 export type Plane = 'x' | 'z';
 

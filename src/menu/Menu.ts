@@ -1,4 +1,7 @@
-import { MenuItem } from './types';
+type MenuItem = {
+  name: string;
+  action: () => void;
+};
 
 export class Menu {
   private _items: MenuItem[] = [];

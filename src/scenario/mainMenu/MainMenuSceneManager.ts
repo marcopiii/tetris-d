@@ -1,8 +1,8 @@
 import * as THREE from 'three';
-import { MainMenu } from '../menu';
-import { VOXEL_SIZE } from '../params';
-import { createWord } from './createWord';
-import { sizeOf } from './utils';
+import { MainMenu } from './MainMenu';
+import { VOXEL_SIZE } from '../../params';
+import { createWord } from '../../scene/createWord';
+import { sizeOf } from '../../scene/utils';
 
 export class MainMenuSceneManager {
   private readonly _scene: THREE.Scene;

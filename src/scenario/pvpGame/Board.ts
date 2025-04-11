@@ -1,4 +1,4 @@
-import { COLS, ROWS } from '../params';
+import { COLS, ROWS } from '../../params';
 import type { Piece } from './Piece';
 import { BoardBlock } from './types';
 

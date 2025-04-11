@@ -1,4 +1,5 @@
-import { PlayerTag, Player } from './types';
+export type PlayerTag = 'P1' | 'P2';
+export type Player = { name: string; active: boolean };
 
 export class PlayerManager {
   private _activePlayer: PlayerTag;

@@ -1,4 +1,4 @@
-import { Shape, Name as Tetrimino, getRandomTetrimino } from '../tetrimino';
+import { Shape, Name as Tetrimino, getRandomTetrimino } from '../../tetrimino';
 import type { Piece } from './Piece';
 
 export class Hold {

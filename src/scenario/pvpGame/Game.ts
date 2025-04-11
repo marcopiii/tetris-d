@@ -1,7 +1,7 @@
-import { CameraPosition, relativeDirection } from '../camera';
+import { CameraPosition, relativeDirection } from '../../camera';
 import { Board } from './Board';
 import { Piece } from './Piece';
-import { COLS, ROWS } from '../params';
+import { COLS, ROWS } from '../../params';
 import { Hold } from './Hold';
 import { Move } from './types';
 

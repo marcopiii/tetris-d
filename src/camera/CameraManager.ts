@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import TWEEN, { Group as TWEENGroup } from '@tweenjs/tween.js';
-import { CameraAction } from '../action';
 import { Position } from './types';
 import { cameraSetup } from './cameraSetup';
 

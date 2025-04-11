@@ -1,12 +1,12 @@
-import { COLS } from '../params';
+import { COLS } from '../../params';
 import {
   Name as Tetrimino,
   getRandomTetrimino,
   Shape,
   RotationState,
   wallKickData,
-} from '../tetrimino';
-import { copy } from '../utils';
+} from '../../tetrimino';
+import { copy } from '../../utils';
 import { Coord, Plane } from './types';
 
 export class Piece {

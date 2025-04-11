@@ -1,4 +1,4 @@
-import { Menu } from './Menu';
+import { Menu } from '../../menu';
 
 export class MainMenu extends Menu {
   constructor(onStart: () => void, onExit: () => void) {

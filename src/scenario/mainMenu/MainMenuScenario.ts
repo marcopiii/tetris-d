@@ -1,12 +1,11 @@
 import * as THREE from 'three';
-import { CameraManager } from '../camera';
 import {
   Button as GamepadButton,
   Event as GamepadEvent,
   GamepadManager,
-} from '../gamepad';
-import { MainMenu } from '../menu';
-import { MainMenuSceneManager } from '../scene';
+} from '../../gamepad';
+import { MainMenu } from './MainMenu';
+import { MainMenuSceneManager } from './MainMenuSceneManager';
 
 export class MainMenuScenario {
   private readonly _sceneManager: MainMenuSceneManager;
