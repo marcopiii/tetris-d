@@ -43,6 +43,13 @@ export class PvPGameScenario {
     this._progressP1 = new Progress();
     this._progressP2 = new Progress();
 
+    this._sceneManager.update(
+      this._game,
+      this._progressP1,
+      this._progressP2,
+      this._playerManager.players,
+      this._cameraManager.position,
+    )
     this._clock.start();
   }
 
