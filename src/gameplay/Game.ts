@@ -30,12 +30,6 @@ export class Game {
     return { ...this._hold.piece, available: this._piece.isHoldable };
   }
 
-  reset() {
-    this._board.clean();
-    this._piece = new Piece();
-    this._hold = new Hold();
-  }
-
   /** Progresses the game by one tick.
    * @return A tuple containing the number of cleared lines for each player and whether the game is over
    */

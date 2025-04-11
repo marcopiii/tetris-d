@@ -61,13 +61,13 @@ export class PvPGameScenario {
       alert('Game Over');
       this._sceneManager.reset();
     }
-  }
+  };
 
   private onNewPiece = () => {
     this._playerManager.switchPlayer();
     this._gamepadP1.active = this._playerManager.activePlayer === 'P1';
     this._gamepadP2.active = this._playerManager.activePlayer === 'P2';
-  }
+  };
 
   private gameCommandHandler = (command: GameAction) => {
     if (!this._clock.isRunning) return;
@@ -83,7 +83,7 @@ export class PvPGameScenario {
         this._playerManager.players,
         this._cameraManager.position,
       );
-  }
+  };
 
   private cameraCommandHandler = (
     action: Extract<CameraAction, { type: 'move' }>,
@@ -103,7 +103,7 @@ export class PvPGameScenario {
       this._playerManager.players,
       this._cameraManager.position,
     );
-  }
+  };
 
   private cuttingCommandHandler = (
     action: Extract<CameraAction, { type: 'cut' | 'uncut' }>,
@@ -119,7 +119,7 @@ export class PvPGameScenario {
       this._playerManager.players,
       this._cameraManager.position,
     );
-  }
+  };
 
   private controllerHandler = (event: GamepadEvent, btn: GamepadButton) => {
     if (event === 'press') {
@@ -147,5 +147,5 @@ export class PvPGameScenario {
       if (btn === 'RB')
         this.cuttingCommandHandler({ type: 'uncut', side: 'above' });
     }
-  }
+  };
 }
