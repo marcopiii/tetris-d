@@ -1,1 +1,2 @@
-export { SceneManager } from './SceneManager';
+export { GameSceneManager } from './GameSceneManager';
+export { MainMenuSceneManager } from './MainMenuSceneManager';

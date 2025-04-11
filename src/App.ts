@@ -1,8 +1,8 @@
+import * as THREE from 'three';
 import { CameraManager } from './camera';
 import { GamepadManager } from './gamepad';
 import { RenderManager } from './render';
 import { MainMenuScenario, PvPGameScenario } from './scenario';
-import { SceneManager } from './scene';
 
 type ScenarioState =
   | {
@@ -15,7 +15,8 @@ type ScenarioState =
     };
 
 export class App {
-  private readonly _sceneManager: SceneManager;
+  private readonly _scene: THREE.Scene;
+
   private readonly _cameraManager: CameraManager;
   private readonly _renderManager: RenderManager;
 
@@ -25,11 +26,12 @@ export class App {
   private _scenario!: ScenarioState;
 
   constructor(container: HTMLElement) {
-    this._sceneManager = new SceneManager();
+    this._scene = new THREE.Scene();
+
     this._cameraManager = new CameraManager(container);
     this._renderManager = new RenderManager(
       container,
-      this._sceneManager.scene,
+      this._scene,
       this._cameraManager.camera,
     );
 
@@ -45,7 +47,7 @@ export class App {
     this._scenario = {
       scenario: 'pvp-game',
       state: new PvPGameScenario(
-        this._sceneManager,
+        this._scene,
         this._cameraManager,
         this._gamepadP1,
         this._gamepadP2,
@@ -57,7 +59,7 @@ export class App {
     this._scenario = {
       scenario: 'main-menu',
       state: new MainMenuScenario(
-        this._sceneManager,
+        this._scene,
         this._cameraManager,
         this._gamepadP1,
         {

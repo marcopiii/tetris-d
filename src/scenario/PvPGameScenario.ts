@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import type { CameraAction, GameAction } from '../action';
 import { CameraManager } from '../camera';
 import {
@@ -7,7 +8,7 @@ import {
 } from '../gamepad';
 import { Clock, Game, Progress } from '../gameplay';
 import { PlayerManager } from '../player';
-import { SceneManager } from '../scene';
+import { GameSceneManager } from '../scene';
 
 export class PvPGameScenario {
   private readonly _game: Game;
@@ -16,19 +17,19 @@ export class PvPGameScenario {
   private readonly _progressP1: Progress;
   private readonly _progressP2: Progress;
 
-  private readonly _sceneManager: SceneManager;
+  private readonly _sceneManager: GameSceneManager;
   private readonly _cameraManager: CameraManager;
 
   private readonly _gamepadP1: GamepadManager;
   private readonly _gamepadP2: GamepadManager;
 
   constructor(
-    sceneManager: SceneManager,
+    scene: THREE.Scene,
     cameraManager: CameraManager,
     gamepadP1: GamepadManager,
     gamepadP2: GamepadManager,
   ) {
-    this._sceneManager = sceneManager;
+    this._sceneManager = new GameSceneManager(scene);
     this._cameraManager = cameraManager;
 
     this._gamepadP1 = gamepadP1;
@@ -59,7 +60,7 @@ export class PvPGameScenario {
     if (gameOver) {
       this._clock.toggle();
       alert('Game Over');
-      this._sceneManager.reset();
+      // todo: return to main menu
     }
   };
 

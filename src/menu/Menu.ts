@@ -22,4 +22,11 @@ export class Menu {
   select(): void {
     this._items[this._selectedIndex]?.action();
   }
+
+  get options() {
+    return this._items.map((o, i) => ({
+      label: o.name,
+      selected: i === this._selectedIndex,
+    }));
+  }
 }

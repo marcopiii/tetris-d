@@ -15,7 +15,7 @@ import type { Game, Progress } from '../gameplay';
 import { cuttingShadowMaterial } from './assets/materials';
 import { translateX, translateY, translateZ } from './utils';
 
-export class SceneManager {
+export class GameSceneManager {
   private readonly _scene: THREE.Scene;
   private _cutter: { below: boolean; above: boolean };
 
@@ -61,15 +61,11 @@ export class SceneManager {
     scene.add(zrGrid);
   }
 
-  constructor() {
-    this._scene = new THREE.Scene();
-    this._cutter = { below: false, above: false };
-    this.#config(this._scene);
-  }
-
-  reset() {
+  constructor(scene: THREE.Scene) {
+    this._scene = scene;
     this._scene.clear();
     this.#config(this._scene);
+    this._cutter = { below: false, above: false };
   }
 
   get scene() {
@@ -93,7 +89,8 @@ export class SceneManager {
     players: Record<PlayerTag, Player>,
     cameraPosition: CameraPosition,
   ) {
-    this.reset();
+    this._scene.clear();
+    this.#config(this._scene);
 
     const isCutOut = (x: number, z: number) => {
       return game.piece.plane === 'x'

@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { CameraManager } from '../camera';
 import {
   Button as GamepadButton,
@@ -5,10 +6,10 @@ import {
   GamepadManager,
 } from '../gamepad';
 import { MainMenu } from '../menu';
-import { SceneManager } from '../scene';
+import { MainMenuSceneManager } from '../scene';
 
 export class MainMenuScenario {
-  private readonly _sceneManager: SceneManager;
+  private readonly _sceneManager: MainMenuSceneManager;
   private readonly _cameraManager: CameraManager;
 
   private readonly _gamepad: GamepadManager;
@@ -16,7 +17,7 @@ export class MainMenuScenario {
   private readonly _menu: MainMenu;
 
   constructor(
-    sceneManager: SceneManager,
+    scene: THREE.Scene,
     cameraManager: CameraManager,
     gamepad: GamepadManager,
     scenarioMutation: {
@@ -24,7 +25,7 @@ export class MainMenuScenario {
       onExit: () => void;
     },
   ) {
-    this._sceneManager = sceneManager;
+    this._sceneManager = new MainMenuSceneManager(scene);
     this._cameraManager = cameraManager;
     // todo: setup the camera for the menu
 
@@ -36,10 +37,13 @@ export class MainMenuScenario {
   }
 
   private menuCommandHandler = (command: 'up' | 'down' | 'confirm') => {
-    if (command === 'confirm') this._menu.select();
+    if (command === 'confirm') {
+      this._menu.select();
+      return;
+    }
     if (command === 'up') this._menu.navigate('up');
     if (command === 'down') this._menu.navigate('down');
-    // todo: update the scene
+    this._sceneManager.update(this._menu);
   };
 
   private controllerHandler = (event: GamepadEvent, btn: GamepadButton) => {
