@@ -39,7 +39,7 @@ export class PvPGameScenario {
 
     this._clock = new Clock(this.processGameFrame);
     this._game = new Game(this.onNewPiece);
-    this._playerManager = new PlayerManager('P1', 'P2');
+    this._playerManager = new PlayerManager('p1', 'p2');
     this._progressP1 = new Progress();
     this._progressP2 = new Progress();
 

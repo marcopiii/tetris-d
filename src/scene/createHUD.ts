@@ -12,7 +12,7 @@ function createScoreHUD(
   align: 'left' | 'right',
   disabled = false,
 ) {
-  const labelGroup = createWord('SCORE', 'secondary', align, disabled);
+  const labelGroup = createWord('score', 'secondary', align, disabled);
   const scoreGroup = createWord(score.toString(), 'primary', align, disabled);
 
   const scoreHUD = new THREE.Group();
@@ -29,7 +29,7 @@ function createLevelHUD(
   align: 'left' | 'right',
   disabled = false,
 ) {
-  const labelGroup = createWord('LEVEL', 'secondary', align, disabled);
+  const labelGroup = createWord('level', 'secondary', align, disabled);
   const levelGroup = createWord(level.toString(), 'primary', align, disabled);
 
   const levelHUD = new THREE.Group();
@@ -48,7 +48,7 @@ function createHoldHUD(
   align: 'left' | 'right',
   disabled = false,
 ) {
-  const labelGroup = createWord('HOLD', 'secondary', align, disabled);
+  const labelGroup = createWord('hold', 'secondary', align, disabled);
   const holdGroup = new THREE.Group();
   shape.forEach((row, y) => {
     (align === 'left' ? row : row.toReversed()).forEach((exists, x) => {

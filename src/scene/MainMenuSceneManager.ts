@@ -20,7 +20,7 @@ export class MainMenuSceneManager {
         option.label,
         option.selected ? 'primary' : 'secondary',
       );
-      word.position.set(0, 8 * i, 0);
+      word.position.set(0, -3 * i, option.selected ? 1 : 0);
       menuGroup.add(word);
     });
 
