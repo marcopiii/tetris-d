@@ -58,15 +58,10 @@ export class App {
   private onMainMenu = () => {
     this._scenario = {
       scenario: 'main-menu',
-      state: new MainMenuScenario(
-        this._scene,
-        this._cameraManager,
-        this._gamepadP1,
-        {
-          onPvP: this.onStartGame,
-          onExit: this.exit,
-        },
-      ),
+      state: new MainMenuScenario(this._scene, this._gamepadP1, {
+        onPvP: this.onStartGame,
+        onExit: this.exit,
+      }),
     };
   };
 

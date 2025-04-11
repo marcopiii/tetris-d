@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { MainMenu } from '../menu';
+import { VOXEL_SIZE } from '../params';
 import { createWord } from './createWord';
+import { sizeOf } from './utils';
 
 export class MainMenuSceneManager {
   private readonly _scene: THREE.Scene;
@@ -14,16 +16,29 @@ export class MainMenuSceneManager {
   update(menu: MainMenu) {
     this._scene.clear();
 
-    const menuGroup = new THREE.Group();
+    const group = new THREE.Group();
+
+    const title = createWord('tetris-d', 'main');
+    title.position.set(
+      -sizeOf(title).x / 2,
+      15 * VOXEL_SIZE.main,
+      0
+    );
+    group.add(title);
+
     menu.options.forEach((option, i) => {
       const word = createWord(
         option.label,
         option.selected ? 'primary' : 'secondary',
       );
-      word.position.set(0, -3 * i, option.selected ? 1 : 0);
-      menuGroup.add(word);
+      word.position.set(
+        -sizeOf(word).x / 2,
+        -(12 * VOXEL_SIZE.secondary * i),
+        option.selected ? 3 * VOXEL_SIZE.secondary : 0,
+      );
+      group.add(word);
     });
 
-    this._scene.add(menuGroup);
+    this._scene.add(group);
   }
 }

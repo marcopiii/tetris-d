@@ -10,15 +10,11 @@ import { MainMenuSceneManager } from '../scene';
 
 export class MainMenuScenario {
   private readonly _sceneManager: MainMenuSceneManager;
-  private readonly _cameraManager: CameraManager;
-
   private readonly _gamepad: GamepadManager;
-
   private readonly _menu: MainMenu;
 
   constructor(
     scene: THREE.Scene,
-    cameraManager: CameraManager,
     gamepad: GamepadManager,
     scenarioMutation: {
       onPvP: () => void;
@@ -26,14 +22,13 @@ export class MainMenuScenario {
     },
   ) {
     this._sceneManager = new MainMenuSceneManager(scene);
-    this._cameraManager = cameraManager;
-    // todo: setup the camera for the menu
 
     this._gamepad = gamepad;
     this._gamepad.handler = this.controllerHandler;
     this._gamepad.active = true;
 
     this._menu = new MainMenu(scenarioMutation.onPvP, scenarioMutation.onExit);
+    this._sceneManager.update(this._menu);
   }
 
   private menuCommandHandler = (command: 'up' | 'down' | 'confirm') => {
