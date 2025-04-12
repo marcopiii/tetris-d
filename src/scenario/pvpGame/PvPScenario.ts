@@ -102,6 +102,10 @@ export class PvPScenario {
     this._playerManager.switchPlayer();
     this._gamepadP1.active = this._playerManager.activePlayer === 'P1';
     this._gamepadP2.active = this._playerManager.activePlayer === 'P2';
+    this._clock.level =
+      this._playerManager.activePlayer === 'P1'
+        ? this._progressP1.level
+        : this._progressP2.level;
   };
 
   private gameCommandHandler = (command: GameAction) => {
