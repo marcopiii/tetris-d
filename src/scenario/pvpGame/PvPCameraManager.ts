@@ -1,25 +1,19 @@
 import * as THREE from 'three';
 import TWEEN, { Group as TWEENGroup } from '@tweenjs/tween.js';
-import { Position } from './types';
-import { cameraSetup } from './cameraSetup';
+import { MINO_SIZE } from '../../params';
 
-export class CameraManager {
+export type CameraPosition = 'c1' | 'c2' | 'c3' | 'c4';
+
+export class PvPCameraManager {
   private readonly _camera: THREE.Camera;
   private readonly _tweenGroup: TWEENGroup;
-  private _position: Position;
+  private _position: CameraPosition;
 
-  private frustumSize = 22;
+  constructor(camera: THREE.Camera, tweenGroup: TWEENGroup) {
+    this._camera = camera;
+    this._tweenGroup = tweenGroup;
 
-  constructor(container: HTMLElement) {
-    const aspect = container.clientWidth / container.clientHeight;
-    this._tweenGroup = new TWEEN.Group();
     this._position = 'c1';
-    this._camera = new THREE.OrthographicCamera(
-      (-this.frustumSize * aspect) / 2,
-      (this.frustumSize * aspect) / 2,
-      this.frustumSize / 2,
-      -this.frustumSize / 2,
-    );
     const initPosition = cameraSetup[this._position];
     this._camera.position.set(
       initPosition.position.x,
@@ -29,15 +23,7 @@ export class CameraManager {
     this._camera.lookAt(cameraSetup[this._position].lookAt);
   }
 
-  get camera() {
-    return this._camera;
-  }
-
-  get tween() {
-    return this._tweenGroup;
-  }
-
-  get position(): Position {
+  get position(): CameraPosition {
     return this._position;
   }
 
@@ -66,3 +52,27 @@ export class CameraManager {
       .start();
   }
 }
+
+type CameraSetup = {
+  position: THREE.Vector3;
+  lookAt: THREE.Vector3;
+};
+
+const cameraSetup: Record<CameraPosition, CameraSetup> = {
+  c1: {
+    position: new THREE.Vector3(-10, 5, 10 + MINO_SIZE),
+    lookAt: new THREE.Vector3(0, 0, MINO_SIZE),
+  },
+  c2: {
+    position: new THREE.Vector3(10, 5, 10 + MINO_SIZE),
+    lookAt: new THREE.Vector3(0, 0, MINO_SIZE),
+  },
+  c3: {
+    position: new THREE.Vector3(10, 4, -10 + MINO_SIZE),
+    lookAt: new THREE.Vector3(0, -1, +MINO_SIZE),
+  },
+  c4: {
+    position: new THREE.Vector3(-10, 5, -10 - MINO_SIZE),
+    lookAt: new THREE.Vector3(0, 0, -MINO_SIZE),
+  },
+};

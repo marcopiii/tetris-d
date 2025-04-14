@@ -1,5 +1,3 @@
-import * as THREE from 'three';
-import { CameraManager } from './camera';
 import { GamepadManager } from './gamepad';
 import { RenderManager } from './render';
 import { MainMenuScenario, PvPGameScenario } from './scenario';
@@ -15,9 +13,6 @@ type ScenarioState =
     };
 
 export class App {
-  private readonly _scene: THREE.Scene;
-
-  private readonly _cameraManager: CameraManager;
   private readonly _renderManager: RenderManager;
 
   private readonly _gamepadP1: GamepadManager;
@@ -26,42 +21,40 @@ export class App {
   private _scenario!: ScenarioState;
 
   constructor(container: HTMLElement) {
-    this._scene = new THREE.Scene();
-
-    this._cameraManager = new CameraManager(container);
-    this._renderManager = new RenderManager(
-      container,
-      this._scene,
-      this._cameraManager.camera,
-    );
+    this._renderManager = new RenderManager(container);
 
     this._gamepadP1 = new GamepadManager(0);
     this._gamepadP2 = new GamepadManager(1);
 
-    this.onMainMenu();
-
+    this.mainMenu();
     this.animate();
   }
 
-  private onStartGame = () => {
+  private startGame = () => {
     this._scenario = {
       scenario: 'pvp-game',
       state: new PvPGameScenario(
-        this._scene,
-        this._cameraManager,
+        this._renderManager.scene,
+        this._renderManager.camera,
+        this._renderManager.tween,
         this._gamepadP1,
         this._gamepadP2,
       ),
     };
   };
 
-  private onMainMenu = () => {
+  private mainMenu = () => {
     this._scenario = {
       scenario: 'main-menu',
-      state: new MainMenuScenario(this._scene, this._gamepadP1, {
-        onPvP: this.onStartGame,
-        onExit: this.exit,
-      }),
+      state: new MainMenuScenario(
+        this._renderManager.scene,
+        this._renderManager.camera,
+        this._gamepadP1,
+        {
+          onPvP: this.startGame,
+          onExit: this.exit,
+        },
+      ),
     };
   };
 
@@ -71,7 +64,7 @@ export class App {
 
   private animate = () => {
     requestAnimationFrame(this.animate);
-    this._cameraManager.tween.update();
+    this._renderManager.tween.update();
     this._renderManager.render();
     this._gamepadP1.poll();
     this._gamepadP2.poll();

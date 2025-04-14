@@ -1,4 +1,4 @@
-import { CameraPosition, relativeDirection } from '../../camera';
+import { CameraPosition } from './PvPCameraManager';
 import { Board } from './Board';
 import { Piece } from './Piece';
 import { COLS, ROWS } from '../../params';
@@ -146,3 +146,27 @@ function detectCollision(piece: Piece, board: Board): boolean {
   });
   return collisionDetected;
 }
+
+type RelativeDirection = {
+  x: 'positive' | 'negative';
+  z: 'positive' | 'negative';
+};
+
+const relativeDirection: Record<CameraPosition, RelativeDirection> = {
+  c1: {
+    x: 'positive',
+    z: 'positive',
+  },
+  c2: {
+    x: 'positive',
+    z: 'negative',
+  },
+  c3: {
+    x: 'negative',
+    z: 'negative',
+  },
+  c4: {
+    x: 'negative',
+    z: 'positive',
+  },
+};

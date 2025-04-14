@@ -5,15 +5,19 @@ import {
   GamepadManager,
 } from '../../gamepad';
 import { MainMenu } from './MainMenu';
+import { MainMenuCameraManager } from './MainMenuCameraManager';
 import { MainMenuSceneManager } from './MainMenuSceneManager';
 
 export class MainMenuScenario {
   private readonly _sceneManager: MainMenuSceneManager;
+  private readonly _cameraManager: MainMenuCameraManager;
+
   private readonly _gamepad: GamepadManager;
   private readonly _menu: MainMenu;
 
   constructor(
     scene: THREE.Scene,
+    camera: THREE.Camera,
     gamepad: GamepadManager,
     scenarioMutation: {
       onPvP: () => void;
@@ -21,6 +25,7 @@ export class MainMenuScenario {
     },
   ) {
     this._sceneManager = new MainMenuSceneManager(scene);
+    this._cameraManager = new MainMenuCameraManager(camera);
 
     this._gamepad = gamepad;
     this._gamepad.handler = this.controllerHandler;

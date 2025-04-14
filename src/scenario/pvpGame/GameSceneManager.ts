@@ -1,9 +1,9 @@
-import { CameraPosition } from '../../camera';
-import {COLS, ROWS, MINO_SIZE, VOXEL_SIZE} from '../../params';
+import { CameraPosition } from './PvPCameraManager';
+import { COLS, ROWS, MINO_SIZE, VOXEL_SIZE } from '../../params';
 import * as THREE from 'three';
-import {createWord} from "../../scene/createWord";
-import {Shape} from "../../scene/types";
-import {Name as Tetrimino} from "../../tetrimino";
+import { createWord } from '../../scene/createWord';
+import { Shape } from '../../scene/types';
+import { Name as Tetrimino } from '../../tetrimino';
 import type { PlayerTag, Player } from './PlayerManager';
 import {
   createMino,

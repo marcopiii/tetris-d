@@ -1,5 +1,6 @@
+import { Group as TWEENGroup } from '@tweenjs/tween.js';
 import * as THREE from 'three';
-import { CameraManager } from '../../camera';
+import { PvPCameraManager } from './PvPCameraManager';
 import {
   Button as GamepadButton,
   Event as GamepadEvent,
@@ -13,17 +14,17 @@ import { GameSceneManager } from './GameSceneManager';
 
 export type CameraAction =
   | {
-  type: 'move';
-  direction: 'left' | 'right';
-}
+      type: 'move';
+      direction: 'left' | 'right';
+    }
   | {
-  type: 'cut';
-  side: 'above' | 'below';
-}
+      type: 'cut';
+      side: 'above' | 'below';
+    }
   | {
-  type: 'uncut';
-  side: 'above' | 'below';
-};
+      type: 'uncut';
+      side: 'above' | 'below';
+    };
 
 type GameAction =
   | 'hold'
@@ -43,19 +44,20 @@ export class PvPGameScenario {
   private readonly _progressP2: Progress;
 
   private readonly _sceneManager: GameSceneManager;
-  private readonly _cameraManager: CameraManager;
+  private readonly _cameraManager: PvPCameraManager;
 
   private readonly _gamepadP1: GamepadManager;
   private readonly _gamepadP2: GamepadManager;
 
   constructor(
     scene: THREE.Scene,
-    cameraManager: CameraManager,
+    camera: THREE.Camera,
+    tween: TWEENGroup,
     gamepadP1: GamepadManager,
     gamepadP2: GamepadManager,
   ) {
     this._sceneManager = new GameSceneManager(scene);
-    this._cameraManager = cameraManager;
+    this._cameraManager = new PvPCameraManager(camera, tween);
 
     this._gamepadP1 = gamepadP1;
     this._gamepadP2 = gamepadP2;
@@ -74,7 +76,7 @@ export class PvPGameScenario {
       this._progressP2,
       this._playerManager.players,
       this._cameraManager.position,
-    )
+    );
     this._clock.start();
   }
 
