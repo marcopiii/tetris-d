@@ -17,11 +17,12 @@ import type { Game } from './Game';
 import type { Progress } from './Progress';
 import { cuttingShadowMaterial } from '../../scene/assets/materials';
 
-const center = new THREE.Vector3(0,0,0);
+export const center = new THREE.Vector3(0, 0, 0);
+export const offset = new THREE.Vector3(1 / 2, -1 / 2, 1 / 2);
 
-const translateX = (x: number) => x + (1 / 2) - (COLS / 2);
-const translateY = (y: number) => - y - (1 / 2) + (ROWS / 2);
-const translateZ = (z: number) => z + (1 / 2) - COLS / 2;
+const translateX = (x: number) => x + offset.x - COLS / 2;
+const translateY = (y: number) => -y + offset.y + ROWS / 2;
+const translateZ = (z: number) => z + offset.z - COLS / 2;
 
 export class PvPScene {
   private readonly _scene: THREE.Scene;
@@ -126,7 +127,7 @@ export class PvPScene {
         belowCutShadow.rotateX(THREE.MathUtils.degToRad(-90));
         belowCutShadow.position
           .add(center)
-          .add({x: 0, y: -ROWS / 2, z: (game.piece.planePosition - COLS) / 2})
+          .add({ x: 0, y: -ROWS / 2, z: (game.piece.planePosition - COLS) / 2 })
           .multiplyScalar(MINO_SIZE);
       }
       this._scene.add(belowCutShadow);
