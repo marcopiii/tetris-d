@@ -1,3 +1,4 @@
+import { Group as TWEENGroup } from '@tweenjs/tween.js';
 import * as THREE from 'three';
 import {
   Button as GamepadButton,
@@ -18,6 +19,7 @@ export class MainMenuScenario {
   constructor(
     scene: THREE.Scene,
     camera: THREE.Camera,
+    tween: TWEENGroup,
     gamepad: GamepadManager,
     scenarioMutation: {
       onPvP: () => void;
@@ -25,7 +27,7 @@ export class MainMenuScenario {
     },
   ) {
     this._sceneManager = new MainMenuSceneManager(scene);
-    this._cameraManager = new MainMenuCameraManager(camera);
+    this._cameraManager = new MainMenuCameraManager(camera, tween);
 
     this._gamepad = gamepad;
     this._gamepad.handler = this.controllerHandler;

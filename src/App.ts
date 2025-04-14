@@ -49,6 +49,7 @@ export class App {
       state: new MainMenuScenario(
         this._renderManager.scene,
         this._renderManager.camera,
+        this._renderManager.tween,
         this._gamepadP1,
         {
           onPvP: this.startGame,

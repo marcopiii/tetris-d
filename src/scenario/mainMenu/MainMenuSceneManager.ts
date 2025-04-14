@@ -19,7 +19,11 @@ export class MainMenuSceneManager {
     const group = new THREE.Group();
 
     const title = createWord('tetris-d', 'main');
-    title.position.set(-sizeOf(title).x / 2, 15 * VOXEL_SIZE.main, 0);
+    title.position.set(
+      -20-sizeOf(title).x / 2,
+      15 * VOXEL_SIZE.main,
+      20
+    );
     group.add(title);
 
     menu.options.forEach((option, i) => {
@@ -28,9 +32,9 @@ export class MainMenuSceneManager {
         option.selected ? 'primary' : 'secondary',
       );
       word.position.set(
-        -sizeOf(word).x / 2,
+        -20-sizeOf(word).x / 2,
         -(12 * VOXEL_SIZE.secondary * i),
-        option.selected ? 3 * VOXEL_SIZE.secondary : 0,
+        20 + (option.selected ? 3 * VOXEL_SIZE.secondary : 0),
       );
       group.add(word);
     });

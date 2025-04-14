@@ -15,12 +15,13 @@ export class PvPCameraManager {
 
     this._position = 'c1';
     const initPosition = cameraSetup[this._position];
-    this._camera.position.set(
-      initPosition.position.x,
-      initPosition.position.y,
-      initPosition.position.z,
-    );
-    this._camera.lookAt(cameraSetup[this._position].lookAt);
+    new TWEEN.Tween(this._camera.position, this._tweenGroup)
+      .to(initPosition.position, 500)
+      .easing(TWEEN.Easing.Exponential.Out)
+      .onUpdate(() => {
+        this._camera.lookAt(initPosition.lookAt);
+      })
+      .start();
   }
 
   get position(): CameraPosition {
