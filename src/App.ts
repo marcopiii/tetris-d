@@ -1,6 +1,6 @@
 import { GamepadManager } from './gamepad';
 import { RenderManager } from './render';
-import { MainMenuScenario, PvPGameScenario } from './scenario';
+import { MainMenuScenario, PvPScenario } from './scenario';
 
 type ScenarioState =
   | {
@@ -9,7 +9,7 @@ type ScenarioState =
     }
   | {
       scenario: 'pvp-game';
-      state: PvPGameScenario;
+      state: PvPScenario;
     };
 
 export class App {
@@ -33,7 +33,7 @@ export class App {
   private startGame = () => {
     this._scenario = {
       scenario: 'pvp-game',
-      state: new PvPGameScenario(
+      state: new PvPScenario(
         this._renderManager.scene,
         this._renderManager.camera,
         this._renderManager.tween,

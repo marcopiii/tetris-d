@@ -6,12 +6,12 @@ import {
   GamepadManager,
 } from '../../gamepad';
 import { MainMenu } from './MainMenu';
-import { MainMenuCameraManager } from './MainMenuCameraManager';
-import { MainMenuSceneManager } from './MainMenuSceneManager';
+import { MainMenuCamera } from './MainMenuCamera';
+import { MainMenuScene } from './MainMenuScene';
 
 export class MainMenuScenario {
-  private readonly _sceneManager: MainMenuSceneManager;
-  private readonly _cameraManager: MainMenuCameraManager;
+  private readonly _sceneManager: MainMenuScene;
+  private readonly _cameraManager: MainMenuCamera;
 
   private readonly _gamepad: GamepadManager;
   private readonly _menu: MainMenu;
@@ -26,8 +26,8 @@ export class MainMenuScenario {
       onExit: () => void;
     },
   ) {
-    this._sceneManager = new MainMenuSceneManager(scene);
-    this._cameraManager = new MainMenuCameraManager(camera, tween);
+    this._sceneManager = new MainMenuScene(scene);
+    this._cameraManager = new MainMenuCamera(camera, tween);
 
     this._gamepad = gamepad;
     this._gamepad.handler = this.controllerHandler;

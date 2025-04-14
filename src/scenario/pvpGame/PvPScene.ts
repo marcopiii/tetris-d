@@ -1,4 +1,4 @@
-import { CameraPosition } from './PvPCameraManager';
+import { CameraPosition } from './PvPCamera';
 import { COLS, ROWS, MINO_SIZE, VOXEL_SIZE } from '../../params';
 import * as THREE from 'three';
 import { createWord } from '../../scene/createWord';
@@ -18,7 +18,7 @@ import type { Progress } from './Progress';
 import { cuttingShadowMaterial } from '../../scene/assets/materials';
 import { translateX, translateY, translateZ } from '../../scene/utils';
 
-export class GameSceneManager {
+export class PvPScene {
   private readonly _scene: THREE.Scene;
   private _cutter: { below: boolean; above: boolean };
 

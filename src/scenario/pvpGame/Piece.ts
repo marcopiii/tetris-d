@@ -7,7 +7,10 @@ import {
   wallKickData,
 } from '../../tetrimino';
 import { copy } from '../../utils';
-import { Coord, Plane } from './types';
+
+type Coord = { x: number; y: number; z: number };
+
+type Plane = 'x' | 'z';
 
 export class Piece {
   private _type: Tetrimino;

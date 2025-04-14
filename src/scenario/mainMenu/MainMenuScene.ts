@@ -4,7 +4,7 @@ import { VOXEL_SIZE } from '../../params';
 import { createWord } from '../../scene/createWord';
 import { sizeOf } from '../../scene/utils';
 
-export class MainMenuSceneManager {
+export class MainMenuScene {
   private readonly _scene: THREE.Scene;
 
   constructor(scene: THREE.Scene) {

@@ -4,7 +4,7 @@ import { MINO_SIZE } from '../../params';
 
 export type CameraPosition = 'c1' | 'c2' | 'c3' | 'c4';
 
-export class PvPCameraManager {
+export class PvPCamera {
   private readonly _camera: THREE.Camera;
   private readonly _tweenGroup: TWEENGroup;
   private _position: CameraPosition;

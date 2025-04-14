@@ -1,1 +1,1 @@
-export { PvPGameScenario } from './PvPGameScenario';
+export { PvPScenario } from './PvPScenario';

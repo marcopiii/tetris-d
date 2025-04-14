@@ -2,7 +2,7 @@ import TWEEN, { Group as TWEENGroup } from '@tweenjs/tween.js';
 import * as THREE from 'three';
 import { MINO_SIZE } from '../../params';
 
-export class MainMenuCameraManager {
+export class MainMenuCamera {
   private readonly _camera: THREE.Camera;
   private readonly _tweenGroup: TWEENGroup;
 

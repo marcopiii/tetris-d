@@ -1,9 +1,18 @@
-import { CameraPosition } from './PvPCameraManager';
+import { CameraPosition } from './PvPCamera';
 import { Board } from './Board';
 import { Piece } from './Piece';
 import { COLS, ROWS } from '../../params';
 import { Hold } from './Hold';
-import { Move } from './types';
+
+type Move =
+  | 'hold'
+  | 'shiftL'
+  | 'shiftR'
+  | 'shiftB'
+  | 'shiftF'
+  | 'rotateL'
+  | 'rotateR'
+  | 'hardDrop';
 
 export class Game {
   private readonly _onNewPiece: () => void;

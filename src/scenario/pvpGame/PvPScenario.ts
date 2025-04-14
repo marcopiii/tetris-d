@@ -1,6 +1,6 @@
 import { Group as TWEENGroup } from '@tweenjs/tween.js';
 import * as THREE from 'three';
-import { PvPCameraManager } from './PvPCameraManager';
+import { PvPCamera } from './PvPCamera';
 import {
   Button as GamepadButton,
   Event as GamepadEvent,
@@ -10,7 +10,7 @@ import { Clock } from './Clock';
 import { Game } from './Game';
 import { Progress } from './Progress';
 import { PlayerManager } from './PlayerManager';
-import { GameSceneManager } from './GameSceneManager';
+import { PvPScene } from './PvPScene';
 
 export type CameraAction =
   | {
@@ -36,15 +36,15 @@ type GameAction =
   | 'shiftB'
   | 'hardDrop';
 
-export class PvPGameScenario {
+export class PvPScenario {
   private readonly _game: Game;
   private readonly _clock: Clock;
   private readonly _playerManager: PlayerManager;
   private readonly _progressP1: Progress;
   private readonly _progressP2: Progress;
 
-  private readonly _sceneManager: GameSceneManager;
-  private readonly _cameraManager: PvPCameraManager;
+  private readonly _sceneManager: PvPScene;
+  private readonly _cameraManager: PvPCamera;
 
   private readonly _gamepadP1: GamepadManager;
   private readonly _gamepadP2: GamepadManager;
@@ -56,8 +56,8 @@ export class PvPGameScenario {
     gamepadP1: GamepadManager,
     gamepadP2: GamepadManager,
   ) {
-    this._sceneManager = new GameSceneManager(scene);
-    this._cameraManager = new PvPCameraManager(camera, tween);
+    this._sceneManager = new PvPScene(scene);
+    this._cameraManager = new PvPCamera(camera, tween);
 
     this._gamepadP1 = gamepadP1;
     this._gamepadP2 = gamepadP2;
