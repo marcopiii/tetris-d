@@ -1,20 +1,6 @@
 import * as THREE from 'three';
 import { COLS, MINO_SIZE, ROWS } from '../params';
 
-// translation from the Board coord system to the Scene coord system
-
-export function translateY(y: number) {
-  return -(y + 1 - ROWS / 2) * MINO_SIZE;
-}
-
-export function translateX(x: number) {
-  return (x + 1 - COLS / 2) * MINO_SIZE;
-}
-
-export function translateZ(z: number) {
-  return (z + 1 - COLS / 2) * MINO_SIZE;
-}
-
 export function sizeOf(g: THREE.Group) {
   const box = new THREE.Box3().setFromObject(g);
   const size = new THREE.Vector3();
