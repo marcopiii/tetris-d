@@ -34,15 +34,16 @@ export class PvEScene extends GameScene {
         .add(GameScene.center)
         .add({ x: COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
         .multiplyScalar(MINO_SIZE);
+      hudHold.rotateY(THREE.MathUtils.degToRad(-90));
     } else if (cameraPosition === 'c2') {
       hudProgress.position
         .add(GameScene.center)
-        .add({ x: (COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
+        .add({ x: -COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
         .multiplyScalar(MINO_SIZE);
-      hudProgress.rotateY(THREE.MathUtils.degToRad(180));
+      hudProgress.rotateY(THREE.MathUtils.degToRad(90));
       hudHold.position
         .add(GameScene.center)
-        .add({ x: -COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
+        .add({ x: (COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
     } else if (cameraPosition === 'c3') {
       hudProgress.position
@@ -54,17 +55,18 @@ export class PvEScene extends GameScene {
         .add(GameScene.center)
         .add({ x: -(COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
-      hudHold.rotateY(THREE.MathUtils.degToRad(180));
+      hudHold.rotateY(THREE.MathUtils.degToRad(90));
     } else if (cameraPosition === 'c4') {
       hudProgress.position
         .add(GameScene.center)
-        .add({ x: -COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
-        .multiplyScalar(MINO_SIZE);
-      hudHold.position
-        .add(GameScene.center)
         .add({ x: (COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
-      hudHold.rotateY(THREE.MathUtils.degToRad(180));
+      hudProgress.rotateY(THREE.MathUtils.degToRad(-90));
+      hudHold.position
+        .add(GameScene.center)
+        .add({ x: -COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
+        .multiplyScalar(MINO_SIZE);
+      hudHold.rotateY(THREE.MathUtils.degToRad(-180));
     }
 
     this._scene.add(hudProgress);
