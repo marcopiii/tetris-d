@@ -26,12 +26,12 @@ export abstract class GameScene {
   private config(scene: THREE.Scene) {
     scene.background = new THREE.Color('#b5c5d2');
 
-    const yGrid = tetrionFloor;
+    const yGrid = tetrionFloor();
     yGrid.position
       .add(GameScene.center)
       .add({ x: 0, y: -ROWS / 2, z: 0 })
       .multiplyScalar(MINO_SIZE);
-
+      
     const xlGrid = createTetrionWall();
     xlGrid.rotateY(THREE.MathUtils.degToRad(90));
     xlGrid.position
