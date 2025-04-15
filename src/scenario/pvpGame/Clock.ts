@@ -10,7 +10,7 @@ export class Clock {
   }
 
   private speed() {
-    return 1 / (gravity[this._level] * 60);
+    return 1000 / (gravity[this._level] * 60);
   }
 
   get isRunning(): boolean {
