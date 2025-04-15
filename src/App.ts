@@ -34,19 +34,6 @@ export class App {
     this.animate();
   }
 
-  private startGame = () => {
-    this._scenario = {
-      scenario: 'pvp-game',
-      state: new PvPScenario(
-        this._renderManager.scene,
-        this._renderManager.camera,
-        this._renderManager.tween,
-        this._gamepadP1,
-        this._gamepadP2,
-      ),
-    };
-  };
-
   private mainMenu = () => {
     this._scenario = {
       scenario: 'main-menu',
@@ -56,9 +43,35 @@ export class App {
         this._renderManager.tween,
         this._gamepadP1,
         {
-          onPvP: this.startGame,
+          onPvE: this.startPvE,
+          onPvP: this.startPvP,
           onExit: this.exit,
         },
+      ),
+    };
+  };
+
+  private startPvE = () => {
+    this._scenario = {
+      scenario: 'pve-game',
+      state: new PvEScenario(
+        this._renderManager.scene,
+        this._renderManager.camera,
+        this._renderManager.tween,
+        this._gamepadP1,
+      ),
+    };
+  };
+
+  private startPvP = () => {
+    this._scenario = {
+      scenario: 'pvp-game',
+      state: new PvPScenario(
+        this._renderManager.scene,
+        this._renderManager.camera,
+        this._renderManager.tween,
+        this._gamepadP1,
+        this._gamepadP2,
       ),
     };
   };
