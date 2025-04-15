@@ -17,14 +17,15 @@ import type { Game } from './Game';
 import type { Progress } from './Progress';
 import { cuttingShadowMaterial } from '../../scene/assets/materials';
 
-export const center = new THREE.Vector3(0, 0, 0);
-export const offset = new THREE.Vector3(1 / 2, -1 / 2, 1 / 2);
-
-const translateX = (x: number) => x + offset.x - COLS / 2;
-const translateY = (y: number) => -y + offset.y + ROWS / 2;
-const translateZ = (z: number) => z + offset.z - COLS / 2;
-
 export class PvPScene {
+  static readonly center = new THREE.Vector3(0, 0, 0);
+  static readonly offset = new THREE.Vector3(1 / 2, -1 / 2, 1 / 2);
+
+  // translations from the board coord system to the scene coord system
+  private translateX = (x: number) => x + PvPScene.offset.x - COLS / 2;
+  private translateY = (y: number) => -y + PvPScene.offset.y + ROWS / 2;
+  private translateZ = (z: number) => z + PvPScene.offset.z - COLS / 2;
+
   private readonly _scene: THREE.Scene;
   private _cutter: { below: boolean; above: boolean };
 
@@ -33,32 +34,32 @@ export class PvPScene {
 
     const yGrid = tetrionFloor;
     yGrid.position
-      .add(center)
+      .add(PvPScene.center)
       .add({ x: 0, y: -ROWS / 2, z: 0 })
       .multiplyScalar(MINO_SIZE);
 
     const xlGrid = createTetrionWall();
     xlGrid.rotateY(THREE.MathUtils.degToRad(90));
     xlGrid.position
-      .add(center)
+      .add(PvPScene.center)
       .add({ x: COLS / 2, y: 0, z: 0 })
       .multiplyScalar(MINO_SIZE);
     const xrGrid = createTetrionWall();
     xrGrid.rotateY(THREE.MathUtils.degToRad(-90));
     xrGrid.position
-      .add(center)
+      .add(PvPScene.center)
       .add({ x: -COLS / 2, y: 0, z: 0 })
       .multiplyScalar(MINO_SIZE);
 
     const zlGrid = createTetrionWall();
     zlGrid.position
-      .add(center)
+      .add(PvPScene.center)
       .add({ x: 0, y: 0, z: -COLS / 2 })
       .multiplyScalar(MINO_SIZE);
     const zrGrid = createTetrionWall();
     zrGrid.rotateY(THREE.MathUtils.degToRad(180));
     zrGrid.position
-      .add(center)
+      .add(PvPScene.center)
       .add({ x: 0, y: 0, z: COLS / 2 })
       .multiplyScalar(MINO_SIZE);
 
@@ -74,10 +75,6 @@ export class PvPScene {
     this._scene.clear();
     this.#config(this._scene);
     this._cutter = { below: false, above: false };
-  }
-
-  get scene() {
-    return this._scene;
   }
 
   set cutter(cutter: {
@@ -120,13 +117,13 @@ export class PvPScene {
         belowCutShadow.rotateZ(THREE.MathUtils.degToRad(90));
         belowCutShadow.rotateY(THREE.MathUtils.degToRad(90));
         belowCutShadow.position
-          .add(center)
+          .add(PvPScene.center)
           .add({ x: (game.piece.planePosition - COLS) / 2, y: -ROWS / 2, z: 0 })
           .multiplyScalar(MINO_SIZE);
       } else {
         belowCutShadow.rotateX(THREE.MathUtils.degToRad(-90));
         belowCutShadow.position
-          .add(center)
+          .add(PvPScene.center)
           .add({ x: 0, y: -ROWS / 2, z: (game.piece.planePosition - COLS) / 2 })
           .multiplyScalar(MINO_SIZE);
       }
@@ -145,13 +142,13 @@ export class PvPScene {
         aboveCutShadow.rotateZ(THREE.MathUtils.degToRad(90));
         aboveCutShadow.rotateY(THREE.MathUtils.degToRad(90));
         aboveCutShadow.position
-          .add(center)
+          .add(PvPScene.center)
           .add({ x: (game.piece.planePosition + 1) / 2, y: -ROWS / 2, z: 0 })
           .multiplyScalar(MINO_SIZE);
       } else {
         aboveCutShadow.rotateX(THREE.MathUtils.degToRad(-90));
         aboveCutShadow.position
-          .add(center)
+          .add(PvPScene.center)
           .add({ x: 0, y: -ROWS / 2, z: (game.piece.planePosition + 1) / 2 })
           .multiplyScalar(MINO_SIZE);
       }
@@ -162,8 +159,12 @@ export class PvPScene {
       if (isCutOut(x, z)) return;
       const mino = type === 'DELETE' ? createBloomingMino() : createMino(type);
       mino.position
-        .add(center)
-        .add({ x: translateX(x), y: translateY(y), z: translateZ(z) })
+        .add(PvPScene.center)
+        .add({
+          x: this.translateX(x),
+          y: this.translateY(y),
+          z: this.translateZ(z),
+        })
         .multiplyScalar(MINO_SIZE);
       this._scene.add(mino);
     });
@@ -171,8 +172,12 @@ export class PvPScene {
     game.ghostPiece.forEachBlock((y, x, z) => {
       const mino = createGhostMino(game.ghostPiece.type);
       mino.position
-        .add(center)
-        .add({ x: translateX(x), y: translateY(y), z: translateZ(z) })
+        .add(PvPScene.center)
+        .add({
+          x: this.translateX(x),
+          y: this.translateY(y),
+          z: this.translateZ(z),
+        })
         .multiplyScalar(MINO_SIZE);
       this._scene.add(mino);
     });
@@ -180,8 +185,12 @@ export class PvPScene {
     game.piece.forEachBlock((y, x, z) => {
       const mino = createMino(game.piece.type);
       mino.position
-        .add(center)
-        .add({ x: translateX(x), y: translateY(y), z: translateZ(z) })
+        .add(PvPScene.center)
+        .add({
+          x: this.translateX(x),
+          y: this.translateY(y),
+          z: this.translateZ(z),
+        })
         .multiplyScalar(MINO_SIZE);
       this._scene.add(mino);
 
@@ -195,20 +204,20 @@ export class PvPScene {
       zrShadow.rotateY(THREE.MathUtils.degToRad(180));
 
       xrShadow.position
-        .add(center)
-        .add({ x: COLS / 2, y: translateY(y), z: translateZ(z) })
+        .add(PvPScene.center)
+        .add({ x: COLS / 2, y: this.translateY(y), z: this.translateZ(z) })
         .multiplyScalar(MINO_SIZE);
       xlShadow.position
-        .add(center)
-        .add({ x: -COLS / 2, y: translateY(y), z: translateZ(z) })
+        .add(PvPScene.center)
+        .add({ x: -COLS / 2, y: this.translateY(y), z: this.translateZ(z) })
         .multiplyScalar(MINO_SIZE);
       zlShadow.position
-        .add(center)
-        .add({ x: translateX(x), y: translateY(y), z: -COLS / 2 })
+        .add(PvPScene.center)
+        .add({ x: this.translateX(x), y: this.translateY(y), z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
       zrShadow.position
-        .add(center)
-        .add({ x: translateX(x), y: translateY(y), z: COLS / 2 })
+        .add(PvPScene.center)
+        .add({ x: this.translateX(x), y: this.translateY(y), z: COLS / 2 })
         .multiplyScalar(MINO_SIZE);
 
       this._scene.add(xrShadow);
@@ -228,24 +237,24 @@ export class PvPScene {
     );
     if (cameraPosition === 'c1') {
       hudP1.position
-        .add(center)
+        .add(PvPScene.center)
         .add({ x: -(COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
     } else if (cameraPosition === 'c2') {
       hudP1.position
-        .add(center)
+        .add(PvPScene.center)
         .add({ x: (COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
       hudP1.rotateY(THREE.MathUtils.degToRad(180));
     } else if (cameraPosition === 'c3') {
       hudP1.position
-        .add(center)
+        .add(PvPScene.center)
         .add({ x: COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
         .multiplyScalar(MINO_SIZE);
       hudP1.rotateY(THREE.MathUtils.degToRad(180));
     } else if (cameraPosition === 'c4') {
       hudP1.position
-        .add(center)
+        .add(PvPScene.center)
         .add({ x: -COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
         .multiplyScalar(MINO_SIZE);
     }
@@ -260,23 +269,23 @@ export class PvPScene {
     );
     if (cameraPosition === 'c1') {
       hudP2.position
-        .add(center)
+        .add(PvPScene.center)
         .add({ x: COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
         .multiplyScalar(MINO_SIZE);
     } else if (cameraPosition === 'c2') {
       hudP2.position
-        .add(center)
+        .add(PvPScene.center)
         .add({ x: -COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
         .multiplyScalar(MINO_SIZE);
     } else if (cameraPosition === 'c3') {
       hudP2.position
-        .add(center)
+        .add(PvPScene.center)
         .add({ x: -(COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
       hudP2.rotateY(THREE.MathUtils.degToRad(180));
     } else if (cameraPosition === 'c4') {
       hudP2.position
-        .add(center)
+        .add(PvPScene.center)
         .add({ x: (COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
       hudP2.rotateY(THREE.MathUtils.degToRad(180));

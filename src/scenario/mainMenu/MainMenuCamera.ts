@@ -1,6 +1,6 @@
 import TWEEN, { Group as TWEENGroup } from '@tweenjs/tween.js';
 import * as THREE from 'three';
-import { center } from './MainMenuScene';
+import { MainMenuScene } from './MainMenuScene';
 
 export class MainMenuCamera {
   private readonly _camera: THREE.Camera;
@@ -11,8 +11,8 @@ export class MainMenuCamera {
     this._tweenGroup = tweenGroup;
 
     const cameraSetup = {
-      position: new THREE.Vector3(-10, 5, 10),
-      lookAt: center,
+      position: new THREE.Vector3(-10, 4, 10),
+      lookAt: MainMenuScene.center,
     };
 
     new TWEEN.Tween(this._camera.position, this._tweenGroup)

@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import TWEEN, { Group as TWEENGroup } from '@tweenjs/tween.js';
-import { MINO_SIZE } from '../../params';
-import { center, offset } from './PvPScene';
+import { PvPScene } from './PvPScene';
 
 export type CameraPosition = 'c1' | 'c2' | 'c3' | 'c4';
 
@@ -63,19 +62,28 @@ type CameraSetup = {
 const distance = new THREE.Vector3(10, 4, 10);
 const cameraSetup: Record<CameraPosition, CameraSetup> = {
   c1: {
-    position: distance.clone().multiply({ x: -1, y: 1, z: 1 }).add(offset),
-    lookAt: center.clone().add(offset),
+    position: distance
+      .clone()
+      .multiply({ x: -1, y: 1, z: 1 })
+      .add(PvPScene.offset),
+    lookAt: PvPScene.center.clone().add(PvPScene.offset),
   },
   c2: {
-    position: distance.clone().add(offset),
-    lookAt: center.clone().add(offset),
+    position: distance.clone().add(PvPScene.offset),
+    lookAt: PvPScene.center.clone().add(PvPScene.offset),
   },
   c3: {
-    position: distance.clone().multiply({ x: 1, y: 1, z: -1 }).add(offset),
-    lookAt: center.clone().add(offset),
+    position: distance
+      .clone()
+      .multiply({ x: 1, y: 1, z: -1 })
+      .add(PvPScene.offset),
+    lookAt: PvPScene.center.clone().add(PvPScene.offset),
   },
   c4: {
-    position:distance.clone().multiply({ x: -1, y: 1, z: -1 }).add(offset),
-    lookAt: center.clone().add(offset),
+    position: distance
+      .clone()
+      .multiply({ x: -1, y: 1, z: -1 })
+      .add(PvPScene.offset),
+    lookAt: PvPScene.center.clone().add(PvPScene.offset),
   },
 };
