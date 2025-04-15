@@ -1,13 +1,16 @@
-import { COLS } from '../params';
+import { COLS } from '../../params';
 import {
   Name as Tetrimino,
   getRandomTetrimino,
   Shape,
   RotationState,
   wallKickData,
-} from '../tetrimino';
-import { copy } from '../utils';
-import { Coord, Plane } from './types';
+} from '../../tetrimino';
+import { copy } from '../../utils';
+
+type Coord = { x: number; y: number; z: number };
+
+type Plane = 'x' | 'z';
 
 export class Piece {
   private _type: Tetrimino;

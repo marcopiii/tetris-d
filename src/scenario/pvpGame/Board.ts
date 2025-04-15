@@ -1,6 +1,8 @@
-import { COLS, ROWS } from '../params';
+import { COLS, ROWS } from '../../params';
 import type { Piece } from './Piece';
-import { BoardBlock } from './types';
+import { Name as Tetrimino } from '../../tetrimino';
+
+type BoardBlock = Tetrimino | 'DELETE';
 
 export class Board {
   private _matrix: (BoardBlock | null)[][][];

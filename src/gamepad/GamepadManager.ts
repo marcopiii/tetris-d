@@ -2,16 +2,20 @@ import { mapping } from './mapping';
 import { Button, Event } from './types';
 
 export class GamepadManager {
-  private readonly _handler: (event: Event, button: Button) => void;
+  private _handler: (event: Event, button: Button) => void;
   private readonly _gamepadIndex: number;
   private _buffer: readonly GamepadButton[];
   private _active: boolean;
 
-  constructor(index: number, handler: (event: Event, button: Button) => void) {
-    this._handler = handler;
+  constructor(index: number) {
+    this._handler = () => {};
     this._gamepadIndex = index;
     this._buffer = [];
     this._active = index === 0;
+  }
+
+  set handler(handler: (event: Event, button: Button) => void) {
+    this._handler = handler;
   }
 
   set active(active: boolean) {

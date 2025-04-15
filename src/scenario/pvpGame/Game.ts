@@ -1,9 +1,18 @@
-import { CameraPosition, relativeDirection } from '../camera';
+import { PvPCameraPosition } from './PvPCamera';
 import { Board } from './Board';
 import { Piece } from './Piece';
-import { COLS, ROWS } from '../params';
+import { COLS, ROWS } from '../../params';
 import { Hold } from './Hold';
-import { Move } from './types';
+
+type Move =
+  | 'hold'
+  | 'shiftL'
+  | 'shiftR'
+  | 'shiftB'
+  | 'shiftF'
+  | 'rotateL'
+  | 'rotateR'
+  | 'hardDrop';
 
 export class Game {
   private readonly _onNewPiece: () => void;
@@ -28,12 +37,6 @@ export class Game {
 
   get held() {
     return { ...this._hold.piece, available: this._piece.isHoldable };
-  }
-
-  reset() {
-    this._board.clean();
-    this._piece = new Piece();
-    this._hold = new Hold()
   }
 
   /** Progresses the game by one tick.
@@ -73,7 +76,7 @@ export class Game {
   /**
    * @returns {boolean} - Whether the move had success
    */
-  tryMove(type: Move, cameraPosition: CameraPosition): boolean {
+  tryMove(type: Move, cameraPosition: PvPCameraPosition): boolean {
     const isInverted =
       (this._piece.plane === 'x' &&
         relativeDirection[cameraPosition].z === 'negative') ||
@@ -152,3 +155,27 @@ function detectCollision(piece: Piece, board: Board): boolean {
   });
   return collisionDetected;
 }
+
+type RelativeDirection = {
+  x: 'positive' | 'negative';
+  z: 'positive' | 'negative';
+};
+
+const relativeDirection: Record<PvPCameraPosition, RelativeDirection> = {
+  c1: {
+    x: 'positive',
+    z: 'positive',
+  },
+  c2: {
+    x: 'positive',
+    z: 'negative',
+  },
+  c3: {
+    x: 'negative',
+    z: 'negative',
+  },
+  c4: {
+    x: 'negative',
+    z: 'positive',
+  },
+};
