@@ -14,22 +14,15 @@ export class PvEScene extends GameScene {
     super(scene);
   }
 
-  update(
-    game: Game,
-    progress: Progress,
-    cameraPosition: GameCameraPosition,
-  ) {
+  update(game: Game, progress: Progress, cameraPosition: GameCameraPosition) {
     this.innerUpdate(game);
 
-    const hudProgress = createProgressHUD(
-      progress,
-      'right',
-    );
+    const hudProgress = createProgressHUD(progress, 'right');
     const hudHold = createHoldHUD(
       game.held.shape,
       game.held.type,
       game.held.available,
-      "left",
+      'left',
     );
 
     if (cameraPosition === 'c1') {
@@ -46,7 +39,7 @@ export class PvEScene extends GameScene {
         .add(GameScene.center)
         .add({ x: (COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
-        hudProgress.rotateY(THREE.MathUtils.degToRad(180));
+      hudProgress.rotateY(THREE.MathUtils.degToRad(180));
       hudHold.position
         .add(GameScene.center)
         .add({ x: -COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
@@ -61,7 +54,7 @@ export class PvEScene extends GameScene {
         .add(GameScene.center)
         .add({ x: -(COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
-        hudHold.rotateY(THREE.MathUtils.degToRad(180));
+      hudHold.rotateY(THREE.MathUtils.degToRad(180));
     } else if (cameraPosition === 'c4') {
       hudProgress.position
         .add(GameScene.center)
@@ -76,7 +69,6 @@ export class PvEScene extends GameScene {
 
     this._scene.add(hudProgress);
     this._scene.add(hudHold);
-
   }
 }
 
@@ -140,14 +132,10 @@ function createHoldHUD(
   return holdHUD;
 }
 
-function createProgressHUD(
-  progress: Progress,
-  align: 'left' | 'right',
-) {
+function createProgressHUD(progress: Progress, align: 'left' | 'right') {
   const hud = new THREE.Group();
   const score = createScoreHUD(progress.score, align);
   const level = createLevelHUD(progress.level, align);
-  
 
   score.position.set(0, 0, 0);
   level.position.set(
