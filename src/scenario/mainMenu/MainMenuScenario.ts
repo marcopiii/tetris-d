@@ -5,7 +5,7 @@ import {
   Event as GamepadEvent,
   GamepadManager,
 } from '../../gamepad';
-import { CameraAction } from '../pvpGame/PvPScenario';
+import { CameraAction } from '../pvp/PvPScenario';
 import { MainMenu } from './MainMenu';
 import { MainMenuCamera } from './MainMenuCamera';
 import { MainMenuScene } from './MainMenuScene';

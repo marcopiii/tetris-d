@@ -1,2 +1,2 @@
 export { MainMenuScenario } from './mainMenu';
-export { PvPScenario } from './pvpGame';
+export { PvPScenario } from './pvp';
