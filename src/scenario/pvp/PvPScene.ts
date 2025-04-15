@@ -5,86 +5,14 @@ import { createWord } from '../../scene/createWord';
 import { Shape } from '../../scene/types';
 import { Name as Tetrimino } from '../../tetrimino';
 import type { PlayerTag, Player } from './PlayerManager';
-import {
-  createMino,
-  createMinoShade,
-  createBloomingMino,
-  createGhostMino,
-  createTetrionWall,
-  tetrionFloor,
-} from '../../scene/createMesh';
+import { createMino } from '../../scene/createMesh';
 import type { Game } from './Game';
 import type { Progress } from './Progress';
-import { cuttingShadowMaterial } from '../../scene/assets/materials';
+import { GameScene } from './GameScene';
 
-export class PvPScene {
-  static readonly center = new THREE.Vector3(0, 0, 0);
-  static readonly offset = new THREE.Vector3(1 / 2, -1 / 2, 1 / 2);
-
-  // translations from the board coord system to the scene coord system
-  private translateX = (x: number) => x + PvPScene.offset.x - COLS / 2;
-  private translateY = (y: number) => -y + PvPScene.offset.y + ROWS / 2;
-  private translateZ = (z: number) => z + PvPScene.offset.z - COLS / 2;
-
-  private readonly _scene: THREE.Scene;
-  private _cutter: { below: boolean; above: boolean };
-
-  #config(scene: THREE.Scene) {
-    scene.background = new THREE.Color('#b5c5d2');
-
-    const yGrid = tetrionFloor;
-    yGrid.position
-      .add(PvPScene.center)
-      .add({ x: 0, y: -ROWS / 2, z: 0 })
-      .multiplyScalar(MINO_SIZE);
-
-    const xlGrid = createTetrionWall();
-    xlGrid.rotateY(THREE.MathUtils.degToRad(90));
-    xlGrid.position
-      .add(PvPScene.center)
-      .add({ x: COLS / 2, y: 0, z: 0 })
-      .multiplyScalar(MINO_SIZE);
-    const xrGrid = createTetrionWall();
-    xrGrid.rotateY(THREE.MathUtils.degToRad(-90));
-    xrGrid.position
-      .add(PvPScene.center)
-      .add({ x: -COLS / 2, y: 0, z: 0 })
-      .multiplyScalar(MINO_SIZE);
-
-    const zlGrid = createTetrionWall();
-    zlGrid.position
-      .add(PvPScene.center)
-      .add({ x: 0, y: 0, z: -COLS / 2 })
-      .multiplyScalar(MINO_SIZE);
-    const zrGrid = createTetrionWall();
-    zrGrid.rotateY(THREE.MathUtils.degToRad(180));
-    zrGrid.position
-      .add(PvPScene.center)
-      .add({ x: 0, y: 0, z: COLS / 2 })
-      .multiplyScalar(MINO_SIZE);
-
-    scene.add(yGrid);
-    scene.add(xlGrid);
-    scene.add(xrGrid);
-    scene.add(zlGrid);
-    scene.add(zrGrid);
-  }
-
+export class PvPScene extends GameScene {
   constructor(scene: THREE.Scene) {
-    this._scene = scene;
-    this._scene.clear();
-    this.#config(this._scene);
-    this._cutter = { below: false, above: false };
-  }
-
-  set cutter(cutter: {
-    below: boolean | undefined;
-    above: boolean | undefined;
-  }) {
-    this._cutter = {
-      below: cutter.below ?? this._cutter.below,
-      above: cutter.above ?? this._cutter.above,
-    };
+    super(scene)
   }
 
   update(
@@ -94,137 +22,8 @@ export class PvPScene {
     players: Record<PlayerTag, Player>,
     cameraPosition: PvPCameraPosition,
   ) {
-    this._scene.clear();
-    this.#config(this._scene);
 
-    const isCutOut = (x: number, z: number) => {
-      return game.piece.plane === 'x'
-        ? (this._cutter.below && x < game.piece.planePosition) ||
-            (this._cutter.above && x > game.piece.planePosition)
-        : (this._cutter.below && z < game.piece.planePosition) ||
-            (this._cutter.above && z > game.piece.planePosition);
-    };
-
-    if (this._cutter.below) {
-      const belowCutShadow = new THREE.Mesh(
-        new THREE.PlaneGeometry(
-          COLS * MINO_SIZE,
-          game.piece.planePosition * MINO_SIZE,
-        ),
-        cuttingShadowMaterial,
-      );
-      if (game.piece.plane === 'x') {
-        belowCutShadow.rotateZ(THREE.MathUtils.degToRad(90));
-        belowCutShadow.rotateY(THREE.MathUtils.degToRad(90));
-        belowCutShadow.position
-          .add(PvPScene.center)
-          .add({ x: (game.piece.planePosition - COLS) / 2, y: -ROWS / 2, z: 0 })
-          .multiplyScalar(MINO_SIZE);
-      } else {
-        belowCutShadow.rotateX(THREE.MathUtils.degToRad(-90));
-        belowCutShadow.position
-          .add(PvPScene.center)
-          .add({ x: 0, y: -ROWS / 2, z: (game.piece.planePosition - COLS) / 2 })
-          .multiplyScalar(MINO_SIZE);
-      }
-      this._scene.add(belowCutShadow);
-    }
-
-    if (this._cutter.above) {
-      const aboveCutShadow = new THREE.Mesh(
-        new THREE.PlaneGeometry(
-          COLS * MINO_SIZE,
-          (COLS - 1 - game.piece.planePosition) * MINO_SIZE,
-        ),
-        cuttingShadowMaterial,
-      );
-      if (game.piece.plane === 'x') {
-        aboveCutShadow.rotateZ(THREE.MathUtils.degToRad(90));
-        aboveCutShadow.rotateY(THREE.MathUtils.degToRad(90));
-        aboveCutShadow.position
-          .add(PvPScene.center)
-          .add({ x: (game.piece.planePosition + 1) / 2, y: -ROWS / 2, z: 0 })
-          .multiplyScalar(MINO_SIZE);
-      } else {
-        aboveCutShadow.rotateX(THREE.MathUtils.degToRad(-90));
-        aboveCutShadow.position
-          .add(PvPScene.center)
-          .add({ x: 0, y: -ROWS / 2, z: (game.piece.planePosition + 1) / 2 })
-          .multiplyScalar(MINO_SIZE);
-      }
-      this._scene.add(aboveCutShadow);
-    }
-
-    game.board.forEachBlock((type, y, x, z) => {
-      if (isCutOut(x, z)) return;
-      const mino = type === 'DELETE' ? createBloomingMino() : createMino(type);
-      mino.position
-        .add(PvPScene.center)
-        .add({
-          x: this.translateX(x),
-          y: this.translateY(y),
-          z: this.translateZ(z),
-        })
-        .multiplyScalar(MINO_SIZE);
-      this._scene.add(mino);
-    });
-
-    game.ghostPiece.forEachBlock((y, x, z) => {
-      const mino = createGhostMino(game.ghostPiece.type);
-      mino.position
-        .add(PvPScene.center)
-        .add({
-          x: this.translateX(x),
-          y: this.translateY(y),
-          z: this.translateZ(z),
-        })
-        .multiplyScalar(MINO_SIZE);
-      this._scene.add(mino);
-    });
-
-    game.piece.forEachBlock((y, x, z) => {
-      const mino = createMino(game.piece.type);
-      mino.position
-        .add(PvPScene.center)
-        .add({
-          x: this.translateX(x),
-          y: this.translateY(y),
-          z: this.translateZ(z),
-        })
-        .multiplyScalar(MINO_SIZE);
-      this._scene.add(mino);
-
-      const xrShadow = createMinoShade(game.piece.type);
-      const xlShadow = createMinoShade(game.piece.type);
-      const zlShadow = createMinoShade(game.piece.type);
-      const zrShadow = createMinoShade(game.piece.type);
-
-      xrShadow.rotateY(THREE.MathUtils.degToRad(-90));
-      xlShadow.rotateY(THREE.MathUtils.degToRad(90));
-      zrShadow.rotateY(THREE.MathUtils.degToRad(180));
-
-      xrShadow.position
-        .add(PvPScene.center)
-        .add({ x: COLS / 2, y: this.translateY(y), z: this.translateZ(z) })
-        .multiplyScalar(MINO_SIZE);
-      xlShadow.position
-        .add(PvPScene.center)
-        .add({ x: -COLS / 2, y: this.translateY(y), z: this.translateZ(z) })
-        .multiplyScalar(MINO_SIZE);
-      zlShadow.position
-        .add(PvPScene.center)
-        .add({ x: this.translateX(x), y: this.translateY(y), z: -COLS / 2 })
-        .multiplyScalar(MINO_SIZE);
-      zrShadow.position
-        .add(PvPScene.center)
-        .add({ x: this.translateX(x), y: this.translateY(y), z: COLS / 2 })
-        .multiplyScalar(MINO_SIZE);
-
-      this._scene.add(xrShadow);
-      this._scene.add(xlShadow);
-      this._scene.add(zlShadow);
-      this._scene.add(zrShadow);
-    });
+    this.innerUpdate(game);
 
     const { P1, P2 } = players;
 
@@ -237,24 +36,24 @@ export class PvPScene {
     );
     if (cameraPosition === 'c1') {
       hudP1.position
-        .add(PvPScene.center)
+        .add(GameScene.center)
         .add({ x: -(COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
     } else if (cameraPosition === 'c2') {
       hudP1.position
-        .add(PvPScene.center)
+        .add(GameScene.center)
         .add({ x: (COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
       hudP1.rotateY(THREE.MathUtils.degToRad(180));
     } else if (cameraPosition === 'c3') {
       hudP1.position
-        .add(PvPScene.center)
+        .add(GameScene.center)
         .add({ x: COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
         .multiplyScalar(MINO_SIZE);
       hudP1.rotateY(THREE.MathUtils.degToRad(180));
     } else if (cameraPosition === 'c4') {
       hudP1.position
-        .add(PvPScene.center)
+        .add(GameScene.center)
         .add({ x: -COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
         .multiplyScalar(MINO_SIZE);
     }
@@ -269,23 +68,23 @@ export class PvPScene {
     );
     if (cameraPosition === 'c1') {
       hudP2.position
-        .add(PvPScene.center)
+        .add(GameScene.center)
         .add({ x: COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
         .multiplyScalar(MINO_SIZE);
     } else if (cameraPosition === 'c2') {
       hudP2.position
-        .add(PvPScene.center)
+        .add(GameScene.center)
         .add({ x: -COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
         .multiplyScalar(MINO_SIZE);
     } else if (cameraPosition === 'c3') {
       hudP2.position
-        .add(PvPScene.center)
+        .add(GameScene.center)
         .add({ x: -(COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
       hudP2.rotateY(THREE.MathUtils.degToRad(180));
     } else if (cameraPosition === 'c4') {
       hudP2.position
-        .add(PvPScene.center)
+        .add(GameScene.center)
         .add({ x: (COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
       hudP2.rotateY(THREE.MathUtils.degToRad(180));
