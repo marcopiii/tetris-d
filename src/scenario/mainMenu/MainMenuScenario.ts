@@ -5,7 +5,7 @@ import {
   Event as GamepadEvent,
   GamepadManager,
 } from '../../gamepad';
-import {CameraAction} from "../pvpGame/PvPScenario";
+import { CameraAction } from '../pvpGame/PvPScenario';
 import { MainMenu } from './MainMenu';
 import { MainMenuCamera } from './MainMenuCamera';
 import { MainMenuScene } from './MainMenuScene';
@@ -66,8 +66,10 @@ export class MainMenuScenario {
       if (btn === 'padD') this.menuCommandHandler('down');
       if (btn === 'padU') this.menuCommandHandler('up');
       if (btn === 'A') this.menuCommandHandler('confirm');
-      if (btn === 'LT') this.cameraCommandHandler({ type: 'move', direction: 'left' });
-      if (btn === 'RT') this.cameraCommandHandler({ type: 'move', direction: 'right' });
+      if (btn === 'LT')
+        this.cameraCommandHandler({ type: 'move', direction: 'left' });
+      if (btn === 'RT')
+        this.cameraCommandHandler({ type: 'move', direction: 'right' });
     }
   };
 }

@@ -43,7 +43,6 @@ export class MainMenuCamera {
       })
       .start();
   }
-
 }
 
 type CameraSetup = {
