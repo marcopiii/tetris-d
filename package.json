@@ -4,10 +4,10 @@
   "description": "",
   "private": true,
   "keywords": [
-    ""
+    "tetris", "3d", "game"
   ],
-  "license": "",
-  "author": "",
+  "license": "MIT",
+  "author": "marcopiii",
   "scripts": {
     "prettier": "prettier --write \"src/**/*.{js,ts,jsx,tsx,json,css,scss,md}\"",
     "start": "webpack-dev-server --config webpack.config.dev.js",
