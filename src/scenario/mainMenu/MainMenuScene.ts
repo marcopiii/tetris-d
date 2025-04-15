@@ -21,9 +21,11 @@ export class MainMenuScene {
     const group = new THREE.Group();
 
     const title = createWord('tetris-d', 'main');
-    title.position
-      .add(MainMenuScene.center)
-      .add({ x: -sizeOf(title).x / 2, y: 15 * VOXEL_SIZE.main, z: 0 });
+    title.position.add({
+      x: -sizeOf(title).x / 2,
+      y: 15 * VOXEL_SIZE.main,
+      z: 0,
+    });
     group.add(title);
 
     menu.options.forEach((option, i) => {
@@ -31,13 +33,16 @@ export class MainMenuScene {
         option.label,
         option.selected ? 'primary' : 'secondary',
       );
-      word.position.add(MainMenuScene.center).add({
+      word.position.add({
         x: -sizeOf(word).x / 2,
         y: -(12 * VOXEL_SIZE.secondary * i),
         z: option.selected ? 3 * VOXEL_SIZE.secondary : 0,
       });
       group.add(word);
     });
+
+    group.position.add(MainMenuScene.center);
+    group.rotateY(THREE.MathUtils.degToRad(180));
 
     this._scene.add(group);
   }
