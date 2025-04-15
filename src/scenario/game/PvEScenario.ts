@@ -36,7 +36,7 @@ type GameAction =
   | 'shiftB'
   | 'hardDrop';
 
-export class PvPScenario {
+export class PvEScenario {
   private readonly _game: Game;
   private readonly _clock: Clock;
   private readonly _playerManager: PlayerManager;

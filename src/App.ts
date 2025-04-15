@@ -1,11 +1,15 @@
 import { GamepadManager } from './gamepad';
 import { RenderManager } from './render';
-import { MainMenuScenario, PvPScenario } from './scenario';
+import { MainMenuScenario, PvPScenario, PvEScenario } from './scenario';
 
 type ScenarioState =
   | {
       scenario: 'main-menu';
       state: MainMenuScenario;
+    }
+  | {
+      scenario: 'pve-game';
+      state: PvEScenario;
     }
   | {
       scenario: 'pvp-game';
