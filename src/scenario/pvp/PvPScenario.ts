@@ -1,6 +1,6 @@
 import { Group as TWEENGroup } from '@tweenjs/tween.js';
 import * as THREE from 'three';
-import { PvPCamera } from './PvPCamera';
+import { GameCamera } from './GameCamera';
 import {
   Button as GamepadButton,
   Event as GamepadEvent,
@@ -44,7 +44,7 @@ export class PvPScenario {
   private readonly _progressP2: Progress;
 
   private readonly _sceneManager: PvPScene;
-  private readonly _cameraManager: PvPCamera;
+  private readonly _cameraManager: GameCamera;
 
   private readonly _gamepadP1: GamepadManager;
   private readonly _gamepadP2: GamepadManager;
@@ -57,7 +57,7 @@ export class PvPScenario {
     gamepadP2: GamepadManager,
   ) {
     this._sceneManager = new PvPScene(scene);
-    this._cameraManager = new PvPCamera(camera, tween);
+    this._cameraManager = new GameCamera(camera, tween);
 
     this._gamepadP1 = gamepadP1;
     this._gamepadP2 = gamepadP2;

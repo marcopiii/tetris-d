@@ -1,13 +1,13 @@
 import * as THREE from 'three';
 import TWEEN, { Group as TWEENGroup } from '@tweenjs/tween.js';
-import { PvPScene } from './PvPScene';
+import { GameScene } from './GameScene';
 
-export type PvPCameraPosition = 'c1' | 'c2' | 'c3' | 'c4';
+export type GameCameraPosition = 'c1' | 'c2' | 'c3' | 'c4';
 
-export class PvPCamera {
+export class GameCamera {
   private readonly _camera: THREE.Camera;
   private readonly _tweenGroup: TWEENGroup;
-  private _position: PvPCameraPosition;
+  private _position: GameCameraPosition;
 
   constructor(camera: THREE.Camera, tweenGroup: TWEENGroup) {
     this._camera = camera;
@@ -24,7 +24,7 @@ export class PvPCamera {
       .start();
   }
 
-  get position(): PvPCameraPosition {
+  get position(): GameCameraPosition {
     return this._position;
   }
 
@@ -60,30 +60,30 @@ type CameraSetup = {
 };
 
 const distance = new THREE.Vector3(10, 4, 10);
-const cameraSetup: Record<PvPCameraPosition, CameraSetup> = {
+const cameraSetup: Record<GameCameraPosition, CameraSetup> = {
   c1: {
     position: distance
       .clone()
       .multiply({ x: -1, y: 1, z: 1 })
-      .add(PvPScene.offset),
-    lookAt: PvPScene.center.clone().add(PvPScene.offset),
+      .add(GameScene.offset),
+    lookAt: GameScene.center.clone().add(GameScene.offset),
   },
   c2: {
-    position: distance.clone().add(PvPScene.offset),
-    lookAt: PvPScene.center.clone().add(PvPScene.offset),
+    position: distance.clone().add(GameScene.offset),
+    lookAt: GameScene.center.clone().add(GameScene.offset),
   },
   c3: {
     position: distance
       .clone()
       .multiply({ x: 1, y: 1, z: -1 })
-      .add(PvPScene.offset),
-    lookAt: PvPScene.center.clone().add(PvPScene.offset),
+      .add(GameScene.offset),
+    lookAt: GameScene.center.clone().add(GameScene.offset),
   },
   c4: {
     position: distance
       .clone()
       .multiply({ x: -1, y: 1, z: -1 })
-      .add(PvPScene.offset),
-    lookAt: PvPScene.center.clone().add(PvPScene.offset),
+      .add(GameScene.offset),
+    lookAt: GameScene.center.clone().add(GameScene.offset),
   },
 };

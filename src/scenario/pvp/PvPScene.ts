@@ -1,4 +1,4 @@
-import { PvPCameraPosition } from './PvPCamera';
+import { GameCameraPosition } from './GameCamera';
 import { COLS, ROWS, MINO_SIZE, VOXEL_SIZE } from '../../params';
 import * as THREE from 'three';
 import { createWord } from '../../scene/createWord';
@@ -12,7 +12,7 @@ import { GameScene } from './GameScene';
 
 export class PvPScene extends GameScene {
   constructor(scene: THREE.Scene) {
-    super(scene)
+    super(scene);
   }
 
   update(
@@ -20,9 +20,8 @@ export class PvPScene extends GameScene {
     progressP1: Progress,
     progressP2: Progress,
     players: Record<PlayerTag, Player>,
-    cameraPosition: PvPCameraPosition,
+    cameraPosition: GameCameraPosition,
   ) {
-
     this.innerUpdate(game);
 
     const { P1, P2 } = players;

@@ -213,6 +213,5 @@ export abstract class GameScene {
       this._scene.add(zlShadow);
       this._scene.add(zrShadow);
     });
-
   }
 }
