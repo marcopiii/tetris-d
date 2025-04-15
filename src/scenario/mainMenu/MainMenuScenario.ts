@@ -5,7 +5,7 @@ import {
   Event as GamepadEvent,
   GamepadManager,
 } from '../../gamepad';
-import { CameraAction } from '../pvpGame/PvPScenario';
+import { CameraAction } from '../game/PvPScenario';
 import { MainMenu } from './MainMenu';
 import { MainMenuCamera } from './MainMenuCamera';
 import { MainMenuScene } from './MainMenuScene';
@@ -23,6 +23,7 @@ export class MainMenuScenario {
     tween: TWEENGroup,
     gamepad: GamepadManager,
     scenarioMutation: {
+      onPvE: () => void;
       onPvP: () => void;
       onExit: () => void;
     },
@@ -34,7 +35,11 @@ export class MainMenuScenario {
     this._gamepad.handler = this.controllerHandler;
     this._gamepad.active = true;
 
-    this._menu = new MainMenu(scenarioMutation.onPvP, scenarioMutation.onExit);
+    this._menu = new MainMenu(
+      scenarioMutation.onPvE,
+      scenarioMutation.onPvP,
+      scenarioMutation.onExit,
+    );
     this._sceneManager.update(this._menu);
   }
 

@@ -1,4 +1,4 @@
-import { PvPCameraPosition } from './PvPCamera';
+import { GameCameraPosition } from './GameCamera';
 import { Board } from './Board';
 import { Piece } from './Piece';
 import { COLS, ROWS } from '../../params';
@@ -40,7 +40,7 @@ export class Game {
   }
 
   /** Progresses the game by one tick.
-   * @return A tuple containing the number of cleared lines for each player and whether the game is over
+   * @return A tuple containing the number of cleared lines for each side and whether the game is over
    */
   tick(): [number, number, boolean] {
     this._board.clearLines();
@@ -48,11 +48,11 @@ export class Game {
     if (detectCollision(this._piece, this._board)) {
       this._piece.rollback();
       this._board.fixPiece(this._piece);
-      const [lineClearP1, lineClearP2] = this._board.checkLines();
+      const [lineClearZ, lineClearX] = this._board.checkLines();
       this._piece = this._piece.plane === 'x' ? new Piece('z') : new Piece('x');
       this._onNewPiece();
       const gameOver = detectCollision(this._piece, this._board);
-      return [lineClearP1, lineClearP2, gameOver];
+      return [lineClearZ, lineClearX, gameOver];
     }
     return [0, 0, false];
   }
@@ -76,7 +76,7 @@ export class Game {
   /**
    * @returns {boolean} - Whether the move had success
    */
-  tryMove(type: Move, cameraPosition: PvPCameraPosition): boolean {
+  tryMove(type: Move, cameraPosition: GameCameraPosition): boolean {
     const isInverted =
       (this._piece.plane === 'x' &&
         relativeDirection[cameraPosition].z === 'negative') ||
@@ -161,7 +161,7 @@ type RelativeDirection = {
   z: 'positive' | 'negative';
 };
 
-const relativeDirection: Record<PvPCameraPosition, RelativeDirection> = {
+const relativeDirection: Record<GameCameraPosition, RelativeDirection> = {
   c1: {
     x: 'positive',
     z: 'positive',

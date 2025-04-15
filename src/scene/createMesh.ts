@@ -41,12 +41,8 @@ export function createVoxel(
   return new THREE.Mesh(voxelGeometries[type], [x, x, y, y, z, z]);
 }
 
-export const tetrionFloor = new THREE.GridHelper(
-  COLS * MINO_SIZE,
-  COLS,
-  '#8797a4',
-  '#8797a4',
-);
+export const tetrionFloor = () =>
+  new THREE.GridHelper(COLS * MINO_SIZE, COLS, '#8797a4', '#8797a4');
 
 export function createTetrionWall() {
   return new THREE.LineSegments(tetrionWallGeometry, tetrionMaterial);
