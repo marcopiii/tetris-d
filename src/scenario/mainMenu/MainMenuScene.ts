@@ -33,9 +33,10 @@ export class MainMenuScene {
         option.label,
         option.selected ? 'primary' : 'secondary',
       );
+      const size = sizeOf(word)
       word.position.add({
-        x: -sizeOf(word).x / 2,
-        y: -(12 * VOXEL_SIZE.secondary * i),
+        x: - (size.x / 2),
+        y: (size.y / 2) - (12 * VOXEL_SIZE.secondary * i),
         z: option.selected ? 3 * VOXEL_SIZE.secondary : 0,
       });
       group.add(word);
