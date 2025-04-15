@@ -1,4 +1,4 @@
-import { CameraPosition } from './PvPCamera';
+import { PvPCameraPosition } from './PvPCamera';
 import { COLS, ROWS, MINO_SIZE, VOXEL_SIZE } from '../../params';
 import * as THREE from 'three';
 import { createWord } from '../../scene/createWord';
@@ -92,7 +92,7 @@ export class PvPScene {
     progressP1: Progress,
     progressP2: Progress,
     players: Record<PlayerTag, Player>,
-    cameraPosition: CameraPosition,
+    cameraPosition: PvPCameraPosition,
   ) {
     this._scene.clear();
     this.#config(this._scene);

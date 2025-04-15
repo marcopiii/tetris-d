@@ -1,4 +1,4 @@
-import { CameraPosition } from './PvPCamera';
+import { PvPCameraPosition } from './PvPCamera';
 import { Board } from './Board';
 import { Piece } from './Piece';
 import { COLS, ROWS } from '../../params';
@@ -76,7 +76,7 @@ export class Game {
   /**
    * @returns {boolean} - Whether the move had success
    */
-  tryMove(type: Move, cameraPosition: CameraPosition): boolean {
+  tryMove(type: Move, cameraPosition: PvPCameraPosition): boolean {
     const isInverted =
       (this._piece.plane === 'x' &&
         relativeDirection[cameraPosition].z === 'negative') ||
@@ -161,7 +161,7 @@ type RelativeDirection = {
   z: 'positive' | 'negative';
 };
 
-const relativeDirection: Record<CameraPosition, RelativeDirection> = {
+const relativeDirection: Record<PvPCameraPosition, RelativeDirection> = {
   c1: {
     x: 'positive',
     z: 'positive',

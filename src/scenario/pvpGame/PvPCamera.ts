@@ -2,12 +2,12 @@ import * as THREE from 'three';
 import TWEEN, { Group as TWEENGroup } from '@tweenjs/tween.js';
 import { PvPScene } from './PvPScene';
 
-export type CameraPosition = 'c1' | 'c2' | 'c3' | 'c4';
+export type PvPCameraPosition = 'c1' | 'c2' | 'c3' | 'c4';
 
 export class PvPCamera {
   private readonly _camera: THREE.Camera;
   private readonly _tweenGroup: TWEENGroup;
-  private _position: CameraPosition;
+  private _position: PvPCameraPosition;
 
   constructor(camera: THREE.Camera, tweenGroup: TWEENGroup) {
     this._camera = camera;
@@ -24,7 +24,7 @@ export class PvPCamera {
       .start();
   }
 
-  get position(): CameraPosition {
+  get position(): PvPCameraPosition {
     return this._position;
   }
 
@@ -60,7 +60,7 @@ type CameraSetup = {
 };
 
 const distance = new THREE.Vector3(10, 4, 10);
-const cameraSetup: Record<CameraPosition, CameraSetup> = {
+const cameraSetup: Record<PvPCameraPosition, CameraSetup> = {
   c1: {
     position: distance
       .clone()

@@ -5,6 +5,7 @@ import {
   Event as GamepadEvent,
   GamepadManager,
 } from '../../gamepad';
+import {CameraAction} from "../pvpGame/PvPScenario";
 import { MainMenu } from './MainMenu';
 import { MainMenuCamera } from './MainMenuCamera';
 import { MainMenuScene } from './MainMenuScene';
@@ -37,6 +38,19 @@ export class MainMenuScenario {
     this._sceneManager.update(this._menu);
   }
 
+  private cameraCommandHandler = (
+    action: Extract<CameraAction, { type: 'move' }>,
+  ) => {
+    switch (action.direction) {
+      case 'left':
+        this._cameraManager.move('left');
+        break;
+      case 'right':
+        this._cameraManager.move('right');
+        break;
+    }
+  };
+
   private menuCommandHandler = (command: 'up' | 'down' | 'confirm') => {
     if (command === 'confirm') {
       this._menu.select();
@@ -52,6 +66,8 @@ export class MainMenuScenario {
       if (btn === 'padD') this.menuCommandHandler('down');
       if (btn === 'padU') this.menuCommandHandler('up');
       if (btn === 'A') this.menuCommandHandler('confirm');
+      if (btn === 'LT') this.cameraCommandHandler({ type: 'move', direction: 'left' });
+      if (btn === 'RT') this.cameraCommandHandler({ type: 'move', direction: 'right' });
     }
   };
 }
