@@ -1,16 +1,13 @@
 import { Group as TWEENGroup } from '@tweenjs/tween.js';
 import * as THREE from 'three';
 import { GameCamera } from './GameCamera';
-import {
-  Button as GamepadButton,
-  Event as GamepadEvent,
-  GamepadManager,
-} from '../../gamepad';
+import { GamepadManager } from '../../gamepad';
 import { Clock } from './Clock';
 import { Game } from './Game';
 import { Progress } from './Progress';
 import { PlayerManager } from './PlayerManager';
 import { PvPScene } from './PvPScene';
+import { GameScenario } from './GameScenario';
 
 export type CameraAction =
   | {
@@ -36,7 +33,7 @@ type GameAction =
   | 'shiftB'
   | 'hardDrop';
 
-export class PvPScenario {
+export class PvPScenario extends GameScenario {
   private readonly _game: Game;
   private readonly _clock: Clock;
   private readonly _playerManager: PlayerManager;
@@ -56,6 +53,8 @@ export class PvPScenario {
     gamepadP1: GamepadManager,
     gamepadP2: GamepadManager,
   ) {
+    super();
+
     this._sceneManager = new PvPScene(scene);
     this._cameraManager = new GameCamera(camera, tween);
 
@@ -108,7 +107,7 @@ export class PvPScenario {
         : this._progressP2.level;
   };
 
-  private gameCommandHandler = (command: GameAction) => {
+  protected gameCommandHandler = (command: GameAction) => {
     if (!this._clock.isRunning) return;
     const sceneNeedsUpdate = this._game.tryMove(
       command,
@@ -124,7 +123,7 @@ export class PvPScenario {
       );
   };
 
-  private cameraCommandHandler = (
+  protected cameraCommandHandler = (
     action: Extract<CameraAction, { type: 'move' }>,
   ) => {
     switch (action.direction) {
@@ -144,7 +143,7 @@ export class PvPScenario {
     );
   };
 
-  private cuttingCommandHandler = (
+  protected cuttingCommandHandler = (
     action: Extract<CameraAction, { type: 'cut' | 'uncut' }>,
   ) => {
     this._sceneManager.cutter = {
@@ -160,31 +159,7 @@ export class PvPScenario {
     );
   };
 
-  private controllerHandler = (event: GamepadEvent, btn: GamepadButton) => {
-    if (event === 'press') {
-      if (btn === 'start') this._clock.toggle();
-      if (btn === 'padL') this.gameCommandHandler('shiftL');
-      if (btn === 'padR') this.gameCommandHandler('shiftR');
-      if (btn === 'padD') this.gameCommandHandler('shiftF');
-      if (btn === 'padU') this.gameCommandHandler('shiftB');
-      if (btn === 'X') this.gameCommandHandler('rotateL');
-      if (btn === 'B') this.gameCommandHandler('rotateR');
-      if (btn === 'A') this.gameCommandHandler('hardDrop');
-      if (btn === 'Y') this.gameCommandHandler('hold');
-      if (btn === 'LT')
-        this.cameraCommandHandler({ type: 'move', direction: 'left' });
-      if (btn === 'RT')
-        this.cameraCommandHandler({ type: 'move', direction: 'right' });
-      if (btn === 'LB')
-        this.cuttingCommandHandler({ type: 'cut', side: 'below' });
-      if (btn === 'RB')
-        this.cuttingCommandHandler({ type: 'cut', side: 'above' });
-    }
-    if (event === 'release') {
-      if (btn === 'LB')
-        this.cuttingCommandHandler({ type: 'uncut', side: 'below' });
-      if (btn === 'RB')
-        this.cuttingCommandHandler({ type: 'uncut', side: 'above' });
-    }
+  protected clockCommandHandler = (action: 'toggle') => {
+    this._clock.toggle();
   };
 }
