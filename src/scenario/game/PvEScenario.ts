@@ -11,6 +11,7 @@ import { Game } from './Game';
 import { Progress } from './Progress';
 import { PlayerManager } from './PlayerManager';
 import { PvEScene } from './PvEScene';
+import { KeyboardManager, KeyboardEvent as KeyboardEventType } from '../../keyboard';
 
 export type CameraAction =
   | {
@@ -39,29 +40,32 @@ type GameAction =
 export class PvEScenario {
   private readonly _game: Game;
   private readonly _clock: Clock;
-  private readonly _playerManager: PlayerManager;
   private readonly _progress: Progress;
 
   private readonly _sceneManager: PvEScene;
   private readonly _cameraManager: GameCamera;
 
+  private readonly _keyboard: KeyboardManager;
   private readonly _gamepad: GamepadManager;
 
   constructor(
     scene: THREE.Scene,
     camera: THREE.Camera,
     tween: TWEENGroup,
+    keyboard: KeyboardManager,
     gamepad: GamepadManager,
   ) {
     this._sceneManager = new PvEScene(scene);
     this._cameraManager = new GameCamera(camera, tween);
+
+    this._keyboard = keyboard;
+    this._keyboard.handler = this.keyboardHandler;
 
     this._gamepad = gamepad;
     this._gamepad.handler = this.controllerHandler;
 
     this._clock = new Clock(this.processGameFrame);
     this._game = new Game(this.onNewPiece);
-    this._playerManager = new PlayerManager('p1', 'p2');
     this._progress = new Progress();
 
     this._sceneManager.update(
@@ -137,6 +141,34 @@ export class PvEScenario {
     );
   };
 
+  private keyboardHandler = (event: KeyboardEventType, btn: KeyboardEvent["code"]) => {
+    if (event === 'press') {
+      if (btn === 'Enter') this._clock.toggle();
+      if (btn === 'KeyA') this.gameCommandHandler('shiftL');
+      if (btn === 'KeyD') this.gameCommandHandler('shiftR');
+      if (btn === 'KeyS') this.gameCommandHandler('shiftF');
+      if (btn === 'KeyW') this.gameCommandHandler('shiftB');
+      if (btn === 'KeyQ') this.gameCommandHandler('rotateL');
+      if (btn === 'KeyE') this.gameCommandHandler('rotateR');
+      if (btn === 'Space') this.gameCommandHandler('hardDrop');
+      if (btn === 'Tab') this.gameCommandHandler('hold');
+      if (btn === 'ArrowLeft')
+        this.cameraCommandHandler({ type: 'move', direction: 'left' });
+      if (btn === 'ArrowRight')
+        this.cameraCommandHandler({ type: 'move', direction: 'right' });
+      if (btn === 'ArrowDown')
+        this.cuttingCommandHandler({ type: 'cut', side: 'below' });
+      if (btn === 'ArrowUp')
+        this.cuttingCommandHandler({ type: 'cut', side: 'above' });
+    }
+    if (event === 'release') {
+      if (btn === 'ArrowDown')
+        this.cuttingCommandHandler({ type: 'uncut', side: 'below' });
+      if (btn === 'ArrowUp')
+        this.cuttingCommandHandler({ type: 'uncut', side: 'above' });
+    }
+  };
+
   private controllerHandler = (event: GamepadEvent, btn: GamepadButton) => {
     if (event === 'press') {
       if (btn === 'start') this._clock.toggle();
@@ -164,4 +196,5 @@ export class PvEScenario {
         this.cuttingCommandHandler({ type: 'uncut', side: 'above' });
     }
   };
+
 }
