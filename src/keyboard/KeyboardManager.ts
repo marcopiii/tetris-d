@@ -1,4 +1,4 @@
-import { Event, Button } from '../gamepad/types';
+export type Event = 'press' | 'release';
 
 export class KeyboardManager {
   private _handler: (event: Event, button: KeyboardEvent['code']) => void;

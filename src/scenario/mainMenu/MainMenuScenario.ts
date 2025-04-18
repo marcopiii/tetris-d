@@ -9,18 +9,25 @@ import { CameraAction } from '../game/PvPScenario';
 import { MainMenu } from './MainMenu';
 import { MainMenuCamera } from './MainMenuCamera';
 import { MainMenuScene } from './MainMenuScene';
+import {
+  KeyboardManager,
+  type KeyboardEvent as KeyboardEventType,
+} from '../../keyboard';
 
 export class MainMenuScenario {
   private readonly _sceneManager: MainMenuScene;
   private readonly _cameraManager: MainMenuCamera;
 
+  private readonly _keyboard: KeyboardManager;
   private readonly _gamepad: GamepadManager;
+
   private readonly _menu: MainMenu;
 
   constructor(
     scene: THREE.Scene,
     camera: THREE.Camera,
     tween: TWEENGroup,
+    keyboard: KeyboardManager,
     gamepad: GamepadManager,
     scenarioMutation: {
       onPvE: () => void;
@@ -30,6 +37,9 @@ export class MainMenuScenario {
   ) {
     this._sceneManager = new MainMenuScene(scene);
     this._cameraManager = new MainMenuCamera(camera, tween);
+
+    this._keyboard = keyboard;
+    this._keyboard.handler = this.keyboardHandler;
 
     this._gamepad = gamepad;
     this._gamepad.handler = this.controllerHandler;
@@ -64,6 +74,21 @@ export class MainMenuScenario {
     if (command === 'up') this._menu.navigate('up');
     if (command === 'down') this._menu.navigate('down');
     this._sceneManager.update(this._menu);
+  };
+
+  private keyboardHandler = (
+    event: KeyboardEventType,
+    btn: KeyboardEvent['code'],
+  ) => {
+    if (event === 'press') {
+      if (btn === 'ArrowDown') this.menuCommandHandler('down');
+      if (btn === 'ArrowUp') this.menuCommandHandler('up');
+      if (btn === 'Enter') this.menuCommandHandler('confirm');
+      if (btn === 'ArrowLeft')
+        this.cameraCommandHandler({ type: 'move', direction: 'left' });
+      if (btn === 'ArrowRight')
+        this.cameraCommandHandler({ type: 'move', direction: 'right' });
+    }
   };
 
   private controllerHandler = (event: GamepadEvent, btn: GamepadButton) => {
