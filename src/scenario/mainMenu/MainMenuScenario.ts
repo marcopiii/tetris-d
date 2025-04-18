@@ -5,7 +5,7 @@ import {
   Event as GamepadEvent,
   GamepadManager,
 } from '../../gamepad';
-import { CameraAction } from '../game/PvPScenario';
+import { CameraCommand } from './commands';
 import { MainMenu } from './MainMenu';
 import { MainMenuCamera } from './MainMenuCamera';
 import { MainMenuScene } from './MainMenuScene';
@@ -53,17 +53,9 @@ export class MainMenuScenario {
     this._sceneManager.update(this._menu);
   }
 
-  private cameraCommandHandler = (
-    action: Extract<CameraAction, { type: 'move' }>,
-  ) => {
-    switch (action.direction) {
-      case 'left':
-        this._cameraManager.move('left');
-        break;
-      case 'right':
-        this._cameraManager.move('right');
-        break;
-    }
+  protected onCameraCmd = (command: CameraCommand) => {
+    if (command === 'moveL') this._cameraManager.move('left');
+    if (command === 'moveR') this._cameraManager.move('right');
   };
 
   private menuCommandHandler = (command: 'up' | 'down' | 'confirm') => {
@@ -84,10 +76,8 @@ export class MainMenuScenario {
       if (btn === 'ArrowDown') this.menuCommandHandler('down');
       if (btn === 'ArrowUp') this.menuCommandHandler('up');
       if (btn === 'Enter') this.menuCommandHandler('confirm');
-      if (btn === 'ArrowLeft')
-        this.cameraCommandHandler({ type: 'move', direction: 'left' });
-      if (btn === 'ArrowRight')
-        this.cameraCommandHandler({ type: 'move', direction: 'right' });
+      if (btn === 'ArrowLeft') this.onCameraCmd('moveL');
+      if (btn === 'ArrowRight') this.onCameraCmd('moveR');
     }
   };
 
@@ -96,10 +86,8 @@ export class MainMenuScenario {
       if (btn === 'padD') this.menuCommandHandler('down');
       if (btn === 'padU') this.menuCommandHandler('up');
       if (btn === 'A') this.menuCommandHandler('confirm');
-      if (btn === 'LT')
-        this.cameraCommandHandler({ type: 'move', direction: 'left' });
-      if (btn === 'RT')
-        this.cameraCommandHandler({ type: 'move', direction: 'right' });
+      if (btn === 'LT') this.onCameraCmd('moveL');
+      if (btn === 'RT') this.onCameraCmd('moveR');
     }
   };
 }

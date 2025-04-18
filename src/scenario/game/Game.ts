@@ -3,16 +3,7 @@ import { Board } from './Board';
 import { Piece } from './Piece';
 import { COLS, ROWS } from '../../params';
 import { Hold } from './Hold';
-
-type Move =
-  | 'hold'
-  | 'shiftL'
-  | 'shiftR'
-  | 'shiftB'
-  | 'shiftF'
-  | 'rotateL'
-  | 'rotateR'
-  | 'hardDrop';
+import { GameplayCommand } from './commands';
 
 export class Game {
   private readonly _onNewPiece: () => void;
@@ -76,7 +67,7 @@ export class Game {
   /**
    * @returns {boolean} - Whether the move had success
    */
-  tryMove(type: Move, cameraPosition: GameCameraPosition): boolean {
+  tryMove(type: GameplayCommand, cameraPosition: GameCameraPosition): boolean {
     const isInverted =
       (this._piece.plane === 'x' &&
         relativeDirection[cameraPosition].z === 'negative') ||

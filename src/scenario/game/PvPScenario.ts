@@ -8,30 +8,7 @@ import { Progress } from './Progress';
 import { PlayerManager } from './PlayerManager';
 import { PvPScene } from './PvPScene';
 import { GameScenario } from './GameScenario';
-
-export type CameraAction =
-  | {
-      type: 'move';
-      direction: 'left' | 'right';
-    }
-  | {
-      type: 'cut';
-      side: 'above' | 'below';
-    }
-  | {
-      type: 'uncut';
-      side: 'above' | 'below';
-    };
-
-type GameAction =
-  | 'hold'
-  | 'rotateL'
-  | 'rotateR'
-  | 'shiftL'
-  | 'shiftR'
-  | 'shiftF'
-  | 'shiftB'
-  | 'hardDrop';
+import { CameraCommand, CutCommand, GameplayCommand } from './commands';
 
 export class PvPScenario extends GameScenario {
   private readonly _game: Game;
@@ -107,7 +84,7 @@ export class PvPScenario extends GameScenario {
         : this._progressP2.level;
   };
 
-  protected gameCommandHandler = (command: GameAction) => {
+  protected onGameplayCmd = (command: GameplayCommand) => {
     if (!this._clock.isRunning) return;
     const sceneNeedsUpdate = this._game.tryMove(
       command,
@@ -123,17 +100,9 @@ export class PvPScenario extends GameScenario {
       );
   };
 
-  protected cameraCommandHandler = (
-    action: Extract<CameraAction, { type: 'move' }>,
-  ) => {
-    switch (action.direction) {
-      case 'left':
-        this._cameraManager.move('left');
-        break;
-      case 'right':
-        this._cameraManager.move('right');
-        break;
-    }
+  protected onCameraCmd = (command: CameraCommand) => {
+    if (command === 'moveL') this._cameraManager.move('left');
+    if (command === 'moveR') this._cameraManager.move('right');
     this._sceneManager.update(
       this._game,
       this._progressP1,
@@ -143,12 +112,20 @@ export class PvPScenario extends GameScenario {
     );
   };
 
-  protected cuttingCommandHandler = (
-    action: Extract<CameraAction, { type: 'cut' | 'uncut' }>,
-  ) => {
+  protected onCutCmd = (command: CutCommand) => {
     this._sceneManager.cutter = {
-      below: action.side === 'below' ? action.type === 'cut' : undefined,
-      above: action.side === 'above' ? action.type === 'cut' : undefined,
+      below:
+        command === 'cutBelow'
+          ? true
+          : command === 'uncutBelow'
+            ? false
+            : undefined,
+      above:
+        command === 'cutAbove'
+          ? true
+          : command === 'uncutAbove'
+            ? false
+            : undefined,
     };
     this._sceneManager.update(
       this._game,
@@ -159,7 +136,7 @@ export class PvPScenario extends GameScenario {
     );
   };
 
-  protected clockCommandHandler = (action: 'toggle') => {
+  protected onClockCmd = (action: 'toggle') => {
     this._clock.toggle();
   };
 }
