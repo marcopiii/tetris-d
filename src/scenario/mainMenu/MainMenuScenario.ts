@@ -5,22 +5,29 @@ import {
   Event as GamepadEvent,
   GamepadManager,
 } from '../../gamepad';
-import { CameraAction } from '../game/PvPScenario';
+import { CameraCommand } from './commands';
 import { MainMenu } from './MainMenu';
 import { MainMenuCamera } from './MainMenuCamera';
 import { MainMenuScene } from './MainMenuScene';
+import {
+  KeyboardManager,
+  type KeyboardEvent as KeyboardEventType,
+} from '../../keyboard';
 
 export class MainMenuScenario {
   private readonly _sceneManager: MainMenuScene;
   private readonly _cameraManager: MainMenuCamera;
 
+  private readonly _keyboard: KeyboardManager;
   private readonly _gamepad: GamepadManager;
+
   private readonly _menu: MainMenu;
 
   constructor(
     scene: THREE.Scene,
     camera: THREE.Camera,
     tween: TWEENGroup,
+    keyboard: KeyboardManager,
     gamepad: GamepadManager,
     scenarioMutation: {
       onPvE: () => void;
@@ -30,6 +37,9 @@ export class MainMenuScenario {
   ) {
     this._sceneManager = new MainMenuScene(scene);
     this._cameraManager = new MainMenuCamera(camera, tween);
+
+    this._keyboard = keyboard;
+    this._keyboard.handler = this.keyboardHandler;
 
     this._gamepad = gamepad;
     this._gamepad.handler = this.controllerHandler;
@@ -43,17 +53,9 @@ export class MainMenuScenario {
     this._sceneManager.update(this._menu);
   }
 
-  private cameraCommandHandler = (
-    action: Extract<CameraAction, { type: 'move' }>,
-  ) => {
-    switch (action.direction) {
-      case 'left':
-        this._cameraManager.move('left');
-        break;
-      case 'right':
-        this._cameraManager.move('right');
-        break;
-    }
+  protected onCameraCmd = (command: CameraCommand) => {
+    if (command === 'moveL') this._cameraManager.move('left');
+    if (command === 'moveR') this._cameraManager.move('right');
   };
 
   private menuCommandHandler = (command: 'up' | 'down' | 'confirm') => {
@@ -66,15 +68,26 @@ export class MainMenuScenario {
     this._sceneManager.update(this._menu);
   };
 
+  private keyboardHandler = (
+    event: KeyboardEventType,
+    btn: KeyboardEvent['code'],
+  ) => {
+    if (event === 'press') {
+      if (btn === 'ArrowDown') this.menuCommandHandler('down');
+      if (btn === 'ArrowUp') this.menuCommandHandler('up');
+      if (btn === 'Enter') this.menuCommandHandler('confirm');
+      if (btn === 'ArrowLeft') this.onCameraCmd('moveL');
+      if (btn === 'ArrowRight') this.onCameraCmd('moveR');
+    }
+  };
+
   private controllerHandler = (event: GamepadEvent, btn: GamepadButton) => {
     if (event === 'press') {
       if (btn === 'padD') this.menuCommandHandler('down');
       if (btn === 'padU') this.menuCommandHandler('up');
       if (btn === 'A') this.menuCommandHandler('confirm');
-      if (btn === 'LT')
-        this.cameraCommandHandler({ type: 'move', direction: 'left' });
-      if (btn === 'RT')
-        this.cameraCommandHandler({ type: 'move', direction: 'right' });
+      if (btn === 'LT') this.onCameraCmd('moveL');
+      if (btn === 'RT') this.onCameraCmd('moveR');
     }
   };
 }

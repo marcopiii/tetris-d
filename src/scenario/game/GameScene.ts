@@ -31,7 +31,7 @@ export abstract class GameScene {
       .add(GameScene.center)
       .add({ x: 0, y: -ROWS / 2, z: 0 })
       .multiplyScalar(MINO_SIZE);
-      
+
     const xlGrid = createTetrionWall();
     xlGrid.rotateY(THREE.MathUtils.degToRad(90));
     xlGrid.position

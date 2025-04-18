@@ -1,5 +1,22 @@
 import { mapping } from './mapping';
-import { Button, Event } from './types';
+
+export type Button =
+  | 'start'
+  | 'select'
+  | 'padL'
+  | 'padD'
+  | 'padR'
+  | 'padU'
+  | 'A'
+  | 'B'
+  | 'X'
+  | 'Y'
+  | 'LB'
+  | 'RB'
+  | 'LT'
+  | 'RT';
+
+export type Event = 'press' | 'release';
 
 export class GamepadManager {
   private _handler: (event: Event, button: Button) => void;

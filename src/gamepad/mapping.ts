@@ -1,4 +1,4 @@
-import { Button } from './types';
+import { Button } from './GamepadManager';
 
 export function mapping(i: number): Button | undefined {
   switch (i) {

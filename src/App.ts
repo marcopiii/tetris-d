@@ -1,4 +1,5 @@
 import { GamepadManager } from './gamepad';
+import { KeyboardManager } from './keyboard/KeyboardManager';
 import { RenderManager } from './render';
 import { MainMenuScenario, PvPScenario, PvEScenario } from './scenario';
 
@@ -19,6 +20,7 @@ type ScenarioState =
 export class App {
   private readonly _renderManager: RenderManager;
 
+  private readonly _keyboardManager: KeyboardManager;
   private readonly _gamepadP1: GamepadManager;
   private readonly _gamepadP2: GamepadManager;
 
@@ -27,6 +29,7 @@ export class App {
   constructor(container: HTMLElement) {
     this._renderManager = new RenderManager(container);
 
+    this._keyboardManager = new KeyboardManager();
     this._gamepadP1 = new GamepadManager(0);
     this._gamepadP2 = new GamepadManager(1);
 
@@ -41,6 +44,7 @@ export class App {
         this._renderManager.scene,
         this._renderManager.camera,
         this._renderManager.tween,
+        this._keyboardManager,
         this._gamepadP1,
         {
           onPvE: this.startPvE,
@@ -58,6 +62,7 @@ export class App {
         this._renderManager.scene,
         this._renderManager.camera,
         this._renderManager.tween,
+        this._keyboardManager,
         this._gamepadP1,
       ),
     };
