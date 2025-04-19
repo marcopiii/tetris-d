@@ -9,6 +9,7 @@ import { PlayerManager } from './PlayerManager';
 import { PvPScene } from './PvPScene';
 import { GameScenario } from './GameScenario';
 import { CameraCommand, CutCommand, GameplayCommand } from './commands';
+import { KeyboardManager } from '../../keyboard';
 
 export class PvPScenario extends GameScenario {
   private readonly _game: Game;
@@ -20,6 +21,7 @@ export class PvPScenario extends GameScenario {
   private readonly _sceneManager: PvPScene;
   private readonly _cameraManager: GameCamera;
 
+  private readonly _keyboard: KeyboardManager;
   private readonly _gamepadP1: GamepadManager;
   private readonly _gamepadP2: GamepadManager;
 
@@ -27,6 +29,7 @@ export class PvPScenario extends GameScenario {
     scene: THREE.Scene,
     camera: THREE.Camera,
     tween: TWEENGroup,
+    keyboard: KeyboardManager,
     gamepadP1: GamepadManager,
     gamepadP2: GamepadManager,
   ) {
@@ -34,6 +37,10 @@ export class PvPScenario extends GameScenario {
 
     this._sceneManager = new PvPScene(scene);
     this._cameraManager = new GameCamera(camera, tween);
+
+    // disable keyboard in pvp
+    this._keyboard = keyboard;
+    this._keyboard.handler = () => {};
 
     this._gamepadP1 = gamepadP1;
     this._gamepadP2 = gamepadP2;
