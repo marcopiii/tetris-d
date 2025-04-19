@@ -18,7 +18,6 @@ module.exports = merge(common, {
     new MiniCssExtractPlugin(),
     new CopyPlugin({
       patterns: [
-        { from: 'icon.svg', to: 'icon.svg' },
         { from: 'favicon.ico', to: 'favicon.ico' },
         { from: 'icon.png', to: 'icon.png' },
       ],
