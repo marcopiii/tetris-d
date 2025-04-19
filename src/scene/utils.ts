@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { COLS, MINO_SIZE, ROWS } from '../params';
 
 export function sizeOf(g: THREE.Group) {
   const box = new THREE.Box3().setFromObject(g);

@@ -2,12 +2,12 @@ import { GameCameraPosition } from './GameCamera';
 import { COLS, ROWS, MINO_SIZE, VOXEL_SIZE } from '../../params';
 import * as THREE from 'three';
 import { createWord } from '../../scene/createWord';
-import { Shape } from '../../scene/types';
-import { Name as Tetrimino } from '../../tetrimino';
+import { Shape, Name as Tetrimino } from '../../tetrimino';
 import { createMino } from '../../scene/createMesh';
 import type { Game } from './Game';
 import type { Progress } from './Progress';
 import { GameScene } from './GameScene';
+import * as F from '../../scene/font';
 
 export class PvEScene extends GameScene {
   constructor(scene: THREE.Scene) {
@@ -79,8 +79,18 @@ function createScoreHUD(
   align: 'left' | 'right',
   disabled = false,
 ) {
-  const labelGroup = createWord('score', 'secondary', align, disabled);
-  const scoreGroup = createWord(score.toString(), 'primary', align, disabled);
+  const labelGroup = createWord(F.alphabet)(
+    'score',
+    'secondary',
+    align,
+    disabled,
+  );
+  const scoreGroup = createWord(F.numbers)(
+    score.toString(),
+    'primary',
+    align,
+    disabled,
+  );
 
   const scoreHUD = new THREE.Group();
   labelGroup.position.set(0, 0, 0);
@@ -96,8 +106,18 @@ function createLevelHUD(
   align: 'left' | 'right',
   disabled = false,
 ) {
-  const labelGroup = createWord('level', 'secondary', align, disabled);
-  const levelGroup = createWord(level.toString(), 'primary', align, disabled);
+  const labelGroup = createWord(F.alphabet)(
+    'level',
+    'secondary',
+    align,
+    disabled,
+  );
+  const levelGroup = createWord(F.numbers)(
+    level.toString(),
+    'primary',
+    align,
+    disabled,
+  );
 
   const levelHUD = new THREE.Group();
   labelGroup.position.set(0, 0, 0);
@@ -114,7 +134,7 @@ function createHoldHUD(
   available: boolean,
   align: 'left' | 'right',
 ) {
-  const labelGroup = createWord('hold', 'secondary', align);
+  const labelGroup = createWord(F.alphabet)('hold', 'secondary', align);
   const holdGroup = new THREE.Group();
   shape.forEach((row, y) => {
     (align === 'left' ? row : row.toReversed()).forEach((exists, x) => {

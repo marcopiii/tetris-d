@@ -2,13 +2,13 @@ import { GameCameraPosition } from './GameCamera';
 import { COLS, ROWS, MINO_SIZE, VOXEL_SIZE } from '../../params';
 import * as THREE from 'three';
 import { createWord } from '../../scene/createWord';
-import { Shape } from '../../scene/types';
-import { Name as Tetrimino } from '../../tetrimino';
+import { Shape, Name as Tetrimino } from '../../tetrimino';
 import type { PlayerTag, Player } from './PlayerManager';
 import { createMino } from '../../scene/createMesh';
 import type { Game } from './Game';
 import type { Progress } from './Progress';
 import { GameScene } from './GameScene';
+import * as F from '../../scene/font';
 
 export class PvPScene extends GameScene {
   constructor(scene: THREE.Scene) {
@@ -99,8 +99,18 @@ function createScoreHUD(
   align: 'left' | 'right',
   disabled = false,
 ) {
-  const labelGroup = createWord('score', 'secondary', align, disabled);
-  const scoreGroup = createWord(score.toString(), 'primary', align, disabled);
+  const labelGroup = createWord(F.alphabet)(
+    'score',
+    'secondary',
+    align,
+    disabled,
+  );
+  const scoreGroup = createWord(F.numbers)(
+    score.toString(),
+    'primary',
+    align,
+    disabled,
+  );
 
   const scoreHUD = new THREE.Group();
   labelGroup.position.set(0, 0, 0);
@@ -116,8 +126,18 @@ function createLevelHUD(
   align: 'left' | 'right',
   disabled = false,
 ) {
-  const labelGroup = createWord('level', 'secondary', align, disabled);
-  const levelGroup = createWord(level.toString(), 'primary', align, disabled);
+  const labelGroup = createWord(F.alphabet)(
+    'level',
+    'secondary',
+    align,
+    disabled,
+  );
+  const levelGroup = createWord(F.numbers)(
+    level.toString(),
+    'primary',
+    align,
+    disabled,
+  );
 
   const levelHUD = new THREE.Group();
   labelGroup.position.set(0, 0, 0);
@@ -129,13 +149,18 @@ function createLevelHUD(
 }
 
 function createHoldHUD(
-  shape: Shape,
+  shape: F.Char,
   type: Tetrimino,
   available: boolean,
   align: 'left' | 'right',
   disabled = false,
 ) {
-  const labelGroup = createWord('hold', 'secondary', align, disabled);
+  const labelGroup = createWord(F.alphabet)(
+    'hold',
+    'secondary',
+    align,
+    disabled,
+  );
   const holdGroup = new THREE.Group();
   shape.forEach((row, y) => {
     (align === 'left' ? row : row.toReversed()).forEach((exists, x) => {
@@ -163,7 +188,7 @@ function createHUD(
   disabled: boolean = false,
 ) {
   const hud = new THREE.Group();
-  const handle = createWord(player.name, 'main', align, disabled);
+  const handle = createWord(F.alphabet)(player.name, 'main', align, disabled);
   const score = createScoreHUD(progress.score, align, disabled);
   const level = createLevelHUD(progress.level, align, disabled);
   const held = createHoldHUD(

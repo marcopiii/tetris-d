@@ -49,7 +49,6 @@ export class App {
         {
           onPvE: this.startPvE,
           onPvP: this.startPvP,
-          onExit: this.exit,
         },
       ),
     };
@@ -80,10 +79,6 @@ export class App {
         this._gamepadP2,
       ),
     };
-  };
-
-  private exit = () => {
-    window.location.href = 'https://www.google.com';
   };
 
   private animate = () => {

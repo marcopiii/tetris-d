@@ -32,7 +32,6 @@ export class MainMenuScenario {
     scenarioMutation: {
       onPvE: () => void;
       onPvP: () => void;
-      onExit: () => void;
     },
   ) {
     this._sceneManager = new MainMenuScene(scene);
@@ -45,10 +44,15 @@ export class MainMenuScenario {
     this._gamepad.handler = this.controllerHandler;
     this._gamepad.active = true;
 
+    const onAbout = () => {
+      window.location.href =
+        'https://github.com/marcopiii/tetris-d?tab=readme-ov-file#how-to-play';
+    };
+
     this._menu = new MainMenu(
       scenarioMutation.onPvE,
       scenarioMutation.onPvP,
-      scenarioMutation.onExit,
+      onAbout,
     );
     this._sceneManager.update(this._menu);
   }

@@ -1,8 +1,11 @@
 import * as THREE from 'three';
 import { MainMenu } from './MainMenu';
 import { VOXEL_SIZE } from '../../params';
-import { createWord } from '../../scene/createWord';
+import { createWord as _createWord } from '../../scene/createWord';
 import { sizeOf } from '../../scene/utils';
+import { alphabet } from '../../scene/font';
+
+const createWord = _createWord(alphabet);
 
 export class MainMenuScene {
   private readonly _scene: THREE.Scene;
