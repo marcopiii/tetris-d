@@ -75,6 +75,7 @@ export class App {
         this._renderManager.scene,
         this._renderManager.camera,
         this._renderManager.tween,
+        this._keyboardManager,
         this._gamepadP1,
         this._gamepadP2,
       ),
