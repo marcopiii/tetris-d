@@ -1,11 +1,14 @@
-const myAudioResource = require('../audio/menu_navigation.mp3');
+const menuNavigationFx = require('../audio/menu_navigation.mp3');
 
 type MenuItem = {
   name: string;
   action: () => void;
 };
 
-const navigationSound = new Audio(myAudioResource);
+const play = (src: string) => {
+  const audio = new Audio(src);
+  audio.play();
+};
 
 export class Menu {
   private _items: MenuItem[] = [];
@@ -24,7 +27,7 @@ export class Menu {
         this._selectedIndex + 1,
       );
     }
-    navigationSound.play();
+    play(menuNavigationFx);
   }
 
   select(): void {
