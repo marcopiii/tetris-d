@@ -20,11 +20,23 @@ export abstract class GameScene {
   private translateY = (y: number) => -y + GameScene.offset.y + ROWS / 2;
   private translateZ = (z: number) => z + GameScene.offset.z - COLS / 2;
 
-  protected readonly _scene: THREE.Scene;
   private _cutter: { below: boolean; above: boolean };
 
-  private config(scene: THREE.Scene) {
-    scene.background = new THREE.Color('#b5c5d2');
+  protected readonly _scene: THREE.Scene;
+  private readonly _tetrion: THREE.Group;
+
+  constructor(scene: THREE.Scene) {
+    this._scene = scene;
+    this._scene.clear();
+    this._tetrion = new THREE.Group();
+    this._scene.add(this._tetrion);
+
+    this.setupTetrion();
+    this._cutter = { below: false, above: false };
+  }
+
+  private setupTetrion() {
+    this._scene.background = new THREE.Color('#b5c5d2');
 
     const yGrid = tetrionFloor();
     yGrid.position
@@ -57,18 +69,11 @@ export abstract class GameScene {
       .add({ x: 0, y: 0, z: COLS / 2 })
       .multiplyScalar(MINO_SIZE);
 
-    scene.add(yGrid);
-    scene.add(xlGrid);
-    scene.add(xrGrid);
-    scene.add(zlGrid);
-    scene.add(zrGrid);
-  }
-
-  constructor(scene: THREE.Scene) {
-    this._scene = scene;
-    this._scene.clear();
-    this.config(this._scene);
-    this._cutter = { below: false, above: false };
+    this._scene.add(yGrid);
+    this._scene.add(xlGrid);
+    this._scene.add(xrGrid);
+    this._scene.add(zlGrid);
+    this._scene.add(zrGrid);
   }
 
   set cutter(cutter: {
@@ -83,7 +88,7 @@ export abstract class GameScene {
 
   protected innerUpdate(game: Game) {
     this._scene.clear();
-    this.config(this._scene);
+    this.setupTetrion();
 
     const isCutOut = (x: number, z: number) => {
       return game.piece.plane === 'x'
