@@ -11,6 +11,14 @@ module.exports = merge(common, {
     filename: 'bundle.js',
     path: resolve(__dirname, 'dist'),
   },
+  module: {
+    rules: [
+      {
+        test: /\.(mp3)$/i,
+        type: 'asset/resource',
+      },
+    ]
+  },
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/index.html',
