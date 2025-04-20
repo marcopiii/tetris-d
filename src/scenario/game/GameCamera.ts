@@ -1,6 +1,9 @@
 import * as THREE from 'three';
 import TWEEN, { Group as TWEENGroup } from '@tweenjs/tween.js';
+import { play } from '../../utils';
 import { GameScene } from './GameScene';
+
+const camera_move = require('../../audio/camera_move.mp3');
 
 export type GameCameraPosition = 'c1' | 'c2' | 'c3' | 'c4';
 
@@ -44,6 +47,7 @@ export class GameCamera {
         break;
     }
     const target = cameraSetup[this._position];
+    play(camera_move, 0.05);
     new TWEEN.Tween(this._camera.position, this._tweenGroup)
       .to(target.position, 500)
       .easing(TWEEN.Easing.Exponential.Out)

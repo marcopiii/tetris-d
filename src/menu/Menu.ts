@@ -1,3 +1,8 @@
+import { play } from '../utils';
+
+const menu_nav_ok = require('../audio/menu_nav_ok.mp3');
+const menu_nav_ko = require('../audio/menu_nav_ko.mp3');
+
 type MenuItem = {
   name: string;
   action: () => void;
@@ -12,14 +17,16 @@ export class Menu {
   }
 
   navigate(direction: 'up' | 'down'): void {
-    if (direction === 'up') {
-      this._selectedIndex = Math.max(0, this._selectedIndex - 1);
-    } else if (direction === 'down') {
-      this._selectedIndex = Math.min(
-        this._items.length - 1,
-        this._selectedIndex + 1,
-      );
-    }
+    const [i, bounded] =
+      direction === 'up'
+        ? this._selectedIndex - 1 < 0
+          ? [0, true]
+          : [this._selectedIndex - 1, false]
+        : this._selectedIndex + 1 > this._items.length - 1
+          ? [this._items.length - 1, true]
+          : [this._selectedIndex + 1, false];
+    this._selectedIndex = i;
+    bounded ? play(menu_nav_ko, 0.5) : play(menu_nav_ok, 0.5);
   }
 
   select(): void {

@@ -4,7 +4,9 @@
   "description": "",
   "private": true,
   "keywords": [
-    "tetris", "3d", "game"
+    "tetris",
+    "3d",
+    "game"
   ],
   "license": "MIT",
   "author": "marcopiii",
@@ -21,6 +23,7 @@
     "babel-loader": "^10.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^7.1.2",
+    "file-loader": "^6.2.0",
     "flow-bin": "^0.265.3",
     "html-webpack-plugin": "^5.6.0",
     "mini-css-extract-plugin": "^2.9.2",

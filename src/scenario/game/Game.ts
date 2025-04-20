@@ -1,9 +1,15 @@
+import { play } from '../../utils';
 import { GameCameraPosition } from './GameCamera';
 import { Board } from './Board';
 import { Piece } from './Piece';
 import { COLS, ROWS } from '../../params';
 import { Hold } from './Hold';
 import { GameplayCommand } from './commands';
+
+const tetrimino_move_fx = require('../../audio/tetrimino_move.mp3');
+const tetrimino_rotate_fx = require('../../audio/tetrimino_rotate.mp3');
+const hard_drop_fx = require('../../audio/hard_drop.mp3');
+const line_clear_fx = require('../../audio/line_clear.mp3');
 
 export class Game {
   private readonly _onNewPiece: () => void;
@@ -40,6 +46,9 @@ export class Game {
       this._piece.rollback();
       this._board.fixPiece(this._piece);
       const [lineClearZ, lineClearX] = this._board.checkLines();
+      if (lineClearZ > 0 || lineClearX > 0) {
+        play(line_clear_fx, 0.75);
+      }
       this._piece = this._piece.plane === 'x' ? new Piece('z') : new Piece('x');
       this._onNewPiece();
       const gameOver = detectCollision(this._piece, this._board);
@@ -90,7 +99,10 @@ export class Game {
           isInverted
             ? this._piece.rotateRight(wallKickTest)
             : this._piece.rotateLeft(wallKickTest);
-          if (!detectCollision(this._piece, this._board)) return true;
+          if (!detectCollision(this._piece, this._board)) {
+            play(tetrimino_rotate_fx, 0.15);
+            return true;
+          }
           this._piece.rollback();
           wallKickTest++;
         }
@@ -100,13 +112,17 @@ export class Game {
           isInverted
             ? this._piece.rotateLeft(wallKickTest)
             : this._piece.rotateRight(wallKickTest);
-          if (!detectCollision(this._piece, this._board)) return true;
+          if (!detectCollision(this._piece, this._board)) {
+            play(tetrimino_rotate_fx, 0.15);
+            return true;
+          }
           this._piece.rollback();
           wallKickTest++;
         }
         return false;
       case 'hardDrop':
         this.hardDrop();
+        play(hard_drop_fx, 0.5);
         return true;
       case 'hold':
         this.holdPiece();
@@ -116,6 +132,7 @@ export class Game {
       this._piece.rollback();
       return false;
     }
+    play(tetrimino_move_fx, 0.15);
     return true;
   }
 
