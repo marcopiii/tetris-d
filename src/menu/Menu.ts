@@ -1,14 +1,11 @@
+import { play } from '../utils';
+
 const menu_nav_ok = require('../audio/menu_nav_ok.mp3');
 const menu_nav_ko = require('../audio/menu_nav_ko.mp3');
 
 type MenuItem = {
   name: string;
   action: () => void;
-};
-
-const play = (src: string) => {
-  const audio = new Audio(src);
-  audio.play();
 };
 
 export class Menu {
