@@ -9,6 +9,7 @@ import { GameplayCommand } from './commands';
 const tetrimino_move_fx = require('../../audio/tetrimino_move.mp3');
 const tetrimino_rotate_fx = require('../../audio/tetrimino_rotate.mp3');
 const hard_drop_fx = require('../../audio/hard_drop.mp3');
+const line_clear_fx = require('../../audio/line_clear.mp3');
 
 export class Game {
   private readonly _onNewPiece: () => void;
@@ -45,6 +46,9 @@ export class Game {
       this._piece.rollback();
       this._board.fixPiece(this._piece);
       const [lineClearZ, lineClearX] = this._board.checkLines();
+      if (lineClearZ > 0 || lineClearX > 0) {
+        play(line_clear_fx);
+      }
       this._piece = this._piece.plane === 'x' ? new Piece('z') : new Piece('x');
       this._onNewPiece();
       const gameOver = detectCollision(this._piece, this._board);
