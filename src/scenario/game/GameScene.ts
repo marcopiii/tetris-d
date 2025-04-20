@@ -24,16 +24,19 @@ export abstract class GameScene {
 
   protected readonly _scene: THREE.Scene;
   private readonly _tetrion: THREE.Group;
-  private readonly _minos: THREE.Group;
+  private readonly _board: THREE.Group;
+  private readonly _piece: THREE.Group;
 
   constructor(scene: THREE.Scene) {
     this._scene = scene;
     this._scene.clear();
 
     this._tetrion = new THREE.Group();
-    this._minos = new THREE.Group();
+    this._board = new THREE.Group();
+    this._piece = new THREE.Group();
     this._scene.add(this._tetrion);
-    this._scene.add(this._minos);
+    this._scene.add(this._board);
+    this._scene.add(this._piece);
 
     this.setupTetrion();
     this._cutter = { below: false, above: false };
@@ -93,7 +96,8 @@ export abstract class GameScene {
   }
 
   protected innerUpdate(game: Game) {
-    this._minos.clear();
+    this._board.clear();
+    this._piece.clear();
 
     const isCutOut = (x: number, z: number) => {
       return game.piece.plane === 'x'
@@ -125,7 +129,7 @@ export abstract class GameScene {
           .add({ x: 0, y: -ROWS / 2, z: (game.piece.planePosition - COLS) / 2 })
           .multiplyScalar(MINO_SIZE);
       }
-      this._minos.add(belowCutShadow);
+      this._board.add(belowCutShadow);
     }
 
     if (this._cutter.above) {
@@ -150,7 +154,7 @@ export abstract class GameScene {
           .add({ x: 0, y: -ROWS / 2, z: (game.piece.planePosition + 1) / 2 })
           .multiplyScalar(MINO_SIZE);
       }
-      this._minos.add(aboveCutShadow);
+      this._board.add(aboveCutShadow);
     }
 
     game.board.forEachBlock((type, y, x, z) => {
@@ -164,7 +168,7 @@ export abstract class GameScene {
           z: this.translateZ(z),
         })
         .multiplyScalar(MINO_SIZE);
-      this._minos.add(mino);
+      this._board.add(mino);
     });
 
     game.ghostPiece.forEachBlock((y, x, z) => {
@@ -177,7 +181,7 @@ export abstract class GameScene {
           z: this.translateZ(z),
         })
         .multiplyScalar(MINO_SIZE);
-      this._minos.add(mino);
+      this._piece.add(mino);
     });
 
     game.piece.forEachBlock((y, x, z) => {
@@ -190,7 +194,7 @@ export abstract class GameScene {
           z: this.translateZ(z),
         })
         .multiplyScalar(MINO_SIZE);
-      this._minos.add(mino);
+      this._piece.add(mino);
 
       const xrShadow = createMinoShade(game.piece.type);
       const xlShadow = createMinoShade(game.piece.type);
@@ -218,10 +222,10 @@ export abstract class GameScene {
         .add({ x: this.translateX(x), y: this.translateY(y), z: COLS / 2 })
         .multiplyScalar(MINO_SIZE);
 
-      this._minos.add(xrShadow);
-      this._minos.add(xlShadow);
-      this._minos.add(zlShadow);
-      this._minos.add(zrShadow);
+      this._piece.add(xrShadow);
+      this._piece.add(xlShadow);
+      this._piece.add(zlShadow);
+      this._piece.add(zrShadow);
     });
   }
 }
