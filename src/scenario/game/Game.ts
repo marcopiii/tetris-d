@@ -47,7 +47,7 @@ export class Game {
       this._board.fixPiece(this._piece);
       const [lineClearZ, lineClearX] = this._board.checkLines();
       if (lineClearZ > 0 || lineClearX > 0) {
-        play(line_clear_fx);
+        play(line_clear_fx, 0.75);
       }
       this._piece = this._piece.plane === 'x' ? new Piece('z') : new Piece('x');
       this._onNewPiece();
@@ -100,7 +100,7 @@ export class Game {
             ? this._piece.rotateRight(wallKickTest)
             : this._piece.rotateLeft(wallKickTest);
           if (!detectCollision(this._piece, this._board)) {
-            play(tetrimino_rotate_fx);
+            play(tetrimino_rotate_fx, 0.15);
             return true;
           }
           this._piece.rollback();
@@ -113,7 +113,7 @@ export class Game {
             ? this._piece.rotateLeft(wallKickTest)
             : this._piece.rotateRight(wallKickTest);
           if (!detectCollision(this._piece, this._board)) {
-            play(tetrimino_rotate_fx);
+            play(tetrimino_rotate_fx, 0.15);
             return true;
           }
           this._piece.rollback();
@@ -122,7 +122,7 @@ export class Game {
         return false;
       case 'hardDrop':
         this.hardDrop();
-        play(hard_drop_fx);
+        play(hard_drop_fx, 0.5);
         return true;
       case 'hold':
         this.holdPiece();
@@ -132,7 +132,7 @@ export class Game {
       this._piece.rollback();
       return false;
     }
-    play(tetrimino_move_fx);
+    play(tetrimino_move_fx, 0.15);
     return true;
   }
 

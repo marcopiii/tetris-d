@@ -26,7 +26,7 @@ export class Menu {
           ? [this._items.length - 1, true]
           : [this._selectedIndex + 1, false];
     this._selectedIndex = i;
-    bounded ? play(menu_nav_ko) : play(menu_nav_ok);
+    bounded ? play(menu_nav_ko, 0.5) : play(menu_nav_ok, 0.5);
   }
 
   select(): void {
