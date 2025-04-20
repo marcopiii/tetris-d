@@ -1,4 +1,4 @@
-const menu_nav = require('../audio/menu_nav.mp3');
+const menu_nav_ok = require('../audio/menu_nav_ok.mp3');
 const menu_nav_ko = require('../audio/menu_nav_ko.mp3');
 
 type MenuItem = {
@@ -29,7 +29,7 @@ export class Menu {
           ? [this._items.length - 1, true]
           : [this._selectedIndex + 1, false];
     this._selectedIndex = i;
-    bounded ? play(menu_nav_ko) : play(menu_nav);
+    bounded ? play(menu_nav_ko) : play(menu_nav_ok);
   }
 
   select(): void {
