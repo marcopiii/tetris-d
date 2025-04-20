@@ -1,4 +1,5 @@
-const menuNavigationFx = require('../audio/menu_navigation.mp3');
+const menu_nav = require('../audio/menu_nav.mp3');
+const menu_nav_ko = require('../audio/menu_nav_ko.mp3');
 
 type MenuItem = {
   name: string;
@@ -19,15 +20,16 @@ export class Menu {
   }
 
   navigate(direction: 'up' | 'down'): void {
-    if (direction === 'up') {
-      this._selectedIndex = Math.max(0, this._selectedIndex - 1);
-    } else if (direction === 'down') {
-      this._selectedIndex = Math.min(
-        this._items.length - 1,
-        this._selectedIndex + 1,
-      );
-    }
-    play(menuNavigationFx);
+    const [i, bounded] =
+      direction === 'up'
+        ? this._selectedIndex - 1 < 0
+          ? [0, true]
+          : [this._selectedIndex - 1, false]
+        : this._selectedIndex + 1 > this._items.length - 1
+          ? [this._items.length - 1, true]
+          : [this._selectedIndex + 1, false];
+    this._selectedIndex = i;
+    bounded ? play(menu_nav_ko) : play(menu_nav);
   }
 
   select(): void {
