@@ -69,11 +69,13 @@ export abstract class GameScene {
       .add({ x: 0, y: 0, z: COLS / 2 })
       .multiplyScalar(MINO_SIZE);
 
-    this._scene.add(yGrid);
-    this._scene.add(xlGrid);
-    this._scene.add(xrGrid);
-    this._scene.add(zlGrid);
-    this._scene.add(zrGrid);
+    this._tetrion.add(yGrid);
+    this._tetrion.add(xlGrid);
+    this._tetrion.add(xrGrid);
+    this._tetrion.add(zlGrid);
+    this._tetrion.add(zrGrid);
+
+    this._scene.add(this._tetrion);
   }
 
   set cutter(cutter: {
