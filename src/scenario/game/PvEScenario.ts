@@ -58,6 +58,10 @@ export class PvEScenario extends GameScenario {
   };
 
   private onNewPiece = () => {
+    this._cameraManager.cut(
+      { left: false, right: false },
+      this._game.piece.plane,
+    );
     this._clock.level = this._progress.level;
   };
 

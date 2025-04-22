@@ -82,6 +82,10 @@ export class PvPScenario extends GameScenario {
   };
 
   private onNewPiece = () => {
+    this._cameraManager.cut(
+      { left: false, right: false },
+      this._game.piece.plane,
+    );
     this._playerManager.switchPlayer();
     this._gamepadP1.active = this._playerManager.activePlayer === 'P1';
     this._gamepadP2.active = this._playerManager.activePlayer === 'P2';
