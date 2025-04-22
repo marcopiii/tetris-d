@@ -1,4 +1,4 @@
-import { GameCameraPosition } from './GameCamera';
+import { GameCamera, GameCameraPosition } from './GameCamera';
 import { COLS, ROWS, MINO_SIZE, VOXEL_SIZE } from '../../params';
 import * as THREE from 'three';
 import { createWord } from '../../scene/createWord';
@@ -20,9 +20,9 @@ export class PvPScene extends GameScene {
     progressP1: Progress,
     progressP2: Progress,
     players: Record<PlayerTag, Player>,
-    cameraPosition: GameCameraPosition,
+    camera: GameCamera,
   ) {
-    this.innerUpdate(game);
+    this.innerUpdate(game, camera);
 
     const { P1, P2 } = players;
 
@@ -30,27 +30,27 @@ export class PvPScene extends GameScene {
       P1,
       progressP1,
       game.held,
-      ['c1', 'c3'].includes(cameraPosition) ? 'right' : 'left',
+      ['c1', 'c3'].includes(camera.position) ? 'right' : 'left',
       !P1.active,
     );
-    if (cameraPosition === 'c1') {
+    if (camera.position === 'c1') {
       hudP1.position
         .add(GameScene.center)
         .add({ x: -(COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
-    } else if (cameraPosition === 'c2') {
+    } else if (camera.position === 'c2') {
       hudP1.position
         .add(GameScene.center)
         .add({ x: (COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
       hudP1.rotateY(THREE.MathUtils.degToRad(180));
-    } else if (cameraPosition === 'c3') {
+    } else if (camera.position === 'c3') {
       hudP1.position
         .add(GameScene.center)
         .add({ x: COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
         .multiplyScalar(MINO_SIZE);
       hudP1.rotateY(THREE.MathUtils.degToRad(180));
-    } else if (cameraPosition === 'c4') {
+    } else if (camera.position === 'c4') {
       hudP1.position
         .add(GameScene.center)
         .add({ x: -COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
@@ -62,26 +62,26 @@ export class PvPScene extends GameScene {
       P2,
       progressP2,
       game.held,
-      ['c1', 'c3'].includes(cameraPosition) ? 'left' : 'right',
+      ['c1', 'c3'].includes(camera.position) ? 'left' : 'right',
       !P2.active,
     );
-    if (cameraPosition === 'c1') {
+    if (camera.position === 'c1') {
       hudP2.position
         .add(GameScene.center)
         .add({ x: COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
         .multiplyScalar(MINO_SIZE);
-    } else if (cameraPosition === 'c2') {
+    } else if (camera.position === 'c2') {
       hudP2.position
         .add(GameScene.center)
         .add({ x: -COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
         .multiplyScalar(MINO_SIZE);
-    } else if (cameraPosition === 'c3') {
+    } else if (camera.position === 'c3') {
       hudP2.position
         .add(GameScene.center)
         .add({ x: -(COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
       hudP2.rotateY(THREE.MathUtils.degToRad(180));
-    } else if (cameraPosition === 'c4') {
+    } else if (camera.position === 'c4') {
       hudP2.position
         .add(GameScene.center)
         .add({ x: (COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })

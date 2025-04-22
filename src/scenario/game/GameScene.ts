@@ -10,6 +10,7 @@ import {
 } from '../../scene/createMesh';
 import type { Game } from './Game';
 import { cuttingShadowMaterial } from '../../scene/assets/materials';
+import { GameCamera } from './GameCamera';
 
 export abstract class GameScene {
   static readonly center = new THREE.Vector3(0, 0, 0);
@@ -19,8 +20,6 @@ export abstract class GameScene {
   private translateX = (x: number) => x + GameScene.offset.x - COLS / 2;
   private translateY = (y: number) => -y + GameScene.offset.y + ROWS / 2;
   private translateZ = (z: number) => z + GameScene.offset.z - COLS / 2;
-
-  private _cutter: { below: boolean; above: boolean };
 
   protected readonly _scene: THREE.Scene;
   private readonly _tetrion: THREE.Group;
@@ -39,7 +38,6 @@ export abstract class GameScene {
     this._scene.add(this._piece);
 
     this.setupTetrion();
-    this._cutter = { below: false, above: false };
   }
 
   private setupTetrion() {
@@ -85,29 +83,19 @@ export abstract class GameScene {
     this._scene.add(this._tetrion);
   }
 
-  set cutter(cutter: {
-    below: boolean | undefined;
-    above: boolean | undefined;
-  }) {
-    this._cutter = {
-      below: cutter.below ?? this._cutter.below,
-      above: cutter.above ?? this._cutter.above,
-    };
-  }
-
-  protected innerUpdate(game: Game) {
+  protected innerUpdate(game: Game, camera: GameCamera) {
     this._board.clear();
     this._piece.clear();
 
     const isCutOut = (x: number, z: number) => {
       return game.piece.plane === 'x'
-        ? (this._cutter.below && x < game.piece.planePosition) ||
-            (this._cutter.above && x > game.piece.planePosition)
-        : (this._cutter.below && z < game.piece.planePosition) ||
-            (this._cutter.above && z > game.piece.planePosition);
+        ? (camera.cutter.below && x < game.piece.planePosition) ||
+            (camera.cutter.above && x > game.piece.planePosition)
+        : (camera.cutter.below && z < game.piece.planePosition) ||
+            (camera.cutter.above && z > game.piece.planePosition);
     };
 
-    if (this._cutter.below) {
+    if (camera.cutter.below) {
       const belowCutShadow = new THREE.Mesh(
         new THREE.PlaneGeometry(
           COLS * MINO_SIZE,
@@ -132,7 +120,7 @@ export abstract class GameScene {
       this._board.add(belowCutShadow);
     }
 
-    if (this._cutter.above) {
+    if (camera.cutter.above) {
       const aboveCutShadow = new THREE.Mesh(
         new THREE.PlaneGeometry(
           COLS * MINO_SIZE,

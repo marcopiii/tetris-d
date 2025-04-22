@@ -10,13 +10,17 @@ export type GameCameraPosition = 'c1' | 'c2' | 'c3' | 'c4';
 export class GameCamera {
   private readonly _camera: THREE.Camera;
   private readonly _tweenGroup: TWEENGroup;
+
   private _position: GameCameraPosition;
+  _cutter: { below: boolean; above: boolean };
 
   constructor(camera: THREE.Camera, tweenGroup: TWEENGroup) {
     this._camera = camera;
     this._tweenGroup = tweenGroup;
 
     this._position = 'c1';
+    this._cutter = { below: false, above: false };
+
     const initPosition = cameraSetup[this._position];
     new TWEEN.Tween(this._camera.position, this._tweenGroup)
       .to(initPosition.position, 500)
@@ -56,6 +60,21 @@ export class GameCamera {
       })
       .start();
   }
+
+  get cutter() {
+    return this._cutter;
+  }
+
+  set cutter(cutter: {
+    below: boolean | undefined;
+    above: boolean | undefined;
+  }) {
+    this._cutter = {
+      below: cutter.below ?? this._cutter.below,
+      above: cutter.above ?? this._cutter.above,
+    };
+  }
+
 }
 
 type CameraSetup = {

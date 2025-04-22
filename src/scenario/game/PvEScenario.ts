@@ -45,7 +45,7 @@ export class PvEScenario extends GameScenario {
     this._sceneManager.update(
       this._game,
       this._progress,
-      this._cameraManager.position,
+      this._cameraManager,
     );
     this._clock.start();
   }
@@ -56,7 +56,7 @@ export class PvEScenario extends GameScenario {
     this._sceneManager.update(
       this._game,
       this._progress,
-      this._cameraManager.position,
+      this._cameraManager,
     );
     if (gameOver) {
       this._clock.toggle();
@@ -79,7 +79,7 @@ export class PvEScenario extends GameScenario {
       this._sceneManager.update(
         this._game,
         this._progress,
-        this._cameraManager.position,
+        this._cameraManager,
       );
   };
 
@@ -90,12 +90,12 @@ export class PvEScenario extends GameScenario {
     this._sceneManager.update(
       this._game,
       this._progress,
-      this._cameraManager.position,
+      this._cameraManager,
     );
   };
 
   protected onCutCmd = (command: CutCommand) => {
-    this._sceneManager.cutter = {
+    this._cameraManager.cutter = {
       below:
         command === 'cutBelow'
           ? true
@@ -112,7 +112,7 @@ export class PvEScenario extends GameScenario {
     this._sceneManager.update(
       this._game,
       this._progress,
-      this._cameraManager.position,
+      this._cameraManager,
     );
   };
 
