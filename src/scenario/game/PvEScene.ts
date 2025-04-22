@@ -1,4 +1,4 @@
-import { GameCamera, GameCameraPosition } from './GameCamera';
+import { GameCamera } from './GameCamera';
 import { COLS, ROWS, MINO_SIZE, VOXEL_SIZE } from '../../params';
 import * as THREE from 'three';
 import { createWord } from '../../scene/createWord';
@@ -10,12 +10,17 @@ import { GameScene } from './GameScene';
 import * as F from '../../scene/font';
 
 export class PvEScene extends GameScene {
+  private readonly _hud: THREE.Group;
+
   constructor(scene: THREE.Scene) {
     super(scene);
+    this._hud = new THREE.Group();
+    this._scene.add(this._hud);
   }
 
   update(game: Game, progress: Progress, camera: GameCamera) {
     this.innerUpdate(game, camera);
+    this._hud.clear();
 
     const hudProgress = createProgressHUD(progress, 'right');
     const hudHold = createHoldHUD(
@@ -69,8 +74,8 @@ export class PvEScene extends GameScene {
       hudHold.rotateY(THREE.MathUtils.degToRad(-180));
     }
 
-    this._scene.add(hudProgress);
-    this._scene.add(hudHold);
+    this._hud.add(hudProgress);
+    this._hud.add(hudHold);
   }
 }
 
