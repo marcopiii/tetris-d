@@ -42,22 +42,14 @@ export class PvEScenario extends GameScenario {
     this._game = new Game(this.onNewPiece);
     this._progress = new Progress();
 
-    this._sceneManager.update(
-      this._game,
-      this._progress,
-      this._cameraManager,
-    );
+    this._sceneManager.update(this._game, this._progress, this._cameraManager);
     this._clock.start();
   }
 
   private processGameFrame = () => {
     const [lineClearZ, lineClearX, gameOver] = this._game.tick();
     this._progress.add(lineClearZ + lineClearX);
-    this._sceneManager.update(
-      this._game,
-      this._progress,
-      this._cameraManager,
-    );
+    this._sceneManager.update(this._game, this._progress, this._cameraManager);
     if (gameOver) {
       this._clock.toggle();
       alert('Game Over');
@@ -87,33 +79,28 @@ export class PvEScenario extends GameScenario {
     if (command === 'moveL') this._cameraManager.move('left');
     else if (command === 'moveR') this._cameraManager.move('right');
 
-    this._sceneManager.update(
-      this._game,
-      this._progress,
-      this._cameraManager,
-    );
+    this._sceneManager.update(this._game, this._progress, this._cameraManager);
   };
 
   protected onCutCmd = (command: CutCommand) => {
-    this._cameraManager.cutter = {
-      below:
-        command === 'cutBelow'
-          ? true
-          : command === 'uncutBelow'
-            ? false
-            : undefined,
-      above:
-        command === 'cutAbove'
-          ? true
-          : command === 'uncutAbove'
-            ? false
-            : undefined,
-    };
-    this._sceneManager.update(
-      this._game,
-      this._progress,
-      this._cameraManager,
+    this._cameraManager.cut(
+      {
+        below:
+          command === 'cutBelow'
+            ? true
+            : command === 'uncutBelow'
+              ? false
+              : undefined,
+        above:
+          command === 'cutAbove'
+            ? true
+            : command === 'uncutAbove'
+              ? false
+              : undefined,
+      },
+      this._game.piece.plane,
     );
+    this._sceneManager.update(this._game, this._progress, this._cameraManager);
   };
 
   protected onClockCmd = (command: 'toggle') => {

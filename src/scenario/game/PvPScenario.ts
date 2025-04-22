@@ -120,20 +120,23 @@ export class PvPScenario extends GameScenario {
   };
 
   protected onCutCmd = (command: CutCommand) => {
-    this._cameraManager.cutter = {
-      below:
-        command === 'cutBelow'
-          ? true
-          : command === 'uncutBelow'
-            ? false
-            : undefined,
-      above:
-        command === 'cutAbove'
-          ? true
-          : command === 'uncutAbove'
-            ? false
-            : undefined,
-    };
+    this._cameraManager.cut(
+      {
+        below:
+          command === 'cutBelow'
+            ? true
+            : command === 'uncutBelow'
+              ? false
+              : undefined,
+        above:
+          command === 'cutAbove'
+            ? true
+            : command === 'uncutAbove'
+              ? false
+              : undefined,
+      },
+      this._game.piece.plane,
+    );
     this._sceneManager.update(
       this._game,
       this._progressP1,

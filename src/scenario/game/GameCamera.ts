@@ -65,16 +65,22 @@ export class GameCamera {
     return this._cutter;
   }
 
-  set cutter(cutter: {
-    below: boolean | undefined;
-    above: boolean | undefined;
-  }) {
+  cut(
+    cutter: {
+      below: boolean | undefined;
+      above: boolean | undefined;
+    },
+    plane: 'x' | 'z',
+  ) {
+    const isInverted =
+      (plane === 'x' && relativeDirection[this._position].x === 'negative') ||
+      (plane === 'z' && relativeDirection[this._position].z === 'negative');
+
     this._cutter = {
-      below: cutter.below ?? this._cutter.below,
-      above: cutter.above ?? this._cutter.above,
+      below: (isInverted ? cutter.above : cutter.below) ?? this._cutter.below,
+      above: (isInverted ? cutter.below : cutter.above) ?? this._cutter.above,
     };
   }
-
 }
 
 type CameraSetup = {
@@ -108,5 +114,29 @@ const cameraSetup: Record<GameCameraPosition, CameraSetup> = {
       .multiply({ x: -1, y: 1, z: -1 })
       .add(GameScene.offset),
     lookAt: GameScene.center.clone().add(GameScene.offset),
+  },
+};
+
+type RelativeDirection = {
+  x: 'positive' | 'negative';
+  z: 'positive' | 'negative';
+};
+
+const relativeDirection: Record<GameCameraPosition, RelativeDirection> = {
+  c1: {
+    x: 'positive',
+    z: 'positive',
+  },
+  c2: {
+    x: 'positive',
+    z: 'negative',
+  },
+  c3: {
+    x: 'negative',
+    z: 'negative',
+  },
+  c4: {
+    x: 'negative',
+    z: 'positive',
   },
 };
