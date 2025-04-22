@@ -1,4 +1,4 @@
-import { GameCameraPosition } from './GameCamera';
+import { GameCamera, GameCameraPosition } from './GameCamera';
 import { COLS, ROWS, MINO_SIZE, VOXEL_SIZE } from '../../params';
 import * as THREE from 'three';
 import { createWord } from '../../scene/createWord';
@@ -14,8 +14,8 @@ export class PvEScene extends GameScene {
     super(scene);
   }
 
-  update(game: Game, progress: Progress, cameraPosition: GameCameraPosition) {
-    this.innerUpdate(game);
+  update(game: Game, progress: Progress, camera: GameCamera) {
+    this.innerUpdate(game, camera);
 
     const hudProgress = createProgressHUD(progress, 'right');
     const hudHold = createHoldHUD(
@@ -25,7 +25,7 @@ export class PvEScene extends GameScene {
       'left',
     );
 
-    if (cameraPosition === 'c1') {
+    if (camera.position === 'c1') {
       hudProgress.position
         .add(GameScene.center)
         .add({ x: -(COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
@@ -35,7 +35,7 @@ export class PvEScene extends GameScene {
         .add({ x: COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
         .multiplyScalar(MINO_SIZE);
       hudHold.rotateY(THREE.MathUtils.degToRad(-90));
-    } else if (cameraPosition === 'c2') {
+    } else if (camera.position === 'c2') {
       hudProgress.position
         .add(GameScene.center)
         .add({ x: -COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
@@ -45,7 +45,7 @@ export class PvEScene extends GameScene {
         .add(GameScene.center)
         .add({ x: (COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
-    } else if (cameraPosition === 'c3') {
+    } else if (camera.position === 'c3') {
       hudProgress.position
         .add(GameScene.center)
         .add({ x: COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
@@ -56,7 +56,7 @@ export class PvEScene extends GameScene {
         .add({ x: -(COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
       hudHold.rotateY(THREE.MathUtils.degToRad(90));
-    } else if (cameraPosition === 'c4') {
+    } else if (camera.position === 'c4') {
       hudProgress.position
         .add(GameScene.center)
         .add({ x: (COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })

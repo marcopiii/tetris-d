@@ -58,7 +58,7 @@ export class PvPScenario extends GameScenario {
       this._progressP1,
       this._progressP2,
       this._playerManager.players,
-      this._cameraManager.position,
+      this._cameraManager,
     );
     this._clock.start();
   }
@@ -72,7 +72,7 @@ export class PvPScenario extends GameScenario {
       this._progressP1,
       this._progressP2,
       this._playerManager.players,
-      this._cameraManager.position,
+      this._cameraManager,
     );
     if (gameOver) {
       this._clock.toggle();
@@ -82,6 +82,10 @@ export class PvPScenario extends GameScenario {
   };
 
   private onNewPiece = () => {
+    this._cameraManager.cut(
+      { left: false, right: false },
+      this._game.piece.plane,
+    );
     this._playerManager.switchPlayer();
     this._gamepadP1.active = this._playerManager.activePlayer === 'P1';
     this._gamepadP2.active = this._playerManager.activePlayer === 'P2';
@@ -93,53 +97,55 @@ export class PvPScenario extends GameScenario {
 
   protected onGameplayCmd = (command: GameplayCommand) => {
     if (!this._clock.isRunning) return;
-    const sceneNeedsUpdate = this._game.tryMove(
-      command,
-      this._cameraManager.position,
-    );
+    const sceneNeedsUpdate = this._game.tryMove(command, this._cameraManager);
     if (sceneNeedsUpdate)
       this._sceneManager.update(
         this._game,
         this._progressP1,
         this._progressP2,
         this._playerManager.players,
-        this._cameraManager.position,
+        this._cameraManager,
       );
   };
 
   protected onCameraCmd = (command: CameraCommand) => {
-    if (command === 'moveL') this._cameraManager.move('left');
-    if (command === 'moveR') this._cameraManager.move('right');
+    if (command === 'moveL')
+      this._cameraManager.move('left', this._game.piece.plane);
+    if (command === 'moveR')
+      this._cameraManager.move('right', this._game.piece.plane);
     this._sceneManager.update(
       this._game,
       this._progressP1,
       this._progressP2,
       this._playerManager.players,
-      this._cameraManager.position,
+      this._cameraManager,
     );
   };
 
   protected onCutCmd = (command: CutCommand) => {
-    this._sceneManager.cutter = {
-      below:
-        command === 'cutBelow'
-          ? true
-          : command === 'uncutBelow'
-            ? false
-            : undefined,
-      above:
-        command === 'cutAbove'
-          ? true
-          : command === 'uncutAbove'
-            ? false
-            : undefined,
-    };
+    this._cameraManager.cut(
+      {
+        left:
+          command === 'cutLeft'
+            ? true
+            : command === 'uncutLeft'
+              ? false
+              : undefined,
+        right:
+          command === 'cutRight'
+            ? true
+            : command === 'uncutRight'
+              ? false
+              : undefined,
+      },
+      this._game.piece.plane,
+    );
     this._sceneManager.update(
       this._game,
       this._progressP1,
       this._progressP2,
       this._playerManager.players,
-      this._cameraManager.position,
+      this._cameraManager,
     );
   };
 

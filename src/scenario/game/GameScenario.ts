@@ -24,12 +24,12 @@ export abstract class GameScenario {
       if (btn === 'Tab') this.onGameplayCmd('hold');
       if (btn === 'ArrowLeft') this.onCameraCmd('moveL');
       if (btn === 'ArrowRight') this.onCameraCmd('moveR');
-      if (btn === 'ArrowDown') this.onCutCmd('cutBelow');
-      if (btn === 'ArrowUp') this.onCutCmd('cutAbove');
+      if (btn === 'ArrowDown') this.onCutCmd('cutLeft');
+      if (btn === 'ArrowUp') this.onCutCmd('cutRight');
     }
     if (event === 'release') {
-      if (btn === 'ArrowDown') this.onCutCmd('uncutBelow');
-      if (btn === 'ArrowUp') this.onCutCmd('uncutAbove');
+      if (btn === 'ArrowDown') this.onCutCmd('uncutLeft');
+      if (btn === 'ArrowUp') this.onCutCmd('uncutRight');
     }
   };
 
@@ -46,12 +46,12 @@ export abstract class GameScenario {
       if (btn === 'Y') this.onGameplayCmd('hold');
       if (btn === 'LT') this.onCameraCmd('moveL');
       if (btn === 'RT') this.onCameraCmd('moveR');
-      if (btn === 'LB') this.onCutCmd('cutBelow');
-      if (btn === 'RB') this.onCutCmd('cutAbove');
+      if (btn === 'LB') this.onCutCmd('cutLeft');
+      if (btn === 'RB') this.onCutCmd('cutRight');
     }
     if (event === 'release') {
-      if (btn === 'LB') this.onCutCmd('uncutBelow');
-      if (btn === 'RB') this.onCutCmd('uncutAbove');
+      if (btn === 'LB') this.onCutCmd('uncutLeft');
+      if (btn === 'RB') this.onCutCmd('uncutRight');
     }
   };
 }
