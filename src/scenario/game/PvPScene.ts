@@ -11,8 +11,12 @@ import { GameScene } from './GameScene';
 import * as F from '../../scene/font';
 
 export class PvPScene extends GameScene {
+  private readonly _hud: THREE.Group;
+
   constructor(scene: THREE.Scene) {
     super(scene);
+    this._hud = new THREE.Group();
+    this._scene.add(this._hud);
   }
 
   update(
@@ -23,6 +27,7 @@ export class PvPScene extends GameScene {
     camera: GameCamera,
   ) {
     this.innerUpdate(game, camera);
+    this._hud.clear();
 
     const { P1, P2 } = players;
 
@@ -56,7 +61,7 @@ export class PvPScene extends GameScene {
         .add({ x: -COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
         .multiplyScalar(MINO_SIZE);
     }
-    this._scene.add(hudP1);
+    this._hud.add(hudP1);
 
     const hudP2 = createHUD(
       P2,
@@ -90,7 +95,7 @@ export class PvPScene extends GameScene {
     }
 
     hudP2.rotateY(THREE.MathUtils.degToRad(90));
-    this._scene.add(hudP2);
+    this._hud.add(hudP2);
   }
 }
 
