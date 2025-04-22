@@ -39,7 +39,10 @@ export class GameCamera {
     return relativeDirection[this._position];
   }
 
-  move(direction: 'left' | 'right') {
+  move(direction: 'left' | 'right', currentPlane: 'x' | 'z') {
+    const wasInverted =
+      (currentPlane === 'x' && this.relativeDirection.x === 'negative') ||
+      (currentPlane === 'z' && this.relativeDirection.z === 'negative');
     switch (this._position) {
       case 'c1':
         this._position = direction === 'right' ? 'c2' : 'c4';
@@ -54,6 +57,14 @@ export class GameCamera {
         this._position = direction === 'right' ? 'c1' : 'c3';
         break;
     }
+    const isInverted =
+      (currentPlane === 'x' && this.relativeDirection.x === 'negative') ||
+      (currentPlane === 'z' && this.relativeDirection.z === 'negative');
+    const isInverting = wasInverted !== isInverted;
+    this._cutter = {
+      below: isInverting ? this._cutter.above : this._cutter.below,
+      above: isInverting ? this._cutter.below : this._cutter.above,
+    };
     const target = cameraSetup[this._position];
     play(camera_move, 0.05);
     new TWEEN.Tween(this._camera.position, this._tweenGroup)

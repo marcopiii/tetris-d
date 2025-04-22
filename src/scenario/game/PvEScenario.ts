@@ -77,8 +77,10 @@ export class PvEScenario extends GameScenario {
   };
 
   protected onCameraCmd = (command: CameraCommand) => {
-    if (command === 'moveL') this._cameraManager.move('left');
-    else if (command === 'moveR') this._cameraManager.move('right');
+    if (command === 'moveL')
+      this._cameraManager.move('left', this._game.piece.plane);
+    else if (command === 'moveR')
+      this._cameraManager.move('right', this._game.piece.plane);
 
     this._sceneManager.update(this._game, this._progress, this._cameraManager);
   };
