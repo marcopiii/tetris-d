@@ -122,16 +122,16 @@ export class PvPScenario extends GameScenario {
   protected onCutCmd = (command: CutCommand) => {
     this._cameraManager.cut(
       {
-        below:
-          command === 'cutBelow'
+        left:
+          command === 'cutLeft'
             ? true
-            : command === 'uncutBelow'
+            : command === 'uncutLeft'
               ? false
               : undefined,
-        above:
-          command === 'cutAbove'
+        right:
+          command === 'cutRight'
             ? true
-            : command === 'uncutAbove'
+            : command === 'uncutRight'
               ? false
               : undefined,
       },

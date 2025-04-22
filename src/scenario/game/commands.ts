@@ -10,4 +10,4 @@ export type GameplayCommand =
 
 export type CameraCommand = 'moveL' | 'moveR';
 
-export type CutCommand = 'cutAbove' | 'cutBelow' | 'uncutAbove' | 'uncutBelow';
+export type CutCommand = 'cutLeft' | 'cutRight' | 'uncutLeft' | 'uncutRight';

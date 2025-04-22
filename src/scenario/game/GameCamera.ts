@@ -67,8 +67,8 @@ export class GameCamera {
 
   cut(
     cutter: {
-      below: boolean | undefined;
-      above: boolean | undefined;
+      left: boolean | undefined;
+      right: boolean | undefined;
     },
     plane: 'x' | 'z',
   ) {
@@ -77,8 +77,8 @@ export class GameCamera {
       (plane === 'z' && relativeDirection[this._position].z === 'negative');
 
     this._cutter = {
-      below: (isInverted ? cutter.above : cutter.below) ?? this._cutter.below,
-      above: (isInverted ? cutter.below : cutter.above) ?? this._cutter.above,
+      below: (isInverted ? cutter.right : cutter.left) ?? this._cutter.below,
+      above: (isInverted ? cutter.left : cutter.right) ?? this._cutter.above,
     };
   }
 }
