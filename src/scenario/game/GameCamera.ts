@@ -35,6 +35,10 @@ export class GameCamera {
     return this._position;
   }
 
+  get relativeDirection(): RelativeDirection {
+    return relativeDirection[this._position];
+  }
+
   move(direction: 'left' | 'right') {
     switch (this._position) {
       case 'c1':
@@ -73,8 +77,8 @@ export class GameCamera {
     plane: 'x' | 'z',
   ) {
     const isInverted =
-      (plane === 'x' && relativeDirection[this._position].x === 'negative') ||
-      (plane === 'z' && relativeDirection[this._position].z === 'negative');
+      (plane === 'x' && this.relativeDirection.x === 'negative') ||
+      (plane === 'z' && this.relativeDirection.z === 'negative');
 
     this._cutter = {
       below: (isInverted ? cutter.right : cutter.left) ?? this._cutter.below,

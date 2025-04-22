@@ -1,5 +1,5 @@
 import { play } from '../../utils';
-import { GameCameraPosition } from './GameCamera';
+import { GameCamera } from './GameCamera';
 import { Board } from './Board';
 import { Piece } from './Piece';
 import { COLS, ROWS } from '../../params';
@@ -73,12 +73,11 @@ export class Game {
   /**
    * @returns {boolean} - Whether the move had success
    */
-  tryMove(type: GameplayCommand, cameraPosition: GameCameraPosition): boolean {
+  tryMove(type: GameplayCommand, camera: GameCamera): boolean {
     const isInverted =
       (this._piece.plane === 'x' &&
-        relativeDirection[cameraPosition].z === 'negative') ||
-      (this._piece.plane === 'z' &&
-        relativeDirection[cameraPosition].x === 'negative');
+        camera.relativeDirection.z === 'negative') ||
+      (this._piece.plane === 'z' && camera.relativeDirection.x === 'negative');
 
     let wallKickTest = 0;
     switch (type) {
@@ -160,27 +159,3 @@ function detectCollision(piece: Piece, board: Board): boolean {
   });
   return collisionDetected;
 }
-
-type RelativeDirection = {
-  x: 'positive' | 'negative';
-  z: 'positive' | 'negative';
-};
-
-const relativeDirection: Record<GameCameraPosition, RelativeDirection> = {
-  c1: {
-    x: 'positive',
-    z: 'positive',
-  },
-  c2: {
-    x: 'positive',
-    z: 'negative',
-  },
-  c3: {
-    x: 'negative',
-    z: 'negative',
-  },
-  c4: {
-    x: 'negative',
-    z: 'positive',
-  },
-};
