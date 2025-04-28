@@ -42,14 +42,16 @@ export abstract class GameScenario {
       if (btn === 'padU') this.onGameplayCmd('shiftB');
       if (btn === 'X') this.onGameplayCmd('rotateL');
       if (btn === 'B') this.onGameplayCmd('rotateR');
-      if (btn === 'A') this.onGameplayCmd('hardDrop');
       if (btn === 'Y') this.onGameplayCmd('hold');
       if (btn === 'LT') this.onCameraCmd('moveL');
       if (btn === 'RT') this.onCameraCmd('moveR');
       if (btn === 'LB') this.onCutCmd('cutLeft');
       if (btn === 'RB') this.onCutCmd('cutRight');
     }
-    if (event === 'release') {
+    if (event === 'lift') {
+      if (btn === 'A') this.onGameplayCmd('hardDrop');
+    }
+    if (['release', 'lift'].includes(event)) {
       if (btn === 'LB') this.onCutCmd('uncutLeft');
       if (btn === 'RB') this.onCutCmd('uncutRight');
     }
