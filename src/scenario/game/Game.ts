@@ -122,6 +122,7 @@ export class Game {
       case 'hardDrop':
         this.hardDrop();
         play(hard_drop_fx, 0.5);
+        this.tick();
         return true;
       case 'hold':
         this.holdPiece();
