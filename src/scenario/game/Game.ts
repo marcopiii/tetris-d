@@ -23,8 +23,8 @@ export class Game {
     this._onNewPiece = onNewPiece;
     this._board = new Board();
     this._bag = new Bag();
-    this._piece = new Piece(this._bag.getNextTetrimino(), 'z');
     this._hold = new Hold(this._bag.getNextTetrimino());
+    this._piece = new Piece(this._bag.getNextTetrimino(), 'z');
   }
 
   get board() {
