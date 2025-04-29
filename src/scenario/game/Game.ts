@@ -50,9 +50,12 @@ export class Game {
    */
   tick(): [number, number, boolean] {
     const needRecheck = this._board.clearLines();
-    const [comboLineClearZ, comboLineClearX] = needRecheck
+    const [cascadeLineClearZ, cascadeLineClearX] = needRecheck
       ? this._board.checkLines()
       : [0, 0];
+    if (cascadeLineClearZ > 0 || cascadeLineClearX > 0) {
+      play(line_clear_fx, 0.75);
+    }
     this._piece.drop();
     if (detectCollision(this._piece, this._board)) {
       this._piece.rollback();
