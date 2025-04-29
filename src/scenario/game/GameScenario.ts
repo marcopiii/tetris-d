@@ -1,9 +1,9 @@
 import { Button as GamepadButton, Event as GamepadEvent } from '../../gamepad';
 import { KeyboardEvent as KeyboardEventType } from '../../keyboard';
-import { CameraCommand, CutCommand, GameplayCommand } from './commands';
+import { CameraCommand, ClockCommand, CutCommand, GameplayCommand } from './commands';
 
 export abstract class GameScenario {
-  protected abstract onClockCmd: (command: 'toggle') => void;
+  protected abstract onClockCmd: (command: ClockCommand) => void;
   protected abstract onGameplayCmd: (command: GameplayCommand) => void;
   protected abstract onCameraCmd: (command: CameraCommand) => void;
   protected abstract onCutCmd: (command: CutCommand) => void;
@@ -54,6 +54,12 @@ export abstract class GameScenario {
     if (['release', 'lift'].includes(event)) {
       if (btn === 'LB') this.onCutCmd('uncutLeft');
       if (btn === 'RB') this.onCutCmd('uncutRight');
+    }
+    if (event === 'hold') {
+      if (btn === 'A') this.onClockCmd('startFastDrop');
+    }
+    if (event === 'release') {
+      if (btn === 'A') this.onClockCmd('endFastDrop');
     }
   };
 }
