@@ -1,9 +1,14 @@
 import { Button as GamepadButton, Event as GamepadEvent } from '../../gamepad';
 import { KeyboardEvent as KeyboardEventType } from '../../keyboard';
-import { CameraCommand, CutCommand, GameplayCommand } from './commands';
+import {
+  CameraCommand,
+  ClockCommand,
+  CutCommand,
+  GameplayCommand,
+} from './commands';
 
 export abstract class GameScenario {
-  protected abstract onClockCmd: (command: 'toggle') => void;
+  protected abstract onClockCmd: (command: ClockCommand) => void;
   protected abstract onGameplayCmd: (command: GameplayCommand) => void;
   protected abstract onCameraCmd: (command: CameraCommand) => void;
   protected abstract onCutCmd: (command: CutCommand) => void;
@@ -42,16 +47,24 @@ export abstract class GameScenario {
       if (btn === 'padU') this.onGameplayCmd('shiftB');
       if (btn === 'X') this.onGameplayCmd('rotateL');
       if (btn === 'B') this.onGameplayCmd('rotateR');
-      if (btn === 'A') this.onGameplayCmd('hardDrop');
       if (btn === 'Y') this.onGameplayCmd('hold');
       if (btn === 'LT') this.onCameraCmd('moveL');
       if (btn === 'RT') this.onCameraCmd('moveR');
       if (btn === 'LB') this.onCutCmd('cutLeft');
       if (btn === 'RB') this.onCutCmd('cutRight');
     }
-    if (event === 'release') {
+    if (event === 'lift') {
+      if (btn === 'A') this.onGameplayCmd('hardDrop');
+    }
+    if (['release', 'lift'].includes(event)) {
       if (btn === 'LB') this.onCutCmd('uncutLeft');
       if (btn === 'RB') this.onCutCmd('uncutRight');
+    }
+    if (event === 'hold') {
+      if (btn === 'A') this.onClockCmd('startFastDrop');
+    }
+    if (event === 'release') {
+      if (btn === 'A') this.onClockCmd('endFastDrop');
     }
   };
 }

@@ -11,3 +11,5 @@ export type GameplayCommand =
 export type CameraCommand = 'moveL' | 'moveR';
 
 export type CutCommand = 'cutLeft' | 'cutRight' | 'uncutLeft' | 'uncutRight';
+
+export type ClockCommand = 'toggle' | 'startFastDrop' | 'endFastDrop';

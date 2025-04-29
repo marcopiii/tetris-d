@@ -8,7 +8,12 @@ import { Progress } from './Progress';
 import { PvEScene } from './PvEScene';
 import { KeyboardManager } from '../../keyboard';
 import { GameScenario } from './GameScenario';
-import { CameraCommand, CutCommand, GameplayCommand } from './commands';
+import {
+  CameraCommand,
+  ClockCommand,
+  CutCommand,
+  GameplayCommand,
+} from './commands';
 
 export class PvEScenario extends GameScenario {
   private readonly _game: Game;
@@ -106,7 +111,9 @@ export class PvEScenario extends GameScenario {
     this._sceneManager.update(this._game, this._progress, this._cameraManager);
   };
 
-  protected onClockCmd = (command: 'toggle') => {
-    this._clock.toggle();
+  protected onClockCmd = (command: ClockCommand) => {
+    if (command === 'toggle') this._clock.toggle();
+    if (command === 'startFastDrop') this._clock.fastDrop = true;
+    if (command === 'endFastDrop') this._clock.fastDrop = false;
   };
 }
