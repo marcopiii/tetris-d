@@ -49,7 +49,10 @@ export class Game {
    * @return A tuple containing the number of cleared lines for each side and whether the game is over
    */
   tick(): [number, number, boolean] {
-    this._board.clearLines();
+    const needRecheck = this._board.clearLines();
+    const [comboLineClearZ, comboLineClearX] = needRecheck
+      ? this._board.checkLines()
+      : [0, 0];
     this._piece.drop();
     if (detectCollision(this._piece, this._board)) {
       this._piece.rollback();
