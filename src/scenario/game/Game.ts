@@ -1,4 +1,5 @@
 import { play } from '../../utils';
+import { Bag } from './Bag';
 import { GameCamera } from './GameCamera';
 import { Board } from './Board';
 import { Piece } from './Piece';
@@ -14,14 +15,16 @@ const line_clear_fx = require('../../audio/line_clear.mp3');
 export class Game {
   private readonly _onNewPiece: () => void;
   private readonly _board: Board;
+  private readonly _bag: Bag;
   private _piece: Piece;
   private _hold: Hold;
 
   constructor(onNewPiece: () => void) {
     this._onNewPiece = onNewPiece;
     this._board = new Board();
-    this._piece = new Piece();
-    this._hold = new Hold();
+    this._bag = new Bag();
+    this._piece = new Piece(this._bag.getNextTetrimino(), 'z');
+    this._hold = new Hold(this._bag.getNextTetrimino());
   }
 
   get board() {
@@ -49,7 +52,10 @@ export class Game {
       if (lineClearZ > 0 || lineClearX > 0) {
         play(line_clear_fx, 0.75);
       }
-      this._piece = this._piece.plane === 'x' ? new Piece('z') : new Piece('x');
+      this._piece =
+        this._piece.plane === 'x'
+          ? new Piece(this._bag.getNextTetrimino(), 'z')
+          : new Piece(this._bag.getNextTetrimino(), 'x');
       this._onNewPiece();
       const gameOver = detectCollision(this._piece, this._board);
       return [lineClearZ, lineClearX, gameOver];

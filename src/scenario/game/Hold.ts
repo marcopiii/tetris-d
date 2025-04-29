@@ -1,14 +1,13 @@
-import { Shape, Name as Tetrimino, getRandomTetrimino } from '../../tetrimino';
+import { Shape, Name as Tetrimino, tetrimino } from '../../tetrimino';
 import type { Piece } from './Piece';
 
 export class Hold {
   private _type: Tetrimino;
   private _shape: Shape;
 
-  constructor() {
-    const { type, shape } = getRandomTetrimino();
+  constructor(type: Tetrimino) {
     this._type = type;
-    this._shape = shape;
+    this._shape = tetrimino[type];
   }
 
   get piece() {
