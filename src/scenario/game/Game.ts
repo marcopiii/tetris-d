@@ -49,7 +49,13 @@ export class Game {
    * @return A tuple containing the number of cleared lines for each side and whether the game is over
    */
   tick(): [number, number, boolean] {
-    this._board.clearLines();
+    const needRecheck = this._board.clearLines();
+    const [cascadeLineClearZ, cascadeLineClearX] = needRecheck
+      ? this._board.checkLines()
+      : [0, 0];
+    if (cascadeLineClearZ > 0 || cascadeLineClearX > 0) {
+      play(line_clear_fx, 0.75);
+    }
     this._piece.drop();
     if (detectCollision(this._piece, this._board)) {
       this._piece.rollback();
@@ -64,9 +70,17 @@ export class Game {
           : new Piece(this._bag.getNextTetrimino(), 'x');
       this._onNewPiece();
       const gameOver = detectCollision(this._piece, this._board);
-      return [lineClearZ, lineClearX, gameOver];
+      return [
+        lineClearZ + cascadeLineClearZ,
+        lineClearX + cascadeLineClearX,
+        gameOver,
+      ];
     }
-    return [0, 0, false];
+    return [
+      cascadeLineClearZ,
+      cascadeLineClearX,
+      false,
+    ];
   }
 
   private holdPiece() {
