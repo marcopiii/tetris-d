@@ -1,10 +1,10 @@
 import { COLS } from '../../params';
 import {
   Name as Tetrimino,
-  getRandomTetrimino,
   Shape,
   RotationState,
   wallKickData,
+  tetrimino,
 } from '../../tetrimino';
 import { copy } from '../../utils';
 
@@ -27,12 +27,11 @@ export class Piece {
     plane: Plane;
   };
 
-  constructor(plane: Plane = 'z') {
-    const { type, shape } = getRandomTetrimino();
+  constructor(type: Tetrimino, plane: Plane) {
     this._type = type;
-    this._shape = shape;
+    this._shape = tetrimino[type];
     this._rotationState = '0';
-    this._position = initPosition(plane, shape);
+    this._position = initPosition(plane, this._shape);
     this._plane = plane;
     this._prev = {
       position: copy(this._position),
@@ -64,7 +63,7 @@ export class Piece {
   }
 
   clone() {
-    const piece = new Piece(this._plane);
+    const piece = new Piece(this.type, this._plane);
     piece._shape = copy(this._shape);
     piece._position = copy(this._position);
     piece._prev = copy(this._prev);
