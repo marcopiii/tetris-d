@@ -1,7 +1,6 @@
 import { COLS } from '../../params';
 import {
   Name as Tetrimino,
-  getRandomTetrimino,
   Shape,
   RotationState,
   wallKickData,
