@@ -38,6 +38,9 @@ export class Clock {
   }
 
   set fastDrop(active: boolean) {
+    if (gravity[this._level] > 1)
+      return;
+
     clearInterval(this._interval);
     if (active) {
       this._interval = setInterval(this._callback, 1000/60);
