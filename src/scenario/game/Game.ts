@@ -76,11 +76,7 @@ export class Game {
         gameOver,
       ];
     }
-    return [
-      cascadeLineClearZ,
-      cascadeLineClearX,
-      false,
-    ];
+    return [cascadeLineClearZ, cascadeLineClearX, false];
   }
 
   private holdPiece() {
