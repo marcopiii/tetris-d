@@ -18,7 +18,7 @@ export type Button =
 
 export type Event = 'press' | 'hold' | 'release' | 'lift';
 
-const HOLD_FRAMES = 7;
+const HOLD_FRAMES = 12;
 const BUFFER_SIZE = HOLD_FRAMES + 1;
 
 export class GamepadManager {
