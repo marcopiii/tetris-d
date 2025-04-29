@@ -23,30 +23,25 @@ export class PvEScene extends GameScene {
     this._hud.clear();
 
     const hudProgress = createProgressHUD(progress, 'right');
-    const hudHold = createHoldHUD(
-      game.held.shape,
-      game.held.type,
-      game.held.available,
-      'left',
-    );
+    const hudPiece = createPieceHUD(game.next, game.held, 'left');
 
     if (camera.position === 'c1') {
       hudProgress.position
         .add(GameScene.center)
         .add({ x: -(COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
-      hudHold.position
+      hudPiece.position
         .add(GameScene.center)
         .add({ x: COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
         .multiplyScalar(MINO_SIZE);
-      hudHold.rotateY(THREE.MathUtils.degToRad(-90));
+      hudPiece.rotateY(THREE.MathUtils.degToRad(-90));
     } else if (camera.position === 'c2') {
       hudProgress.position
         .add(GameScene.center)
         .add({ x: -COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
         .multiplyScalar(MINO_SIZE);
       hudProgress.rotateY(THREE.MathUtils.degToRad(90));
-      hudHold.position
+      hudPiece.position
         .add(GameScene.center)
         .add({ x: (COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
@@ -56,26 +51,26 @@ export class PvEScene extends GameScene {
         .add({ x: COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
         .multiplyScalar(MINO_SIZE);
       hudProgress.rotateY(THREE.MathUtils.degToRad(180));
-      hudHold.position
+      hudPiece.position
         .add(GameScene.center)
         .add({ x: -(COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
-      hudHold.rotateY(THREE.MathUtils.degToRad(90));
+      hudPiece.rotateY(THREE.MathUtils.degToRad(90));
     } else if (camera.position === 'c4') {
       hudProgress.position
         .add(GameScene.center)
         .add({ x: (COLS + 1) / 2, y: (ROWS - 2) / 2, z: -COLS / 2 })
         .multiplyScalar(MINO_SIZE);
       hudProgress.rotateY(THREE.MathUtils.degToRad(-90));
-      hudHold.position
+      hudPiece.position
         .add(GameScene.center)
         .add({ x: -COLS / 2, y: (ROWS - 2) / 2, z: (COLS + 1) / 2 })
         .multiplyScalar(MINO_SIZE);
-      hudHold.rotateY(THREE.MathUtils.degToRad(-180));
+      hudPiece.rotateY(THREE.MathUtils.degToRad(-180));
     }
 
     this._hud.add(hudProgress);
-    this._hud.add(hudHold);
+    this._hud.add(hudPiece);
   }
 }
 
@@ -133,6 +128,37 @@ function createLevelHUD(
   return levelHUD;
 }
 
+function createPreviewHUD(
+  shape: F.Char,
+  type: Tetrimino,
+  align: 'left' | 'right',
+  disabled = false,
+) {
+  const labelGroup = createWord(F.alphabet)(
+    'next',
+    'secondary',
+    align,
+    disabled,
+  );
+  const nextGroup = new THREE.Group();
+  shape.forEach((row, y) => {
+    (align === 'left' ? row : row.toReversed()).forEach((exists, x) => {
+      if (exists) {
+        const cube = createMino(!disabled ? type : 'disabled');
+        cube.position.set(x, -y, 0);
+        nextGroup.add(cube);
+      }
+    });
+  });
+
+  const nextHUD = new THREE.Group();
+  labelGroup.position.set(0, 0, 0);
+  nextGroup.position.set(0.5, -12 * VOXEL_SIZE.secondary, 0);
+  nextHUD.add(labelGroup);
+  nextHUD.add(nextGroup);
+  return nextHUD;
+}
+
 function createHoldHUD(
   shape: Shape,
   type: Tetrimino,
@@ -157,6 +183,27 @@ function createHoldHUD(
   holdHUD.add(labelGroup);
   holdHUD.add(holdGroup);
   return holdHUD;
+}
+
+function createPieceHUD(
+  next: { shape: Shape; type: Tetrimino },
+  hold: { shape: Shape; type: Tetrimino; available: boolean },
+  align: 'left' | 'right',
+) {
+  const previewHUD = createPreviewHUD(next.shape, next.type, align);
+  const holdHUD = createHoldHUD(hold.shape, hold.type, hold.available, align);
+
+  holdHUD.position.set(
+    0,
+    -(VOXEL_SIZE.secondary * 11 + VOXEL_SIZE.primary * 11),
+    0,
+  );
+
+  const group = new THREE.Group();
+  group.add(previewHUD);
+  group.add(holdHUD);
+
+  return group;
 }
 
 function createProgressHUD(progress: Progress, align: 'left' | 'right') {
