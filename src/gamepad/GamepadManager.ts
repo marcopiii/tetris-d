@@ -30,7 +30,7 @@ export class GamepadManager {
   constructor(index: number) {
     this._handler = () => {};
     this._gamepadIndex = index;
-    this._buffer = new Array(BUFFER_SIZE).fill([]);
+    this._buffer = [];
     this._active = index === 0;
   }
 
@@ -39,7 +39,7 @@ export class GamepadManager {
   }
 
   set active(active: boolean) {
-    this._buffer = new Array(BUFFER_SIZE).fill([]);
+    this._buffer = [];
     this._active = active;
   }
 
@@ -52,7 +52,7 @@ export class GamepadManager {
       const buttonCode = mapping(i);
       if (!buttonCode) return;
 
-      const wasPressed = this._buffer[0][i]?.pressed ?? false;
+      const wasPressed = this._buffer[0]?.[i]?.pressed ?? false;
       const isHolding = this._buffer
         .slice(0, HOLD_FRAMES)
         .every((b) => b[i]?.pressed ?? false);
