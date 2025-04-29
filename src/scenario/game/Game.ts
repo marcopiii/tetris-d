@@ -70,9 +70,17 @@ export class Game {
           : new Piece(this._bag.getNextTetrimino(), 'x');
       this._onNewPiece();
       const gameOver = detectCollision(this._piece, this._board);
-      return [lineClearZ, lineClearX, gameOver];
+      return [
+        lineClearZ + cascadeLineClearZ,
+        lineClearX + cascadeLineClearX,
+        gameOver,
+      ];
     }
-    return [0, 0, false];
+    return [
+      cascadeLineClearZ,
+      cascadeLineClearX,
+      false,
+    ];
   }
 
   private holdPiece() {
