@@ -1,6 +1,11 @@
 import { Button as GamepadButton, Event as GamepadEvent } from '../../gamepad';
 import { KeyboardEvent as KeyboardEventType } from '../../keyboard';
-import { CameraCommand, ClockCommand, CutCommand, GameplayCommand } from './commands';
+import {
+  CameraCommand,
+  ClockCommand,
+  CutCommand,
+  GameplayCommand,
+} from './commands';
 
 export abstract class GameScenario {
   protected abstract onClockCmd: (command: ClockCommand) => void;

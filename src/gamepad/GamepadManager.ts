@@ -53,17 +53,17 @@ export class GamepadManager {
       if (!buttonCode) return;
 
       const wasPressed = this._buffer[0][i]?.pressed ?? false;
-      const isHolding = this._buffer.slice(0,HOLD_FRAMES).every((b) => b[i]?.pressed ?? false);
-      const wasHeld = this._buffer.every((b) => b[i]?.pressed ?? false)
+      const isHolding = this._buffer
+        .slice(0, HOLD_FRAMES)
+        .every((b) => b[i]?.pressed ?? false);
+      const wasHeld = this._buffer.every((b) => b[i]?.pressed ?? false);
 
-      if (button.pressed && !wasPressed)
-        this._handler('press', buttonCode);
+      if (button.pressed && !wasPressed) this._handler('press', buttonCode);
       if (button.pressed && isHolding && !wasHeld)
         this._handler('hold', buttonCode);
       if (!button.pressed && wasPressed && !wasHeld)
         this._handler('lift', buttonCode);
-      if (!button.pressed && wasHeld)
-        this._handler('release', buttonCode);
+      if (!button.pressed && wasHeld) this._handler('release', buttonCode);
     });
     this._buffer = [[...gamepad.buttons], ...this._buffer].slice(
       0,

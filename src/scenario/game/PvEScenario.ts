@@ -8,7 +8,12 @@ import { Progress } from './Progress';
 import { PvEScene } from './PvEScene';
 import { KeyboardManager } from '../../keyboard';
 import { GameScenario } from './GameScenario';
-import { CameraCommand, ClockCommand, CutCommand, GameplayCommand } from './commands';
+import {
+  CameraCommand,
+  ClockCommand,
+  CutCommand,
+  GameplayCommand,
+} from './commands';
 
 export class PvEScenario extends GameScenario {
   private readonly _game: Game;
