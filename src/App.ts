@@ -1,7 +1,7 @@
 import { GamepadManager } from './gamepad';
-import { KeyboardManager } from './keyboard/KeyboardManager';
+import { KeyboardManager } from './keyboard';
 import { RenderManager } from './render';
-import { MainMenuScenario, PvPScenario, PvEScenario } from './scenario';
+import { MainMenuScenario, PvEScenario } from './scenario';
 
 type ScenarioState =
   | {
@@ -11,10 +11,6 @@ type ScenarioState =
   | {
       scenario: 'pve-game';
       state: PvEScenario;
-    }
-  | {
-      scenario: 'pvp-game';
-      state: PvPScenario;
     };
 
 export class App {
@@ -22,7 +18,6 @@ export class App {
 
   private readonly _keyboardManager: KeyboardManager;
   private readonly _gamepadP1: GamepadManager;
-  private readonly _gamepadP2: GamepadManager;
 
   private _scenario!: ScenarioState;
 
@@ -31,7 +26,6 @@ export class App {
 
     this._keyboardManager = new KeyboardManager();
     this._gamepadP1 = new GamepadManager(0);
-    this._gamepadP2 = new GamepadManager(1);
 
     this.mainMenu();
     this.animate();
@@ -48,7 +42,6 @@ export class App {
         this._gamepadP1,
         {
           onPvE: this.startPvE,
-          onPvP: this.startPvP,
         },
       ),
     };
@@ -67,25 +60,10 @@ export class App {
     };
   };
 
-  private startPvP = () => {
-    this._scenario = {
-      scenario: 'pvp-game',
-      state: new PvPScenario(
-        this._renderManager.scene,
-        this._renderManager.camera,
-        this._renderManager.tween,
-        this._keyboardManager,
-        this._gamepadP1,
-        this._gamepadP2,
-      ),
-    };
-  };
-
   private animate = () => {
     requestAnimationFrame(this.animate);
     this._renderManager.tween.update();
     this._renderManager.render();
     this._gamepadP1.poll();
-    this._gamepadP2.poll();
   };
 }
