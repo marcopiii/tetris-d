@@ -51,11 +51,10 @@ export class Game {
    */
   tick(): [LineCoord[], boolean] {
     const needRecheck = this._board.clearLines();
-    const cascadeLineClear = needRecheck
-      ? this._board.checkLines()
-      : [];
+    const cascadeLineClear = needRecheck ? this._board.checkLines() : [];
     if (cascadeLineClear.length > 0) {
       play(line_clear_fx, 0.75);
+      return [cascadeLineClear, false];
     }
     this._piece.drop();
     if (detectCollision(this._piece, this._board)) {
@@ -71,12 +70,9 @@ export class Game {
           : new Piece(this._bag.getNextTetrimino(), 'x');
       this._onNewPiece();
       const gameOver = detectCollision(this._piece, this._board);
-      return [
-        [...lineClear, ...cascadeLineClear],
-        gameOver,
-      ];
+      return [lineClear, gameOver];
     }
-    return [cascadeLineClear, false];
+    return [[], false];
   }
 
   private holdPiece() {
