@@ -52,8 +52,8 @@ export class PvEScenario extends GameScenario {
   }
 
   private processGameFrame = () => {
-    const [lineClearZ, lineClearX, gameOver] = this._game.tick();
-    this._progress.add(lineClearZ + lineClearX);
+    const [clearedLines, gameOver] = this._game.tick();
+    this._progress.add(clearedLines);
     this._sceneManager.update(this._game, this._progress, this._cameraManager);
     if (gameOver) {
       this._clock.toggle();

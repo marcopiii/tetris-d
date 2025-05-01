@@ -7,6 +7,7 @@ import { Piece } from './Piece';
 import { COLS, ROWS } from '../../params';
 import { Hold } from './Hold';
 import { GameplayCommand } from './commands';
+import { LineCoord } from './types';
 
 const tetrimino_move_fx = require('../../audio/tetrimino_move.mp3');
 const tetrimino_rotate_fx = require('../../audio/tetrimino_rotate.mp3');
@@ -46,22 +47,21 @@ export class Game {
   }
 
   /** Progresses the game by one tick.
-   * @return A tuple containing the number of cleared lines for each side and whether the game is over
+   * @return A tuple containing the cleared lines and whether the game is over
    */
-  tick(): [number, number, boolean] {
+  tick(): [LineCoord[], boolean] {
     const needRecheck = this._board.clearLines();
-    const [cascadeLineClearZ, cascadeLineClearX] = needRecheck
-      ? this._board.checkLines()
-      : [0, 0];
-    if (cascadeLineClearZ > 0 || cascadeLineClearX > 0) {
+    const cascadeLineClear = needRecheck ? this._board.checkLines() : [];
+    if (cascadeLineClear.length > 0) {
       play(line_clear_fx, 0.75);
+      return [cascadeLineClear, false];
     }
     this._piece.drop();
     if (detectCollision(this._piece, this._board)) {
       this._piece.rollback();
       this._board.fixPiece(this._piece);
-      const [lineClearZ, lineClearX] = this._board.checkLines();
-      if (lineClearZ > 0 || lineClearX > 0) {
+      const lineClear = this._board.checkLines();
+      if (lineClear.length > 0) {
         play(line_clear_fx, 0.75);
       }
       this._piece =
@@ -70,13 +70,9 @@ export class Game {
           : new Piece(this._bag.getNextTetrimino(), 'x');
       this._onNewPiece();
       const gameOver = detectCollision(this._piece, this._board);
-      return [
-        lineClearZ + cascadeLineClearZ,
-        lineClearX + cascadeLineClearX,
-        gameOver,
-      ];
+      return [lineClear, gameOver];
     }
-    return [cascadeLineClearZ, cascadeLineClearX, false];
+    return [[], false];
   }
 
   private holdPiece() {
