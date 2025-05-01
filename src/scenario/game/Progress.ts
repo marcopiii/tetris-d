@@ -38,12 +38,12 @@ function planeMultiplier(lines: LineCoord[]) {
 
   const orthogonalPlanes =
     lines.some((line) => 'x' in line) && lines.some((line) => 'z' in line);
-  if (orthogonalPlanes) return 2;
+  if (orthogonalPlanes) return 1.5;
 
   const parallelPlanes =
     lines.some((line) => line.x != lines[0].x) ||
     lines.some((line) => line.z != lines[0].z);
-  if (parallelPlanes) return 1.5;
+  if (parallelPlanes) return 1.25;
 
   return 1;
 }
