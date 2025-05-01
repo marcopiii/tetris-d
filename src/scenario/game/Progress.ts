@@ -1,3 +1,5 @@
+import { LineCoord } from './types';
+
 export class Progress {
   private _lineClear: number;
   private _score: number;
@@ -17,18 +19,14 @@ export class Progress {
     return Math.floor(this._lineClear / this.LINE_CLEAR_PER_LEVEL) + 1;
   }
 
-  add(lineClear: number) {
-    const base = scorePerLines(lineClear) ?? 0;
-    const gain = base * this.level;
+  add(lines: LineCoord[]) {
+    const base = scorePerLines(lines.length);
+    const multiplier = planeMultiplier(lines);
+    const gain = base * multiplier * this.level;
     this._score += gain;
-    this._lineClear += lineClear;
+    this._lineClear += lines.length;
   }
 }
-
-export type LineCoord = { y: number } & (
-  | { x: number; z?: never }
-  | { x?: never; z: number }
-  );
 
 function scorePerLines(n: number) {
   if (n < 1) return 0;

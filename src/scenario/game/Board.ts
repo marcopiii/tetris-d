@@ -1,11 +1,12 @@
 import { COLS, ROWS } from '../../params';
 import type { Piece } from './Piece';
 import { Name as Tetrimino } from '../../tetrimino';
+import { LineCoord } from './types';
 
 type BoardBlock = Tetrimino | 'DELETE';
 
 export class Board {
-  private _matrix: (BoardBlock | null)[][][];
+  private readonly _matrix: (BoardBlock | null)[][][];
 
   constructor() {
     this._matrix = Array(ROWS)
@@ -54,7 +55,8 @@ export class Board {
     this._matrix[0][x][z] = null;
   }
 
-  checkLines(): [number, number] {
+  /** Marks the completed line for deletion. Return the coordinates of the lines */
+  checkLines(): LineCoord[] {
     const checkZAxisRow = (y: number, x: number) => {
       for (let z = 0; z < COLS; z++) {
         if (!this._matrix[y][x][z]) return false;
@@ -68,15 +70,14 @@ export class Board {
       return true;
     };
 
-    let clearedLinesZ = 0;
-    let clearedLinesX = 0;
+    const clearedLines: LineCoord[] = [];
     for (let y = 0; y < ROWS; y++) {
       for (let z = 0; z < COLS; z++) {
         if (checkXAxisRow(y, z)) {
           for (let x = 0; x < COLS; x++) {
             this._matrix[y][x][z] = 'DELETE';
           }
-          clearedLinesZ++;
+          clearedLines.push({ y, z });
         }
       }
       for (let x = 0; x < COLS; x++) {
@@ -84,13 +85,14 @@ export class Board {
           for (let z = 0; z < COLS; z++) {
             this._matrix[y][x][z] = 'DELETE';
           }
-          clearedLinesX++;
+          clearedLines.push({ y, x });
         }
       }
     }
-    return [clearedLinesZ, clearedLinesX];
+    return clearedLines;
   }
 
+  /** Deletes the marked lines and returns true if any line was cleared */
   clearLines() {
     let clearedLines = false;
     for (let x = 0; x < COLS; x++) {
@@ -109,13 +111,4 @@ export class Board {
     return clearedLines;
   }
 
-  clean() {
-    this._matrix = Array(ROWS)
-      .fill(null)
-      .map(() =>
-        Array(COLS)
-          .fill(null)
-          .map(() => Array(COLS).fill(null)),
-      );
-  }
 }
