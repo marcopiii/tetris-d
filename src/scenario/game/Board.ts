@@ -110,5 +110,4 @@ export class Board {
     }
     return clearedLines;
   }
-
 }
