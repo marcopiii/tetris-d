@@ -120,10 +120,6 @@ export class ControlsMenu extends Menu<{
         action: () => {},
       },
       {
-        name: 'reset',
-        action: () => {},
-      },
-      {
         name: 'back',
         action: onBack,
         terminal: true,
