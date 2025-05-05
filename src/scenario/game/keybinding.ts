@@ -1,6 +1,7 @@
 import { Button as GamepadButton } from '../../gamepad';
 
-export type Keybindings = Record<SemanticButtons, GamepadButton>;
+export type ControllerKeybindings = Record<SemanticButtons, GamepadButton>;
+export type KeyboardKeybindings = Record<SemanticButtons, KeyboardEvent['code']>;
 
 type SemanticButtons =
   | 'pause'
@@ -18,7 +19,7 @@ type SemanticButtons =
   | 'hardDrop'
   | 'fastDrop';
 
-export const defaultKeybindings: Keybindings = {
+export const defaultControllerKeybindings: ControllerKeybindings = {
   pause: 'start',
   shiftL: 'padL',
   shiftR: 'padR',
@@ -34,3 +35,20 @@ export const defaultKeybindings: Keybindings = {
   hardDrop: 'A',
   fastDrop: 'A',
 };
+
+export const defaultKeyboardKeybindings: KeyboardKeybindings = {
+  pause: 'Enter',
+  shiftL: 'KeyA',
+  shiftR: 'KeyD',
+  shiftF: 'KeyS',
+  shiftB: 'KeyW',
+  rotateL: 'KeyQ',
+  rotateR: 'KeyE',
+  hold: 'KeyX',
+  cameraL: 'ArrowLeft',
+  cameraR: 'ArrowRight',
+  cutL: 'ArrowDown',
+  cutR: 'ArrowUp',
+  hardDrop: 'Space',
+  fastDrop: 'Space',
+}
