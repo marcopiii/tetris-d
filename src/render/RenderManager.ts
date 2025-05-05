@@ -25,7 +25,7 @@ export class RenderManager {
     this._tweenGroup = new TWEENGroup();
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(container.clientWidth, container.clientHeight);
 
     container.appendChild(renderer.domElement);
