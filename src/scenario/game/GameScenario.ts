@@ -1,11 +1,11 @@
 import { Button as GamepadButton, Event as GamepadEvent } from '../../gamepad';
 import { KeyboardEvent as KeyboardEventType } from '../../keyboard';
 import {
-  CameraCommand,
-  ClockCommand,
-  CutCommand,
-  GameplayCommand,
-} from './commands';
+  CameraAction,
+  ClockAction,
+  CutAction,
+  GameplayAction,
+} from './actions';
 import {
   defaultControllerKeybindings,
   ControllerKeybindings,
@@ -17,10 +17,10 @@ export abstract class GameScenario {
   private controllerKeybindings: ControllerKeybindings;
   private keyboardKeybindings: KeyboardKeybindings;
 
-  protected abstract onClockCmd: (command: ClockCommand) => void;
-  protected abstract onGameplayCmd: (command: GameplayCommand) => void;
-  protected abstract onCameraCmd: (command: CameraCommand) => void;
-  protected abstract onCutCmd: (command: CutCommand) => void;
+  protected abstract onClockCmd: (command: ClockAction) => void;
+  protected abstract onGameplayCmd: (command: GameplayAction) => void;
+  protected abstract onCameraCmd: (command: CameraAction) => void;
+  protected abstract onCutCmd: (command: CutAction) => void;
 
   protected constructor() {
     this.controllerKeybindings = this.readControllerKeybindings();

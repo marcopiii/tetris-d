@@ -9,11 +9,11 @@ import { PvEScene } from './PvEScene';
 import { KeyboardManager } from '../../keyboard';
 import { GameScenario } from './GameScenario';
 import {
-  CameraCommand,
-  ClockCommand,
-  CutCommand,
-  GameplayCommand,
-} from './commands';
+  CameraAction,
+  ClockAction,
+  CutAction,
+  GameplayAction,
+} from './actions';
 
 export class PvEScenario extends GameScenario {
   private readonly _game: Game;
@@ -70,7 +70,7 @@ export class PvEScenario extends GameScenario {
     this._clock.level = this._progress.level;
   };
 
-  protected onGameplayCmd = (command: GameplayCommand) => {
+  protected onGameplayCmd = (command: GameplayAction) => {
     if (!this._clock.isRunning) return;
     const sceneNeedsUpdate = this._game.tryMove(command, this._cameraManager);
     if (sceneNeedsUpdate)
@@ -81,7 +81,7 @@ export class PvEScenario extends GameScenario {
       );
   };
 
-  protected onCameraCmd = (command: CameraCommand) => {
+  protected onCameraCmd = (command: CameraAction) => {
     if (command === 'moveL')
       this._cameraManager.move('left', this._game.piece.plane);
     else if (command === 'moveR')
@@ -90,7 +90,7 @@ export class PvEScenario extends GameScenario {
     this._sceneManager.update(this._game, this._progress, this._cameraManager);
   };
 
-  protected onCutCmd = (command: CutCommand) => {
+  protected onCutCmd = (command: CutAction) => {
     this._cameraManager.cut(
       {
         left:
@@ -111,7 +111,7 @@ export class PvEScenario extends GameScenario {
     this._sceneManager.update(this._game, this._progress, this._cameraManager);
   };
 
-  protected onClockCmd = (command: ClockCommand) => {
+  protected onClockCmd = (command: ClockAction) => {
     if (command === 'toggle') this._clock.toggle();
     if (command === 'startFastDrop') this._clock.fastDrop = true;
     if (command === 'endFastDrop') this._clock.fastDrop = false;

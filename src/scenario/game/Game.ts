@@ -6,7 +6,7 @@ import { Board } from './Board';
 import { Piece } from './Piece';
 import { COLS, ROWS } from '../../params';
 import { Hold } from './Hold';
-import { GameplayCommand } from './commands';
+import { GameplayAction } from './actions';
 import { LineCoord } from './types';
 
 const tetrimino_move_fx = require('../../audio/tetrimino_move.mp3');
@@ -91,7 +91,7 @@ export class Game {
   /**
    * @returns {boolean} - Whether the move had success
    */
-  tryMove(type: GameplayCommand, camera: GameCamera): boolean {
+  tryMove(type: GameplayAction, camera: GameCamera): boolean {
     const isInverted =
       (this._piece.plane === 'x' &&
         camera.relativeDirection.z === 'negative') ||
