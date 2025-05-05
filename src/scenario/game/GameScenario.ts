@@ -1,4 +1,12 @@
 import { Button as GamepadButton, Event as GamepadEvent } from '../../gamepad';
+import {
+  ControllerKeybindings,
+  KeyboardKeybindings,
+} from '../../keybindings/keybinding';
+import {
+  readControllerKeybindings,
+  readKeyboardKeybindings,
+} from '../../keybindings/utils';
 import { KeyboardEvent as KeyboardEventType } from '../../keyboard';
 import {
   CameraAction,
@@ -6,12 +14,6 @@ import {
   CutAction,
   GameplayAction,
 } from './actions';
-import {
-  defaultControllerKeybindings,
-  ControllerKeybindings,
-  KeyboardKeybindings,
-  defaultKeyboardKeybindings,
-} from './keybinding';
 
 export abstract class GameScenario {
   private controllerKeybindings: ControllerKeybindings;
@@ -23,46 +25,8 @@ export abstract class GameScenario {
   protected abstract onCutCmd: (command: CutAction) => void;
 
   protected constructor() {
-    this.controllerKeybindings = this.readControllerKeybindings();
-    this.keyboardKeybindings = this.readKeyboardKeybindings();
-  }
-
-  private readControllerKeybindings(): ControllerKeybindings {
-    const storedControllerKeybindings = window.localStorage.getItem(
-      'controller-keybindings',
-    );
-    if (!storedControllerKeybindings) {
-      window.localStorage.setItem(
-        'controller-keybindings',
-        JSON.stringify(defaultControllerKeybindings),
-      );
-      return defaultControllerKeybindings;
-    }
-    try {
-      return JSON.parse(storedControllerKeybindings);
-    } catch (error) {
-      console.error('Error parsing controller config:', error);
-      return defaultControllerKeybindings;
-    }
-  }
-
-  private readKeyboardKeybindings(): KeyboardKeybindings {
-    const storedKeyboardKeybindings = window.localStorage.getItem(
-      'keyboard-keybindings',
-    );
-    if (!storedKeyboardKeybindings) {
-      window.localStorage.setItem(
-        'keyboard-keybindings',
-        JSON.stringify(defaultKeyboardKeybindings),
-      );
-      return defaultKeyboardKeybindings;
-    }
-    try {
-      return JSON.parse(storedKeyboardKeybindings);
-    } catch (error) {
-      console.error('Error parsing keyboard config:', error);
-      return defaultKeyboardKeybindings;
-    }
+    this.controllerKeybindings = readControllerKeybindings();
+    this.keyboardKeybindings = readKeyboardKeybindings();
   }
 
   protected keyboardHandler = (
@@ -85,7 +49,7 @@ export abstract class GameScenario {
       this.onGameplayCmd('rotateR');
     if (btn === this.keyboardKeybindings.hold && event === 'press')
       this.onGameplayCmd('hold');
-    if (btn === this.keyboardKeybindings.hardDrop && event === 'release')
+    if (btn === this.keyboardKeybindings.drop && event === 'release')
       this.onGameplayCmd('hardDrop');
     // todo(marco): fix fast drop
     // if (btn === this.keyboardKeybindings.fastDrop) {
@@ -123,9 +87,9 @@ export abstract class GameScenario {
       this.onGameplayCmd('rotateR');
     if (btn === this.controllerKeybindings.hold && event === 'press')
       this.onGameplayCmd('hold');
-    if (btn === this.controllerKeybindings.hardDrop && event === 'lift')
+    if (btn === this.controllerKeybindings.drop && event === 'lift')
       this.onGameplayCmd('hardDrop');
-    if (btn === this.controllerKeybindings.fastDrop) {
+    if (btn === this.controllerKeybindings.drop) {
       if (event === 'hold') this.onClockCmd('startFastDrop');
       if (event === 'release') this.onClockCmd('endFastDrop');
     }

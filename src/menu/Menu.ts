@@ -5,6 +5,7 @@ const menu_nav_ko = require('../audio/menu_nav_ko.mp3');
 
 type MenuItem = {
   name: string;
+  accessory?: string;
   action: () => void;
 };
 

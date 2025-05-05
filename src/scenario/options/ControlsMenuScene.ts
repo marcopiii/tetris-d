@@ -1,0 +1,54 @@
+import * as THREE from 'three';
+import { ControlsMenu } from './ControlsMenu';
+import { VOXEL_SIZE } from '../../params';
+import { createWord as _createWord } from '../../scene/createWord';
+import { sizeOf } from '../../scene/utils';
+import { alphabet } from '../../scene/font';
+
+const createWord = _createWord(alphabet);
+
+export class ControlsMenuScene {
+  private readonly _scene: THREE.Scene;
+
+  static readonly center = new THREE.Vector3(-20, 100, 20);
+
+  constructor(scene: THREE.Scene) {
+    this._scene = scene;
+    this._scene.background = new THREE.Color('#596067');
+    this._scene.clear();
+  }
+
+  update(menu: ControlsMenu) {
+    this._scene.clear();
+
+    const group = new THREE.Group();
+
+    const title = createWord('controls', 'main');
+    title.position.add({
+      x: -sizeOf(title).x / 2,
+      y: 30 * VOXEL_SIZE.main,
+      z: 0,
+    });
+    group.add(title);
+
+    menu.options.forEach((option, i) => {
+      const word = createWord(
+        option.label,
+        option.selected ? 'primary' : 'secondary',
+      );
+      word.scale.multiplyScalar(0.75);
+      const size = sizeOf(word);
+      word.position.add({
+        x: -(size.x / 2),
+        y: 4 + size.y / 2 - 9 * VOXEL_SIZE.secondary * i,
+        z: option.selected ? 3 * VOXEL_SIZE.secondary : 0,
+      });
+      group.add(word);
+    });
+
+    group.position.add(ControlsMenuScene.center);
+    group.rotateY(THREE.MathUtils.degToRad(180));
+
+    this._scene.add(group);
+  }
+}

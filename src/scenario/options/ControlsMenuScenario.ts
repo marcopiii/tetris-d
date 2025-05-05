@@ -6,22 +6,22 @@ import {
   GamepadManager,
 } from '../../gamepad';
 import { CameraCommand } from './commands';
-import { MainMenu } from './MainMenu';
-import { MainMenuCamera } from './MainMenuCamera';
-import { MainMenuScene } from './MainMenuScene';
 import {
   KeyboardManager,
   type KeyboardEvent as KeyboardEventType,
 } from '../../keyboard';
+import { ControlsMenu } from './ControlsMenu';
+import { ControlsMenuCamera } from './ControlsMenuCamera';
+import { ControlsMenuScene } from './ControlsMenuScene';
 
-export class MainMenuScenario {
-  private readonly _sceneManager: MainMenuScene;
-  private readonly _cameraManager: MainMenuCamera;
+export class ControlsMenuScenario {
+  private readonly _sceneManager: ControlsMenuScene;
+  private readonly _cameraManager: ControlsMenuCamera;
 
   private readonly _keyboard: KeyboardManager;
   private readonly _gamepad: GamepadManager;
 
-  private readonly _menu: MainMenu;
+  private readonly _menu: ControlsMenu;
 
   constructor(
     scene: THREE.Scene,
@@ -29,10 +29,10 @@ export class MainMenuScenario {
     tween: TWEENGroup,
     keyboard: KeyboardManager,
     gamepad: GamepadManager,
-    scenarioMutation: { onPvE: () => void, onCommands: () => void },
+    scenarioMutation: { onBack: () => void },
   ) {
-    this._sceneManager = new MainMenuScene(scene);
-    this._cameraManager = new MainMenuCamera(camera, tween);
+    this._sceneManager = new ControlsMenuScene(scene);
+    this._cameraManager = new ControlsMenuCamera(camera, tween);
 
     this._keyboard = keyboard;
     this._keyboard.handler = this.keyboardHandler;
@@ -46,13 +46,13 @@ export class MainMenuScenario {
         'https://github.com/marcopiii/tetris-d?tab=readme-ov-file#how-to-play';
     };
 
-    this._menu = new MainMenu(scenarioMutation.onPvE, scenarioMutation.onCommands, onAbout);
+    this._menu = new ControlsMenu(scenarioMutation.onBack);
     this._sceneManager.update(this._menu);
   }
 
   protected onCameraCmd = (command: CameraCommand) => {
-    if (command === 'moveL') this._cameraManager.move('left');
-    if (command === 'moveR') this._cameraManager.move('right');
+    if (command === 'controller') this._cameraManager.move('controller');
+    if (command === 'keyboard') this._cameraManager.move('keyboard');
   };
 
   private menuCommandHandler = (command: 'up' | 'down' | 'confirm') => {
@@ -73,8 +73,8 @@ export class MainMenuScenario {
       if (btn === 'ArrowDown') this.menuCommandHandler('down');
       if (btn === 'ArrowUp') this.menuCommandHandler('up');
       if (btn === 'Enter') this.menuCommandHandler('confirm');
-      if (btn === 'ArrowLeft') this.onCameraCmd('moveL');
-      if (btn === 'ArrowRight') this.onCameraCmd('moveR');
+      if (btn === 'ArrowLeft') this.onCameraCmd('controller');
+      if (btn === 'ArrowRight') this.onCameraCmd('keyboard');
     }
   };
 
@@ -83,8 +83,8 @@ export class MainMenuScenario {
       if (btn === 'padD') this.menuCommandHandler('down');
       if (btn === 'padU') this.menuCommandHandler('up');
       if (btn === 'A') this.menuCommandHandler('confirm');
-      if (btn === 'LT') this.onCameraCmd('moveL');
-      if (btn === 'RT') this.onCameraCmd('moveR');
+      if (btn === 'LT') this.onCameraCmd('controller');
+      if (btn === 'RT') this.onCameraCmd('keyboard');
     }
   };
 }
