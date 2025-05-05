@@ -4,7 +4,7 @@ import { type Font } from './font';
  * @see https://www.dafont.com/minecraft-standard.font
  */
 export const alphabet: Font = {
-  " ": [
+  ' ': [
     [0, 0, 0],
     [0, 0, 0],
     [0, 0, 0],
@@ -12,7 +12,7 @@ export const alphabet: Font = {
     [0, 0, 0],
     [0, 0, 0],
     [0, 0, 0],
-    [0, 0, 0]
+    [0, 0, 0],
   ],
   1: [
     [0, 0, 1, 0, 0],

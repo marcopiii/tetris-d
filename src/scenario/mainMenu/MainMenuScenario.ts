@@ -29,7 +29,7 @@ export class MainMenuScenario {
     tween: TWEENGroup,
     keyboard: KeyboardManager,
     gamepad: GamepadManager,
-    scenarioMutation: { onPvE: () => void, onCommands: () => void },
+    scenarioMutation: { onPvE: () => void; onCommands: () => void },
   ) {
     this._sceneManager = new MainMenuScene(scene);
     this._cameraManager = new MainMenuCamera(camera, tween);
@@ -46,7 +46,11 @@ export class MainMenuScenario {
         'https://github.com/marcopiii/tetris-d?tab=readme-ov-file#how-to-play';
     };
 
-    this._menu = new MainMenu(scenarioMutation.onPvE, scenarioMutation.onCommands, onAbout);
+    this._menu = new MainMenu(
+      scenarioMutation.onPvE,
+      scenarioMutation.onCommands,
+      onAbout,
+    );
     this._sceneManager.update(this._menu);
   }
 
