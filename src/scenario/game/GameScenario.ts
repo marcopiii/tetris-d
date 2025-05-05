@@ -28,7 +28,9 @@ export abstract class GameScenario {
   }
 
   private readControllerKeybindings(): ControllerKeybindings {
-    const storedControllerKeybindings = window.localStorage.getItem('controller-keybindings');
+    const storedControllerKeybindings = window.localStorage.getItem(
+      'controller-keybindings',
+    );
     if (!storedControllerKeybindings) {
       window.localStorage.setItem(
         'controller-keybindings',
@@ -45,7 +47,9 @@ export abstract class GameScenario {
   }
 
   private readKeyboardKeybindings(): KeyboardKeybindings {
-    const storedKeyboardKeybindings = window.localStorage.getItem('keyboard-keybindings');
+    const storedKeyboardKeybindings = window.localStorage.getItem(
+      'keyboard-keybindings',
+    );
     if (!storedKeyboardKeybindings) {
       window.localStorage.setItem(
         'keyboard-keybindings',
@@ -60,7 +64,6 @@ export abstract class GameScenario {
       return defaultKeyboardKeybindings;
     }
   }
-
 
   protected keyboardHandler = (
     event: KeyboardEventType,
