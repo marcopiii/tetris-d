@@ -41,6 +41,21 @@ export class ControlsMenuScene {
       title.position.multiply({ x: -1, y: 1, z: 1 });
     group.add(title);
 
+    const binding = createWord(
+      menu.editing === 'gamepad' ? 'gamepad' : 'keyboard',
+      'main',
+      menu.editing === 'gamepad' ? 'left' : 'right',
+    );
+    binding.position.add({
+      x: 6,
+      y: 30 * VOXEL_SIZE.main,
+      z: 1,
+    });
+    binding.rotateY(THREE.MathUtils.degToRad(-90));
+    if (menu.editing === 'keyboard')
+      binding.position.multiply({ x: -1, y: 1, z: 1 });
+    group.add(binding);
+
     menu.options.forEach((option, i) => {
       const action = createWord(
         option.label,
