@@ -2,7 +2,7 @@ import { GamepadManager } from './gamepad';
 import { KeyboardManager } from './keyboard';
 import { RenderManager } from './render';
 import { MainMenuScenario, PvEScenario } from './scenario';
-import { ControlsMenuScenario } from './scenario/options';
+import { ControlsMenuScenario } from './scenario/controls';
 
 type ScenarioState =
   | {
