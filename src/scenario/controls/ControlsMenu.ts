@@ -135,7 +135,11 @@ export class ControlsMenu extends Menu<{
     this.keyboardKeybindings = readKeyboardKeybindings();
   }
 
-  editing(binding: 'gamepad' | 'keyboard') {
+  set editing(binding: 'gamepad' | 'keyboard') {
     this.binding = binding;
+  }
+
+  get editing() {
+    return this.binding;
   }
 }
