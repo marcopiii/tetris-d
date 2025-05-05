@@ -1,8 +1,11 @@
 import { GamepadManager } from './gamepad';
 import { KeyboardManager } from './keyboard';
 import { RenderManager } from './render';
-import { MainMenuScenario, PvEScenario } from './scenario';
-import { ControlsMenuScenario } from './scenario/controls';
+import {
+  MainMenuScenario,
+  PvEScenario,
+  ControlsMenuScenario,
+} from './scenario';
 
 type ScenarioState =
   | {
@@ -80,7 +83,7 @@ export class App {
         },
       ),
     };
-  }
+  };
 
   private animate = () => {
     requestAnimationFrame(this.animate);
