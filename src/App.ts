@@ -1,7 +1,11 @@
 import { GamepadManager } from './gamepad';
 import { KeyboardManager } from './keyboard';
 import { RenderManager } from './render';
-import { MainMenuScenario, PvEScenario } from './scenario';
+import {
+  MainMenuScenario,
+  PvEScenario,
+  ControlsMenuScenario,
+} from './scenario';
 
 type ScenarioState =
   | {
@@ -11,6 +15,10 @@ type ScenarioState =
   | {
       scenario: 'pve-game';
       state: PvEScenario;
+    }
+  | {
+      scenario: 'commands-menu';
+      state: ControlsMenuScenario;
     };
 
 export class App {
@@ -27,11 +35,11 @@ export class App {
     this._keyboardManager = new KeyboardManager();
     this._gamepadP1 = new GamepadManager(0);
 
-    this.mainMenu();
+    this.goToMainMenu();
     this.animate();
   }
 
-  private mainMenu = () => {
+  private goToMainMenu = () => {
     this._scenario = {
       scenario: 'main-menu',
       state: new MainMenuScenario(
@@ -42,6 +50,7 @@ export class App {
         this._gamepadP1,
         {
           onPvE: this.startPvE,
+          onCommands: this.goToCommandsMenu,
         },
       ),
     };
@@ -56,6 +65,22 @@ export class App {
         this._renderManager.tween,
         this._keyboardManager,
         this._gamepadP1,
+      ),
+    };
+  };
+
+  private goToCommandsMenu = () => {
+    this._scenario = {
+      scenario: 'commands-menu',
+      state: new ControlsMenuScenario(
+        this._renderManager.scene,
+        this._renderManager.camera,
+        this._renderManager.tween,
+        this._keyboardManager,
+        this._gamepadP1,
+        {
+          onBack: this.goToMainMenu,
+        },
       ),
     };
   };

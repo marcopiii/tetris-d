@@ -3,16 +3,18 @@ import { play } from '../utils';
 const menu_nav_ok = require('../audio/menu_nav_ok.mp3');
 const menu_nav_ko = require('../audio/menu_nav_ko.mp3');
 
-type MenuItem = {
+type MenuItem<T = never> = {
   name: string;
+  accessory?: T;
   action: () => void;
+  terminal?: boolean;
 };
 
-export class Menu {
-  private _items: MenuItem[] = [];
+export class Menu<T = never> {
+  private _items: MenuItem<T>[] = [];
   private _selectedIndex: number = 0;
 
-  constructor(items: MenuItem[]) {
+  constructor(items: MenuItem<T>[]) {
     this._items = items;
   }
 
@@ -29,13 +31,16 @@ export class Menu {
     bounded ? play(menu_nav_ko, 0.5) : play(menu_nav_ok, 0.5);
   }
 
-  select(): void {
-    this._items[this._selectedIndex]?.action();
+  select(): boolean {
+    const op = this._items[this._selectedIndex];
+    op?.action();
+    return op?.terminal ?? false;
   }
 
   get options() {
     return this._items.map((o, i) => ({
       label: o.name,
+      accessory: o.accessory,
       selected: i === this._selectedIndex,
     }));
   }

@@ -1,70 +1,109 @@
 import { Button as GamepadButton, Event as GamepadEvent } from '../../gamepad';
+import {
+  ControllerKeybindings,
+  KeyboardKeybindings,
+} from '../../keybindings/keybinding';
+import {
+  readControllerKeybindings,
+  readKeyboardKeybindings,
+} from '../../keybindings/utils';
 import { KeyboardEvent as KeyboardEventType } from '../../keyboard';
 import {
-  CameraCommand,
-  ClockCommand,
-  CutCommand,
-  GameplayCommand,
-} from './commands';
+  CameraAction,
+  ClockAction,
+  CutAction,
+  GameplayAction,
+} from './actions';
 
 export abstract class GameScenario {
-  protected abstract onClockCmd: (command: ClockCommand) => void;
-  protected abstract onGameplayCmd: (command: GameplayCommand) => void;
-  protected abstract onCameraCmd: (command: CameraCommand) => void;
-  protected abstract onCutCmd: (command: CutCommand) => void;
+  private controllerKeybindings: ControllerKeybindings;
+  private keyboardKeybindings: KeyboardKeybindings;
+
+  protected abstract onClockCmd: (command: ClockAction) => void;
+  protected abstract onGameplayCmd: (command: GameplayAction) => void;
+  protected abstract onCameraCmd: (command: CameraAction) => void;
+  protected abstract onCutCmd: (command: CutAction) => void;
+
+  protected constructor() {
+    this.controllerKeybindings = readControllerKeybindings();
+    this.keyboardKeybindings = readKeyboardKeybindings();
+  }
 
   protected keyboardHandler = (
     event: KeyboardEventType,
     btn: KeyboardEvent['code'],
   ) => {
-    if (event === 'press') {
-      if (btn === 'Enter') this.onClockCmd('toggle');
-      if (btn === 'KeyA') this.onGameplayCmd('shiftL');
-      if (btn === 'KeyD') this.onGameplayCmd('shiftR');
-      if (btn === 'KeyS') this.onGameplayCmd('shiftF');
-      if (btn === 'KeyW') this.onGameplayCmd('shiftB');
-      if (btn === 'KeyQ') this.onGameplayCmd('rotateL');
-      if (btn === 'KeyE') this.onGameplayCmd('rotateR');
-      if (btn === 'Space') this.onGameplayCmd('hardDrop');
-      if (btn === 'Tab') this.onGameplayCmd('hold');
-      if (btn === 'ArrowLeft') this.onCameraCmd('moveL');
-      if (btn === 'ArrowRight') this.onCameraCmd('moveR');
-      if (btn === 'ArrowDown') this.onCutCmd('cutLeft');
-      if (btn === 'ArrowUp') this.onCutCmd('cutRight');
+    if (btn === this.keyboardKeybindings.pause && event === 'press')
+      this.onClockCmd('toggle');
+    if (btn === this.keyboardKeybindings.shiftL && event === 'press')
+      this.onGameplayCmd('shiftL');
+    if (btn === this.keyboardKeybindings.shiftR && event === 'press')
+      this.onGameplayCmd('shiftR');
+    if (btn === this.keyboardKeybindings.shiftF && event === 'press')
+      this.onGameplayCmd('shiftF');
+    if (btn === this.keyboardKeybindings.shiftB && event === 'press')
+      this.onGameplayCmd('shiftB');
+    if (btn === this.keyboardKeybindings.rotateL && event === 'press')
+      this.onGameplayCmd('rotateL');
+    if (btn === this.keyboardKeybindings.rotateR && event === 'press')
+      this.onGameplayCmd('rotateR');
+    if (btn === this.keyboardKeybindings.hold && event === 'press')
+      this.onGameplayCmd('hold');
+    if (btn === this.keyboardKeybindings.drop && event === 'release')
+      this.onGameplayCmd('hardDrop');
+    // todo(marco): fix fast drop
+    // if (btn === this.keyboardKeybindings.fastDrop) {
+    //   if (event === 'hold') this.onClockCmd('startFastDrop');
+    //   if (event === 'release') this.onClockCmd('endFastDrop');
+    // }
+    if (btn === this.keyboardKeybindings.cameraL && event === 'press')
+      this.onCameraCmd('moveL');
+    if (btn === this.keyboardKeybindings.cameraR && event === 'press')
+      this.onCameraCmd('moveR');
+    if (btn === this.keyboardKeybindings.cutL) {
+      if (event === 'press') this.onCutCmd('cutLeft');
+      if (event === 'release') this.onCutCmd('uncutLeft');
     }
-    if (event === 'release') {
-      if (btn === 'ArrowDown') this.onCutCmd('uncutLeft');
-      if (btn === 'ArrowUp') this.onCutCmd('uncutRight');
+    if (btn === this.keyboardKeybindings.cutR) {
+      if (event === 'press') this.onCutCmd('cutRight');
+      if (event === 'release') this.onCutCmd('uncutRight');
     }
   };
 
-  protected controllerHandler = (event: GamepadEvent, btn: GamepadButton) => {
-    if (event === 'press') {
-      if (btn === 'start') this.onClockCmd('toggle');
-      if (btn === 'padL') this.onGameplayCmd('shiftL');
-      if (btn === 'padR') this.onGameplayCmd('shiftR');
-      if (btn === 'padD') this.onGameplayCmd('shiftF');
-      if (btn === 'padU') this.onGameplayCmd('shiftB');
-      if (btn === 'X') this.onGameplayCmd('rotateL');
-      if (btn === 'B') this.onGameplayCmd('rotateR');
-      if (btn === 'Y') this.onGameplayCmd('hold');
-      if (btn === 'LT') this.onCameraCmd('moveL');
-      if (btn === 'RT') this.onCameraCmd('moveR');
-      if (btn === 'LB') this.onCutCmd('cutLeft');
-      if (btn === 'RB') this.onCutCmd('cutRight');
+  protected async controllerHandler(event: GamepadEvent, btn: GamepadButton) {
+    if (btn === this.controllerKeybindings.pause && event === 'press')
+      this.onClockCmd('toggle');
+    if (btn === this.controllerKeybindings.shiftL && event === 'press')
+      this.onGameplayCmd('shiftL');
+    if (btn === this.controllerKeybindings.shiftR && event === 'press')
+      this.onGameplayCmd('shiftR');
+    if (btn === this.controllerKeybindings.shiftF && event === 'press')
+      this.onGameplayCmd('shiftF');
+    if (btn === this.controllerKeybindings.shiftB && event === 'press')
+      this.onGameplayCmd('shiftB');
+    if (btn === this.controllerKeybindings.rotateL && event === 'press')
+      this.onGameplayCmd('rotateL');
+    if (btn === this.controllerKeybindings.rotateR && event === 'press')
+      this.onGameplayCmd('rotateR');
+    if (btn === this.controllerKeybindings.hold && event === 'press')
+      this.onGameplayCmd('hold');
+    if (btn === this.controllerKeybindings.drop && event === 'lift')
+      this.onGameplayCmd('hardDrop');
+    if (btn === this.controllerKeybindings.drop) {
+      if (event === 'hold') this.onClockCmd('startFastDrop');
+      if (event === 'release') this.onClockCmd('endFastDrop');
     }
-    if (event === 'lift') {
-      if (btn === 'A') this.onGameplayCmd('hardDrop');
+    if (btn === this.controllerKeybindings.cameraL && event === 'press')
+      this.onCameraCmd('moveL');
+    if (btn === this.controllerKeybindings.cameraR && event === 'press')
+      this.onCameraCmd('moveR');
+    if (btn === this.controllerKeybindings.cutL) {
+      if (event === 'press') this.onCutCmd('cutLeft');
+      if (event === 'release') this.onCutCmd('uncutLeft');
     }
-    if (['release', 'lift'].includes(event)) {
-      if (btn === 'LB') this.onCutCmd('uncutLeft');
-      if (btn === 'RB') this.onCutCmd('uncutRight');
+    if (btn === this.controllerKeybindings.cutR) {
+      if (event === 'press') this.onCutCmd('cutRight');
+      if (event === 'release') this.onCutCmd('uncutRight');
     }
-    if (event === 'hold') {
-      if (btn === 'A') this.onClockCmd('startFastDrop');
-    }
-    if (event === 'release') {
-      if (btn === 'A') this.onClockCmd('endFastDrop');
-    }
-  };
+  }
 }
