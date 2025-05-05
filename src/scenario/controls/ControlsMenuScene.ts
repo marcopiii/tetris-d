@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { buttonLocalization } from '../../gamepad';
 import { ControlsMenu } from './ControlsMenu';
 import { VOXEL_SIZE } from '../../params';
 import { createWord as _createWord } from '../../scene/createWord';
@@ -32,18 +33,35 @@ export class ControlsMenuScene {
     group.add(title);
 
     menu.options.forEach((option, i) => {
-      const word = createWord(
+      const action = createWord(
         option.label,
         option.selected ? 'primary' : 'secondary',
+        'right'
       );
-      word.scale.multiplyScalar(0.75);
-      const size = sizeOf(word);
-      word.position.add({
-        x: -(size.x / 2),
-        y: 4 + size.y / 2 - 9 * VOXEL_SIZE.secondary * i,
+      action.scale.multiplyScalar(0.75);
+      const actionSize = sizeOf(action);
+      action.position.add({
+        x: 5,
+        y: 4 + actionSize.y / 2 - 9 * VOXEL_SIZE.secondary * i,
         z: option.selected ? 3 * VOXEL_SIZE.secondary : 0,
       });
-      group.add(word);
+      action.rotateY(THREE.MathUtils.degToRad(180));
+      group.add(action);
+
+      if (!option.accessory) return;
+      const button = createWord(
+        buttonLocalization(option.accessory),
+        option.selected ? 'primary' : 'secondary',
+      );
+      button.scale.multiplyScalar(0.75);
+      const buttonSize = sizeOf(button);
+      button.position.add({
+        x: 6 + (option.selected ? 0 : 3 * VOXEL_SIZE.secondary),
+        y: 4 + buttonSize.y / 2 - 9 * VOXEL_SIZE.secondary * i,
+        z: 2,
+      });
+      button.rotateY(THREE.MathUtils.degToRad(-90));
+      group.add(button);
     });
 
     group.position.add(ControlsMenuScene.center);

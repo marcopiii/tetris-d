@@ -1,3 +1,4 @@
+import { Button } from '../../gamepad';
 import {
   ControllerKeybindings,
   KeyboardKeybindings,
@@ -8,7 +9,7 @@ import {
 } from '../../keybindings/utils';
 import { Menu } from '../../menu';
 
-export class ControlsMenu extends Menu {
+export class ControlsMenu extends Menu<Button> {
   private controllerKeybindings: ControllerKeybindings;
   private keyboardKeybindings: KeyboardKeybindings;
 
@@ -25,6 +26,11 @@ export class ControlsMenu extends Menu {
       {
         name: 'rotate left',
         accessory: controllerKeybindings.rotateL,
+        action: () => {},
+      },
+      {
+        name: 'drop',
+        accessory: controllerKeybindings.drop,
         action: () => {},
       },
       { name: 'hold', accessory: controllerKeybindings.hold, action: () => {} },
@@ -46,11 +52,6 @@ export class ControlsMenu extends Menu {
       {
         name: 'hide right side',
         accessory: controllerKeybindings.cutR,
-        action: () => {},
-      },
-      {
-        name: 'drop',
-        accessory: controllerKeybindings.drop,
         action: () => {},
       },
       {
