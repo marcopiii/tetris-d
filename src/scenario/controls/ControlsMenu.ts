@@ -19,6 +19,26 @@ export class ControlsMenu extends Menu<Button> {
 
     super([
       {
+        name: 'move piece left',
+        accessory: controllerKeybindings.shiftL,
+        action: () => {},
+      },
+      {
+        name: 'move piece right',
+        accessory: controllerKeybindings.shiftR,
+        action: () => {},
+      },
+      {
+        name: 'move piece forward',
+        accessory: controllerKeybindings.shiftF,
+        action: () => {},
+      },
+      {
+        name: 'move piece backward',
+        accessory: controllerKeybindings.shiftB,
+        action: () => {},
+      },
+      {
         name: 'rotate right',
         accessory: controllerKeybindings.rotateR,
         action: () => {},

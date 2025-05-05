@@ -24,12 +24,13 @@ export class ControlsMenuScene {
 
     const group = new THREE.Group();
 
-    const title = createWord('controls', 'main');
+    const title = createWord('controls', 'main', 'right');
     title.position.add({
-      x: -sizeOf(title).x / 2,
+      x: 5,
       y: 30 * VOXEL_SIZE.main,
       z: 0,
     });
+    title.rotateY(THREE.MathUtils.degToRad(-180));
     group.add(title);
 
     menu.options.forEach((option, i) => {
@@ -38,11 +39,11 @@ export class ControlsMenuScene {
         option.selected ? 'primary' : 'secondary',
         'right'
       );
-      action.scale.multiplyScalar(0.75);
+      action.scale.multiplyScalar(0.6);
       const actionSize = sizeOf(action);
       action.position.add({
         x: 5,
-        y: 4 + actionSize.y / 2 - 9 * VOXEL_SIZE.secondary * i,
+        y: 4 + actionSize.y / 2 - 7 * VOXEL_SIZE.secondary * i,
         z: option.selected ? 3 * VOXEL_SIZE.secondary : 0,
       });
       action.rotateY(THREE.MathUtils.degToRad(180));
@@ -53,12 +54,12 @@ export class ControlsMenuScene {
         buttonLocalization(option.accessory),
         option.selected ? 'primary' : 'secondary',
       );
-      button.scale.multiplyScalar(0.75);
+      button.scale.multiplyScalar(0.6);
       const buttonSize = sizeOf(button);
       button.position.add({
         x: 6 + (option.selected ? 0 : 3 * VOXEL_SIZE.secondary),
-        y: 4 + buttonSize.y / 2 - 9 * VOXEL_SIZE.secondary * i,
-        z: 2,
+        y: 4 + buttonSize.y / 2 - 7 * VOXEL_SIZE.secondary * i,
+        z: 1,
       });
       button.rotateY(THREE.MathUtils.degToRad(-90));
       group.add(button);
