@@ -9,9 +9,14 @@ import {
 } from '../../keybindings/utils';
 import { Menu } from '../../menu';
 
-export class ControlsMenu extends Menu<Button> {
+export class ControlsMenu extends Menu<{
+  gamepad: Button;
+  keyboard: KeyboardEvent['code'];
+}> {
   private controllerKeybindings: ControllerKeybindings;
   private keyboardKeybindings: KeyboardKeybindings;
+
+  private binding: 'gamepad' | 'keyboard' = 'gamepad';
 
   constructor(onBack: () => void) {
     const controllerKeybindings = readControllerKeybindings();
@@ -20,67 +25,117 @@ export class ControlsMenu extends Menu<Button> {
     super([
       {
         name: 'move piece left',
-        accessory: controllerKeybindings.shiftL,
+        accessory: {
+          gamepad: controllerKeybindings.shiftL,
+          keyboard: keyboardKeybindings.shiftL,
+        },
         action: () => {},
       },
       {
         name: 'move piece right',
-        accessory: controllerKeybindings.shiftR,
+        accessory: {
+          gamepad: controllerKeybindings.shiftR,
+          keyboard: keyboardKeybindings.shiftR,
+        },
         action: () => {},
       },
       {
         name: 'move piece forward',
-        accessory: controllerKeybindings.shiftF,
+        accessory: {
+          gamepad: controllerKeybindings.shiftF,
+          keyboard: keyboardKeybindings.shiftF,
+        },
         action: () => {},
       },
       {
         name: 'move piece backward',
-        accessory: controllerKeybindings.shiftB,
+        accessory: {
+          gamepad: controllerKeybindings.shiftB,
+          keyboard: keyboardKeybindings.shiftB,
+        },
         action: () => {},
       },
       {
         name: 'rotate right',
-        accessory: controllerKeybindings.rotateR,
+        accessory: {
+          gamepad: controllerKeybindings.rotateR,
+          keyboard: keyboardKeybindings.rotateR,
+        },
         action: () => {},
       },
       {
         name: 'rotate left',
-        accessory: controllerKeybindings.rotateL,
+        accessory: {
+          gamepad: controllerKeybindings.rotateL,
+          keyboard: keyboardKeybindings.rotateL,
+        },
         action: () => {},
       },
       {
         name: 'drop',
-        accessory: controllerKeybindings.drop,
+        accessory: {
+          gamepad: controllerKeybindings.drop,
+          keyboard: keyboardKeybindings.drop,
+        },
         action: () => {},
       },
-      { name: 'hold', accessory: controllerKeybindings.hold, action: () => {} },
+      {
+        name: 'hold',
+        accessory: {
+          gamepad: controllerKeybindings.hold,
+          keyboard: keyboardKeybindings.hold,
+        },
+        action: () => {},
+      },
       {
         name: 'move camera left',
-        accessory: controllerKeybindings.cameraL,
+        accessory: {
+          gamepad: controllerKeybindings.cameraL,
+          keyboard: keyboardKeybindings.cameraL,
+        },
         action: () => {},
       },
       {
         name: 'move camera right',
-        accessory: controllerKeybindings.cameraR,
+        accessory: {
+          gamepad: controllerKeybindings.cameraR,
+          keyboard: keyboardKeybindings.cameraR,
+        },
         action: () => {},
       },
       {
         name: 'hide left side',
-        accessory: controllerKeybindings.cutL,
+        accessory: {
+          gamepad: controllerKeybindings.cutL,
+          keyboard: keyboardKeybindings.cutL,
+        },
         action: () => {},
       },
       {
         name: 'hide right side',
-        accessory: controllerKeybindings.cutR,
+        accessory: {
+          gamepad: controllerKeybindings.cutR,
+          keyboard: keyboardKeybindings.cutR,
+        },
+        action: () => {},
+      },
+      {
+        name: 'reset',
         action: () => {},
       },
       {
         name: 'back',
         action: onBack,
+        terminal: true,
       },
     ]);
 
+    this.binding = 'gamepad';
     this.controllerKeybindings = readControllerKeybindings();
     this.keyboardKeybindings = readKeyboardKeybindings();
+  }
+
+  editing(binding: 'gamepad' | 'keyboard') {
+    this.binding = binding;
   }
 }

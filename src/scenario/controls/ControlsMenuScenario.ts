@@ -5,7 +5,6 @@ import {
   Event as GamepadEvent,
   GamepadManager,
 } from '../../gamepad';
-import { CameraCommand } from './commands';
 import {
   KeyboardManager,
   type KeyboardEvent as KeyboardEventType,
@@ -41,27 +40,27 @@ export class ControlsMenuScenario {
     this._gamepad.handler = this.controllerHandler;
     this._gamepad.active = true;
 
-    const onAbout = () => {
-      window.location.href =
-        'https://github.com/marcopiii/tetris-d?tab=readme-ov-file#how-to-play';
-    };
-
     this._menu = new ControlsMenu(scenarioMutation.onBack);
     this._sceneManager.update(this._menu);
   }
 
-  protected onCameraCmd = (command: CameraCommand) => {
-    if (command === 'controller') this._cameraManager.move('controller');
-    if (command === 'keyboard') this._cameraManager.move('keyboard');
-  };
-
-  private menuCommandHandler = (command: 'up' | 'down' | 'confirm') => {
+  private menuCommandHandler = (
+    command: 'up' | 'down' | 'confirm' | 'gamepad' | 'keyboard',
+  ) => {
     if (command === 'confirm') {
-      this._menu.select();
-      return;
+      const terminal = this._menu.select();
+      if (terminal) return;
     }
     if (command === 'up') this._menu.navigate('up');
     if (command === 'down') this._menu.navigate('down');
+    if (command === 'gamepad') {
+      this._menu.editing('gamepad');
+      this._cameraManager.move('gamepad');
+    }
+    if (command === 'keyboard') {
+      this._menu.editing('keyboard');
+      this._cameraManager.move('keyboard');
+    }
     this._sceneManager.update(this._menu);
   };
 
@@ -73,8 +72,8 @@ export class ControlsMenuScenario {
       if (btn === 'ArrowDown') this.menuCommandHandler('down');
       if (btn === 'ArrowUp') this.menuCommandHandler('up');
       if (btn === 'Enter') this.menuCommandHandler('confirm');
-      if (btn === 'ArrowLeft') this.onCameraCmd('controller');
-      if (btn === 'ArrowRight') this.onCameraCmd('keyboard');
+      if (btn === 'ArrowLeft') this.menuCommandHandler('gamepad');
+      if (btn === 'ArrowRight') this.menuCommandHandler('keyboard');
     }
   };
 
@@ -83,8 +82,8 @@ export class ControlsMenuScenario {
       if (btn === 'padD') this.menuCommandHandler('down');
       if (btn === 'padU') this.menuCommandHandler('up');
       if (btn === 'A') this.menuCommandHandler('confirm');
-      if (btn === 'LT') this.onCameraCmd('controller');
-      if (btn === 'RT') this.onCameraCmd('keyboard');
+      if (btn === 'LT') this.menuCommandHandler('gamepad');
+      if (btn === 'RT') this.menuCommandHandler('keyboard');
     }
   };
 }

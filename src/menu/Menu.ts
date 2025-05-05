@@ -7,6 +7,7 @@ type MenuItem<T = never> = {
   name: string;
   accessory?: T;
   action: () => void;
+  terminal?: boolean;
 };
 
 export class Menu<T = never> {
@@ -30,8 +31,10 @@ export class Menu<T = never> {
     bounded ? play(menu_nav_ko, 0.5) : play(menu_nav_ok, 0.5);
   }
 
-  select(): void {
-    this._items[this._selectedIndex]?.action();
+  select(): boolean {
+    const op = this._items[this._selectedIndex];
+    op?.action();
+    return op?.terminal ?? false;
   }
 
   get options() {

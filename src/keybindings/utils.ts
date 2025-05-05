@@ -42,3 +42,17 @@ export function readKeyboardKeybindings(): KeyboardKeybindings {
     return defaultKeyboardKeybindings;
   }
 }
+
+export function resetControllerKeybindings() {
+  window.localStorage.setItem(
+    'controller-keybindings',
+    JSON.stringify(defaultControllerKeybindings),
+  );
+}
+
+export function resetKeyboardKeybindings() {
+  window.localStorage.setItem(
+    'keyboard-keybindings',
+    JSON.stringify(defaultKeyboardKeybindings),
+  );
+}

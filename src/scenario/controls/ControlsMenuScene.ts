@@ -37,7 +37,7 @@ export class ControlsMenuScene {
       const action = createWord(
         option.label,
         option.selected ? 'primary' : 'secondary',
-        'right'
+        'right',
       );
       action.scale.multiplyScalar(0.6);
       const actionSize = sizeOf(action);
@@ -51,7 +51,7 @@ export class ControlsMenuScene {
 
       if (!option.accessory) return;
       const button = createWord(
-        buttonLocalization(option.accessory),
+        buttonLocalization(option.accessory.gamepad),
         option.selected ? 'primary' : 'secondary',
       );
       button.scale.multiplyScalar(0.6);

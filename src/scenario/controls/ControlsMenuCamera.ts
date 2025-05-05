@@ -2,7 +2,7 @@ import TWEEN, { Group as TWEENGroup } from '@tweenjs/tween.js';
 import * as THREE from 'three';
 import { ControlsMenuScene } from './ControlsMenuScene';
 
-export type ControlsMenuCameraPosition = 'controller' | 'keyboard';
+export type ControlsMenuCameraPosition = 'gamepad' | 'keyboard';
 
 export class ControlsMenuCamera {
   private readonly _camera: THREE.Camera;
@@ -13,7 +13,7 @@ export class ControlsMenuCamera {
     this._camera = camera;
     this._tweenGroup = tweenGroup;
 
-    this._position = 'controller';
+    this._position = 'gamepad';
     const initPosition = cameraSetup[this._position];
 
     new TWEEN.Tween(this._camera.position, this._tweenGroup)
@@ -25,7 +25,7 @@ export class ControlsMenuCamera {
       .start();
   }
 
-  move(position: 'controller' | 'keyboard') {
+  move(position: 'gamepad' | 'keyboard') {
     this._position = position;
     const target = cameraSetup[this._position];
     new TWEEN.Tween(this._camera.position, this._tweenGroup)
@@ -45,7 +45,7 @@ type CameraSetup = {
 
 const distance = new THREE.Vector3(10, 4, -10);
 const cameraSetup: Record<ControlsMenuCameraPosition, CameraSetup> = {
-  controller: {
+  gamepad: {
     position: ControlsMenuScene.center.clone().add(distance),
     lookAt: ControlsMenuScene.center,
   },
