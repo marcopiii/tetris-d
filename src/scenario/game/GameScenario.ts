@@ -29,7 +29,13 @@ export abstract class GameScenario {
 
   private readControllerKeybindings(): ControllerKeybindings {
     const storedControllerKeybindings = window.localStorage.getItem('controller-keybindings');
-    if (!storedControllerKeybindings) return defaultControllerKeybindings;
+    if (!storedControllerKeybindings) {
+      window.localStorage.setItem(
+        'controller-keybindings',
+        JSON.stringify(defaultControllerKeybindings),
+      );
+      return defaultControllerKeybindings;
+    }
     try {
       return JSON.parse(storedControllerKeybindings);
     } catch (error) {
@@ -40,7 +46,13 @@ export abstract class GameScenario {
 
   private readKeyboardKeybindings(): KeyboardKeybindings {
     const storedKeyboardKeybindings = window.localStorage.getItem('keyboard-keybindings');
-    if (!storedKeyboardKeybindings) return defaultKeyboardKeybindings;
+    if (!storedKeyboardKeybindings) {
+      window.localStorage.setItem(
+        'keyboard-keybindings',
+        JSON.stringify(defaultKeyboardKeybindings),
+      );
+      return defaultKeyboardKeybindings;
+    }
     try {
       return JSON.parse(storedKeyboardKeybindings);
     } catch (error) {
