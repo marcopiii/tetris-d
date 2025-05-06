@@ -74,3 +74,17 @@ export function updateKeyboardKeybindings(
     JSON.stringify(newKeybindings),
   );
 }
+
+export function resetGamepadKeybindings() {
+  window.localStorage.setItem(
+    'gamepad-keybindings',
+    JSON.stringify(defaultGamepadKeybindings),
+  );
+}
+
+export function resetKeyboardKeybindings() {
+  window.localStorage.setItem(
+    'keyboard-keybindings',
+    JSON.stringify(defaultKeyboardKeybindings),
+  );
+}

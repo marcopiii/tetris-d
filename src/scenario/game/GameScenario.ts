@@ -105,5 +105,5 @@ export abstract class GameScenario {
       if (event === 'press') this.onCutCmd('cutRight');
       if (event === 'release') this.onCutCmd('uncutRight');
     }
-  }
+  };
 }

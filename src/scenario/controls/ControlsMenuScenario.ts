@@ -6,7 +6,11 @@ import {
   GamepadManager,
 } from '../../gamepad';
 import { SemanticButton } from '../../keybindings/keybinding';
-import { updateGamepadKeybindings } from '../../keybindings/utils';
+import {
+  resetGamepadKeybindings,
+  resetKeyboardKeybindings,
+  updateGamepadKeybindings,
+} from '../../keybindings/utils';
 import {
   KeyboardManager,
   type KeyboardEvent as KeyboardEventType,
@@ -42,7 +46,7 @@ export class ControlsMenuScenario {
     this._gamepad.handler = this.gamepadHandler;
     this._gamepad.active = true;
 
-    this._menu = new ControlsMenu(scenarioMutation.onBack);
+    this._menu = new ControlsMenu(scenarioMutation.onBack, this.reset);
     this._sceneManager.update(this._menu);
   }
 
@@ -66,6 +70,24 @@ export class ControlsMenuScenario {
     this._sceneManager.update(this._menu);
   };
 
+  private remap = (action: SemanticButton, btn: GamepadButton) => {
+    updateGamepadKeybindings(action, btn);
+    this._menu.currentAction = undefined;
+    this._menu.refreshItems();
+    this._sceneManager.update(this._menu);
+  };
+
+  private reset = () => {
+    if (this._menu.currentController === 'gamepad') {
+      resetGamepadKeybindings();
+    } else {
+      resetKeyboardKeybindings();
+    }
+    this._menu.currentAction = undefined;
+    this._menu.refreshItems();
+    this._sceneManager.update(this._menu);
+  };
+
   private keyboardHandler = (
     event: KeyboardEventType,
     btn: KeyboardEvent['code'],
@@ -79,16 +101,12 @@ export class ControlsMenuScenario {
     }
   };
 
-  private remap(action: SemanticButton, btn: GamepadButton) {
-    updateGamepadKeybindings(action, btn);
-    this._menu.currentAction = undefined;
-    this._menu.refreshItems();
-    this._sceneManager.update(this._menu);
-  }
-
   private gamepadHandler = (event: GamepadEvent, btn: GamepadButton) => {
     if (event === 'press') {
-      if (this._menu.currentAction) {
+      if (
+        this._menu.currentController === 'gamepad' &&
+        this._menu.currentAction
+      ) {
         this.remap(this._menu.currentAction, btn);
         return;
       }

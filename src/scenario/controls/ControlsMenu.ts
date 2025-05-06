@@ -12,12 +12,14 @@ export class ControlsMenu extends Menu<{
   keyboard: KeyboardEvent['code'];
 }> {
   private readonly onBack: () => void;
+  private readonly onReset: () => void;
 
   private editingController: 'gamepad' | 'keyboard';
   private editingAction?: SemanticButton;
 
-  constructor(onBack: () => void) {
+  constructor(onBack: () => void, onReset: () => void) {
     super([]);
+    this.onReset = onReset;
     this.onBack = onBack;
     this.refreshItems();
     this.editingController = 'gamepad';
@@ -144,6 +146,10 @@ export class ControlsMenu extends Menu<{
           keyboard: keyboardKeybindings.pause,
         },
         action: () => {},
+      },
+      {
+        name: 'reset',
+        action: this.onReset,
       },
       {
         name: 'back',
