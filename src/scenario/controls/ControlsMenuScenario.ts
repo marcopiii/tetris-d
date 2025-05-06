@@ -5,6 +5,8 @@ import {
   Event as GamepadEvent,
   GamepadManager,
 } from '../../gamepad';
+import { SemanticButton } from '../../keybindings/keybinding';
+import { updateGamepadKeybindings } from '../../keybindings/utils';
 import {
   KeyboardManager,
   type KeyboardEvent as KeyboardEventType,
@@ -37,7 +39,7 @@ export class ControlsMenuScenario {
     this._keyboard.handler = this.keyboardHandler;
 
     this._gamepad = gamepad;
-    this._gamepad.handler = this.controllerHandler;
+    this._gamepad.handler = this.gamepadHandler;
     this._gamepad.active = true;
 
     this._menu = new ControlsMenu(scenarioMutation.onBack);
@@ -77,8 +79,19 @@ export class ControlsMenuScenario {
     }
   };
 
-  private controllerHandler = (event: GamepadEvent, btn: GamepadButton) => {
+  private remap(action: SemanticButton, btn: GamepadButton) {
+    updateGamepadKeybindings(action, btn);
+    this._menu.currentAction = undefined;
+    this._menu.refreshItems();
+    this._sceneManager.update(this._menu);
+  }
+
+  private gamepadHandler = (event: GamepadEvent, btn: GamepadButton) => {
     if (event === 'press') {
+      if (this._menu.currentAction) {
+        this.remap(this._menu.currentAction, btn);
+        return;
+      }
       if (btn === 'padD') this.menuCommandHandler('down');
       if (btn === 'padU') this.menuCommandHandler('up');
       if (btn === 'A') this.menuCommandHandler('confirm');

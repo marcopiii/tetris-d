@@ -1,11 +1,7 @@
 import { Button } from '../../gamepad';
+import { SemanticButton } from '../../keybindings/keybinding';
 import {
-  GamepadKeybindings,
-  KeyboardKeybindings,
-  SemanticButton,
-} from '../../keybindings/keybinding';
-import {
-  readControllerKeybindings,
+  readGamepadKeybindings,
   readKeyboardKeybindings,
 } from '../../keybindings/utils';
 import { Menu } from '../../menu';
@@ -15,17 +11,23 @@ export class ControlsMenu extends Menu<{
   gamepad: Button;
   keyboard: KeyboardEvent['code'];
 }> {
-  private gamepadKeybindings: GamepadKeybindings;
-  private keyboardKeybindings: KeyboardKeybindings;
+  private readonly onBack: () => void;
 
   private editingController: 'gamepad' | 'keyboard';
   private editingAction?: SemanticButton;
 
   constructor(onBack: () => void) {
-    const controllerKeybindings = readControllerKeybindings();
+    super([]);
+    this.onBack = onBack;
+    this.refreshItems();
+    this.editingController = 'gamepad';
+  }
+
+  refreshItems() {
+    const controllerKeybindings = readGamepadKeybindings();
     const keyboardKeybindings = readKeyboardKeybindings();
 
-    super([
+    this._items = [
       {
         name: 'move piece left',
         accessory: {
@@ -135,15 +137,20 @@ export class ControlsMenu extends Menu<{
         action: () => (this.currentAction = 'cutR'),
       },
       {
+        name: 'pause',
+        accessory: {
+          semanticButton: 'pause',
+          gamepad: controllerKeybindings.pause,
+          keyboard: keyboardKeybindings.pause,
+        },
+        action: () => {},
+      },
+      {
         name: 'back',
-        action: onBack,
+        action: this.onBack,
         terminal: true,
       },
-    ]);
-
-    this.editingController = 'gamepad';
-    this.gamepadKeybindings = readControllerKeybindings();
-    this.keyboardKeybindings = readKeyboardKeybindings();
+    ];
   }
 
   set currentController(controller: 'gamepad' | 'keyboard') {

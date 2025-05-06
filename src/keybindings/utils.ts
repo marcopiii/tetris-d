@@ -1,25 +1,27 @@
+import { Button as GamepadButton } from '../gamepad';
 import {
   GamepadKeybindings,
   defaultGamepadKeybindings,
   defaultKeyboardKeybindings,
   KeyboardKeybindings,
+  SemanticButton,
 } from './keybinding';
 
-export function readControllerKeybindings(): GamepadKeybindings {
-  const storedControllerKeybindings = window.localStorage.getItem(
-    'controller-keybindings',
+export function readGamepadKeybindings(): GamepadKeybindings {
+  const storedGamepadKeybindings = window.localStorage.getItem(
+    'gamepad-keybindings',
   );
-  if (!storedControllerKeybindings) {
+  if (!storedGamepadKeybindings) {
     window.localStorage.setItem(
-      'controller-keybindings',
+      'gamepad-keybindings',
       JSON.stringify(defaultGamepadKeybindings),
     );
     return defaultGamepadKeybindings;
   }
   try {
-    return JSON.parse(storedControllerKeybindings);
+    return JSON.parse(storedGamepadKeybindings);
   } catch (error) {
-    console.error('Error parsing controller config:', error);
+    console.error('Error parsing gampad config:', error);
     return defaultGamepadKeybindings;
   }
 }
@@ -43,16 +45,32 @@ export function readKeyboardKeybindings(): KeyboardKeybindings {
   }
 }
 
-export function resetControllerKeybindings() {
+export function updateGamepadKeybindings(
+  action: SemanticButton,
+  btn: GamepadButton,
+) {
+  const currentKeybindings = readGamepadKeybindings();
+  const newKeybindings = {
+    ...currentKeybindings,
+    [action]: btn,
+  };
   window.localStorage.setItem(
-    'controller-keybindings',
-    JSON.stringify(defaultGamepadKeybindings),
+    'gamepad-keybindings',
+    JSON.stringify(newKeybindings),
   );
 }
 
-export function resetKeyboardKeybindings() {
+export function updateKeyboardKeybindings(
+  action: SemanticButton,
+  key: KeyboardEvent['code'],
+) {
+  const currentKeybindings = readKeyboardKeybindings();
+  const newKeybindings = {
+    ...currentKeybindings,
+    [action]: key,
+  };
   window.localStorage.setItem(
     'keyboard-keybindings',
-    JSON.stringify(defaultKeyboardKeybindings),
+    JSON.stringify(newKeybindings),
   );
 }

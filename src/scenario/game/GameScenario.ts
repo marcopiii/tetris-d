@@ -4,7 +4,7 @@ import {
   KeyboardKeybindings,
 } from '../../keybindings/keybinding';
 import {
-  readControllerKeybindings,
+  readGamepadKeybindings,
   readKeyboardKeybindings,
 } from '../../keybindings/utils';
 import { KeyboardEvent as KeyboardEventType } from '../../keyboard';
@@ -25,7 +25,7 @@ export abstract class GameScenario {
   protected abstract onCutCmd: (command: CutAction) => void;
 
   protected constructor() {
-    this.controllerKeybindings = readControllerKeybindings();
+    this.controllerKeybindings = readGamepadKeybindings();
     this.keyboardKeybindings = readKeyboardKeybindings();
   }
 
@@ -70,7 +70,7 @@ export abstract class GameScenario {
     }
   };
 
-  protected async controllerHandler(event: GamepadEvent, btn: GamepadButton) {
+  protected controllerHandler = (event: GamepadEvent, btn: GamepadButton) => {
     if (btn === this.controllerKeybindings.pause && event === 'press')
       this.onClockCmd('toggle');
     if (btn === this.controllerKeybindings.shiftL && event === 'press')

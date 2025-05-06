@@ -11,7 +11,7 @@ type MenuItem<T = never> = {
 };
 
 export class Menu<T = never> {
-  private _items: MenuItem<T>[] = [];
+  protected _items: MenuItem<T>[] = [];
   private _selectedIndex: number = 0;
 
   constructor(items: MenuItem<T>[]) {
