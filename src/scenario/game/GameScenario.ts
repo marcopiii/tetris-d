@@ -1,10 +1,10 @@
 import { Button as GamepadButton, Event as GamepadEvent } from '../../gamepad';
 import {
-  ControllerKeybindings,
+  GamepadKeybindings,
   KeyboardKeybindings,
 } from '../../keybindings/keybinding';
 import {
-  readControllerKeybindings,
+  readGamepadKeybindings,
   readKeyboardKeybindings,
 } from '../../keybindings/utils';
 import { KeyboardEvent as KeyboardEventType } from '../../keyboard';
@@ -16,7 +16,7 @@ import {
 } from './actions';
 
 export abstract class GameScenario {
-  private controllerKeybindings: ControllerKeybindings;
+  private controllerKeybindings: GamepadKeybindings;
   private keyboardKeybindings: KeyboardKeybindings;
 
   protected abstract onClockCmd: (command: ClockAction) => void;
@@ -25,7 +25,7 @@ export abstract class GameScenario {
   protected abstract onCutCmd: (command: CutAction) => void;
 
   protected constructor() {
-    this.controllerKeybindings = readControllerKeybindings();
+    this.controllerKeybindings = readGamepadKeybindings();
     this.keyboardKeybindings = readKeyboardKeybindings();
   }
 
@@ -70,7 +70,7 @@ export abstract class GameScenario {
     }
   };
 
-  protected async controllerHandler(event: GamepadEvent, btn: GamepadButton) {
+  protected controllerHandler = (event: GamepadEvent, btn: GamepadButton) => {
     if (btn === this.controllerKeybindings.pause && event === 'press')
       this.onClockCmd('toggle');
     if (btn === this.controllerKeybindings.shiftL && event === 'press')
@@ -105,5 +105,5 @@ export abstract class GameScenario {
       if (event === 'press') this.onCutCmd('cutRight');
       if (event === 'release') this.onCutCmd('uncutRight');
     }
-  }
+  };
 }
