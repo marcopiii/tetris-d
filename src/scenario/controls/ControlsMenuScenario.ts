@@ -54,11 +54,11 @@ export class ControlsMenuScenario {
     if (command === 'up') this._menu.navigate('up');
     if (command === 'down') this._menu.navigate('down');
     if (command === 'gamepad') {
-      this._menu.editing = 'gamepad';
+      this._menu.currentController = 'gamepad';
       this._cameraManager.move('gamepad');
     }
     if (command === 'keyboard') {
-      this._menu.editing = 'keyboard';
+      this._menu.currentController = 'keyboard';
       this._cameraManager.move('keyboard');
     }
     this._sceneManager.update(this._menu);

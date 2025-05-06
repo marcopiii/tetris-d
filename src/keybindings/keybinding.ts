@@ -1,12 +1,9 @@
 import { Button as GamepadButton } from '../gamepad';
 
-export type ControllerKeybindings = Record<SemanticButtons, GamepadButton>;
-export type KeyboardKeybindings = Record<
-  SemanticButtons,
-  KeyboardEvent['code']
->;
+export type GamepadKeybindings = Record<SemanticButton, GamepadButton>;
+export type KeyboardKeybindings = Record<SemanticButton, KeyboardEvent['code']>;
 
-type SemanticButtons =
+export type SemanticButton =
   | 'pause'
   | 'shiftL'
   | 'shiftR'
@@ -21,7 +18,7 @@ type SemanticButtons =
   | 'cutR'
   | 'drop';
 
-export const defaultControllerKeybindings: ControllerKeybindings = {
+export const defaultGamepadKeybindings: GamepadKeybindings = {
   pause: 'start',
   shiftL: 'padL',
   shiftR: 'padR',

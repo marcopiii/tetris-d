@@ -1,26 +1,26 @@
 import {
-  ControllerKeybindings,
-  defaultControllerKeybindings,
+  GamepadKeybindings,
+  defaultGamepadKeybindings,
   defaultKeyboardKeybindings,
   KeyboardKeybindings,
 } from './keybinding';
 
-export function readControllerKeybindings(): ControllerKeybindings {
+export function readControllerKeybindings(): GamepadKeybindings {
   const storedControllerKeybindings = window.localStorage.getItem(
     'controller-keybindings',
   );
   if (!storedControllerKeybindings) {
     window.localStorage.setItem(
       'controller-keybindings',
-      JSON.stringify(defaultControllerKeybindings),
+      JSON.stringify(defaultGamepadKeybindings),
     );
-    return defaultControllerKeybindings;
+    return defaultGamepadKeybindings;
   }
   try {
     return JSON.parse(storedControllerKeybindings);
   } catch (error) {
     console.error('Error parsing controller config:', error);
-    return defaultControllerKeybindings;
+    return defaultGamepadKeybindings;
   }
 }
 
@@ -46,7 +46,7 @@ export function readKeyboardKeybindings(): KeyboardKeybindings {
 export function resetControllerKeybindings() {
   window.localStorage.setItem(
     'controller-keybindings',
-    JSON.stringify(defaultControllerKeybindings),
+    JSON.stringify(defaultGamepadKeybindings),
   );
 }
 

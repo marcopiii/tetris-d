@@ -1,7 +1,8 @@
 import { Button } from '../../gamepad';
 import {
-  ControllerKeybindings,
+  GamepadKeybindings,
   KeyboardKeybindings,
+  SemanticButton,
 } from '../../keybindings/keybinding';
 import {
   readControllerKeybindings,
@@ -10,13 +11,15 @@ import {
 import { Menu } from '../../menu';
 
 export class ControlsMenu extends Menu<{
+  semanticButton: SemanticButton;
   gamepad: Button;
   keyboard: KeyboardEvent['code'];
 }> {
-  private controllerKeybindings: ControllerKeybindings;
+  private gamepadKeybindings: GamepadKeybindings;
   private keyboardKeybindings: KeyboardKeybindings;
 
-  private binding: 'gamepad' | 'keyboard' = 'gamepad';
+  private editingController: 'gamepad' | 'keyboard';
+  private editingAction?: SemanticButton;
 
   constructor(onBack: () => void) {
     const controllerKeybindings = readControllerKeybindings();
@@ -26,98 +29,110 @@ export class ControlsMenu extends Menu<{
       {
         name: 'move piece left',
         accessory: {
+          semanticButton: 'shiftL',
           gamepad: controllerKeybindings.shiftL,
           keyboard: keyboardKeybindings.shiftL,
         },
-        action: () => {},
+        action: () => (this.currentAction = 'shiftL'),
       },
       {
         name: 'move piece right',
         accessory: {
+          semanticButton: 'shiftR',
           gamepad: controllerKeybindings.shiftR,
           keyboard: keyboardKeybindings.shiftR,
         },
-        action: () => {},
+        action: () => (this.currentAction = 'shiftR'),
       },
       {
         name: 'move piece forward',
         accessory: {
+          semanticButton: 'shiftF',
           gamepad: controllerKeybindings.shiftF,
           keyboard: keyboardKeybindings.shiftF,
         },
-        action: () => {},
+        action: () => (this.currentAction = 'shiftF'),
       },
       {
         name: 'move piece backward',
         accessory: {
+          semanticButton: 'shiftB',
           gamepad: controllerKeybindings.shiftB,
           keyboard: keyboardKeybindings.shiftB,
         },
-        action: () => {},
+        action: () => (this.currentAction = 'shiftB'),
       },
       {
         name: 'rotate right',
         accessory: {
+          semanticButton: 'rotateR',
           gamepad: controllerKeybindings.rotateR,
           keyboard: keyboardKeybindings.rotateR,
         },
-        action: () => {},
+        action: () => (this.currentAction = 'rotateR'),
       },
       {
         name: 'rotate left',
         accessory: {
+          semanticButton: 'rotateL',
           gamepad: controllerKeybindings.rotateL,
           keyboard: keyboardKeybindings.rotateL,
         },
-        action: () => {},
+        action: () => (this.currentAction = 'rotateL'),
       },
       {
         name: 'drop',
         accessory: {
+          semanticButton: 'drop',
           gamepad: controllerKeybindings.drop,
           keyboard: keyboardKeybindings.drop,
         },
-        action: () => {},
+        action: () => (this.currentAction = 'drop'),
       },
       {
         name: 'hold',
         accessory: {
+          semanticButton: 'hold',
           gamepad: controllerKeybindings.hold,
           keyboard: keyboardKeybindings.hold,
         },
-        action: () => {},
+        action: () => (this.currentAction = 'hold'),
       },
       {
         name: 'move camera left',
         accessory: {
+          semanticButton: 'cameraL',
           gamepad: controllerKeybindings.cameraL,
           keyboard: keyboardKeybindings.cameraL,
         },
-        action: () => {},
+        action: () => (this.currentAction = 'cameraL'),
       },
       {
         name: 'move camera right',
         accessory: {
+          semanticButton: 'cameraR',
           gamepad: controllerKeybindings.cameraR,
           keyboard: keyboardKeybindings.cameraR,
         },
-        action: () => {},
+        action: () => (this.currentAction = 'cameraR'),
       },
       {
         name: 'hide left side',
         accessory: {
+          semanticButton: 'cutL',
           gamepad: controllerKeybindings.cutL,
           keyboard: keyboardKeybindings.cutL,
         },
-        action: () => {},
+        action: () => (this.currentAction = 'cutL'),
       },
       {
         name: 'hide right side',
         accessory: {
+          semanticButton: 'cutR',
           gamepad: controllerKeybindings.cutR,
           keyboard: keyboardKeybindings.cutR,
         },
-        action: () => {},
+        action: () => (this.currentAction = 'cutR'),
       },
       {
         name: 'back',
@@ -126,16 +141,24 @@ export class ControlsMenu extends Menu<{
       },
     ]);
 
-    this.binding = 'gamepad';
-    this.controllerKeybindings = readControllerKeybindings();
+    this.editingController = 'gamepad';
+    this.gamepadKeybindings = readControllerKeybindings();
     this.keyboardKeybindings = readKeyboardKeybindings();
   }
 
-  set editing(binding: 'gamepad' | 'keyboard') {
-    this.binding = binding;
+  set currentController(controller: 'gamepad' | 'keyboard') {
+    this.editingController = controller;
   }
 
-  get editing() {
-    return this.binding;
+  get currentController() {
+    return this.editingController;
+  }
+
+  get currentAction() {
+    return this.editingAction;
+  }
+
+  set currentAction(action: SemanticButton | undefined) {
+    this.editingAction = action;
   }
 }

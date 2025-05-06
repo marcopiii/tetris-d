@@ -1,6 +1,6 @@
 import { Button as GamepadButton, Event as GamepadEvent } from '../../gamepad';
 import {
-  ControllerKeybindings,
+  GamepadKeybindings,
   KeyboardKeybindings,
 } from '../../keybindings/keybinding';
 import {
@@ -16,7 +16,7 @@ import {
 } from './actions';
 
 export abstract class GameScenario {
-  private controllerKeybindings: ControllerKeybindings;
+  private controllerKeybindings: GamepadKeybindings;
   private keyboardKeybindings: KeyboardKeybindings;
 
   protected abstract onClockCmd: (command: ClockAction) => void;
