@@ -10,6 +10,7 @@ import {
   resetGamepadKeybindings,
   resetKeyboardKeybindings,
   updateGamepadKeybindings,
+  updateKeyboardKeybindings,
 } from '../../keybindings/utils';
 import {
   KeyboardManager,
@@ -70,8 +71,18 @@ export class ControlsMenuScenario {
     this._sceneManager.update(this._menu);
   };
 
-  private remap = (action: SemanticButton, btn: GamepadButton) => {
+  private remapGamepadButton = (action: SemanticButton, btn: GamepadButton) => {
     updateGamepadKeybindings(action, btn);
+    this._menu.currentAction = undefined;
+    this._menu.refreshItems();
+    this._sceneManager.update(this._menu);
+  };
+
+  private remapKeyboardButton = (
+    action: SemanticButton,
+    btn: KeyboardEvent['code'],
+  ) => {
+    updateKeyboardKeybindings(action, btn);
     this._menu.currentAction = undefined;
     this._menu.refreshItems();
     this._sceneManager.update(this._menu);
@@ -93,6 +104,13 @@ export class ControlsMenuScenario {
     btn: KeyboardEvent['code'],
   ) => {
     if (event === 'press') {
+      if (
+        this._menu.currentController === 'keyboard' &&
+        this._menu.currentAction
+      ) {
+        this.remapKeyboardButton(this._menu.currentAction, btn);
+        return;
+      }
       if (btn === 'ArrowDown') this.menuCommandHandler('down');
       if (btn === 'ArrowUp') this.menuCommandHandler('up');
       if (btn === 'Enter') this.menuCommandHandler('confirm');
@@ -107,7 +125,7 @@ export class ControlsMenuScenario {
         this._menu.currentController === 'gamepad' &&
         this._menu.currentAction
       ) {
-        this.remap(this._menu.currentAction, btn);
+        this.remapGamepadButton(this._menu.currentAction, btn);
         return;
       }
       if (btn === 'padD') this.menuCommandHandler('down');
