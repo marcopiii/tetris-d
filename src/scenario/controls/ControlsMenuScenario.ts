@@ -104,11 +104,9 @@ export class ControlsMenuScenario {
     btn: KeyboardEvent['code'],
   ) => {
     if (event === 'press') {
-      if (
-        this._menu.currentController === 'keyboard' &&
-        this._menu.currentAction
-      ) {
-        this.remapKeyboardButton(this._menu.currentAction, btn);
+      if (this._menu.currentAction) {
+        if (this._menu.currentController === 'keyboard')
+          this.remapKeyboardButton(this._menu.currentAction, btn);
         return;
       }
       if (btn === 'ArrowDown') this.menuCommandHandler('down');
@@ -121,11 +119,9 @@ export class ControlsMenuScenario {
 
   private gamepadHandler = (event: GamepadEvent, btn: GamepadButton) => {
     if (event === 'press') {
-      if (
-        this._menu.currentController === 'gamepad' &&
-        this._menu.currentAction
-      ) {
-        this.remapGamepadButton(this._menu.currentAction, btn);
+      if (this._menu.currentAction) {
+        if (this._menu.currentController === 'gamepad')
+          this.remapGamepadButton(this._menu.currentAction, btn);
         return;
       }
       if (btn === 'padD') this.menuCommandHandler('down');
