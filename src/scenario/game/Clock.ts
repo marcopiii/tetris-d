@@ -32,6 +32,8 @@ export class Clock {
   }
 
   reset() {
+    if (this._resetCounter > 10)
+      return;
     clearInterval(this._interval);
     this._interval = undefined;
     this._interval = setInterval(this._callback, this.speed());
