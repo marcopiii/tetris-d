@@ -75,82 +75,113 @@ export class Game {
     return [[], false];
   }
 
-  private holdPiece() {
-    if (!this._piece.isHoldable) return;
-    const hold = this._hold.replace(this._piece);
-    this._piece.replace(hold);
-  }
-
-  private hardDrop() {
-    while (!detectCollision(this._piece, this._board)) {
-      this._piece.drop();
-    }
-    this._piece.rollback();
-  }
-
   /**
-   * @returns {boolean} - Whether the move had success
+   * @returns {[boolean, boolean]} - Whether the move had success and whether
+   * the move should cause the clock to reset
    */
-  tryMove(type: GameplayAction, camera: GameCamera): boolean {
+  tryMove(type: GameplayAction, camera: GameCamera): [boolean, boolean] {
     const isInverted =
       (this._piece.plane === 'x' &&
         camera.relativeDirection.z === 'negative') ||
       (this._piece.plane === 'z' && camera.relativeDirection.x === 'negative');
 
-    let wallKickTest = 0;
+    const lockTest = (): boolean => {
+      this._piece.drop();
+      const isGoingToLock = detectCollision(this._piece, this._board);
+      this._piece.rollback();
+      return isGoingToLock;
+    };
+
+    const tryShift = (
+      type: 'shiftL' | 'shiftR' | 'shiftB' | 'shiftF',
+    ): [boolean, boolean] => {
+      switch (type) {
+        case 'shiftL':
+          isInverted ? this._piece.shiftRight() : this._piece.shiftLeft();
+          break;
+        case 'shiftR':
+          isInverted ? this._piece.shiftLeft() : this._piece.shiftRight();
+          break;
+        case 'shiftB':
+          isInverted ? this._piece.shiftForward() : this._piece.shiftBackward();
+          break;
+        case 'shiftF':
+          isInverted ? this._piece.shiftBackward() : this._piece.shiftForward();
+          break;
+      }
+      if (detectCollision(this._piece, this._board)) {
+        this._piece.rollback();
+        return [false, false];
+      }
+      play(tetrimino_move_fx, 0.15);
+      const clockReset = lockTest();
+      return [true, clockReset];
+    };
+
+    const tryRotation = (type: 'rotateL' | 'rotateR'): [boolean, boolean] => {
+      let wallKickTest = 0;
+      switch (type) {
+        case 'rotateL':
+          while (wallKickTest < 5) {
+            isInverted
+              ? this._piece.rotateRight(wallKickTest)
+              : this._piece.rotateLeft(wallKickTest);
+            if (!detectCollision(this._piece, this._board)) {
+              play(tetrimino_rotate_fx, 0.15);
+              const clockReset = lockTest();
+              return [true, clockReset];
+            }
+            this._piece.rollback();
+            wallKickTest++;
+          }
+          return [false, false];
+        case 'rotateR':
+          while (wallKickTest < 5) {
+            isInverted
+              ? this._piece.rotateLeft(wallKickTest)
+              : this._piece.rotateRight(wallKickTest);
+            if (!detectCollision(this._piece, this._board)) {
+              play(tetrimino_rotate_fx, 0.15);
+              const clockReset = lockTest();
+              return [true, clockReset];
+            }
+            this._piece.rollback();
+            wallKickTest++;
+          }
+          return [false, false];
+      }
+    };
+
+    const hardDrop = (): [boolean, boolean] => {
+      while (!detectCollision(this._piece, this._board)) {
+        this._piece.drop();
+      }
+      this._piece.rollback();
+      play(hard_drop_fx, 0.5);
+      return [true, true];
+    };
+
+    const holdPiece = (): [boolean, boolean] => {
+      if (!this._piece.isHoldable) return [false, false];
+      const hold = this._hold.replace(this._piece);
+      this._piece.replace(hold);
+      return [true, true];
+    };
+
     switch (type) {
       case 'shiftL':
-        isInverted ? this._piece.shiftRight() : this._piece.shiftLeft();
-        break; // go to collision detection
       case 'shiftR':
-        isInverted ? this._piece.shiftLeft() : this._piece.shiftRight();
-        break; // go to collision detection
       case 'shiftB':
-        isInverted ? this._piece.shiftForward() : this._piece.shiftBackward();
-        break; // go to collision detection
       case 'shiftF':
-        isInverted ? this._piece.shiftBackward() : this._piece.shiftForward();
-        break; // go to collision detection
+        return tryShift(type);
       case 'rotateL':
-        while (wallKickTest < 5) {
-          isInverted
-            ? this._piece.rotateRight(wallKickTest)
-            : this._piece.rotateLeft(wallKickTest);
-          if (!detectCollision(this._piece, this._board)) {
-            play(tetrimino_rotate_fx, 0.15);
-            return true;
-          }
-          this._piece.rollback();
-          wallKickTest++;
-        }
-        return false;
       case 'rotateR':
-        while (wallKickTest < 5) {
-          isInverted
-            ? this._piece.rotateLeft(wallKickTest)
-            : this._piece.rotateRight(wallKickTest);
-          if (!detectCollision(this._piece, this._board)) {
-            play(tetrimino_rotate_fx, 0.15);
-            return true;
-          }
-          this._piece.rollback();
-          wallKickTest++;
-        }
-        return false;
+        return tryRotation(type);
       case 'hardDrop':
-        this.hardDrop();
-        play(hard_drop_fx, 0.5);
-        return true;
+        return hardDrop();
       case 'hold':
-        this.holdPiece();
-        return true;
+        return holdPiece();
     }
-    if (detectCollision(this._piece, this._board)) {
-      this._piece.rollback();
-      return false;
-    }
-    play(tetrimino_move_fx, 0.15);
-    return true;
   }
 
   get ghostPiece() {
