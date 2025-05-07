@@ -82,6 +82,7 @@ export class PvEScenario extends GameScenario {
         this._progress,
         this._cameraManager,
       );
+    if (clockReset) this._clock.reset();
   };
 
   protected onCameraCmd = (command: CameraAction) => {

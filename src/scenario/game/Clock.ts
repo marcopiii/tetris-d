@@ -26,6 +26,12 @@ export class Clock {
     }
   }
 
+  reset() {
+    clearInterval(this._interval);
+    this._interval = undefined;
+    this._interval = setInterval(this._callback, this.speed());
+  }
+
   start() {
     clearInterval(this._interval);
     this._interval = setInterval(this._callback, this.speed());
