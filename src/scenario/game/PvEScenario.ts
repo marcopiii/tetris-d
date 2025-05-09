@@ -72,13 +72,17 @@ export class PvEScenario extends GameScenario {
 
   protected onGameplayCmd = (command: GameplayAction) => {
     if (!this._clock.isRunning) return;
-    const sceneNeedsUpdate = this._game.tryMove(command, this._cameraManager);
+    const [sceneNeedsUpdate, clockReset] = this._game.tryMove(
+      command,
+      this._cameraManager,
+    );
     if (sceneNeedsUpdate)
       this._sceneManager.update(
         this._game,
         this._progress,
         this._cameraManager,
       );
+    if (clockReset) this._clock.reset();
   };
 
   protected onCameraCmd = (command: CameraAction) => {

@@ -2,10 +2,15 @@ export class Clock {
   private readonly _callback: () => void;
   private _interval: NodeJS.Timeout | undefined;
   private _level: number;
+  private _resetCounter: number;
 
   constructor(callback: () => void) {
+    this._resetCounter = 0;
     this._level = 1;
-    this._callback = callback;
+    this._callback = () => {
+      this._resetCounter = 0;
+      callback();
+    };
     this._interval = undefined;
   }
 
@@ -24,6 +29,15 @@ export class Clock {
     } else {
       this._interval = setInterval(this._callback, this.speed());
     }
+  }
+
+  reset() {
+    if (this._resetCounter > 10)
+      return;
+    clearInterval(this._interval);
+    this._interval = undefined;
+    this._interval = setInterval(this._callback, this.speed());
+    this._resetCounter++;
   }
 
   start() {
