@@ -30,6 +30,8 @@ export abstract class GameScene {
     this._scene = scene;
     this._scene.clear();
 
+    this._scene.fog = new THREE.Fog('black', 10, 40);
+
     this._tetrion = new THREE.Group();
     this._board = new THREE.Group();
     this._piece = new THREE.Group();
@@ -160,6 +162,14 @@ export abstract class GameScene {
     });
 
     game.ghostPiece.forEachBlock((y, x, z) => {
+      // avoid overlapping with the piece
+      let occupiedByPiece = false;
+      game.piece.forEachBlock((py, px, pz) => {
+        if (py === y && px === x && pz === z)
+          occupiedByPiece = true;
+      });
+      if (occupiedByPiece) return;
+
       const mino = createGhostMino(game.ghostPiece.type);
       mino.position
         .add(GameScene.center)

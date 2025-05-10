@@ -49,13 +49,34 @@ export const minoMaterials = {
 };
 
 export const minoShadeMaterials = {
-  I: new THREE.MeshBasicMaterial({ color: adj(colors.tetrimino.I, -j) }),
-  O: new THREE.MeshBasicMaterial({ color: adj(colors.tetrimino.O, -j) }),
-  T: new THREE.MeshBasicMaterial({ color: adj(colors.tetrimino.T, -j) }),
-  J: new THREE.MeshBasicMaterial({ color: adj(colors.tetrimino.J, -j) }),
-  L: new THREE.MeshBasicMaterial({ color: adj(colors.tetrimino.L, -j) }),
-  S: new THREE.MeshBasicMaterial({ color: adj(colors.tetrimino.S, -j) }),
-  Z: new THREE.MeshBasicMaterial({ color: adj(colors.tetrimino.Z, -j) }),
+  I: new THREE.MeshBasicMaterial({
+    color: adj(colors.tetrimino.I, -j),
+    fog: false,
+  }),
+  O: new THREE.MeshBasicMaterial({
+    color: adj(colors.tetrimino.O, -j),
+    fog: false,
+  }),
+  T: new THREE.MeshBasicMaterial({
+    color: adj(colors.tetrimino.T, -j),
+    fog: false,
+  }),
+  J: new THREE.MeshBasicMaterial({
+    color: adj(colors.tetrimino.J, -j),
+    fog: false,
+  }),
+  L: new THREE.MeshBasicMaterial({
+    color: adj(colors.tetrimino.L, -j),
+    fog: false,
+  }),
+  S: new THREE.MeshBasicMaterial({
+    color: adj(colors.tetrimino.S, -j),
+    fog: false,
+  }),
+  Z: new THREE.MeshBasicMaterial({
+    color: adj(colors.tetrimino.Z, -j),
+    fog: false,
+  }),
 };
 
 export const minoTransMaterials = {
@@ -63,64 +84,99 @@ export const minoTransMaterials = {
     color: colors.tetrimino.I,
     transparent: true,
     opacity: 0.5,
+    fog: false,
   }),
   O: new THREE.MeshBasicMaterial({
     color: colors.tetrimino.O,
     transparent: true,
     opacity: 0.5,
+    fog: false,
   }),
   T: new THREE.MeshBasicMaterial({
     color: colors.tetrimino.T,
     transparent: true,
     opacity: 0.5,
+    fog: false,
   }),
   J: new THREE.MeshBasicMaterial({
     color: colors.tetrimino.J,
     transparent: true,
     opacity: 0.5,
+    fog: false,
   }),
   L: new THREE.MeshBasicMaterial({
     color: colors.tetrimino.L,
     transparent: true,
     opacity: 0.5,
+    fog: false,
   }),
   S: new THREE.MeshBasicMaterial({
     color: colors.tetrimino.S,
     transparent: true,
     opacity: 0.5,
+    fog: false,
   }),
   Z: new THREE.MeshBasicMaterial({
     color: colors.tetrimino.Z,
     transparent: true,
     opacity: 0.5,
+    fog: false,
   }),
 };
 
 export const voxelMaterials = {
   primary: {
-    x: new THREE.MeshBasicMaterial({ color: colors.text.primary }),
-    y: new THREE.MeshBasicMaterial({ color: adj(colors.text.primary, k) }),
-    z: new THREE.MeshBasicMaterial({ color: adj(colors.text.primary, -k) }),
+    x: new THREE.MeshBasicMaterial({ color: colors.text.primary, fog: false }),
+    y: new THREE.MeshBasicMaterial({
+      color: adj(colors.text.primary, k),
+      fog: false,
+    }),
+    z: new THREE.MeshBasicMaterial({
+      color: adj(colors.text.primary, -k),
+      fog: false,
+    }),
   },
   secondary: {
-    x: new THREE.MeshBasicMaterial({ color: colors.text.secondary }),
-    y: new THREE.MeshBasicMaterial({ color: adj(colors.text.secondary, k) }),
-    z: new THREE.MeshBasicMaterial({ color: adj(colors.text.secondary, -k) }),
+    x: new THREE.MeshBasicMaterial({
+      color: colors.text.secondary,
+      fog: false,
+    }),
+    y: new THREE.MeshBasicMaterial({
+      color: adj(colors.text.secondary, k),
+      fog: false,
+    }),
+    z: new THREE.MeshBasicMaterial({
+      color: adj(colors.text.secondary, -k),
+      fog: false,
+    }),
   },
   main: {
-    x: new THREE.MeshBasicMaterial({ color: colors.text.main }),
-    y: new THREE.MeshBasicMaterial({ color: adj(colors.text.main, k) }),
-    z: new THREE.MeshBasicMaterial({ color: adj(colors.text.main, -k) }),
+    x: new THREE.MeshBasicMaterial({ color: colors.text.main, fog: false }),
+    y: new THREE.MeshBasicMaterial({
+      color: adj(colors.text.main, k),
+      fog: false,
+    }),
+    z: new THREE.MeshBasicMaterial({
+      color: adj(colors.text.main, -k),
+      fog: false,
+    }),
   },
   disabled: {
-    x: new THREE.MeshBasicMaterial({ color: colors.disabled }),
-    y: new THREE.MeshBasicMaterial({ color: adj(colors.disabled, k) }),
-    z: new THREE.MeshBasicMaterial({ color: adj(colors.disabled, -k) }),
+    x: new THREE.MeshBasicMaterial({ color: colors.disabled, fog: false }),
+    y: new THREE.MeshBasicMaterial({
+      color: adj(colors.disabled, k),
+      fog: false,
+    }),
+    z: new THREE.MeshBasicMaterial({
+      color: adj(colors.disabled, -k),
+      fog: false,
+    }),
   },
 };
 
 export const bloomingMaterial = new THREE.MeshBasicMaterial({
   color: new THREE.Color(1.01, 1.01, 1.01),
+  fog: false,
 });
 
 export const tetrionMaterial = new THREE.LineBasicMaterial({
