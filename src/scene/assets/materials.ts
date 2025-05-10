@@ -121,6 +121,7 @@ export const voxelMaterials = {
 
 export const bloomingMaterial = new THREE.MeshBasicMaterial({
   color: new THREE.Color(1.01, 1.01, 1.01),
+  fog: false
 });
 
 export const tetrionMaterial = new THREE.LineBasicMaterial({
