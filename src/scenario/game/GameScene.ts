@@ -30,7 +30,7 @@ export abstract class GameScene {
     this._scene = scene;
     this._scene.clear();
 
-    this._scene.fog = new THREE.Fog("black", 10, 40)
+    this._scene.fog = new THREE.Fog('black', 10, 40);
 
     this._tetrion = new THREE.Group();
     this._board = new THREE.Group();
