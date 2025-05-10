@@ -162,6 +162,14 @@ export abstract class GameScene {
     });
 
     game.ghostPiece.forEachBlock((y, x, z) => {
+      // avoid overlapping with the piece
+      let occupiedByPiece = false;
+      game.piece.forEachBlock((py, px, pz) => {
+        if (py === y && px === x && pz === z)
+          occupiedByPiece = true;
+      });
+      if (occupiedByPiece) return;
+
       const mino = createGhostMino(game.ghostPiece.type);
       mino.position
         .add(GameScene.center)
