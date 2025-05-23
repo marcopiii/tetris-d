@@ -1,7 +1,5 @@
 import { play } from '../utils';
-
-const menu_nav_ok = require('../audio/menu_nav_ok.mp3');
-const menu_nav_ko = require('../audio/menu_nav_ko.mp3');
+import FX from '../audio';
 
 type MenuItem<T = never> = {
   name: string;
@@ -28,7 +26,7 @@ export class Menu<T = never> {
           ? [this._items.length - 1, true]
           : [this._selectedIndex + 1, false];
     this._selectedIndex = i;
-    bounded ? play(menu_nav_ko, 0.5) : play(menu_nav_ok, 0.5);
+    bounded ? play(FX.menu_nav_ko, 0.5) : play(FX.menu_nav_ok, 0.5);
   }
 
   select(): boolean {
