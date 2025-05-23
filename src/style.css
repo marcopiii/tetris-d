@@ -8,7 +8,7 @@ body {
   background-color: #222;
 }
 
-#scene-container {
+#root {
   height: 100%;
   width: 100%;
   background-color: #333;
