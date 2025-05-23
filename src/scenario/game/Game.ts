@@ -9,10 +9,7 @@ import { Hold } from './Hold';
 import { GameplayAction } from './actions';
 import { LineCoord } from './types';
 
-const tetrimino_move_fx = require('../../audio/tetrimino_move.mp3');
-const tetrimino_rotate_fx = require('../../audio/tetrimino_rotate.mp3');
-const hard_drop_fx = require('../../audio/hard_drop.mp3');
-const line_clear_fx = require('../../audio/line_clear.mp3');
+import FX from '../../audio';
 
 export class Game {
   private readonly _onNewPiece: () => void;
@@ -53,7 +50,7 @@ export class Game {
     const needRecheck = this._board.clearLines();
     const cascadeLineClear = needRecheck ? this._board.checkLines() : [];
     if (cascadeLineClear.length > 0) {
-      play(line_clear_fx, 0.75);
+      play(FX.line_clear, 0.75);
       return [cascadeLineClear, false];
     }
     this._piece.drop();
@@ -62,7 +59,7 @@ export class Game {
       this._board.fixPiece(this._piece);
       const lineClear = this._board.checkLines();
       if (lineClear.length > 0) {
-        play(line_clear_fx, 0.75);
+        play(FX.line_clear, 0.75);
       }
       this._piece =
         this._piece.plane === 'x'
@@ -113,7 +110,7 @@ export class Game {
         this._piece.rollback();
         return [false, false];
       }
-      play(tetrimino_move_fx, 0.15);
+      play(FX.tetrimino_move, 0.15);
       const clockReset = lockTest();
       return [true, clockReset];
     };
@@ -127,7 +124,7 @@ export class Game {
               ? this._piece.rotateRight(wallKickTest)
               : this._piece.rotateLeft(wallKickTest);
             if (!detectCollision(this._piece, this._board)) {
-              play(tetrimino_rotate_fx, 0.15);
+              play(FX.tetrimino_rotate, 0.15);
               const clockReset = lockTest();
               return [true, clockReset];
             }
@@ -141,7 +138,7 @@ export class Game {
               ? this._piece.rotateLeft(wallKickTest)
               : this._piece.rotateRight(wallKickTest);
             if (!detectCollision(this._piece, this._board)) {
-              play(tetrimino_rotate_fx, 0.15);
+              play(FX.tetrimino_rotate, 0.15);
               const clockReset = lockTest();
               return [true, clockReset];
             }
@@ -157,7 +154,7 @@ export class Game {
         this._piece.drop();
       }
       this._piece.rollback();
-      play(hard_drop_fx, 0.5);
+      play(FX.hard_drop, 0.5);
       return [true, true];
     };
 

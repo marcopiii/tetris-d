@@ -3,9 +3,9 @@ import TWEEN, { Group as TWEENGroup } from '@tweenjs/tween.js';
 import { play } from '../../utils';
 import { GameScene } from './GameScene';
 
-const camera_move = require('../../audio/camera_move.mp3');
 
 export type GameCameraPosition = 'c1' | 'c2' | 'c3' | 'c4';
+import camera_move from '../../audio/camera_move.mp3';
 
 export class GameCamera {
   private readonly _camera: THREE.Camera;
