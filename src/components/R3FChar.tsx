@@ -7,11 +7,14 @@ type Props = {
   position: [number, number, number];
   char: Char;
   type: 'main' | 'primary' | 'secondary';
+  disabled?: boolean;
 };
 
 export default function R3FChar(props: Props) {
   const size = VOXEL_SIZE[props.type];
-  const material = voxelMaterials[props.type];
+  const material = props.disabled
+    ? voxelMaterials.disabled
+    : voxelMaterials[props.type];
 
   return (
     <group position={props.position}>

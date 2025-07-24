@@ -8,6 +8,7 @@ type Props = {
   text: string;
   type: 'main' | 'primary' | 'secondary';
   font: 'alphabet' | 'numbers';
+  disabled?: boolean;
 };
 
 export default function R3FWord(props: Props) {
@@ -34,6 +35,7 @@ export default function R3FWord(props: Props) {
             position={[offset, 0, 0]}
             char={char}
             type={props.type}
+            disabled={props.disabled}
             key={i}
           />
         );
