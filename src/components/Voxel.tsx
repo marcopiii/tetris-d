@@ -3,13 +3,11 @@ import * as THREE from 'three';
 type Props = {
   position: THREE.Vector3Like;
   size: number;
-  material:
-    | [THREE.MeshBasicMaterialParameters]
-    | [
-        THREE.MeshBasicMaterialParameters,
-        THREE.MeshBasicMaterialParameters,
-        THREE.MeshBasicMaterialParameters,
-      ];
+  material: [
+    THREE.MeshBasicMaterialParameters,
+    THREE.MeshBasicMaterialParameters,
+    THREE.MeshBasicMaterialParameters,
+  ];
 };
 
 export default function Voxel(props: Props) {
