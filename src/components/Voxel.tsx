@@ -16,8 +16,8 @@ export default function Voxel(props: Props) {
   return (
     <mesh position={props.position}>
       <boxGeometry args={size} />
-      {props.material.map((materialParams) => (
-        <meshBasicMaterial {...materialParams} />
+      {props.material.map((materialParams, i) => (
+        <meshBasicMaterial {...materialParams} key={i} />
       ))}
     </mesh>
   );

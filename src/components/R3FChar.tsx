@@ -20,7 +20,12 @@ export default function R3FChar(props: Props) {
           if (v) {
             const position: [number, number, number] = [x * size, -y * size, 0];
             return (
-              <Voxel position={position} size={size} material={material} />
+              <Voxel
+                position={position}
+                size={size}
+                material={material}
+                key={`${x}${y}`}
+              />
             );
           }
         }),

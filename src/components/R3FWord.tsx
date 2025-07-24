@@ -30,7 +30,12 @@ export default function R3FWord(props: Props) {
       {chars.map((char, i) => {
         const offset = charOffsets[i] * VOXEL_SIZE[props.type];
         return (
-          <R3FChar position={[offset, 0, 0]} char={char} type={props.type} />
+          <R3FChar
+            position={[offset, 0, 0]}
+            char={char}
+            type={props.type}
+            key={i}
+          />
         );
       })}
     </group>
