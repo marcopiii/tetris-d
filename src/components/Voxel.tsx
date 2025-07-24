@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 type Props = {
-  position: THREE.Vector3Like;
+  position: [number, number, number];
   size: number;
   material: [
     THREE.MeshBasicMaterialParameters,
@@ -11,16 +11,10 @@ type Props = {
 };
 
 export default function Voxel(props: Props) {
-  const position = new THREE.Vector3(
-    props.position.x,
-    props.position.y,
-    props.position.z,
-  );
-
   const size = [props.size, props.size, props.size] as const;
 
   return (
-    <mesh position={position}>
+    <mesh position={props.position}>
       <boxGeometry args={size} />
       {props.material.map((materialParams) => (
         <meshBasicMaterial {...materialParams} />
