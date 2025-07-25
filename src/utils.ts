@@ -1,3 +1,6 @@
+export const clamp = (min: number, max: number) => (num: number) =>
+  num > max ? max : num < min ? min : num;
+
 export function copy<T>(t: T) {
   return JSON.parse(JSON.stringify(t));
 }
