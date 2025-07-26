@@ -22,7 +22,11 @@ const menuNavigationReducer =
 
 export function useMenuNavigation(
   items: MenuItem[],
-): [SelectableMenuItem[], React.ActionDispatch<[action: 'up' | 'down']>] {
+): [
+  SelectableMenuItem[],
+  MenuItem,
+  React.ActionDispatch<[action: 'up' | 'down']>,
+] {
   const [selectedIndex, navigate] = React.useReducer(
     menuNavigationReducer(items.length),
     0,
@@ -31,5 +35,6 @@ export function useMenuNavigation(
     ...item,
     selected: selectedIndex === i,
   }));
-  return [options, navigate];
+  const selectedItem = items[selectedIndex];
+  return [options, selectedItem, navigate];
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import { match } from 'ts-pattern';
 import Menu from './components/Menu';
 import { useMenuNavigation } from './components/utils.';
 
@@ -15,7 +16,14 @@ export function MainMenu(props: Props) {
     { name: 'about', action: props.onAbout, terminal: true },
   ];
 
-  const [options, navigate] = useMenuNavigation(menuItems);
+  const [options, selectedOption, navigate] = useMenuNavigation(menuItems);
+
+  const menuCommandHandler = (command: 'up' | 'down' | 'confirm'): void =>
+    match(command)
+      .with('confirm', () => selectedOption.action())
+      .with('up', () => navigate('up'))
+      .with('down', () => navigate('down'))
+      .exhaustive();
 
   return <Menu title="tetris-d" options={options} />;
 }
