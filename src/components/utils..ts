@@ -12,7 +12,8 @@ export type MenuItem<T = never> = {
 export type SelectableMenuItem<T = never> = MenuItem<T> & { selected: boolean };
 
 const menuNavigationReducer =
-  (itemsLength: number) => (selectedIndex: number, action: 'up' | 'down') => {
+  (itemsLength: number) =>
+  (selectedIndex: number, action: 'up' | 'down'): number => {
     const clamp = _clamp(0, itemsLength - 1);
     return match(action)
       .with('up', () => clamp(selectedIndex - 1))
@@ -24,7 +25,7 @@ export function useMenuNavigation(
   items: MenuItem[],
 ): [
   SelectableMenuItem[],
-  MenuItem,
+  React.RefObject<MenuItem>,
   React.ActionDispatch<[action: 'up' | 'down']>,
 ] {
   const [selectedIndex, navigate] = React.useReducer(
@@ -35,6 +36,12 @@ export function useMenuNavigation(
     ...item,
     selected: selectedIndex === i,
   }));
-  const selectedItem = items[selectedIndex];
-  return [options, selectedItem, navigate];
+
+  // selectedOption is a ref to provide a stable reference for event handlers
+  const selectedOption = React.useRef(items[selectedIndex]);
+  React.useEffect(() => {
+    selectedOption.current = items[selectedIndex];
+  }, [items[selectedIndex]]);
+
+  return [options, selectedOption, navigate];
 }

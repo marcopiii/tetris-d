@@ -3,14 +3,21 @@ type KeyboardHandler = (
   button: KeyboardEvent['code'],
 ) => void;
 
-export function useKeyboardManager(handler: KeyboardHandler): void {
-  const handleKeyDown = (event: KeyboardEvent) => {
-    handler('press', event.code);
-  };
-  const handleKeyUp = (event: KeyboardEvent) => {
-    handler('release', event.code);
-  };
+import React from 'react';
 
-  window.addEventListener('keydown', handleKeyDown);
-  window.addEventListener('keyup', handleKeyUp);
+export function useKeyboardManager(handler: KeyboardHandler): void {
+  React.useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) =>
+      !event.repeat && handler('press', event.code);
+    const handleKeyUp = (event: KeyboardEvent) =>
+      !event.repeat && handler('release', event.code);
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [handler]);
 }
