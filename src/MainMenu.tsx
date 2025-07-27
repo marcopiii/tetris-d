@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { match } from 'ts-pattern';
 import Menu from './components/Menu';
+import useGamepadManager from './components/useGamepadManager';
 import { useKeyboardManager } from './components/useKeyboardManager';
 import useSetCamera from './components/useSetCamera';
 import { useMenuNavigation } from './components/utils.';
@@ -11,6 +12,8 @@ type Props = {
 };
 
 export function MainMenu(props: Props) {
+  console.log('MainMenu rendered');
+
   const setCamera = useSetCamera({
     left: { position: [-10, 4, 10], lookAt: [0, 0, 0] },
     right: { position: [10, 4, 10], lookAt: [0, 0, 0] },
@@ -55,13 +58,27 @@ export function MainMenu(props: Props) {
 
   useKeyboardManager(
     React.useCallback(
-      (event: string, button: string) =>
+      (event, button) =>
         match([event, button])
           .with(['press', 'ArrowUp'], () => menuNavigationHandler('up'))
           .with(['press', 'ArrowDown'], () => menuNavigationHandler('down'))
           .with(['press', 'Enter'], () => menuNavigationHandler('confirm'))
           .with(['press', 'ArrowLeft'], () => menuCameraHandler('moveL'))
           .with(['press', 'ArrowRight'], () => menuCameraHandler('moveR'))
+          .otherwise(() => {}),
+      [menuNavigationHandler, menuCameraHandler],
+    ),
+  );
+
+  useGamepadManager(
+    React.useCallback(
+      (event, button) =>
+        match([event, button])
+          .with(['press', 'padD'], () => menuNavigationHandler('down'))
+          .with(['press', 'padU'], () => menuNavigationHandler('up'))
+          .with(['press', 'A'], () => menuNavigationHandler('confirm'))
+          .with(['press', 'LT'], () => menuCameraHandler('moveL'))
+          .with(['press', 'RT'], () => menuCameraHandler('moveR'))
           .otherwise(() => {}),
       [menuNavigationHandler, menuCameraHandler],
     ),
