@@ -1,7 +1,7 @@
 import React from 'react';
 import { match } from 'ts-pattern';
 import { VOXEL_SIZE } from '../params';
-import { Char, Font, alphabet, numbers } from '../scene/font';
+import { Char, alphabet, numbers } from '../scene/font';
 import R3FChar from './R3FChar';
 import * as THREE from 'three';
 

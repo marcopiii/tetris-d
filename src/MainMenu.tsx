@@ -1,4 +1,5 @@
 import React from 'react';
+import * as THREE from 'three';
 import { match } from 'ts-pattern';
 import Menu from './components/Menu';
 import { useKeyboardManager } from './components/useKeyboardManager';
@@ -56,5 +57,5 @@ export function MainMenu(props: Props) {
     ),
   );
 
-  return <Menu title="tetris-d" options={options} />;
+  return <Menu position={[-5, 0, 0]} title="tetris-d" options={options} />;
 }

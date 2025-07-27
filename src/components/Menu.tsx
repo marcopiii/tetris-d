@@ -4,21 +4,23 @@ import R3FWord from './R3FWord';
 import { SelectableMenuItem } from './utils.';
 
 type MenuProps = {
+  position: [number, number, number];
   title: string;
   options: SelectableMenuItem[];
 };
 
 export default function Menu(props: MenuProps) {
-  const lhMain = VOXEL_SIZE.main * 12;
-  const lhPrimary = VOXEL_SIZE.primary * 12;
+  const lhMain = VOXEL_SIZE.main * 15;
+  const lhPrimary = VOXEL_SIZE.primary * 10;
+  const lhSecondary = VOXEL_SIZE.secondary * 10;
 
   return (
-    <group>
+    <group position={props.position}>
       <R3FWord
         text={props.title}
         type="main"
         font="alphabet"
-        position={[0, 0, 0]}
+        position={[0, lhMain, 0]}
       />
       {props.options.map((option, i) => (
         <R3FWord
@@ -28,7 +30,7 @@ export default function Menu(props: MenuProps) {
           font="alphabet"
           position={[
             0,
-            -(lhMain + lhPrimary * i),
+            -(lhPrimary * i) + (option.selected ? lhPrimary : lhSecondary) / 3,
             option.selected ? VOXEL_SIZE.primary * 3 : 0,
           ]}
         />
