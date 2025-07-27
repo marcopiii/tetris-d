@@ -17,8 +17,14 @@ function App(props: { aspectRatio: number }) {
     frustumCulled: true,
   };
 
+  const cameraPosition = [-10, 4, 10] as const;
+
   return (
-    <Canvas orthographic camera={frustumProps}>
+    <Canvas
+      orthographic
+      camera={{ ...frustumProps, position: cameraPosition }}
+      dpr={window.devicePixelRatio}
+    >
       <axesHelper args={[10]} />
       <MainMenu
         onPvE={() => console.log('play')}
