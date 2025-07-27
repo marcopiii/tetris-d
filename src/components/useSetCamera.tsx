@@ -1,4 +1,7 @@
-import { useThree } from '@react-three/fiber';
+import React from 'react';
+import * as THREE from 'three';
+import { useFrame, useThree } from '@react-three/fiber';
+import TWEEN from '@tweenjs/tween.js';
 
 type CameraSetup = {
   position: [number, number, number];
@@ -11,10 +14,23 @@ export default function useSetCamera<K extends string>(
   pcs: PossibleCameraSetups<K>,
 ) {
   const camera = useThree((rootState) => rootState.camera);
+  const tweenGroup = React.useRef(new TWEEN.Group());
 
-  return (selectedCameraSetup: K) => {
+  useFrame(() => tweenGroup.current.update());
+
+  return (selectedCameraSetup: K, noAnimation?: boolean) => {
     const cameraSetup = pcs[selectedCameraSetup];
-    camera.position.set(...cameraSetup.position);
-    camera.lookAt(...cameraSetup.lookAt);
+
+    if (noAnimation) {
+      camera.position.set(...cameraSetup.position);
+      camera.lookAt(...cameraSetup.lookAt);
+      return;
+    }
+
+    new TWEEN.Tween(camera.position, tweenGroup.current)
+      .to(new THREE.Vector3(...cameraSetup.position), 500)
+      .easing(TWEEN.Easing.Exponential.Out)
+      .onUpdate(() => camera.lookAt(...cameraSetup.lookAt))
+      .start();
   };
 }

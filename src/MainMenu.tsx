@@ -12,15 +12,13 @@ type Props = {
 };
 
 export function MainMenu(props: Props) {
-  console.log('MainMenu rendered');
-
   const setCamera = useSetCamera({
     left: { position: [-10, 4, 10], lookAt: [0, 0, 0] },
     right: { position: [10, 4, 10], lookAt: [0, 0, 0] },
   });
 
   useEffect(() => {
-    setCamera('left');
+    setCamera('left', true);
   }, []);
 
   const menuItems = [
