@@ -1,18 +1,30 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { match } from 'ts-pattern';
 import { GameCanvas } from './components/GameCanvas';
 import { MainMenu } from './MainMenu';
 import './style.css';
 
+type Scenario = 'main-menu' | 'play' | 'controls';
+
 function App(props: { aspectRatio: number }) {
+  const [scenario, setScenario] = React.useState<Scenario>('main-menu');
+
+  const currentScenario = match(scenario)
+    .with('main-menu', () => (
+      <MainMenu
+        onPlay={() => setScenario('play')}
+        onControls={() => setScenario('controls')}
+      />
+    ))
+    .with('play', () => <></>)
+    .with('controls', () => <></>)
+    .exhaustive();
+
   return (
     <GameCanvas aspectRatio={props.aspectRatio}>
       <axesHelper args={[10]} />
-      <MainMenu
-        onPvE={() => console.log('play')}
-        onControls={() => console.log('controls')}
-        onAbout={() => console.log('about')}
-      />
+      {currentScenario}
     </GameCanvas>
   );
 }

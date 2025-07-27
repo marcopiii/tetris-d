@@ -6,9 +6,8 @@ import useSetCamera from './components/useSetCamera';
 import { useMenuNavigation } from './components/utils.';
 
 type Props = {
-  onPvE: () => void;
+  onPlay: () => void;
   onControls: () => void;
-  onAbout: () => void;
 };
 
 export function MainMenu(props: Props) {
@@ -22,9 +21,15 @@ export function MainMenu(props: Props) {
   }, []);
 
   const menuItems = [
-    { name: 'play', action: props.onPvE, terminal: true },
+    { name: 'play', action: props.onPlay, terminal: true },
     { name: 'controls', action: props.onControls, terminal: true },
-    { name: 'about', action: props.onAbout, terminal: true },
+    {
+      name: 'about',
+      action: () => {
+        window.location.href = 'https://github.com/marcopiii/tetris-d';
+      },
+      terminal: true,
+    },
   ];
 
   const [options, selectedOption, navigate] = useMenuNavigation(menuItems);
