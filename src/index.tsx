@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { match } from 'ts-pattern';
 import { GameCanvas } from './components/GameCanvas';
+import Tetrion from './components/Tetrion';
 import { MainMenu } from './MainMenu';
 import './style.css';
 
@@ -17,7 +18,7 @@ function App(props: { aspectRatio: number }) {
         onControls={() => setScenario('controls')}
       />
     ))
-    .with('play', () => <></>)
+    .with('play', () => <Tetrion />)
     .with('controls', () => <></>)
     .exhaustive();
 
