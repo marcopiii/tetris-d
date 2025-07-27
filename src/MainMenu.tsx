@@ -1,8 +1,8 @@
-import React from 'react';
-import * as THREE from 'three';
+import React, { useEffect } from 'react';
 import { match } from 'ts-pattern';
 import Menu from './components/Menu';
 import { useKeyboardManager } from './components/useKeyboardManager';
+import useSetCamera from './components/useSetCamera';
 import { useMenuNavigation } from './components/utils.';
 
 type Props = {
@@ -12,6 +12,15 @@ type Props = {
 };
 
 export function MainMenu(props: Props) {
+  const setCamera = useSetCamera({
+    left: { position: [-10, 4, 10], lookAt: [0, 0, 0] },
+    right: { position: [10, 4, 10], lookAt: [0, 0, 0] },
+  });
+
+  useEffect(() => {
+    setCamera('left');
+  }, []);
+
   const menuItems = [
     { name: 'play', action: props.onPvE, terminal: true },
     { name: 'controls', action: props.onControls, terminal: true },
@@ -23,12 +32,8 @@ export function MainMenu(props: Props) {
   const menuCameraHandler = React.useCallback(
     (command: 'moveL' | 'moveR'): void =>
       match(command)
-        .with('moveL', () => {
-          /* todo */
-        })
-        .with('moveR', () => {
-          /* todo */
-        })
+        .with('moveL', () => setCamera('left'))
+        .with('moveR', () => setCamera('right'))
         .exhaustive(),
     [],
   );
