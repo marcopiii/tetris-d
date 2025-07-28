@@ -4,6 +4,7 @@ import { adjustBrightness as adj } from '../utils';
 import * as THREE from 'three';
 
 const k = 20;
+const j = 80;
 
 export const voxelMaterials: Record<
   'main' | 'primary' | 'secondary' | 'disabled',
@@ -86,45 +87,31 @@ export const minoMaterials: {
   },
   shade: {
     I: {
-      color: colors.tetrimino.I,
-      transparent: true,
-      opacity: 0.5,
+      color: adj(colors.tetrimino.I, -j),
       fog: false,
     },
     O: {
-      color: colors.tetrimino.O,
-      transparent: true,
-      opacity: 0.5,
+      color: adj(colors.tetrimino.O, -j),
       fog: false,
     },
     T: {
-      color: colors.tetrimino.T,
-      transparent: true,
-      opacity: 0.5,
+      color: adj(colors.tetrimino.T, -j),
       fog: false,
     },
     J: {
-      color: colors.tetrimino.J,
-      transparent: true,
-      opacity: 0.5,
+      color: adj(colors.tetrimino.J, -j),
       fog: false,
     },
     L: {
-      color: colors.tetrimino.L,
-      transparent: true,
-      opacity: 0.5,
+      color: adj(colors.tetrimino.L, -j),
       fog: false,
     },
     S: {
-      color: colors.tetrimino.S,
-      transparent: true,
-      opacity: 0.5,
+      color: adj(colors.tetrimino.S, -j),
       fog: false,
     },
     Z: {
-      color: colors.tetrimino.Z,
-      transparent: true,
-      opacity: 0.5,
+      color: adj(colors.tetrimino.Z, -j),
       fog: false,
     },
   },

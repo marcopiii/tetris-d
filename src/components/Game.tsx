@@ -19,7 +19,7 @@ export default function Game() {
     <group>
       <Tetrion />
       <Board matrixIterator={boardManager.flatMapBlocks} />
-      <Tetrimino type={'S'} matrixIterator={tetriminoManager.flatMapBlocks} />
+      <Tetrimino type={type} matrixIterator={tetriminoManager.flatMapBlocks} />
     </group>
   );
 }
