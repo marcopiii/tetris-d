@@ -14,7 +14,7 @@ export class Board {
       .map(() =>
         Array(COLS)
           .fill(null)
-          .map(() => Array(COLS).fill(null)),
+          .map(() => Array(COLS).fill(Math.random() > 0.9 ? 'I' : null)),
       );
   }
 
@@ -36,6 +36,20 @@ export class Board {
         }),
       ),
     );
+  }
+
+  flatMapBlocks<T>(
+    callback: (type: BoardBlock, y: number, x: number, z: number) => T,
+  ): T[] {
+    return this._matrix
+      .flatMap((layer, y) =>
+        layer.flatMap((xRow, x) =>
+          xRow.flatMap((type, z) =>
+            type ? callback(type, y, x, z) : undefined,
+          ),
+        ),
+      )
+      .filter((i): i is T => !!i);
   }
 
   /**
