@@ -1,14 +1,10 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { match } from 'ts-pattern';
-import Board from './components/Board';
+import Game from './components/Game';
 import { GameCanvas } from './components/GameCanvas';
-import Tetrimino from './components/Tetrimino';
-import Tetrion from './components/Tetrion';
 import { MainMenu } from './MainMenu';
 import './style.css';
-import { Board as BoardMatrix } from './scenario/game/Board';
-import { Piece } from './scenario/game/Piece';
 
 type Scenario = 'main-menu' | 'play' | 'controls';
 
@@ -22,13 +18,7 @@ function App(props: { aspectRatio: number }) {
         onControls={() => setScenario('controls')}
       />
     ))
-    .with('play', () => (
-      <>
-        <Tetrion />
-        <Board board={new BoardMatrix()} />
-        <Tetrimino tetrimino={new Piece('S', 'z')} />
-      </>
-    ))
+    .with('play', () => <Game />)
     .with('controls', () => <></>)
     .exhaustive();
 
