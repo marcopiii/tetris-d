@@ -108,6 +108,23 @@ export class Piece {
     );
   }
 
+  flatMapBlocks<T>(callback: (y: number, x: number, z: number) => T): T[] {
+    return this._shape
+      .flatMap((layer, dy) =>
+        layer.flatMap((exists, k) => {
+          if (!exists) return undefined;
+          const dx = this._plane === 'x' ? 0 : k;
+          const dz = this._plane === 'z' ? 0 : k;
+          return callback(
+            this._position.y + dy,
+            this._position.x + dx,
+            this._position.z + dz,
+          );
+        }),
+      )
+      .filter((b): b is T => !!b);
+  }
+
   private checkpoint() {
     this._prev = {
       position: copy(this._position),
