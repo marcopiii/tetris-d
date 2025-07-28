@@ -6,7 +6,9 @@ import Mino from './Mino';
 import { BoardBlock, BoardMatrix } from './useBoardManager';
 
 type Props = {
-  boardMatrix: BoardMatrix;
+  matrixIterator: <T>(
+    callback: (type: BoardBlock, y: number, x: number, z: number) => T,
+  ) => T[];
 };
 
 const offset = new THREE.Vector3(1 / 2, -1 / 2, 1 / 2);
@@ -22,24 +24,10 @@ const translate = (
   z: number,
 ): [number, number, number] => [translateX(x), translateY(y), translateZ(z)];
 
-function flatMapBlocks<T>(matrix: BoardMatrix) {
-  return (callback: (type: BoardBlock, y: number, x: number, z: number) => T) =>
-    matrix
-      .flatMap((layer, y) =>
-        layer.flatMap((xRow, x) =>
-          xRow.flatMap((type, z) =>
-            type ? callback(type, y, x, z) : undefined,
-          ),
-        ),
-      )
-      .filter((i): i is T => !!i);
-}
-
 export default function Board(props: Props) {
-  const renderMino = flatMapBlocks<JSX.Element>(props.boardMatrix);
   return (
     <group>
-      {renderMino((type, y, x, z) => {
+      {props.matrixIterator((type, y, x, z) => {
         const position = translate(x, y, z);
         return match(type)
           .with('DELETE', () => (

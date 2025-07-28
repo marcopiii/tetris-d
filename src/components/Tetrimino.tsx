@@ -1,10 +1,11 @@
 import * as THREE from 'three';
 import { COLS, ROWS } from '../params';
-import { Piece } from '../scenario/game/Piece';
 import Mino from './Mino';
+import { Name as TetriminoType } from '../tetrimino/types';
 
 type Props = {
-  tetrimino: Piece;
+  type: TetriminoType;
+  matrixIterator: <T>(callback: (y: number, x: number, z: number) => T) => T[];
 };
 
 const offset = new THREE.Vector3(1 / 2, -1 / 2, 1 / 2);
@@ -23,8 +24,8 @@ const translate = (
 export default function Tetrimino(props: Props) {
   return (
     <group>
-      {props.tetrimino.flatMapBlocks((y, x, z) => (
-        <Mino type={props.tetrimino.type} position={translate(x, y, z)} />
+      {props.matrixIterator((y, x, z) => (
+        <Mino type={props.type} position={translate(x, y, z)} />
       ))}
     </group>
   );
