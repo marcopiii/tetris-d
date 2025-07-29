@@ -1,5 +1,6 @@
 import React from 'react';
 import FX from '../audio';
+import { COLS, ROWS } from '../params';
 import { LineCoord } from '../scenario/game/types';
 import { play } from '../utils';
 import Board from './Board';
@@ -19,10 +20,26 @@ export default function Game() {
   const boardManager = useBoardManager();
   const tetriminoManager = useTetriminoManager(type, plane);
 
-  function detectCollision(): boolean {
-    // todo: implement collision detection
-    return false;
-  }
+  const detectCollision = React.useCallback(() => {
+    const boardOccupiedCoords = boardManager.flatMapBlocks(
+      (_, y, x, z) => [y, x, z] as const,
+    );
+    const tetriminoOccupiedCoords = tetriminoManager.flatMapBlocks(
+      (y, x, z) => [y, x, z] as const,
+    );
+    const floorCollision = tetriminoOccupiedCoords.some(
+      ([y, x, z]) => y >= ROWS,
+    );
+    const wallCollision = tetriminoOccupiedCoords.some(
+      ([y, x, z]) => x < 0 || x >= COLS || z < 0 || z >= COLS,
+    );
+    const stackCollision = tetriminoOccupiedCoords.some(([ty, tx, tz]) =>
+      boardOccupiedCoords.some(
+        ([by, bx, bz]) => ty === by && tx === bx && tz === bz,
+      ),
+    );
+    return floorCollision || wallCollision || stackCollision;
+  }, [boardManager.flatMapBlocks, tetriminoManager.flatMapBlocks]);
 
   const tick = (): [LineCoord[], boolean] => {
     const needRecheck = boardManager.clearLines();

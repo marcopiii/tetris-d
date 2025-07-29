@@ -59,7 +59,7 @@ export default function useTetriminoManager(
     <T>(callback: (y: number, x: number, z: number) => T): T[] =>
       shape
         .flatMap((layer, dy) =>
-          layer.flatMap((exists, k) => {
+          layer.map((exists, k) => {
             if (!exists) return undefined;
             const dx = plane === 'x' ? 0 : k;
             const dz = plane === 'z' ? 0 : k;

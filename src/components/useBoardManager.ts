@@ -24,9 +24,7 @@ export default function useBoardManager() {
       matrix
         .flatMap((layer, y) =>
           layer.flatMap((xRow, x) =>
-            xRow.flatMap((type, z) =>
-              type ? callback(type, y, x, z) : undefined,
-            ),
+            xRow.map((type, z) => (type ? callback(type, y, x, z) : undefined)),
           ),
         )
         .filter((i): i is T => !!i),
