@@ -11,8 +11,6 @@ import useTetriminoManager from './useTetriminoManager';
 import { Name as TetriminoType } from '../tetrimino/types';
 
 export default function Game() {
-  console.log('Game rendered');
-
   const [{ type, plane }, setCurrentTetrimino] = React.useState({
     type: 'S' as TetriminoType,
     plane: 'z' as 'x' | 'z',
@@ -27,7 +25,6 @@ export default function Game() {
   }
 
   const tick = (): [LineCoord[], boolean] => {
-    console.log('tick');
     const needRecheck = boardManager.clearLines();
     const cascadeLineClear = needRecheck ? boardManager.checkLines() : [];
     if (cascadeLineClear.length > 0) {
@@ -43,7 +40,7 @@ export default function Game() {
         play(FX.line_clear, 0.75);
       }
       setCurrentTetrimino((prevTetrimino) => ({
-        type: 'Z', // Replace with logic to get next tetrimino type
+        type: 'Z', // todo: replace with logic to get next tetrimino type
         plane: prevTetrimino.plane === 'x' ? 'z' : 'x',
       }));
       // onNewPiece();
