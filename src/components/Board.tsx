@@ -25,6 +25,8 @@ const translate = (
 ): [number, number, number] => [translateX(x), translateY(y), translateZ(z)];
 
 export default function Board(props: Props) {
+  console.log('Board rendered');
+
   return (
     <group>
       {props.matrixIterator((type, y, x, z) => {

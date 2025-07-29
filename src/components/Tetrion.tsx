@@ -12,6 +12,8 @@ const tetrionWallGeometry = new THREE.PlaneGeometry(
 );
 
 export default function Tetrion() {
+  console.log('Tetrion rendered');
+  
   const scene = useThree((rootState) => rootState.scene);
 
   React.useEffect(() => {

@@ -23,6 +23,8 @@ const translate = (
 ): [number, number, number] => [translateX(x), translateY(y), translateZ(z)];
 
 export default function Tetrimino(props: Props) {
+  console.log('Tetrimino rendered');
+
   return (
     <group>
       {props.matrixIterator((y, x, z) => (

@@ -6,6 +6,7 @@ import {
   RotationState,
   Shape,
 } from '../tetrimino/types';
+import { copy } from '../utils';
 
 type Plane = 'x' | 'z';
 
@@ -35,6 +36,25 @@ export default function useTetriminoManager(
   );
   const [shape, setShape] = React.useState<Shape>(initShape);
 
+  const [checkpoint, setCheckpoint] = React.useReducer(
+    () => ({
+      position: copy(position),
+      shape: copy(shape),
+      rotationState: copy(rotationState),
+    }),
+    {
+      position: copy(position),
+      shape: copy(shape),
+      rotationState: copy(rotationState),
+    },
+  );
+
+  const rollback = React.useCallback(() => {
+    setPosition(checkpoint.position);
+    setShape(checkpoint.shape);
+    setRotationState(checkpoint.rotationState);
+  }, [checkpoint]);
+
   const flatMapBlocks = React.useCallback(
     <T>(callback: (y: number, x: number, z: number) => T): T[] =>
       shape
@@ -50,5 +70,10 @@ export default function useTetriminoManager(
     [shape, position, plane],
   );
 
-  return { flatMapBlocks };
+  const drop = () => {
+    setCheckpoint();
+    setPosition((prevPosition) => ({ ...prevPosition, y: prevPosition.y + 1 }));
+  };
+
+  return { flatMapBlocks, drop, rollback };
 }
