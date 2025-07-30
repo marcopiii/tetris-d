@@ -1,4 +1,5 @@
 import React from 'react';
+import { match } from 'ts-pattern';
 import FX from '../audio';
 import { COLS, ROWS } from '../params';
 import { LineCoord } from '../scenario/game/types';
@@ -32,13 +33,21 @@ export default function Game() {
     const collision = !attempt(drop)(board);
 
     if (collision) {
-      fixPiece(type, board);
+      fixPiece(type, tetrimino);
       const lineClear = checkLines();
       if (lineClear.length > 0) {
         play(FX.line_clear, 0.75);
       }
       setCurrentTetrimino((prevTetrimino) => ({
-        type: 'Z', // todo: replace with logic to get next tetrimino type
+        type: match(prevTetrimino.type)
+          .with('S', () => 'Z' as const)
+          .with('Z', () => 'I' as const)
+          .with('I', () => 'L' as const)
+          .with('L', () => 'J' as const)
+          .with('J', () => 'T' as const)
+          .with('T', () => 'O' as const)
+          .with('O', () => 'S' as const)
+          .exhaustive(),
         plane: prevTetrimino.plane === 'x' ? 'z' : 'x',
       }));
       // onNewPiece();

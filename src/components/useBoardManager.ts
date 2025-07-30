@@ -44,6 +44,7 @@ export default function useBoardManager() {
       tetrimino.forEach(({ y, x, z }) => {
         newMatrix[y][x][z] = tetriminoType;
       });
+      setMatrix(newMatrix);
     },
     [matrix],
   );

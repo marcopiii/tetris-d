@@ -2,27 +2,36 @@ import React from 'react';
 import { Vector3Like } from 'three';
 import { COLS, ROWS } from '../params';
 import { tetriminos } from '../tetrimino';
-import {
-  Name as TetriminoType,
-  RotationState,
-  Shape,
-} from '../tetrimino/types';
+import { Name as TetriminoType, Shape } from '../tetrimino/types';
 import { initPosition, TetriminoState } from './tetriminoMovement';
 
+/**
+ * Manages the state of a Tetrimino in the game.
+ * This hook initializes the tetrimino state based on the given type and plane. Changing `type`
+ * or `plane` will basically spawn a new tetrimino.
+ * @param type
+ * @param plane
+ */
 export default function useTetriminoManager(
   type: TetriminoType,
   plane: 'x' | 'z',
 ) {
-  const [rotationState, setRotationState] = React.useState<RotationState>('0');
-  const [position, setPosition] = React.useState(
-    initPosition(plane, tetriminos[type]),
-  );
-  const [shape, setShape] = React.useState<Shape>(tetriminos[type]);
+  const [state, setState] = React.useState<TetriminoState>({
+    type,
+    plane,
+    position: initPosition(plane, tetriminos[type]),
+    shape: tetriminos[type],
+    rotationState: '0',
+  });
 
   React.useEffect(() => {
-    setRotationState('0');
-    setShape(tetriminos[type]);
-    setPosition(initPosition(plane, tetriminos[type]));
+    setState({
+      type,
+      plane,
+      position: initPosition(plane, tetriminos[type]),
+      shape: tetriminos[type],
+      rotationState: '0',
+    });
   }, [type, plane]);
 
   function calculateMatrix(
@@ -51,8 +60,8 @@ export default function useTetriminoManager(
    * relative to the board coordinate system.
    */
   const tetrimino: { x: number; y: number; z: number }[] = React.useMemo(
-    () => calculateMatrix(shape, position, plane),
-    [shape, position, plane],
+    () => calculateMatrix(state.shape, state.position, state.plane),
+    [state.shape, state.position, state.plane],
   );
 
   function detectCollision(
@@ -78,14 +87,7 @@ export default function useTetriminoManager(
   const attempt = React.useCallback(
     (moveFn: (state: TetriminoState) => TetriminoState) =>
       (boardMatrix: Vector3Like[]) => {
-        const currentState: TetriminoState = {
-          type,
-          plane,
-          position,
-          shape,
-          rotationState,
-        };
-        const newState = moveFn(currentState);
+        const newState = moveFn(state);
         const newTetriminoMatrix = calculateMatrix(
           newState.shape,
           newState.position,
@@ -95,13 +97,11 @@ export default function useTetriminoManager(
         if (collision) {
           return false;
         } else {
-          setPosition(newState.position);
-          setShape(newState.shape);
-          setRotationState(newState.rotationState);
+          setState(newState);
           return true;
         }
       },
-    [type, plane, position, shape, rotationState],
+    [state],
   );
 
   return { tetrimino, attempt };
