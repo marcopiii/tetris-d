@@ -5,8 +5,7 @@ import { Name as TetriminoType } from '../tetrimino/types';
 import { MinoShade } from './MinoShade';
 
 type Props = {
-  type: TetriminoType;
-  occupiedBlocks: { y: number; x: number; z: number }[];
+  occupiedBlocks: { type: TetriminoType; y: number; x: number; z: number }[];
 };
 
 const offset = new THREE.Vector3(1 / 2, -1 / 2, 1 / 2);
@@ -25,26 +24,26 @@ const translate = (
 export default function Tetrimino(props: Props) {
   return (
     <group>
-      {props.occupiedBlocks.map(({ y, x, z }) => (
+      {props.occupiedBlocks.map(({ type, y, x, z }) => (
         <>
-          <Mino type={props.type} position={translate(x, y, z)} />
+          <Mino type={type} position={translate(x, y, z)} />
           <MinoShade
-            type={props.type}
+            type={type}
             rotation={[0, 0, 0]}
             position={[translateX(x), translateY(y), -COLS / 2]}
           />
           <MinoShade
-            type={props.type}
+            type={type}
             rotation={[0, Math.PI / 2, 0]}
             position={[-COLS / 2, translateY(y), translateZ(z)]}
           />
           <MinoShade
-            type={props.type}
+            type={type}
             rotation={[0, Math.PI, 0]}
             position={[translateX(x), translateY(y), COLS / 2]}
           />
           <MinoShade
-            type={props.type}
+            type={type}
             rotation={[0, -Math.PI / 2, 0]}
             position={[COLS / 2, translateY(y), translateZ(z)]}
           />

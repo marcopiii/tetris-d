@@ -59,8 +59,11 @@ export default function useTetriminoManager(
    * The array of the coordinates of the blocks that are currently occupied by the tetrimino,
    * relative to the board coordinate system.
    */
-  const tetrimino: { x: number; y: number; z: number }[] = React.useMemo(
-    () => calculateMatrix(state.shape, state.position, state.plane),
+  const tetrimino = React.useMemo(
+    () =>
+      calculateMatrix(state.shape, state.position, state.plane).map(
+        (coord) => ({ type: type, ...coord }),
+      ),
     [state.shape, state.position, state.plane],
   );
 

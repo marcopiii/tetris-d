@@ -40,10 +40,10 @@ export default function useBoardManager() {
    * Copies each block of the tetrimino into the board. It does not alter the state of the tetrimino.
    */
   const fixPiece = React.useCallback(
-    (tetriminoType: TetriminoType, tetrimino: Vector3Like[]) => {
+    (tetrimino: { y: number; x: number; z: number; type: TetriminoType }[]) => {
       const newMatrix = copy(matrix);
-      tetrimino.forEach(({ y, x, z }) => {
-        newMatrix[y][x][z] = tetriminoType;
+      tetrimino.forEach(({ type, y, x, z }) => {
+        newMatrix[y][x][z] = type;
       });
       setMatrix(newMatrix);
     },

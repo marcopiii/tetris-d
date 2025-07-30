@@ -7,7 +7,7 @@ const gravity = [
   0.1775, 0.2598, 0.388, 0.59, 0.92, 1.46, 2.36,
 ];
 
-export function useClock(callback: () => void) {
+export default function useClock(callback: () => void) {
   const intervalRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
   const levelRef = React.useRef(1);
   const resetCounterRef = React.useRef(0);
