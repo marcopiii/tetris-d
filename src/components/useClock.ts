@@ -13,7 +13,7 @@ export function useClock(callback: () => void) {
   const resetCounterRef = React.useRef(0);
 
   const speed = React.useCallback(
-    () => 1000 / (gravity[levelRef.current] * 60),
+    () => 100 / (gravity[levelRef.current] * 60),
     [],
   );
 

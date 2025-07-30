@@ -1,7 +1,6 @@
 import React from 'react';
 import { match } from 'ts-pattern';
 import FX from '../audio';
-import { COLS, ROWS } from '../params';
 import { LineCoord } from '../scenario/game/types';
 import { play } from '../utils';
 import Board from './Board';

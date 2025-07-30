@@ -1,4 +1,5 @@
 import React from 'react';
+import { Vector3Like } from 'three';
 import { COLS, ROWS } from '../params';
 import { LineCoord } from '../scenario/game/types';
 import { Name as Tetrimino } from '../tetrimino';
@@ -35,11 +36,11 @@ export default function useBoardManager() {
     [matrix],
   );
 
+  /**
+   * Copies each block of the tetrimino into the board. It does not alter the state of the tetrimino.
+   */
   const fixPiece = React.useCallback(
-    (
-      tetriminoType: TetriminoType,
-      tetrimino: { y: number; x: number; z: number }[],
-    ) => {
+    (tetriminoType: TetriminoType, tetrimino: Vector3Like[]) => {
       const newMatrix = copy(matrix);
       tetrimino.forEach(({ y, x, z }) => {
         newMatrix[y][x][z] = tetriminoType;
@@ -86,7 +87,9 @@ export default function useBoardManager() {
       }
     }
 
-    setMatrix(newMatrix);
+    if (clearedLines.length > 0) {
+      setMatrix(newMatrix);
+    }
     return clearedLines;
   }, [matrix]);
 
@@ -110,7 +113,9 @@ export default function useBoardManager() {
         }
       }
     }
-    setMatrix(newMatrix);
+    if (clearedLines) {
+      setMatrix(newMatrix);
+    }
     return clearedLines;
   }, [matrix]);
 
