@@ -1,3 +1,3 @@
-export * from './tetrimino';
+export * from './tetriminos';
 export * from './wallKickData';
 export * from './types';

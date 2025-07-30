@@ -4,7 +4,7 @@ import {
   Shape,
   RotationState,
   wallKickData,
-  tetrimino,
+  tetriminos,
 } from '../../tetrimino';
 import { copy } from '../../utils';
 
@@ -29,7 +29,7 @@ export class Piece {
 
   constructor(type: Tetrimino, plane: Plane) {
     this._type = type;
-    this._shape = tetrimino[type];
+    this._shape = tetriminos[type];
     this._rotationState = '0';
     this._position = initPosition(plane, this._shape);
     this._plane = plane;

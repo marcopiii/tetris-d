@@ -1,4 +1,4 @@
-import { tetrimino } from '../../tetrimino';
+import { tetriminos } from '../../tetrimino';
 import { play } from '../../utils';
 import { Bag } from './Bag';
 import { GameCamera } from './GameCamera';
@@ -36,7 +36,7 @@ export class Game {
 
   get next() {
     const type = this._bag.previewNextTetrimino();
-    return { type: type, shape: tetrimino[type] };
+    return { type: type, shape: tetriminos[type] };
   }
 
   get held() {

@@ -1,4 +1,4 @@
-import { Name as Tetrimino, tetrimino } from '../../tetrimino';
+import { Name as Tetrimino, tetriminos } from '../../tetrimino';
 
 export class Bag {
   private bag!: Tetrimino[];
@@ -8,7 +8,7 @@ export class Bag {
   }
 
   private regenBag() {
-    const tetriminos = Object.keys(tetrimino) as Tetrimino[];
+    const tetriminos = Object.keys(tetriminos) as Tetrimino[];
     for (let i = tetriminos.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [tetriminos[i], tetriminos[j]] = [tetriminos[j], tetriminos[i]];

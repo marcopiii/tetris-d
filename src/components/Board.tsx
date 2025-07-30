@@ -1,14 +1,11 @@
-import { JSX } from 'react';
 import * as THREE from 'three';
 import { match, P } from 'ts-pattern';
-import { COLS, MINO_SIZE, ROWS } from '../params';
+import { COLS, ROWS } from '../params';
 import Mino from './Mino';
-import { BoardBlock, BoardMatrix } from './useBoardManager';
+import { BoardBlock } from './useBoardManager';
 
 type Props = {
-  matrixIterator: <T>(
-    callback: (type: BoardBlock, y: number, x: number, z: number) => T,
-  ) => T[];
+  occupiedBlocks: { type: BoardBlock; y: number; x: number; z: number }[];
 };
 
 const offset = new THREE.Vector3(1 / 2, -1 / 2, 1 / 2);
@@ -27,7 +24,7 @@ const translate = (
 export default function Board(props: Props) {
   return (
     <group>
-      {props.matrixIterator((type, y, x, z) => {
+      {props.occupiedBlocks.map(({ type, y, x, z }) => {
         const position = translate(x, y, z);
         return match(type)
           .with('DELETE', () => (

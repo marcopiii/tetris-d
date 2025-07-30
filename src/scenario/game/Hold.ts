@@ -1,4 +1,4 @@
-import { Shape, Name as Tetrimino, tetrimino } from '../../tetrimino';
+import { Shape, Name as Tetrimino, tetriminos } from '../../tetrimino';
 import type { Piece } from './Piece';
 
 export class Hold {
@@ -7,7 +7,7 @@ export class Hold {
 
   constructor(type: Tetrimino) {
     this._type = type;
-    this._shape = tetrimino[type];
+    this._shape = tetriminos[type];
   }
 
   get piece() {

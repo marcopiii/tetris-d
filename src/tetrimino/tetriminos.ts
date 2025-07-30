@@ -1,6 +1,6 @@
 import { Name, Shape } from './types';
 
-export const tetrimino: Record<Name, Shape> = {
+export const tetriminos: Record<Name, Shape> = {
   I: [
     [0, 0, 0, 0],
     [1, 1, 1, 1],

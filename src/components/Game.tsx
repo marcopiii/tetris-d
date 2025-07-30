@@ -5,6 +5,7 @@ import { LineCoord } from '../scenario/game/types';
 import { play } from '../utils';
 import Board from './Board';
 import Tetrimino from './Tetrimino';
+import { drop } from './tetriminoMovement';
 import Tetrion from './Tetrion';
 import useBoardManager from './useBoardManager';
 import { useClock } from './useClock';
@@ -17,42 +18,22 @@ export default function Game() {
     plane: 'z' as 'x' | 'z',
   });
 
-  const boardManager = useBoardManager();
-  const tetriminoManager = useTetriminoManager(type, plane);
-
-  const detectCollision = React.useCallback(() => {
-    const boardOccupiedCoords = boardManager.flatMapBlocks(
-      (_, y, x, z) => [y, x, z] as const,
-    );
-    const tetriminoOccupiedCoords = tetriminoManager.flatMapBlocks(
-      (y, x, z) => [y, x, z] as const,
-    );
-    const floorCollision = tetriminoOccupiedCoords.some(
-      ([y, x, z]) => y >= ROWS,
-    );
-    const wallCollision = tetriminoOccupiedCoords.some(
-      ([y, x, z]) => x < 0 || x >= COLS || z < 0 || z >= COLS,
-    );
-    const stackCollision = tetriminoOccupiedCoords.some(([ty, tx, tz]) =>
-      boardOccupiedCoords.some(
-        ([by, bx, bz]) => ty === by && tx === bx && tz === bz,
-      ),
-    );
-    return floorCollision || wallCollision || stackCollision;
-  }, [boardManager.flatMapBlocks, tetriminoManager.flatMapBlocks]);
+  const { board, checkLines, clearLines, fixPiece } = useBoardManager();
+  const { tetrimino, attempt } = useTetriminoManager(type, plane);
 
   const tick = (): [LineCoord[], boolean] => {
-    const needRecheck = boardManager.clearLines();
-    const cascadeLineClear = needRecheck ? boardManager.checkLines() : [];
+    const needRecheck = clearLines();
+    const cascadeLineClear = needRecheck ? checkLines() : [];
     if (cascadeLineClear.length > 0) {
       play(FX.line_clear, 0.75);
       return [cascadeLineClear, false];
     }
-    tetriminoManager.drop();
-    if (detectCollision()) {
-      tetriminoManager.rollback();
-      boardManager.fixPiece(type, tetriminoManager.flatMapBlocks);
-      const lineClear = boardManager.checkLines();
+
+    const collision = !attempt(drop)(board);
+
+    if (collision) {
+      fixPiece(type, board);
+      const lineClear = checkLines();
       if (lineClear.length > 0) {
         play(FX.line_clear, 0.75);
       }
@@ -61,7 +42,7 @@ export default function Game() {
         plane: prevTetrimino.plane === 'x' ? 'z' : 'x',
       }));
       // onNewPiece();
-      const gameOver = detectCollision();
+      const gameOver = false; // detectCollision(); todo: implement game over logic
       return [lineClear, gameOver];
     }
     return [[], false];
@@ -73,8 +54,8 @@ export default function Game() {
   return (
     <group>
       <Tetrion />
-      <Board matrixIterator={boardManager.flatMapBlocks} />
-      <Tetrimino type={type} matrixIterator={tetriminoManager.flatMapBlocks} />
+      <Board occupiedBlocks={board} />
+      <Tetrimino type={type} occupiedBlocks={tetrimino} />
     </group>
   );
 }

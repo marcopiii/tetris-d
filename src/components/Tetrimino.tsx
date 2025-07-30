@@ -6,7 +6,7 @@ import { MinoShade } from './MinoShade';
 
 type Props = {
   type: TetriminoType;
-  matrixIterator: <T>(callback: (y: number, x: number, z: number) => T) => T[];
+  occupiedBlocks: { y: number; x: number; z: number }[];
 };
 
 const offset = new THREE.Vector3(1 / 2, -1 / 2, 1 / 2);
@@ -25,7 +25,7 @@ const translate = (
 export default function Tetrimino(props: Props) {
   return (
     <group>
-      {props.matrixIterator((y, x, z) => (
+      {props.occupiedBlocks.map(({ y, x, z }) => (
         <>
           <Mino type={props.type} position={translate(x, y, z)} />
           <MinoShade

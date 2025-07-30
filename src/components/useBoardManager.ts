@@ -19,28 +19,30 @@ const emptyMatrix: BoardMatrix = Array(ROWS)
 export default function useBoardManager() {
   const [matrix, setMatrix] = React.useState(emptyMatrix);
 
-  const flatMapBlocks = React.useCallback(
-    <T>(callback: (type: BoardBlock, y: number, x: number, z: number) => T) =>
+  /**
+   * The array of the coordinates of the blocks that are occupied by the pieces in the board,
+   * relative to the board coordinate system
+   */
+  const board = React.useMemo(
+    () =>
       matrix
         .flatMap((layer, y) =>
           layer.flatMap((xRow, x) =>
-            xRow.map((type, z) => (type ? callback(type, y, x, z) : undefined)),
+            xRow.map((type, z) => (type ? { type, x, y, z } : undefined)),
           ),
         )
-        .filter((i): i is T => !!i),
+        .filter((block) => !!block),
     [matrix],
   );
 
   const fixPiece = React.useCallback(
     (
-      pieceType: TetriminoType,
-      pieceMatrixIterator: <T>(
-        callback: (y: number, x: number, z: number) => T,
-      ) => T[],
+      tetriminoType: TetriminoType,
+      tetrimino: { y: number; x: number; z: number }[],
     ) => {
       const newMatrix = copy(matrix);
-      pieceMatrixIterator((y, x, z) => {
-        newMatrix[y][x][z] = pieceType;
+      tetrimino.forEach(({ y, x, z }) => {
+        newMatrix[y][x][z] = tetriminoType;
       });
     },
     [matrix],
@@ -112,7 +114,7 @@ export default function useBoardManager() {
   }, [matrix]);
 
   return {
-    flatMapBlocks,
+    board,
     fixPiece,
     checkLines,
     clearLines,
