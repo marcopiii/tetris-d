@@ -10,15 +10,19 @@ type CameraSetup = {
 
 type PossibleCameraSetups<K extends string> = Record<K, CameraSetup>;
 
-export default function useSetCamera<K extends string>(
+export default function useCamera<K extends string>(
   pcs: PossibleCameraSetups<K>,
 ) {
+  const [cameraPosition, trackCameraPosition] = React.useState<K>(
+    Object.keys(pcs)[0] as K,
+  );
+
   const camera = useThree((rootState) => rootState.camera);
   const tweenGroup = React.useRef(new TWEEN.Group());
 
   useFrame(() => tweenGroup.current.update());
 
-  return (selectedCameraSetup: K, noAnimation?: boolean) => {
+  const moveThreeCamera = (selectedCameraSetup: K, noAnimation?: boolean) => {
     const cameraSetup = pcs[selectedCameraSetup];
 
     if (noAnimation) {
@@ -33,4 +37,15 @@ export default function useSetCamera<K extends string>(
       .onUpdate(() => camera.lookAt(...cameraSetup.lookAt))
       .start();
   };
+
+  const setCameraPosition = (selectedCameraSetup: K, noAnimation?: boolean) => {
+    moveThreeCamera(selectedCameraSetup, noAnimation);
+    trackCameraPosition(selectedCameraSetup);
+  };
+
+  React.useEffect(() => {
+    moveThreeCamera(Object.keys(pcs)[0] as K, false);
+  }, []);
+
+  return [cameraPosition, setCameraPosition] as const;
 }
