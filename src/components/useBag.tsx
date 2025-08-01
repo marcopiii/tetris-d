@@ -15,8 +15,7 @@ export default function useBag() {
   const [bag, setBag] = React.useState<Tetrimino[]>(regenBag());
 
   const pullNext = React.useCallback(() => {
-    const [current, next, ...rest] =
-      bag.length > 2 ? bag : [...bag, ...regenBag()];
+    const [_, ...rest] = bag.length > 2 ? bag : [...bag, ...regenBag()];
     setBag(rest);
   }, [bag]);
 
