@@ -42,86 +42,167 @@ export type TriMaterial = [
   THREE.MeshBasicMaterialParameters,
 ];
 
-export const minoMaterials: {
-  normal: Record<Name, TriMaterial>;
-  shade: Record<Name, THREE.MeshBasicMaterialParameters>;
-  disabled: TriMaterial;
-  deleting: THREE.MeshBasicMaterialParameters;
-} = {
-  normal: {
-    I: [
+type MinoState = 'normal' | 'shade' | 'disabled' | 'deleting';
+
+const deletingMaterialProps = {
+  color: new THREE.Color(1.01, 1.01, 1.01),
+  fog: false,
+};
+
+export const minoMaterials: Record<
+  Name,
+  {
+    normal: TriMaterial;
+    shade: THREE.MeshBasicMaterialParameters;
+    disabled: TriMaterial;
+    deleting: TriMaterial;
+  }
+> = {
+  I: {
+    normal: [
       { color: colors.tetrimino.I },
       { color: adj(colors.tetrimino.I, k) },
       { color: adj(colors.tetrimino.I, -k) },
     ],
-    O: [
+    shade: {
+      color: adj(colors.tetrimino.I, -j),
+      fog: false,
+    },
+    disabled: [
+      { color: colors.disabled },
+      { color: adj(colors.disabled, k) },
+      { color: adj(colors.disabled, -k) },
+    ],
+    deleting: [
+      deletingMaterialProps,
+      deletingMaterialProps,
+      deletingMaterialProps,
+    ],
+  },
+  O: {
+    normal: [
       { color: colors.tetrimino.O },
       { color: adj(colors.tetrimino.O, k) },
       { color: adj(colors.tetrimino.O, -k) },
     ],
-    T: [
+    shade: {
+      color: adj(colors.tetrimino.O, -j),
+      fog: false,
+    },
+    disabled: [
+      { color: colors.disabled },
+      { color: adj(colors.disabled, k) },
+      { color: adj(colors.disabled, -k) },
+    ],
+    deleting: [
+      deletingMaterialProps,
+      deletingMaterialProps,
+      deletingMaterialProps,
+    ],
+  },
+  T: {
+    normal: [
       { color: colors.tetrimino.T },
       { color: adj(colors.tetrimino.T, k) },
       { color: adj(colors.tetrimino.T, -k) },
     ],
-    J: [
+    shade: {
+      color: adj(colors.tetrimino.T, -j),
+      fog: false,
+    },
+    disabled: [
+      { color: colors.disabled },
+      { color: adj(colors.disabled, k) },
+      { color: adj(colors.disabled, -k) },
+    ],
+    deleting: [
+      deletingMaterialProps,
+      deletingMaterialProps,
+      deletingMaterialProps,
+    ],
+  },
+  J: {
+    normal: [
       { color: colors.tetrimino.J },
       { color: adj(colors.tetrimino.J, k) },
       { color: adj(colors.tetrimino.J, -k) },
     ],
-    L: [
+    shade: {
+      color: adj(colors.tetrimino.J, -j),
+      fog: false,
+    },
+    disabled: [
+      { color: colors.disabled },
+      { color: adj(colors.disabled, k) },
+      { color: adj(colors.disabled, -k) },
+    ],
+    deleting: [
+      deletingMaterialProps,
+      deletingMaterialProps,
+      deletingMaterialProps,
+    ],
+  },
+  L: {
+    normal: [
       { color: colors.tetrimino.L },
       { color: adj(colors.tetrimino.L, k) },
       { color: adj(colors.tetrimino.L, -k) },
     ],
-    S: [
+    shade: {
+      color: adj(colors.tetrimino.L, -j),
+      fog: false,
+    },
+    disabled: [
+      { color: colors.disabled },
+      { color: adj(colors.disabled, k) },
+      { color: adj(colors.disabled, -k) },
+    ],
+    deleting: [
+      deletingMaterialProps,
+      deletingMaterialProps,
+      deletingMaterialProps,
+    ],
+  },
+  S: {
+    normal: [
       { color: colors.tetrimino.S },
       { color: adj(colors.tetrimino.S, k) },
       { color: adj(colors.tetrimino.S, -k) },
     ],
-    Z: [
+    shade: {
+      color: adj(colors.tetrimino.S, -j),
+      fog: false,
+    },
+    disabled: [
+      { color: colors.disabled },
+      { color: adj(colors.disabled, k) },
+      { color: adj(colors.disabled, -k) },
+    ],
+    deleting: [
+      deletingMaterialProps,
+      deletingMaterialProps,
+      deletingMaterialProps,
+    ],
+  },
+  Z: {
+    normal: [
       { color: colors.tetrimino.Z },
       { color: adj(colors.tetrimino.Z, k) },
       { color: adj(colors.tetrimino.Z, -k) },
     ],
-  },
-  shade: {
-    I: {
-      color: adj(colors.tetrimino.I, -j),
-      fog: false,
-    },
-    O: {
-      color: adj(colors.tetrimino.O, -j),
-      fog: false,
-    },
-    T: {
-      color: adj(colors.tetrimino.T, -j),
-      fog: false,
-    },
-    J: {
-      color: adj(colors.tetrimino.J, -j),
-      fog: false,
-    },
-    L: {
-      color: adj(colors.tetrimino.L, -j),
-      fog: false,
-    },
-    S: {
-      color: adj(colors.tetrimino.S, -j),
-      fog: false,
-    },
-    Z: {
+    shade: {
       color: adj(colors.tetrimino.Z, -j),
       fog: false,
     },
-  },
-  disabled: [
-    { color: colors.disabled },
-    { color: adj(colors.disabled, k) },
-    { color: adj(colors.disabled, -k) },
-  ],
-  deleting: {
-    color: new THREE.Color(1.01, 1.01, 1.01),
-    fog: false,
+    disabled: [
+      { color: colors.disabled },
+      { color: adj(colors.disabled, k) },
+      { color: adj(colors.disabled, -k) },
+    ],
+    deleting: [
+      deletingMaterialProps,
+      deletingMaterialProps,
+      deletingMaterialProps,
+    ],
   },
 };

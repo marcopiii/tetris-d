@@ -12,7 +12,7 @@ export function MinoShade(props: Props) {
   return (
     <mesh rotation={props.rotation} position={props.position}>
       <planeGeometry args={[MINO_SIZE, MINO_SIZE]} />
-      <meshBasicMaterial {...minoMaterials.shade[props.type]} />
+      <meshBasicMaterial {...minoMaterials[props.type].shade} />
     </mesh>
   );
 }
