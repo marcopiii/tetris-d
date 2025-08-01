@@ -32,30 +32,16 @@ export default function Game() {
   );
 
   const tick = (): [LineCoord[], boolean] => {
-    // const needRecheck = clearLines();
-    // const cascadeLineClear = needRecheck ? checkLines() : [];
-    // if (cascadeLineClear.length > 0) {
-    //   play(FX.line_clear, 0.75);
-    //   return [cascadeLineClear, false];
-    // }
-
     const collision = !attempt(drop)(board);
-
     if (collision) {
       fixPiece(tetrimino);
-      const lineClear: LineCoord[] = []; //checkLines();
-      // if (lineClear.length > 0) {
-      //   play(FX.line_clear, 0.75);
-      // }
       bag.pullNext();
       plane.change();
-      // onNewPiece();
-      const gameOver = false; // detectCollision(); todo: implement game over logic
-      return [lineClear, gameOver];
+      return [[], false];
     }
     return [[], false];
   };
-
+  
   const [camera, setCamera] = useCamera({
     c1: { position: [-10, 4, 10], lookAt: [0, 0, 0] },
     c2: { position: [10, 4, 10], lookAt: [0, 0, 0] },

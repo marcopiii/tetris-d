@@ -7,22 +7,35 @@ const gravity = [
   0.1775, 0.2598, 0.388, 0.59, 0.92, 1.46, 2.36,
 ];
 
+function useLockDelayManagement(loopCallback: () => void) {
+  // the number of moves that reset the timer during lock delay
+  const lockDelayResetCounterRef = React.useRef(0);
+
+  // a stable and updated reference to the loop callback, with the side effect of resetting the reset counter
+  const counterResettingCallbackRef = React.useRef(() => {
+    lockDelayResetCounterRef.current = 0;
+    loopCallback();
+  });
+  React.useEffect(() => {
+    counterResettingCallbackRef.current = loopCallback;
+  }, [loopCallback]);
+
+  // a stable function to execute the loop callback
+  const execCounterResettingCallback = React.useCallback(() => {
+    counterResettingCallbackRef.current();
+  }, [counterResettingCallbackRef]);
+
+  return [lockDelayResetCounterRef, execCounterResettingCallback] as const;
+}
+
 export default function useClock(callback: () => void) {
   const intervalRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
   const levelRef = React.useRef(1);
-  const resetCounterRef = React.useRef(0);
 
   const speed = React.useCallback(
     () => 1000 / (gravity[levelRef.current] * 60),
     [],
   );
-
-  const isRunning = intervalRef.current !== undefined;
-
-  const wrappedCallback = React.useCallback(() => {
-    resetCounterRef.current = 0;
-    callback();
-  }, [callback]);
 
   const clear = React.useCallback(() => {
     if (intervalRef.current) {
@@ -31,62 +44,25 @@ export default function useClock(callback: () => void) {
     }
   }, []);
 
+  const [resetCounterRef, execLoop] = useLockDelayManagement(callback);
+
   const toggle = React.useCallback(() => {
     if (intervalRef.current) {
       clear();
     } else {
-      intervalRef.current = setInterval(wrappedCallback, speed());
+      intervalRef.current = setInterval(execLoop, speed());
     }
-  }, [clear, wrappedCallback, speed]);
+  }, [clear, execLoop, speed]);
 
-  const reset = React.useCallback(() => {
-    if (resetCounterRef.current > 10) return;
-    clear();
-    intervalRef.current = setInterval(wrappedCallback, speed());
-    resetCounterRef.current++;
-  }, [clear, wrappedCallback, speed]);
-
-  const start = React.useCallback(() => {
-    clear();
-    intervalRef.current = setInterval(wrappedCallback, speed());
-  }, [clear, wrappedCallback, speed]);
-
-  const setLevel = React.useCallback(
-    (lvl: number) => {
-      levelRef.current = lvl;
-      clear();
-      intervalRef.current = setInterval(wrappedCallback, speed());
-    },
-    [clear, wrappedCallback, speed],
-  );
-
-  const setFastDrop = React.useCallback(
-    (active: boolean) => {
-      if (!isRunning) return;
-      if (gravity[levelRef.current] > 1) return;
-      clear();
-      if (active) {
-        intervalRef.current = setInterval(wrappedCallback, 1000 / 60);
-      } else {
-        intervalRef.current = setInterval(wrappedCallback, speed());
-      }
-    },
-    [isRunning, clear, wrappedCallback, speed],
-  );
-
-  // Start the clock when the component mounts
+  // Start the clock when the component mounts, and clear it when unmounting
   useEffect(() => {
-    start();
+    intervalRef.current = setInterval(execLoop, speed());
     return () => {
       clear();
     };
-  }, [start]);
+  }, [execLoop]);
 
   return {
-    isRunning,
     toggle,
-    reset,
-    setLevel,
-    setFastDrop,
   };
 }
