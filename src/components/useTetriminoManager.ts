@@ -60,10 +60,7 @@ export default function useTetriminoManager(
    * relative to the board coordinate system.
    */
   const tetrimino = React.useMemo(
-    () =>
-      calculateMatrix(state.shape, state.position, state.plane).map(
-        (coord) => ({ type: type, ...coord }),
-      ),
+    () => calculateMatrix(state.shape, state.position, state.plane),
     [state.shape, state.position, state.plane],
   );
 

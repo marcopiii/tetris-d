@@ -34,7 +34,7 @@ export default function Game() {
   const tick = (): [LineCoord[], boolean] => {
     const collision = !attempt(drop)(board);
     if (collision) {
-      fixPiece(tetrimino);
+      fixPiece(bag.current, tetrimino);
       bag.pullNext();
       plane.change();
       return [[], false];
@@ -104,7 +104,7 @@ export default function Game() {
     <group>
       <Tetrion />
       <Board occupiedBlocks={board} />
-      <Tetrimino occupiedBlocks={tetrimino} />
+      <Tetrimino type={bag.current} occupiedBlocks={tetrimino} />
     </group>
   );
 }
