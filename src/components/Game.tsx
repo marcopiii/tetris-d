@@ -41,7 +41,7 @@ export default function Game() {
     }
     return [[], false];
   };
-  
+
   const [camera, setCamera] = useCamera({
     c1: { position: [-10, 4, 10], lookAt: [0, 0, 0] },
     c2: { position: [10, 4, 10], lookAt: [0, 0, 0] },
@@ -62,21 +62,42 @@ export default function Game() {
       .exhaustive();
   }
 
-  const clock = useClock(tick);
+  function gameAction(
+    action: 'shiftL' | 'shiftR' | 'shiftF' | 'shiftB' | 'rotateL' | 'rotateR',
+  ) {
+    match(action)
+      .with('shiftL', () => attempt(shiftLeft)(board))
+      .with('shiftR', () => attempt(shiftRight)(board))
+      .with('shiftF', () => attempt(shiftForward)(board))
+      .with('shiftB', () => attempt(shiftBackward)(board))
+      .with('rotateL', () => {
+        for (let i = 0; i < 5; i++) {
+          if (attempt(rotateLeft(i))(board)) break;
+        }
+      })
+      .with('rotateR', () => {
+        for (let i = 0; i < 5; i++) {
+          if (attempt(rotateRight(i))(board)) break;
+        }
+      })
+      .exhaustive();
+  }
 
   useKeyboardManager((event, button) =>
     match([event, button])
       .with(['press', 'Enter'], () => clock.toggle())
-      .with(['press', 'KeyA'], () => attempt(shiftLeft)(board))
-      .with(['press', 'KeyD'], () => attempt(shiftRight)(board))
-      .with(['press', 'KeyS'], () => attempt(shiftForward)(board))
-      .with(['press', 'KeyW'], () => attempt(shiftBackward)(board))
-      .with(['press', 'KeyQ'], () => attempt(rotateLeft(0))(board))
-      .with(['press', 'KeyE'], () => attempt(rotateRight(0))(board))
+      .with(['press', 'KeyA'], () => gameAction('shiftL'))
+      .with(['press', 'KeyD'], () => gameAction('shiftR'))
+      .with(['press', 'KeyS'], () => gameAction('shiftF'))
+      .with(['press', 'KeyW'], () => gameAction('shiftB'))
+      .with(['press', 'KeyQ'], () => gameAction('rotateL'))
+      .with(['press', 'KeyE'], () => gameAction('rotateR'))
       .with(['press', 'ArrowLeft'], () => cameraAction('left'))
       .with(['press', 'ArrowRight'], () => cameraAction('right'))
       .otherwise(() => null),
   );
+
+  const clock = useClock(tick);
 
   // todo: avoid unnecessary re-renders
   return (
