@@ -1,3 +1,4 @@
+import { uniq, uniqBy } from 'es-toolkit/compat';
 import React from 'react';
 import { match } from 'ts-pattern';
 import { LineCoord } from '../scenario/game/types';
@@ -25,13 +26,14 @@ export default function Game() {
   const plane = usePlane();
   const bag = useBag();
 
-  const { board, fixPiece } = useBoardManager();
+  const { board, fixPiece, clearLines } = useBoardManager();
   const { tetrimino, attempt } = useTetriminoManager(
     bag.current,
     plane.current,
   );
 
   const tick = (): [LineCoord[], boolean] => {
+    clearLines();
     const collision = !attempt(drop)(board);
     if (collision) {
       fixPiece(bag.current, tetrimino);

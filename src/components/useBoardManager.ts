@@ -1,7 +1,12 @@
+import { uniq, uniqBy } from 'es-toolkit/compat';
 import React from 'react';
+import { match, P } from 'ts-pattern';
 import { COLS, ROWS } from '../params';
+import { Board } from '../scenario/game/Board';
+import { LineCoord } from '../scenario/game/types';
 import { copy } from '../utils';
 import type { Name as TetriminoType } from '../tetrimino/types';
+import { checkCompletedLines } from './boardAlgorithms';
 
 export type BoardMatrix = (TetriminoType | null)[][][];
 
@@ -47,8 +52,50 @@ export default function useBoardManager() {
     [matrix],
   );
 
+  const clearLines = React.useCallback(() => {
+    const deleteBlockOnMatrix =
+      (matrix: BoardMatrix) =>
+      ({ y, x, z }: { y: number; x: number; z: number }) => {
+        for (let dy = y; dy > 0; dy--) {
+          matrix[dy][x][z] = matrix[dy - 1][x][z];
+        }
+        matrix[0][x][z] = null;
+      };
+
+    const linesToBlocks = (completedLines: LineCoord[]) =>
+      uniqBy(
+        completedLines
+          .map((line) =>
+            match(line)
+              .with({ y: P.number, x: P.number }, ({ y, x }) =>
+                Array.from({ length: COLS }, (_, z) => ({ y, x, z })),
+              )
+              .with({ y: P.number, z: P.number }, ({ y, z }) =>
+                Array.from({ length: COLS }, (_, x) => ({ y, x, z })),
+              )
+              .exhaustive(),
+          )
+          .flat(),
+        (block) => `${block.y}.${block.x}.${block.z}`,
+      );
+
+    const removeCompletedLines =
+      (matrix: BoardMatrix) => (lines: LineCoord[]) => {
+        const newMatriz = copy(matrix);
+        const deleteBlock = deleteBlockOnMatrix(newMatriz);
+        const blockToDelete = linesToBlocks(lines);
+        blockToDelete.forEach(deleteBlock);
+        return newMatriz;
+      };
+
+    const completedLines = checkCompletedLines(board);
+    const newMatrix = removeCompletedLines(matrix)(completedLines);
+    setMatrix(newMatrix);
+  }, [board]);
+
   return {
     board,
     fixPiece,
+    clearLines,
   };
 }

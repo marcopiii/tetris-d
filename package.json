@@ -27,6 +27,7 @@
   "dependencies": {
     "@react-three/fiber": "^9.1.2",
     "@tweenjs/tween.js": "^25.0.0",
+    "es-toolkit": "^1.39.8",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "three": "0.175.0",
