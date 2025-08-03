@@ -14,10 +14,12 @@ function regenBag() {
 export default function useBag() {
   const [bag, setBag] = React.useState<Tetrimino[]>(regenBag());
   const [hold, setHold] = React.useState<Tetrimino>();
+  const [isHoldable, setHoldable] = React.useState(true);
 
   const pullNext = React.useCallback(() => {
     const [_, ...rest] = bag.length > 2 ? bag : [...bag, ...regenBag()];
     setBag(rest);
+    setHoldable(true);
   }, [bag]);
 
   const [current, next] = React.useMemo(() => {
@@ -34,7 +36,14 @@ export default function useBag() {
       setHold(current);
       pullNext();
     }
+    setHoldable(false);
   }, [current, bag, hold, pullNext]);
 
-  return { current, next, hold, pullNext, switchHold };
+  return {
+    current,
+    next,
+    hold,
+    pullNext,
+    switchHold: isHoldable ? switchHold : undefined,
+  };
 }

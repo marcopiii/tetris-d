@@ -114,7 +114,7 @@ export default function Game() {
       .with(['press', 'KeyW'], () => gameAction('shiftF'))
       .with(['press', 'KeyQ'], () => gameAction('rotateL'))
       .with(['press', 'KeyE'], () => gameAction('rotateR'))
-      .with(['press', 'KeyX'], () => bag.switchHold())
+      .with(['press', 'KeyX'], () => bag.switchHold?.())
       .with(['press', 'ArrowLeft'], () => cameraAction('left'))
       .with(['press', 'ArrowRight'], () => cameraAction('right'))
       .otherwise(() => null),
