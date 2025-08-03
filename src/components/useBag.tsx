@@ -13,6 +13,7 @@ function regenBag() {
 
 export default function useBag() {
   const [bag, setBag] = React.useState<Tetrimino[]>(regenBag());
+  const [hold, setHold] = React.useState<Tetrimino>();
 
   const pullNext = React.useCallback(() => {
     const [_, ...rest] = bag.length > 2 ? bag : [...bag, ...regenBag()];
@@ -24,5 +25,16 @@ export default function useBag() {
     return [current, next] as const;
   }, [bag]);
 
-  return { current, next, pullNext };
+  const switchHold = React.useCallback(() => {
+    if (hold) {
+      const [current, ...rest] = bag;
+      setHold(current);
+      setBag([hold, ...rest]);
+    } else {
+      setHold(current);
+      pullNext();
+    }
+  }, [current, bag, hold, pullNext]);
+
+  return { current, next, hold, pullNext, switchHold };
 }
