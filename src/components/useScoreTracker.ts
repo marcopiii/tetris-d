@@ -9,10 +9,16 @@ type State = {
 };
 
 export default function useScoreTracker() {
+  const cascadeBuffer = React.useRef<LineCoord[]>([]);
+
   const [state, addLines] = React.useReducer(
     (prev: State, lines: LineCoord[]) => {
-      const base = scorePerLines(lines.length);
-      const multiplier = planeMultiplier(lines);
+      const effectiveLines = lines.length
+        ? [...lines, ...cascadeBuffer.current]
+        : [];
+      cascadeBuffer.current = effectiveLines;
+      const base = scorePerLines(effectiveLines.length);
+      const multiplier = planeMultiplier(effectiveLines);
       const gain = base * multiplier * level(prev.lines);
       return {
         score: prev.score + gain,
