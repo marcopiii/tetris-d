@@ -64,7 +64,7 @@ export function shiftLeft(state: TetriminoState): TetriminoState {
     .exhaustive();
 }
 
-export function shiftForward(state: TetriminoState): TetriminoState {
+export function shiftBackward(state: TetriminoState): TetriminoState {
   return match(state.plane)
     .with('x', () => ({
       ...state,
@@ -72,12 +72,12 @@ export function shiftForward(state: TetriminoState): TetriminoState {
     }))
     .with('z', () => ({
       ...state,
-      position: { ...state.position, z: state.position.z + 1 },
+      position: { ...state.position, z: state.position.z - 1 },
     }))
     .exhaustive();
 }
 
-export function shiftBackward(state: TetriminoState): TetriminoState {
+export function shiftForward(state: TetriminoState): TetriminoState {
   return match(state.plane)
     .with('x', () => ({
       ...state,
@@ -85,7 +85,7 @@ export function shiftBackward(state: TetriminoState): TetriminoState {
     }))
     .with('z', () => ({
       ...state,
-      position: { ...state.position, z: state.position.z - 1 },
+      position: { ...state.position, z: state.position.z + 1 },
     }))
     .exhaustive();
 }

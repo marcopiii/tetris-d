@@ -8,8 +8,8 @@ import {
   drop,
   rotateLeft,
   rotateRight,
-  shiftBackward,
   shiftForward,
+  shiftBackward,
   shiftLeft,
   shiftRight,
 } from './tetriminoMovement';
@@ -44,7 +44,7 @@ export default function Game() {
     return [[], false];
   };
 
-  const [camera, setCamera] = useCamera({
+  const [camera, setCamera, relativeAxis] = useCamera({
     c1: { position: [-10, 4, 10], lookAt: [0, 0, 0] },
     c2: { position: [10, 4, 10], lookAt: [0, 0, 0] },
     c3: { position: [10, 4, -10], lookAt: [0, 0, 0] },
@@ -67,19 +67,39 @@ export default function Game() {
   function gameAction(
     action: 'shiftL' | 'shiftR' | 'shiftF' | 'shiftB' | 'rotateL' | 'rotateR',
   ) {
+    const [rightInverted, forwardInverted] = match(plane.current)
+      .with('x', () => [
+        relativeAxis.z.rightInverted,
+        relativeAxis.x.forwardInverted,
+      ])
+      .with('z', () => [
+        relativeAxis.x.rightInverted,
+        relativeAxis.z.forwardInverted,
+      ])
+      .exhaustive();
     match(action)
-      .with('shiftL', () => attempt(shiftLeft)(board))
-      .with('shiftR', () => attempt(shiftRight)(board))
-      .with('shiftF', () => attempt(shiftForward)(board))
-      .with('shiftB', () => attempt(shiftBackward)(board))
+      .with('shiftL', () =>
+        attempt(rightInverted ? shiftRight : shiftLeft)(board),
+      )
+      .with('shiftR', () =>
+        attempt(rightInverted ? shiftLeft : shiftRight)(board),
+      )
+      .with('shiftF', () =>
+        attempt(forwardInverted ? shiftBackward : shiftForward)(board),
+      )
+      .with('shiftB', () =>
+        attempt(forwardInverted ? shiftForward : shiftBackward)(board),
+      )
       .with('rotateL', () => {
         for (let i = 0; i < 5; i++) {
-          if (attempt(rotateLeft(i))(board)) break;
+          if (attempt(rightInverted ? rotateRight(i) : rotateLeft(i))(board))
+            break;
         }
       })
       .with('rotateR', () => {
         for (let i = 0; i < 5; i++) {
-          if (attempt(rotateRight(i))(board)) break;
+          if (attempt(rightInverted ? rotateLeft(i) : rotateRight(i))(board))
+            break;
         }
       })
       .exhaustive();
@@ -90,8 +110,8 @@ export default function Game() {
       .with(['press', 'Enter'], () => clock.toggle())
       .with(['press', 'KeyA'], () => gameAction('shiftL'))
       .with(['press', 'KeyD'], () => gameAction('shiftR'))
-      .with(['press', 'KeyS'], () => gameAction('shiftF'))
-      .with(['press', 'KeyW'], () => gameAction('shiftB'))
+      .with(['press', 'KeyS'], () => gameAction('shiftB'))
+      .with(['press', 'KeyW'], () => gameAction('shiftF'))
       .with(['press', 'KeyQ'], () => gameAction('rotateL'))
       .with(['press', 'KeyE'], () => gameAction('rotateR'))
       .with(['press', 'ArrowLeft'], () => cameraAction('left'))

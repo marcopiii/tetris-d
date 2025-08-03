@@ -43,9 +43,29 @@ export default function useCamera<K extends string>(
     trackCameraPosition(selectedCameraSetup);
   };
 
+  const relativeAxes = React.useMemo(() => {
+    const {
+      lookAt: [lookAtX, lookAtY, lookAtZ],
+      position: [positionX, positionY, positionZ],
+    } = pcs[cameraPosition];
+
+    const forward = new THREE.Vector3(
+      lookAtX - positionX,
+      lookAtY - positionY,
+      lookAtZ - positionZ,
+    ).normalize();
+    const up = new THREE.Vector3(0, 1, 0);
+    const right = new THREE.Vector3().crossVectors(forward, up);
+
+    return {
+      x: { rightInverted: right.x < 0, forwardInverted: forward.x < 0 },
+      z: { rightInverted: right.z < 0, forwardInverted: forward.z < 0 },
+    };
+  }, [pcs, cameraPosition]);
+
   React.useEffect(() => {
     moveThreeCamera(Object.keys(pcs)[0] as K, false);
   }, []);
 
-  return [cameraPosition, setCameraPosition] as const;
+  return [cameraPosition, setCameraPosition, relativeAxes] as const;
 }
