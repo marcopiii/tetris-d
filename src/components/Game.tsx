@@ -1,7 +1,5 @@
-import { uniq, uniqBy } from 'es-toolkit/compat';
 import React from 'react';
 import { match } from 'ts-pattern';
-import { LineCoord } from '../scenario/game/types';
 import Board from './Board';
 import Tetrimino from './Tetrimino';
 import {
@@ -20,6 +18,7 @@ import useClock from './useClock';
 import { useKeyboardManager } from './useKeyboardManager';
 import usePlane from './usePlane';
 import useCamera from './useCamera';
+import useScoreTracker from './useScoreTracker';
 import useTetriminoManager from './useTetriminoManager';
 
 export default function Game() {
@@ -32,16 +31,17 @@ export default function Game() {
     plane.current,
   );
 
-  const tick = (): [LineCoord[], boolean] => {
-    clearLines();
+  const [score, addLines] = useScoreTracker();
+
+  const tick = () => {
+    const clearedLines = clearLines();
     const collision = !attempt(drop)(board);
     if (collision) {
       fixPiece(bag.current, tetrimino);
       bag.pullNext();
       plane.change();
-      return [[], false];
     }
-    return [[], false];
+    addLines(clearedLines);
   };
 
   const [camera, setCamera, relativeAxis] = useCamera({

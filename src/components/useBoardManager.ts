@@ -52,6 +52,10 @@ export default function useBoardManager() {
     [matrix],
   );
 
+  /**
+   * Clears the lines that are completed in the board, and returns the coordinates
+   * of the lines that were removed.
+   */
   const clearLines = React.useCallback(() => {
     const deleteBlockOnMatrix =
       (matrix: BoardMatrix) =>
@@ -76,7 +80,7 @@ export default function useBoardManager() {
               .exhaustive(),
           )
           .flat(),
-        (block) => `${block.y}.${block.x}.${block.z}`,
+        ({ x, y, z }) => `${y}.${x}.${z}`,
       );
 
     const removeCompletedLines =
@@ -91,6 +95,7 @@ export default function useBoardManager() {
     const completedLines = checkCompletedLines(board);
     const newMatrix = removeCompletedLines(matrix)(completedLines);
     setMatrix(newMatrix);
+    return completedLines;
   }, [board]);
 
   return {
