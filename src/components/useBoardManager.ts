@@ -1,8 +1,7 @@
-import { uniq, uniqBy } from 'es-toolkit/compat';
+import { uniqBy } from 'es-toolkit/compat';
 import React from 'react';
 import { match, P } from 'ts-pattern';
 import { COLS, ROWS } from '../params';
-import { Board } from '../scenario/game/Board';
 import { LineCoord } from '../scenario/game/types';
 import { copy } from '../utils';
 import type { Name as TetriminoType } from '../tetrimino/types';
