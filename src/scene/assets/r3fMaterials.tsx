@@ -49,6 +49,12 @@ const deletingMaterialProps = {
   fog: false,
 };
 
+const ghostMaterialProps = {
+  transparent: true,
+  opacity: 0.5,
+  fog: false,
+};
+
 export const minoMaterials: Record<
   Name,
   {
@@ -80,24 +86,9 @@ export const minoMaterials: Record<
       deletingMaterialProps,
     ],
     ghost: [
-      {
-        color: colors.tetrimino.I,
-        transparent: true,
-        opacity: 0.5,
-        fog: false,
-      },
-      {
-        color: colors.tetrimino.I,
-        transparent: true,
-        opacity: 0.5,
-        fog: false,
-      },
-      {
-        color: colors.tetrimino.I,
-        transparent: true,
-        opacity: 0.5,
-        fog: false,
-      },
+      { color: colors.tetrimino.I, ...ghostMaterialProps },
+      { color: adj(colors.tetrimino.I, k), ...ghostMaterialProps },
+      { color: adj(colors.tetrimino.I, -k), ...ghostMaterialProps },
     ],
   },
   O: {
@@ -121,24 +112,9 @@ export const minoMaterials: Record<
       deletingMaterialProps,
     ],
     ghost: [
-      {
-        color: colors.tetrimino.O,
-        transparent: true,
-        opacity: 0.5,
-        fog: false,
-      },
-      {
-        color: colors.tetrimino.O,
-        transparent: true,
-        opacity: 0.5,
-        fog: false,
-      },
-      {
-        color: colors.tetrimino.O,
-        transparent: true,
-        opacity: 0.5,
-        fog: false,
-      },
+      { color: colors.tetrimino.O, ...ghostMaterialProps },
+      { color: adj(colors.tetrimino.O, k), ...ghostMaterialProps },
+      { color: adj(colors.tetrimino.O, -k), ...ghostMaterialProps },
     ],
   },
   T: {
@@ -162,24 +138,9 @@ export const minoMaterials: Record<
       deletingMaterialProps,
     ],
     ghost: [
-      {
-        color: colors.tetrimino.T,
-        transparent: true,
-        opacity: 0.5,
-        fog: false,
-      },
-      {
-        color: colors.tetrimino.T,
-        transparent: true,
-        opacity: 0.5,
-        fog: false,
-      },
-      {
-        color: colors.tetrimino.T,
-        transparent: true,
-        opacity: 0.5,
-        fog: false,
-      },
+      { color: colors.tetrimino.T, ...ghostMaterialProps },
+      { color: adj(colors.tetrimino.T, k), ...ghostMaterialProps },
+      { color: adj(colors.tetrimino.T, -k), ...ghostMaterialProps },
     ],
   },
   J: {
@@ -203,24 +164,9 @@ export const minoMaterials: Record<
       deletingMaterialProps,
     ],
     ghost: [
-      {
-        color: colors.tetrimino.J,
-        transparent: true,
-        opacity: 0.5,
-        fog: false,
-      },
-      {
-        color: colors.tetrimino.J,
-        transparent: true,
-        opacity: 0.5,
-        fog: false,
-      },
-      {
-        color: colors.tetrimino.J,
-        transparent: true,
-        opacity: 0.5,
-        fog: false,
-      },
+      { color: colors.tetrimino.J, ...ghostMaterialProps },
+      { color: adj(colors.tetrimino.J, k), ...ghostMaterialProps },
+      { color: adj(colors.tetrimino.J, -k), ...ghostMaterialProps },
     ],
   },
   L: {
@@ -244,24 +190,9 @@ export const minoMaterials: Record<
       deletingMaterialProps,
     ],
     ghost: [
-      {
-        color: colors.tetrimino.L,
-        transparent: true,
-        opacity: 0.5,
-        fog: false,
-      },
-      {
-        color: colors.tetrimino.L,
-        transparent: true,
-        opacity: 0.5,
-        fog: false,
-      },
-      {
-        color: colors.tetrimino.L,
-        transparent: true,
-        opacity: 0.5,
-        fog: false,
-      },
+      { color: colors.tetrimino.L, ...ghostMaterialProps },
+      { color: adj(colors.tetrimino.L, k), ...ghostMaterialProps },
+      { color: adj(colors.tetrimino.L, -k), ...ghostMaterialProps },
     ],
   },
   S: {
@@ -285,24 +216,9 @@ export const minoMaterials: Record<
       deletingMaterialProps,
     ],
     ghost: [
-      {
-        color: colors.tetrimino.S,
-        transparent: true,
-        opacity: 0.5,
-        fog: false,
-      },
-      {
-        color: colors.tetrimino.S,
-        transparent: true,
-        opacity: 0.5,
-        fog: false,
-      },
-      {
-        color: colors.tetrimino.S,
-        transparent: true,
-        opacity: 0.5,
-        fog: false,
-      },
+      { color: colors.tetrimino.S, ...ghostMaterialProps },
+      { color: adj(colors.tetrimino.S, k), ...ghostMaterialProps },
+      { color: adj(colors.tetrimino.S, -k), ...ghostMaterialProps },
     ],
   },
   Z: {
@@ -326,24 +242,9 @@ export const minoMaterials: Record<
       deletingMaterialProps,
     ],
     ghost: [
-      {
-        color: colors.tetrimino.Z,
-        transparent: true,
-        opacity: 0.5,
-        fog: false,
-      },
-      {
-        color: colors.tetrimino.Z,
-        transparent: true,
-        opacity: 0.5,
-        fog: false,
-      },
-      {
-        color: colors.tetrimino.Z,
-        transparent: true,
-        opacity: 0.5,
-        fog: false,
-      },
+      { color: colors.tetrimino.Z, ...ghostMaterialProps },
+      { color: adj(colors.tetrimino.Z, k), ...ghostMaterialProps },
+      { color: adj(colors.tetrimino.Z, -k), ...ghostMaterialProps },
     ],
   },
 };
