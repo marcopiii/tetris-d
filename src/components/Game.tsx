@@ -26,7 +26,7 @@ export default function Game() {
   const bag = useBag();
 
   const { board, fixPiece, clearLines } = useBoardManager();
-  const { tetrimino, attempt } = useTetriminoManager(
+  const { tetrimino, attempt, projectGhost } = useTetriminoManager(
     bag.current,
     plane.current,
   );
@@ -128,6 +128,7 @@ export default function Game() {
       <Tetrion />
       <Board occupiedBlocks={board} />
       <Tetrimino type={bag.current} occupiedBlocks={tetrimino} />
+      <Tetrimino type={bag.current} occupiedBlocks={projectGhost(board)} />
     </group>
   );
 }

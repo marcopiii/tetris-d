@@ -34,27 +34,6 @@ export default function useTetriminoManager(
     });
   }, [type, plane]);
 
-  function calculateMatrix(
-    shape: Shape,
-    position: Vector3Like,
-    plane: 'x' | 'z',
-  ) {
-    return shape
-      .flatMap((layer, dy) =>
-        layer.map((exists, k) => {
-          if (!exists) return undefined;
-          const dx = plane === 'x' ? 0 : k;
-          const dz = plane === 'z' ? 0 : k;
-          return {
-            y: position.y + dy,
-            x: position.x + dx,
-            z: position.z + dz,
-          };
-        }),
-      )
-      .filter((b) => !!b);
-  }
-
   /**
    * The array of the coordinates of the blocks that are currently occupied by the tetrimino,
    * relative to the board coordinate system.
@@ -63,22 +42,6 @@ export default function useTetriminoManager(
     () => calculateMatrix(state.shape, state.position, state.plane),
     [state.shape, state.position, state.plane],
   );
-
-  function detectCollision(
-    tetriminoMatrix: Vector3Like[],
-    boardMatrix: Vector3Like[],
-  ) {
-    const floorCollision = tetriminoMatrix.some(({ y }) => y >= ROWS);
-    const wallCollision = tetriminoMatrix.some(
-      ({ x, z }) => x < 0 || x >= COLS || z < 0 || z >= COLS,
-    );
-    const stackCollision = tetriminoMatrix.some(({ y: ty, x: tx, z: tz }) =>
-      boardMatrix.some(
-        ({ y: by, x: bx, z: bz }) => ty === by && tx === bx && tz === bz,
-      ),
-    );
-    return floorCollision || wallCollision || stackCollision;
-  }
 
   /**
    * Attempts to apply the given move function to the tetrimino inside the given board.
@@ -104,5 +67,54 @@ export default function useTetriminoManager(
     [state],
   );
 
-  return { tetrimino, attempt };
+  const projectGhost = (boardMatrix: Vector3Like[]) => {
+    const ghostPosition = { ...state.position, y: 0 };
+    let ghostMatrix = calculateMatrix(state.shape, ghostPosition, state.plane);
+    while (!detectCollision(ghostMatrix, boardMatrix)) {
+      ghostPosition.y++;
+      ghostMatrix = calculateMatrix(state.shape, ghostPosition, state.plane);
+    }
+    ghostPosition.y--;
+    ghostMatrix = calculateMatrix(state.shape, ghostPosition, state.plane);
+    return ghostMatrix;
+  };
+
+  return { tetrimino, attempt, projectGhost };
+}
+
+function calculateMatrix(
+  shape: Shape,
+  position: Vector3Like,
+  plane: 'x' | 'z',
+) {
+  return shape
+    .flatMap((layer, dy) =>
+      layer.map((exists, k) => {
+        if (!exists) return undefined;
+        const dx = plane === 'x' ? 0 : k;
+        const dz = plane === 'z' ? 0 : k;
+        return {
+          y: position.y + dy,
+          x: position.x + dx,
+          z: position.z + dz,
+        };
+      }),
+    )
+    .filter((b) => !!b);
+}
+
+function detectCollision(
+  tetriminoMatrix: Vector3Like[],
+  boardMatrix: Vector3Like[],
+) {
+  const floorCollision = tetriminoMatrix.some(({ y }) => y >= ROWS);
+  const wallCollision = tetriminoMatrix.some(
+    ({ x, z }) => x < 0 || x >= COLS || z < 0 || z >= COLS,
+  );
+  const stackCollision = tetriminoMatrix.some(({ y: ty, x: tx, z: tz }) =>
+    boardMatrix.some(
+      ({ y: by, x: bx, z: bz }) => ty === by && tx === bx && tz === bz,
+    ),
+  );
+  return floorCollision || wallCollision || stackCollision;
 }
