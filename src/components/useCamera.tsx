@@ -57,9 +57,22 @@ export default function useCamera<K extends string>(
     const up = new THREE.Vector3(0, 1, 0);
     const right = new THREE.Vector3().crossVectors(forward, up);
 
+    const xAxis = new THREE.Vector3(1, 0, 0);
+    const zAxis = new THREE.Vector3(0, 0, 1);
+    const isXRight = right.dot(xAxis) > 0;
+    const isZRight = right.dot(zAxis) > 0;
+
     return {
-      x: { rightInverted: right.x < 0, forwardInverted: forward.x < 0 },
-      z: { rightInverted: right.z < 0, forwardInverted: forward.z < 0 },
+      x: {
+        rightInverted: right.x < 0,
+        forwardInverted: forward.x < 0,
+        forwardRight: isXRight,
+      },
+      z: {
+        rightInverted: right.z < 0,
+        forwardInverted: forward.z < 0,
+        forwardRight: isZRight,
+      },
     };
   }, [pcs, cameraPosition]);
 

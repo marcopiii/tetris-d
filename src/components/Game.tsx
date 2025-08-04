@@ -16,6 +16,7 @@ import Tetrion from './Tetrion';
 import useBag from './useBag';
 import useBoardManager from './useBoardManager';
 import useClock from './useClock';
+import useCutter from './useCutter';
 import { useKeyboardManager } from './useKeyboardManager';
 import usePlane from './usePlane';
 import useCamera from './useCamera';
@@ -32,6 +33,14 @@ export default function Game() {
     plane.current,
   );
 
+  const [cut, setCut] = useCutter();
+  const [camera, setCamera, relativeAxis] = useCamera({
+    c1: { position: [-10, 4, 10], lookAt: [0, 0, 0] },
+    c2: { position: [10, 4, 10], lookAt: [0, 0, 0] },
+    c3: { position: [10, 4, -10], lookAt: [0, 0, 0] },
+    c4: { position: [-10, 4, -10], lookAt: [0, 0, 0] },
+  });
+
   const [score, addLines] = useScoreTracker();
 
   const tick = () => {
@@ -45,13 +54,6 @@ export default function Game() {
     addLines(clearedLines);
   };
 
-  const [camera, setCamera, relativeAxis] = useCamera({
-    c1: { position: [-10, 4, 10], lookAt: [0, 0, 0] },
-    c2: { position: [10, 4, 10], lookAt: [0, 0, 0] },
-    c3: { position: [10, 4, -10], lookAt: [0, 0, 0] },
-    c4: { position: [-10, 4, -10], lookAt: [0, 0, 0] },
-  });
-
   function cameraAction(action: 'left' | 'right') {
     match([camera, action])
       .with(['c1', 'right'], () => setCamera('c2'))
@@ -62,6 +64,17 @@ export default function Game() {
       .with(['c4', 'left'], () => setCamera('c3'))
       .with(['c3', 'left'], () => setCamera('c2'))
       .with(['c2', 'left'], () => setCamera('c1'))
+      .exhaustive();
+  }
+
+  function cutterAction(action: 'cut' | 'uncut', side: 'left' | 'right') {
+    const fwRx = match(plane.current)
+      .with('x', () => relativeAxis.x.forwardRight)
+      .with('z', () => relativeAxis.z.forwardRight)
+      .exhaustive();
+    match(side)
+      .with('right', () => setCut({ action, side: fwRx ? 'above' : 'below' }))
+      .with('left', () => setCut({ action, side: fwRx ? 'below' : 'above' }))
       .exhaustive();
   }
 
@@ -118,16 +131,37 @@ export default function Game() {
       .with(['press', 'KeyX'], () => bag.switchHold?.())
       .with(['press', 'ArrowLeft'], () => cameraAction('left'))
       .with(['press', 'ArrowRight'], () => cameraAction('right'))
+      .with(['press', 'KeyZ'], () => cutterAction('cut', 'left'))
+      .with(['release', 'KeyZ'], () => cutterAction('uncut', 'left'))
+      .with(['press', 'KeyC'], () => cutterAction('cut', 'right'))
+      .with(['release', 'KeyC'], () => cutterAction('uncut', 'right'))
       .otherwise(() => null),
   );
 
   const clock = useClock(tick);
 
+  const filteredBoard = board.filter((block) => {
+    return match(plane.current)
+      .with(
+        'x',
+        () =>
+          (cut.below ? block.x >= 3 : true) &&
+          (cut.above ? block.x <= 3 : true),
+      )
+      .with(
+        'z',
+        () =>
+          (cut.below ? block.z >= 3 : true) &&
+          (cut.above ? block.z <= 3 : true),
+      )
+      .exhaustive();
+  });
+
   // todo: avoid unnecessary re-renders
   return (
     <group>
       <Tetrion />
-      <Board occupiedBlocks={board} />
+      <Board occupiedBlocks={filteredBoard} />
       <Tetrimino type={bag.current} occupiedBlocks={tetrimino} />
       <Ghost type={bag.current} occupiedBlocks={projectGhost(board)} />
     </group>
