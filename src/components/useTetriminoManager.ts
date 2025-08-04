@@ -76,7 +76,9 @@ export default function useTetriminoManager(
     }
     ghostPosition.y--;
     ghostMatrix = calculateMatrix(state.shape, ghostPosition, state.plane);
-    return ghostMatrix;
+    return ghostMatrix.filter(
+      (g) => !tetrimino.some((t) => t.x === g.x && t.y === g.y && t.z === g.z),
+    );
   };
 
   return { tetrimino, attempt, projectGhost };
