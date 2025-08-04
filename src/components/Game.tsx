@@ -33,13 +33,14 @@ export default function Game() {
     plane.current,
   );
 
-  const [cut, setCut] = useCutter();
   const [camera, setCamera, relativeAxis] = useCamera({
     c1: { position: [-10, 4, 10], lookAt: [0, 0, 0] },
     c2: { position: [10, 4, 10], lookAt: [0, 0, 0] },
     c3: { position: [10, 4, -10], lookAt: [0, 0, 0] },
     c4: { position: [-10, 4, -10], lookAt: [0, 0, 0] },
   });
+
+  const [cut, setCut] = useCutter(camera);
 
   const [score, addLines] = useScoreTracker();
 
@@ -73,8 +74,8 @@ export default function Game() {
       .with('z', () => relativeAxis.z.forwardRight)
       .exhaustive();
     match(side)
-      .with('right', () => setCut({ action, side: fwRx ? 'above' : 'below' }))
-      .with('left', () => setCut({ action, side: fwRx ? 'below' : 'above' }))
+      .with('right', () => setCut(action, fwRx ? 'above' : 'below'))
+      .with('left', () => setCut(action, fwRx ? 'below' : 'above'))
       .exhaustive();
   }
 
