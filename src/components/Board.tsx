@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { match, P } from 'ts-pattern';
 import { COLS, ROWS } from '../params';
-import { LineCoord } from '../scenario/game/types';
 import { checkCompletedLines } from './boardAlgorithms';
 import Mino from './Mino';
 import type { Name as TetriminoType } from '../tetrimino/types';
@@ -47,8 +46,7 @@ export default function Board(props: Props) {
             key={`${y}.${x}.${z}`}
             type={type}
             position={position}
-            deleting={deleting}
-            disabled={false}
+            status={deleting ? 'deleting' : 'normal'}
           />
         );
       })}

@@ -27,7 +27,11 @@ export default function Tetrimino(props: Props) {
     <group>
       {props.occupiedBlocks.map(({ y, x, z }) => (
         <>
-          <Mino type={props.type} position={translate(x, y, z)} />
+          <Mino
+            type={props.type}
+            position={translate(x, y, z)}
+            status="normal"
+          />
           <MinoShade
             type={props.type}
             rotation={[0, 0, 0]}

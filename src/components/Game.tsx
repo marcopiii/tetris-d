@@ -1,6 +1,7 @@
 import React from 'react';
 import { match } from 'ts-pattern';
 import Board from './Board';
+import Ghost from './Ghost';
 import Tetrimino from './Tetrimino';
 import {
   drop,
@@ -128,7 +129,7 @@ export default function Game() {
       <Tetrion />
       <Board occupiedBlocks={board} />
       <Tetrimino type={bag.current} occupiedBlocks={tetrimino} />
-      <Tetrimino type={bag.current} occupiedBlocks={projectGhost(board)} />
+      <Ghost type={bag.current} occupiedBlocks={projectGhost(board)} />
     </group>
   );
 }

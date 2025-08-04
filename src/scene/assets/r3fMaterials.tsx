@@ -56,6 +56,7 @@ export const minoMaterials: Record<
     shade: THREE.MeshBasicMaterialParameters;
     disabled: TriMaterial;
     deleting: TriMaterial;
+    ghost: TriMaterial;
   }
 > = {
   I: {
@@ -78,6 +79,26 @@ export const minoMaterials: Record<
       deletingMaterialProps,
       deletingMaterialProps,
     ],
+    ghost: [
+      {
+        color: colors.tetrimino.I,
+        transparent: true,
+        opacity: 0.5,
+        fog: false,
+      },
+      {
+        color: colors.tetrimino.I,
+        transparent: true,
+        opacity: 0.5,
+        fog: false,
+      },
+      {
+        color: colors.tetrimino.I,
+        transparent: true,
+        opacity: 0.5,
+        fog: false,
+      },
+    ],
   },
   O: {
     normal: [
@@ -98,6 +119,26 @@ export const minoMaterials: Record<
       deletingMaterialProps,
       deletingMaterialProps,
       deletingMaterialProps,
+    ],
+    ghost: [
+      {
+        color: colors.tetrimino.O,
+        transparent: true,
+        opacity: 0.5,
+        fog: false,
+      },
+      {
+        color: colors.tetrimino.O,
+        transparent: true,
+        opacity: 0.5,
+        fog: false,
+      },
+      {
+        color: colors.tetrimino.O,
+        transparent: true,
+        opacity: 0.5,
+        fog: false,
+      },
     ],
   },
   T: {
@@ -120,6 +161,26 @@ export const minoMaterials: Record<
       deletingMaterialProps,
       deletingMaterialProps,
     ],
+    ghost: [
+      {
+        color: colors.tetrimino.T,
+        transparent: true,
+        opacity: 0.5,
+        fog: false,
+      },
+      {
+        color: colors.tetrimino.T,
+        transparent: true,
+        opacity: 0.5,
+        fog: false,
+      },
+      {
+        color: colors.tetrimino.T,
+        transparent: true,
+        opacity: 0.5,
+        fog: false,
+      },
+    ],
   },
   J: {
     normal: [
@@ -140,6 +201,26 @@ export const minoMaterials: Record<
       deletingMaterialProps,
       deletingMaterialProps,
       deletingMaterialProps,
+    ],
+    ghost: [
+      {
+        color: colors.tetrimino.J,
+        transparent: true,
+        opacity: 0.5,
+        fog: false,
+      },
+      {
+        color: colors.tetrimino.J,
+        transparent: true,
+        opacity: 0.5,
+        fog: false,
+      },
+      {
+        color: colors.tetrimino.J,
+        transparent: true,
+        opacity: 0.5,
+        fog: false,
+      },
     ],
   },
   L: {
@@ -162,6 +243,26 @@ export const minoMaterials: Record<
       deletingMaterialProps,
       deletingMaterialProps,
     ],
+    ghost: [
+      {
+        color: colors.tetrimino.L,
+        transparent: true,
+        opacity: 0.5,
+        fog: false,
+      },
+      {
+        color: colors.tetrimino.L,
+        transparent: true,
+        opacity: 0.5,
+        fog: false,
+      },
+      {
+        color: colors.tetrimino.L,
+        transparent: true,
+        opacity: 0.5,
+        fog: false,
+      },
+    ],
   },
   S: {
     normal: [
@@ -183,6 +284,26 @@ export const minoMaterials: Record<
       deletingMaterialProps,
       deletingMaterialProps,
     ],
+    ghost: [
+      {
+        color: colors.tetrimino.S,
+        transparent: true,
+        opacity: 0.5,
+        fog: false,
+      },
+      {
+        color: colors.tetrimino.S,
+        transparent: true,
+        opacity: 0.5,
+        fog: false,
+      },
+      {
+        color: colors.tetrimino.S,
+        transparent: true,
+        opacity: 0.5,
+        fog: false,
+      },
+    ],
   },
   Z: {
     normal: [
@@ -203,6 +324,26 @@ export const minoMaterials: Record<
       deletingMaterialProps,
       deletingMaterialProps,
       deletingMaterialProps,
+    ],
+    ghost: [
+      {
+        color: colors.tetrimino.Z,
+        transparent: true,
+        opacity: 0.5,
+        fog: false,
+      },
+      {
+        color: colors.tetrimino.Z,
+        transparent: true,
+        opacity: 0.5,
+        fog: false,
+      },
+      {
+        color: colors.tetrimino.Z,
+        transparent: true,
+        opacity: 0.5,
+        fog: false,
+      },
     ],
   },
 };
