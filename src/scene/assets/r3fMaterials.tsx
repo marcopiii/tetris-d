@@ -6,6 +6,10 @@ import * as THREE from 'three';
 const k = 20;
 const j = 80;
 
+export const cuttingShadowMaterial: THREE.MeshBasicMaterialParameters = {
+  color: adj(colors.disabled, -60),
+};
+
 export const voxelMaterials: Record<
   'main' | 'primary' | 'secondary' | 'disabled',
   [
