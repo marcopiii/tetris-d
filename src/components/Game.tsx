@@ -142,20 +142,11 @@ export default function Game() {
   const clock = useClock(tick);
 
   const filteredBoard = board.filter((block) => {
-    return match(plane.current)
-      .with(
-        'x',
-        () =>
-          (cut.below ? block.x >= 3 : true) &&
-          (cut.above ? block.x <= 3 : true),
-      )
-      .with(
-        'z',
-        () =>
-          (cut.below ? block.z >= 3 : true) &&
-          (cut.above ? block.z <= 3 : true),
-      )
-      .exhaustive();
+    const p = plane.current;
+    return (
+      (cut.below ? block[p] >= tetrimino[0][p] : true) &&
+      (cut.above ? block[p] <= tetrimino[0][p] : true)
+    );
   });
 
   // todo: avoid unnecessary re-renders
