@@ -1,6 +1,7 @@
 import React from 'react';
 import { match } from 'ts-pattern';
 import Board from './Board';
+import { PlaneCoords } from './Coords';
 import Ghost from './Ghost';
 import Tetrimino from './Tetrimino';
 import {
@@ -141,19 +142,20 @@ export default function Game() {
 
   const clock = useClock(tick);
 
-  const filteredBoard = board.filter((block) => {
-    const p = plane.current;
-    return (
-      (cut.below ? block[p] >= tetrimino[0][p] : true) &&
-      (cut.above ? block[p] <= tetrimino[0][p] : true)
-    );
-  });
+  const boardCuttingProp = React.useMemo(
+    () => ({
+      plane: { [plane.current]: tetrimino[0][plane.current] } as PlaneCoords,
+      below: cut.below,
+      above: cut.above,
+    }),
+    [tetrimino, plane.current, cut.below, cut.above],
+  );
 
   // todo: avoid unnecessary re-renders
   return (
     <group>
       <Tetrion />
-      <Board occupiedBlocks={filteredBoard} />
+      <Board occupiedBlocks={board} cutting={boardCuttingProp} />
       <Tetrimino type={bag.current} occupiedBlocks={tetrimino} />
       <Ghost type={bag.current} occupiedBlocks={projectGhost(board)} />
     </group>
