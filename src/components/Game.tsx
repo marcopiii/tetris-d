@@ -1,8 +1,10 @@
 import React from 'react';
 import { match } from 'ts-pattern';
+import { COLS, ROWS } from '../params';
 import Board from './Board';
 import { PlaneCoords } from './Coords';
 import Ghost from './Ghost';
+import ProgressPanel from './ProgressPanel';
 import Tetrimino from './Tetrimino';
 import {
   drop,
@@ -151,10 +153,32 @@ export default function Game() {
     [tetrimino, plane.current, cut.below, cut.above],
   );
 
+  const progressPanelPosition = match<typeof camera, [number, number, number]>(
+    camera,
+  )
+    .with('c1', () => [-(COLS + 1) / 2, (ROWS - 2) / 2, -COLS / 2])
+    .with('c2', () => [-COLS / 2, (ROWS - 2) / 2, (COLS + 1) / 2])
+    .with('c3', () => [COLS / 2, (ROWS - 2) / 2, (COLS + 1) / 2])
+    .with('c4', () => [(COLS + 1) / 2, (ROWS - 2) / 2, -COLS / 2])
+    .exhaustive();
+
+  const progressPanelRotation = match<typeof camera, [number, number, number]>(
+    camera,
+  )
+    .with('c1', () => [0, 0, 0])
+    .with('c2', () => [0, Math.PI / 2, 0])
+    .with('c3', () => [0, Math.PI, 0])
+    .with('c4', () => [0, -Math.PI / 2, 0])
+    .exhaustive();
+
   // todo: avoid unnecessary re-renders
   return (
     <group>
       <Tetrion />
+      <ProgressPanel
+        position={progressPanelPosition}
+        rotation={progressPanelRotation}
+      />
       <Board occupiedBlocks={board} cutting={boardCuttingProp} />
       <Tetrimino type={bag.current} occupiedBlocks={tetrimino} />
       <Ghost type={bag.current} occupiedBlocks={projectGhost(board)} />
