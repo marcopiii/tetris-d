@@ -28,7 +28,7 @@ export default function useScoreTracker() {
     { score: 0, lines: 0 },
   );
 
-  return [state.score, addLines] as const;
+  return { score: state.score, level: level(state.lines), addLines };
 }
 
 function level(clearedLines: number) {
