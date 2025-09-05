@@ -1,9 +1,9 @@
+import { Center } from '@react-three/drei';
 import React from 'react';
-import { match } from 'ts-pattern';
+import { match, P } from 'ts-pattern';
 import { VOXEL_SIZE } from '../params';
 import { Char, alphabet, numbers } from '../scene/font';
 import R3FChar from './R3FChar';
-import * as THREE from 'three';
 
 type Props = {
   position: [number, number, number];
@@ -11,7 +11,9 @@ type Props = {
   type: 'main' | 'primary' | 'secondary';
   font: 'alphabet' | 'numbers';
   disabled?: boolean;
-  sizeRef?: React.RefObject<THREE.Vector3>;
+  alignX?: 'left' | 'center' | 'right';
+  alignY?: 'top' | 'center' | 'bottom';
+  alignZ?: 'front' | 'center' | 'back';
 };
 
 export default function R3FWord(props: Props) {
@@ -29,8 +31,40 @@ export default function R3FWord(props: Props) {
       : charWidths.slice(0, i).reduce((acc, width) => acc + width + 1, 0),
   );
 
+  const centerPropsX = match(props.alignX)
+    .with('left', () => ({ left: true }))
+    .with('center', () => ({}))
+    .with('right', () => ({ right: true }))
+    .with(P.nullish, () => ({ disableX: true }))
+    .exhaustive();
+
+  const centerPropsY = match(props.alignY)
+    .with('top', () => ({ top: true }))
+    .with('center', () => ({}))
+    .with('bottom', () => ({ bottom: true }))
+    .with(P.nullish, () => ({ disableY: true }));
+
+  const centerPropsZ = match(props.alignZ)
+    .with('front', () => ({ front: true }))
+    .with('center', () => ({}))
+    .with('back', () => ({ back: true }))
+    .with(P.nullish, () => ({ disableZ: true }));
+
+  const centerCacheKey = [
+    props.text,
+    props.type,
+    props.font,
+    props.disabled,
+  ].join('-');
+
   return (
-    <group position={props.position}>
+    <Center
+      {...centerPropsX}
+      {...centerPropsY}
+      {...centerPropsZ}
+      position={props.position}
+      cacheKey={centerCacheKey}
+    >
       {chars.map((char, i) => {
         const offset = charOffsets[i] * VOXEL_SIZE[props.type];
         return (
@@ -43,6 +77,6 @@ export default function R3FWord(props: Props) {
           />
         );
       })}
-    </group>
+    </Center>
   );
 }

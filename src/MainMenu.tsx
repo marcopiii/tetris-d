@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { match } from 'ts-pattern';
 import Menu from './components/Menu';
 import useGamepadManager from './components/useGamepadManager';
@@ -78,5 +78,5 @@ export function MainMenu(props: Props) {
     ),
   );
 
-  return <Menu position={[-5, 0, 0]} title="tetris-d" options={options} />;
+  return <Menu position={[0, 0, 0]} title="tetris-d" options={options} />;
 }

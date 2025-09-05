@@ -12,7 +12,6 @@ type MenuProps = {
 export default function Menu(props: MenuProps) {
   const lhMain = VOXEL_SIZE.main * 15;
   const lhPrimary = VOXEL_SIZE.primary * 10;
-  const lhSecondary = VOXEL_SIZE.secondary * 10;
 
   return (
     <group position={props.position}>
@@ -20,6 +19,7 @@ export default function Menu(props: MenuProps) {
         text={props.title}
         type="main"
         font="alphabet"
+        alignX="center"
         position={[0, lhMain, 0]}
       />
       {props.options.map((option, i) => (
@@ -28,9 +28,11 @@ export default function Menu(props: MenuProps) {
           text={option.name}
           type={option.selected ? 'primary' : 'secondary'}
           font="alphabet"
+          alignX="center"
+          alignY="center"
           position={[
             0,
-            -(lhPrimary * i) + (option.selected ? lhPrimary : lhSecondary) / 3,
+            -(lhPrimary * i),
             option.selected ? VOXEL_SIZE.primary * 3 : 0,
           ]}
         />
