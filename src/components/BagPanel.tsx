@@ -1,3 +1,4 @@
+import { Center } from '@react-three/drei';
 import { match } from 'ts-pattern';
 import { COLS, ROWS } from '../params';
 import Mino from './Mino';
@@ -14,7 +15,7 @@ type Props = {
 export default function BagPanel(props: Props) {
   const pY = (ROWS - 2) / 2;
   const onEdge = COLS / 2;
-  const offEdge = (COLS + 2) / 2;
+  const offEdge = (COLS + 5) / 2;
 
   const position = match<typeof props.camera, [number, number, number]>(
     props.camera,
@@ -42,7 +43,7 @@ export default function BagPanel(props: Props) {
         tetrimino={props.next}
       />
       <LabeledTetrimino
-        position={[0, -4, 0]}
+        position={[0, -6, 0]}
         label="hold"
         tetrimino={props.hold}
       />
@@ -59,12 +60,14 @@ function LabeledTetrimino(props: {
     <group position={props.position}>
       <R3FWord
         position={[0, 0, 0]}
+        alignX="center"
+        alignZ="back"
         text={props.label}
         type="secondary"
         font="alphabet"
       />
       {props.tetrimino && (
-        <group position={[0, -1.75, 0]}>
+        <Center position={[0, -2, 0]} front cacheKey={props.tetrimino}>
           {tetriminos[props.tetrimino].map((layer, dy) =>
             layer.map((exists, dx) => {
               return (
@@ -78,7 +81,7 @@ function LabeledTetrimino(props: {
               );
             }),
           )}
-        </group>
+        </Center>
       )}
     </group>
   );
