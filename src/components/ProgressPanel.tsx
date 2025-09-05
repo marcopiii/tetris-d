@@ -1,3 +1,4 @@
+import { Center } from '@react-three/drei';
 import { match } from 'ts-pattern';
 import { COLS, ROWS } from '../params';
 import R3FWord from './R3FWord';
@@ -9,13 +10,17 @@ type Props = {
 };
 
 export default function ProgressPanel(props: Props) {
+  const pY = (ROWS - 2) / 2;
+  const onEdge = COLS / 2;
+  const offEdge = (COLS + 2) / 2;
+
   const position = match<typeof props.camera, [number, number, number]>(
     props.camera,
   )
-    .with('c1', () => [-(COLS + 1) / 2, (ROWS - 2) / 2, -COLS / 2])
-    .with('c2', () => [-COLS / 2, (ROWS - 2) / 2, (COLS + 1) / 2])
-    .with('c3', () => [COLS / 2, (ROWS - 2) / 2, (COLS + 1) / 2])
-    .with('c4', () => [(COLS + 1) / 2, (ROWS - 2) / 2, -COLS / 2])
+    .with('c1', () => [-offEdge, pY, -onEdge])
+    .with('c2', () => [-onEdge, pY, offEdge])
+    .with('c3', () => [offEdge, pY, onEdge])
+    .with('c4', () => [onEdge, pY, -offEdge])
     .exhaustive();
 
   const rotation = match<typeof props.camera, [number, number, number]>(
@@ -30,7 +35,11 @@ export default function ProgressPanel(props: Props) {
   return (
     <group position={position} rotation={rotation}>
       <LabeledNumber position={[0, 0, 0]} label="score" value={props.score} />
-      <LabeledNumber position={[0, -4, 0]} label="level" value={props.level} />
+      <LabeledNumber
+        position={[0, -3.5, 0]}
+        label="level"
+        value={props.level}
+      />
     </group>
   );
 }
@@ -40,20 +49,31 @@ function LabeledNumber(props: {
   label: string;
   value: number;
 }) {
+  const centerCacheKey = props.value.toString.length;
+
   return (
-    <group position={props.position}>
+    <Center
+      front
+      disableX
+      disableY
+      bottom
+      position={props.position}
+      cacheKey={centerCacheKey}
+    >
       <R3FWord
         position={[0, 0, 0]}
+        alignX="left"
         text={props.label}
         type="secondary"
         font="alphabet"
       />
       <R3FWord
         position={[0, -1.5, 0]}
+        alignX="left"
         text={props.value.toString()}
         type="primary"
         font="numbers"
       />
-    </group>
+    </Center>
   );
 }

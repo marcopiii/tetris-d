@@ -43,7 +43,7 @@ export default function BagPanel(props: Props) {
         tetrimino={props.next}
       />
       <LabeledTetrimino
-        position={[0, -6, 0]}
+        position={[0, -5, 0]}
         label="hold"
         tetrimino={props.hold}
       />
