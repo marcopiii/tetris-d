@@ -12,33 +12,17 @@ type Props = {
 };
 
 export default function BagPanel(props: Props) {
-  const progressPanelPosition = match<
-    typeof props.camera,
-    [number, number, number]
-  >(props.camera)
-    .with('c1', () => [-(COLS + 1) / 2, (ROWS - 2) / 2, -COLS / 2])
-    .with('c2', () => [-COLS / 2, (ROWS - 2) / 2, (COLS + 1) / 2])
-    .with('c3', () => [COLS / 2, (ROWS - 2) / 2, (COLS + 1) / 2])
-    .with('c4', () => [(COLS + 1) / 2, (ROWS - 2) / 2, -COLS / 2])
-    .exhaustive();
-
-  const progressPanelRotation = match<
-    typeof props.camera,
-    [number, number, number]
-  >(props.camera)
-    .with('c1', () => [0, 0, 0])
-    .with('c2', () => [0, Math.PI / 2, 0])
-    .with('c3', () => [0, Math.PI, 0])
-    .with('c4', () => [0, -Math.PI / 2, 0])
-    .exhaustive();
+  const pY = (ROWS - 2) / 2;
+  const onEdge = COLS / 2;
+  const offEdge = (COLS + 2) / 2;
 
   const position = match<typeof props.camera, [number, number, number]>(
     props.camera,
   )
-    .with('c1', () => [COLS / 2, (ROWS - 2) / 2, (COLS + 1) / 2])
-    .with('c2', () => [(COLS + 1) / 2, (ROWS - 2) / 2, -COLS / 2])
-    .with('c3', () => [-(COLS + 1) / 2, (ROWS - 2) / 2, -COLS / 2])
-    .with('c4', () => [-COLS / 2, (ROWS - 2) / 2, (COLS + 1) / 2])
+    .with('c1', () => [onEdge, pY, offEdge])
+    .with('c2', () => [offEdge, pY, -onEdge])
+    .with('c3', () => [-onEdge, pY, -offEdge])
+    .with('c4', () => [-offEdge, pY, onEdge])
     .exhaustive();
 
   const rotation = match<typeof props.camera, [number, number, number]>(
