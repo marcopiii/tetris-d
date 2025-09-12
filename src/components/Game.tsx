@@ -21,6 +21,7 @@ import useBag from './useBag';
 import useBoardManager from './useBoardManager';
 import useClock from './useClock';
 import useCutter from './useCutter';
+import useGamepadManager from './useGamepadManager';
 import { useKeyboardManager } from './useKeyboardManager';
 import usePlane from './usePlane';
 import useCamera from './useCamera';
@@ -138,6 +139,8 @@ export default function Game() {
       .exhaustive();
   }
 
+  const clock = useClock(tick);
+
   useKeyboardManager((event, button) =>
     match([clock.isRunning, event, button])
       .with([P.any, 'press', 'Enter'], () => clock.toggle())
@@ -157,7 +160,24 @@ export default function Game() {
       .otherwise(() => null),
   );
 
-  const clock = useClock(tick);
+  useGamepadManager((event, button) =>
+    match([clock.isRunning, event, button])
+      .with([P.any, 'press', 'start'], () => clock.toggle())
+      .with([true, 'press', 'padL'], () => gameAction('shiftL'))
+      .with([true, 'press', 'padR'], () => gameAction('shiftR'))
+      .with([true, 'press', 'padU'], () => gameAction('shiftB'))
+      .with([true, 'press', 'padD'], () => gameAction('shiftF'))
+      .with([true, 'press', 'X'], () => gameAction('rotateL'))
+      .with([true, 'press', 'B'], () => gameAction('rotateR'))
+      .with([true, 'press', 'Y'], () => bag.switchHold?.())
+      .with([true, 'press', 'LT'], () => cameraAction('left'))
+      .with([true, 'press', 'RT'], () => cameraAction('right'))
+      .with([true, 'press', 'LB'], () => cutterAction('cut', 'left'))
+      .with([true, 'release', 'LB'], () => cutterAction('uncut', 'left'))
+      .with([true, 'press', 'RB'], () => cutterAction('cut', 'right'))
+      .with([true, 'release', 'RB'], () => cutterAction('uncut', 'right'))
+      .otherwise(() => null),
+  );
 
   const boardCuttingProp = React.useMemo(
     () => ({
