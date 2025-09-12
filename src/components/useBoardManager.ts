@@ -59,7 +59,7 @@ export default function useBoardManager() {
   const checkLines = React.useCallback(
     (clear: boolean) => {
       const completedLines = checkCompletedLines(board);
-      if (clear) {
+      if (clear && completedLines.length > 0) {
         const newMatrix = removeCompletedLines(matrix)(completedLines);
         setMatrix(newMatrix);
       }
