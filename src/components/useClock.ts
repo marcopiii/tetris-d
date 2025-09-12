@@ -31,6 +31,7 @@ function useLockDelayManagement(loopCallback: () => void) {
 export default function useClock(callback: () => void) {
   const intervalRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
   const levelRef = React.useRef(1);
+  const [isRunning, setIsRunning] = React.useState(true);
 
   const speed = React.useCallback(
     () => 1000 / (gravity[levelRef.current] * 60),
@@ -52,6 +53,7 @@ export default function useClock(callback: () => void) {
     } else {
       intervalRef.current = setInterval(execLoop, speed());
     }
+    setIsRunning((t) => !t);
   }, [clear, execLoop, speed]);
 
   // Start the clock when the component mounts, and clear it when unmounting
@@ -63,6 +65,7 @@ export default function useClock(callback: () => void) {
   }, [execLoop]);
 
   return {
+    isRunning,
     toggle,
   };
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { match } from 'ts-pattern';
+import { match, P } from 'ts-pattern';
 import { VANISH_ZONE_ROWS } from '../params';
 import BagPanel from './BagPanel';
 import Board from './Board';
@@ -139,21 +139,21 @@ export default function Game() {
   }
 
   useKeyboardManager((event, button) =>
-    match([event, button])
-      .with(['press', 'Enter'], () => clock.toggle())
-      .with(['press', 'KeyA'], () => gameAction('shiftL'))
-      .with(['press', 'KeyD'], () => gameAction('shiftR'))
-      .with(['press', 'KeyS'], () => gameAction('shiftB'))
-      .with(['press', 'KeyW'], () => gameAction('shiftF'))
-      .with(['press', 'KeyQ'], () => gameAction('rotateL'))
-      .with(['press', 'KeyE'], () => gameAction('rotateR'))
-      .with(['press', 'KeyX'], () => bag.switchHold?.())
-      .with(['press', 'ArrowLeft'], () => cameraAction('left'))
-      .with(['press', 'ArrowRight'], () => cameraAction('right'))
-      .with(['press', 'KeyZ'], () => cutterAction('cut', 'left'))
-      .with(['release', 'KeyZ'], () => cutterAction('uncut', 'left'))
-      .with(['press', 'KeyC'], () => cutterAction('cut', 'right'))
-      .with(['release', 'KeyC'], () => cutterAction('uncut', 'right'))
+    match([clock.isRunning, event, button])
+      .with([P.any, 'press', 'Enter'], () => clock.toggle())
+      .with([true, 'press', 'KeyA'], () => gameAction('shiftL'))
+      .with([true, 'press', 'KeyD'], () => gameAction('shiftR'))
+      .with([true, 'press', 'KeyS'], () => gameAction('shiftB'))
+      .with([true, 'press', 'KeyW'], () => gameAction('shiftF'))
+      .with([true, 'press', 'KeyQ'], () => gameAction('rotateL'))
+      .with([true, 'press', 'KeyE'], () => gameAction('rotateR'))
+      .with([true, 'press', 'KeyX'], () => bag.switchHold?.())
+      .with([true, 'press', 'ArrowLeft'], () => cameraAction('left'))
+      .with([true, 'press', 'ArrowRight'], () => cameraAction('right'))
+      .with([true, 'press', 'KeyZ'], () => cutterAction('cut', 'left'))
+      .with([true, 'release', 'KeyZ'], () => cutterAction('uncut', 'left'))
+      .with([true, 'press', 'KeyC'], () => cutterAction('cut', 'right'))
+      .with([true, 'release', 'KeyC'], () => cutterAction('uncut', 'right'))
       .otherwise(() => null),
   );
 
