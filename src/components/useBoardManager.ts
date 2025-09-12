@@ -1,7 +1,7 @@
 import { uniqBy } from 'es-toolkit/compat';
 import React from 'react';
 import { match, P } from 'ts-pattern';
-import { COLS, ROWS } from '../params';
+import { COLS, ROWS, VANISH_ZONE_ROWS } from '../params';
 import { LineCoord } from '../scenario/game/types';
 import { copy } from '../utils';
 import type { Name as TetriminoType } from '../tetrimino/types';
@@ -9,7 +9,7 @@ import { checkCompletedLines } from './boardAlgorithms';
 
 export type BoardMatrix = (TetriminoType | null)[][][];
 
-const emptyMatrix: BoardMatrix = Array(ROWS)
+const emptyMatrix: BoardMatrix = Array(ROWS + VANISH_ZONE_ROWS)
   .fill(null)
   .map(() =>
     Array(COLS)

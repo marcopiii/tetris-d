@@ -1,6 +1,6 @@
 import React from 'react';
 import { Vector3Like } from 'three';
-import { COLS, ROWS } from '../params';
+import { COLS, ROWS, VANISH_ZONE_ROWS } from '../params';
 import { tetriminos } from '../tetrimino';
 import { Name as TetriminoType, Shape } from '../tetrimino/types';
 import { initPosition, TetriminoState } from './tetriminoMovement';
@@ -123,7 +123,9 @@ function detectCollision(
   tetriminoMatrix: Vector3Like[],
   boardMatrix: Vector3Like[],
 ) {
-  const floorCollision = tetriminoMatrix.some(({ y }) => y >= ROWS);
+  const floorCollision = tetriminoMatrix.some(
+    ({ y }) => y >= ROWS + VANISH_ZONE_ROWS,
+  );
   const wallCollision = tetriminoMatrix.some(
     ({ x, z }) => x < 0 || x >= COLS || z < 0 || z >= COLS,
   );

@@ -37,10 +37,10 @@ export default function Game() {
   );
 
   const [camera, setCamera, relativeAxis] = useCamera({
-    c1: { position: [-10, 4, 10], lookAt: [0, 0, 0] },
-    c2: { position: [10, 4, 10], lookAt: [0, 0, 0] },
-    c3: { position: [10, 4, -10], lookAt: [0, 0, 0] },
-    c4: { position: [-10, 4, -10], lookAt: [0, 0, 0] },
+    c1: { position: [-10, 5, 10], lookAt: [0, 1, 0] },
+    c2: { position: [10, 5, 10], lookAt: [0, 1, 0] },
+    c3: { position: [10, 5, -10], lookAt: [0, 1, 0] },
+    c4: { position: [-10, 5, -10], lookAt: [0, 1, 0] },
   });
 
   const [cut, setCut] = useCutter(camera);

@@ -1,4 +1,4 @@
-import { COLS, ROWS } from '../params';
+import { COLS, ROWS, VANISH_ZONE_ROWS } from '../params';
 import { LineCoord } from '../scenario/game/types';
 
 const smartCheckZAxisRow =
@@ -25,7 +25,7 @@ export const checkCompletedLines = (
   const checkZAxisRow = smartCheckZAxisRow(blocks);
   const checkXAxisRow = smartCheckXAxisRow(blocks);
   const clearedLines: LineCoord[] = [];
-  for (let y = 0; y < ROWS; y++) {
+  for (let y = 0; y < ROWS + VANISH_ZONE_ROWS; y++) {
     for (let z = 0; z < COLS; z++) {
       if (checkXAxisRow(y, z)) {
         clearedLines.push({ y, z });
