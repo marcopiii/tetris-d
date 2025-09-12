@@ -4,8 +4,6 @@ import * as THREE from 'three';
 import { COLS, MINO_SIZE, ROWS } from '../params';
 import { tetrionMaterial } from '../scene/assets/materials';
 
-const offset = new THREE.Vector3(1 / 2, -1 / 2, 1 / 2);
-
 const tetrionWallGeometry = new THREE.PlaneGeometry(
   COLS * MINO_SIZE,
   ROWS * MINO_SIZE,

@@ -1,59 +1,49 @@
-import * as THREE from 'three';
-import { COLS, ROWS } from '../params';
+import { COLS } from '../params';
 import Mino from './Mino';
 import { Name as TetriminoType } from '../tetrimino/types';
 import { MinoShade } from './MinoShade';
+import { translate } from './translations';
 
 type Props = {
   type: TetriminoType;
   occupiedBlocks: { y: number; x: number; z: number }[];
 };
 
-const offset = new THREE.Vector3(1 / 2, -1 / 2, 1 / 2);
-
-// translations from the board coord system to the scene coord system
-const translateX = (x: number) => x + offset.x - COLS / 2;
-const translateY = (y: number) => -y + offset.y + ROWS / 2;
-const translateZ = (z: number) => z + offset.z - COLS / 2;
-
-const translate = (
-  x: number,
-  y: number,
-  z: number,
-): [number, number, number] => [translateX(x), translateY(y), translateZ(z)];
-
 export default function Tetrimino(props: Props) {
   return (
     <group>
-      {props.occupiedBlocks.map(({ y, x, z }) => (
-        <>
-          <Mino
-            type={props.type}
-            position={translate(x, y, z)}
-            status="normal"
-          />
-          <MinoShade
-            type={props.type}
-            rotation={[0, 0, 0]}
-            position={[translateX(x), translateY(y), -COLS / 2]}
-          />
-          <MinoShade
-            type={props.type}
-            rotation={[0, Math.PI / 2, 0]}
-            position={[-COLS / 2, translateY(y), translateZ(z)]}
-          />
-          <MinoShade
-            type={props.type}
-            rotation={[0, Math.PI, 0]}
-            position={[translateX(x), translateY(y), COLS / 2]}
-          />
-          <MinoShade
-            type={props.type}
-            rotation={[0, -Math.PI / 2, 0]}
-            position={[COLS / 2, translateY(y), translateZ(z)]}
-          />
-        </>
-      ))}
+      {props.occupiedBlocks.map(({ y, x, z }) => {
+        const [tx, ty, tz] = translate(x, y, z);
+        return (
+          <>
+            <Mino
+              type={props.type}
+              position={translate(x, y, z)}
+              status="normal"
+            />
+            <MinoShade
+              type={props.type}
+              rotation={[0, 0, 0]}
+              position={[tx, ty, -COLS / 2]}
+            />
+            <MinoShade
+              type={props.type}
+              rotation={[0, Math.PI / 2, 0]}
+              position={[-COLS / 2, ty, tz]}
+            />
+            <MinoShade
+              type={props.type}
+              rotation={[0, Math.PI, 0]}
+              position={[tx, ty, COLS / 2]}
+            />
+            <MinoShade
+              type={props.type}
+              rotation={[0, -Math.PI / 2, 0]}
+              position={[COLS / 2, ty, tz]}
+            />
+          </>
+        );
+      })}
     </group>
   );
 }
