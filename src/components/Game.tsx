@@ -52,13 +52,14 @@ export default function Game() {
     const collision = !attempt(drop)(board);
     if (collision) {
       fixPiece(bag.current, tetrimino);
-      // fixme(marco): the piece change should happen in the next tick
+      // note: the board change caused by fixing the piece will trigger a
+      // re-render that may be applied before the bag pull
       bag.pullNext();
       plane.change();
     }
   };
 
-  // update the score as soon the board is changed, while the lines
+  // update the score as soon as the board is changed, while the lines
   // will be cleared in the next tick
   React.useEffect(() => {
     const completedLines = checkLines(false);

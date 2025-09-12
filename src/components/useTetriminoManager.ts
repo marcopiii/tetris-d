@@ -71,8 +71,13 @@ export default function useTetriminoManager(
    * Projects the ghost of the current tetrimino onto the given board.
    */
   const projectGhost = (boardMatrix: Vector3Like[]) => {
-    const ghostPosition = { ...state.position, y: 0 };
+    const ghostPosition = { ...state.position };
     let ghostMatrix = calculateMatrix(state.shape, ghostPosition, state.plane);
+    if (detectCollision(ghostMatrix, boardMatrix)) {
+      // if the current piece matrix is already in collision, it is because the piece
+      // is being fixed in the board, so we don't show any ghost
+      return [];
+    }
     while (!detectCollision(ghostMatrix, boardMatrix)) {
       ghostPosition.y++;
       ghostMatrix = calculateMatrix(state.shape, ghostPosition, state.plane);
