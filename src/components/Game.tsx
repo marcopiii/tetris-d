@@ -1,5 +1,6 @@
 import React from 'react';
 import { match } from 'ts-pattern';
+import { VANISH_ZONE_ROWS } from '../params';
 import BagPanel from './BagPanel';
 import Board from './Board';
 import { PlaneCoords } from './Coords';
@@ -51,6 +52,12 @@ export default function Game() {
     checkLines(true);
     const collision = !attempt(drop)(board);
     if (collision) {
+      if (tetrimino.every(({ y }) => y < VANISH_ZONE_ROWS)) {
+        // game over
+        clock.toggle();
+        alert(`Game Over! Your score: ${score}`);
+        return;
+      }
       fixPiece(bag.current, tetrimino);
       // note: the board change caused by fixing the piece will trigger a
       // re-render that may be applied before the bag pull
