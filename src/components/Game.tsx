@@ -1,6 +1,5 @@
 import React from 'react';
 import { match } from 'ts-pattern';
-import { COLS, ROWS } from '../params';
 import BagPanel from './BagPanel';
 import Board from './Board';
 import { PlaneCoords } from './Coords';
@@ -31,7 +30,7 @@ export default function Game() {
   const plane = usePlane();
   const bag = useBag();
 
-  const { board, fixPiece, clearLines } = useBoardManager();
+  const { board, fixPiece, checkLines } = useBoardManager();
   const { tetrimino, attempt, projectGhost } = useTetriminoManager(
     bag.current,
     plane.current,
@@ -49,15 +48,22 @@ export default function Game() {
   const { score, level, addLines } = useScoreTracker();
 
   const tick = () => {
-    const clearedLines = clearLines();
+    checkLines(true);
     const collision = !attempt(drop)(board);
     if (collision) {
       fixPiece(bag.current, tetrimino);
+      // fixme(marco): the piece change should happen in the next tick
       bag.pullNext();
       plane.change();
     }
-    addLines(clearedLines);
   };
+
+  // update the score as soon the board is changed, while the lines
+  // will be cleared in the next tick
+  React.useEffect(() => {
+    const completedLines = checkLines(false);
+    addLines(completedLines);
+  }, [checkLines]);
 
   function cameraAction(action: 'left' | 'right') {
     match([camera, action])

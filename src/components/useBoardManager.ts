@@ -52,54 +52,59 @@ export default function useBoardManager() {
   );
 
   /**
-   * Clears the lines that are completed in the board, and returns the coordinates
-   * of the lines that were removed.
+   * Checks for completed lines in the board and returns the coordinates
+   * of the completed lines.
+   * If `clear` is true, the completed lines are also removed from the board.
    */
-  const clearLines = React.useCallback(() => {
-    const deleteBlockOnMatrix =
-      (matrix: BoardMatrix) =>
-      ({ y, x, z }: { y: number; x: number; z: number }) => {
-        for (let dy = y; dy > 0; dy--) {
-          matrix[dy][x][z] = matrix[dy - 1][x][z];
-        }
-        matrix[0][x][z] = null;
-      };
-
-    const linesToBlocks = (completedLines: LineCoord[]) =>
-      uniqBy(
-        completedLines
-          .map((line) =>
-            match(line)
-              .with({ y: P.number, x: P.number }, ({ y, x }) =>
-                Array.from({ length: COLS }, (_, z) => ({ y, x, z })),
-              )
-              .with({ y: P.number, z: P.number }, ({ y, z }) =>
-                Array.from({ length: COLS }, (_, x) => ({ y, x, z })),
-              )
-              .exhaustive(),
-          )
-          .flat(),
-        ({ x, y, z }) => `${y}.${x}.${z}`,
-      );
-
-    const removeCompletedLines =
-      (matrix: BoardMatrix) => (lines: LineCoord[]) => {
-        const newMatriz = copy(matrix);
-        const deleteBlock = deleteBlockOnMatrix(newMatriz);
-        const blockToDelete = linesToBlocks(lines);
-        blockToDelete.forEach(deleteBlock);
-        return newMatriz;
-      };
-
-    const completedLines = checkCompletedLines(board);
-    const newMatrix = removeCompletedLines(matrix)(completedLines);
-    setMatrix(newMatrix);
-    return completedLines;
-  }, [board]);
+  const checkLines = React.useCallback(
+    (clear: boolean) => {
+      const completedLines = checkCompletedLines(board);
+      if (clear) {
+        const newMatrix = removeCompletedLines(matrix)(completedLines);
+        setMatrix(newMatrix);
+      }
+      return completedLines;
+    },
+    [board],
+  );
 
   return {
     board,
     fixPiece,
-    clearLines,
+    checkLines,
   };
 }
+
+const deleteBlockOnMatrix =
+  (matrix: BoardMatrix) =>
+  ({ y, x, z }: { y: number; x: number; z: number }) => {
+    for (let dy = y; dy > 0; dy--) {
+      matrix[dy][x][z] = matrix[dy - 1][x][z];
+    }
+    matrix[0][x][z] = null;
+  };
+
+const linesToBlocks = (completedLines: LineCoord[]) =>
+  uniqBy(
+    completedLines
+      .map((line) =>
+        match(line)
+          .with({ y: P.number, x: P.number }, ({ y, x }) =>
+            Array.from({ length: COLS }, (_, z) => ({ y, x, z })),
+          )
+          .with({ y: P.number, z: P.number }, ({ y, z }) =>
+            Array.from({ length: COLS }, (_, x) => ({ y, x, z })),
+          )
+          .exhaustive(),
+      )
+      .flat(),
+    ({ x, y, z }) => `${y}.${x}.${z}`,
+  );
+
+const removeCompletedLines = (matrix: BoardMatrix) => (lines: LineCoord[]) => {
+  const newMatriz = copy(matrix);
+  const deleteBlock = deleteBlockOnMatrix(newMatriz);
+  const blockToDelete = linesToBlocks(lines);
+  blockToDelete.forEach(deleteBlock);
+  return newMatriz;
+};

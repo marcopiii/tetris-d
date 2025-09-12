@@ -67,6 +67,9 @@ export default function useTetriminoManager(
     [state],
   );
 
+  /**
+   * Projects the ghost of the current tetrimino onto the given board.
+   */
   const projectGhost = (boardMatrix: Vector3Like[]) => {
     const ghostPosition = { ...state.position, y: 0 };
     let ghostMatrix = calculateMatrix(state.shape, ghostPosition, state.plane);
@@ -105,6 +108,12 @@ function calculateMatrix(
     .filter((b) => !!b);
 }
 
+/**
+ * Detects if the given tetrimino collides with the given board. A collision can be:
+ * - floor collision: any block of the tetrimino is below the floor
+ * - wall collision: any block of the tetrimino is outside the walls
+ * - stack collision: any block of the tetrimino overlaps with any block of the board
+ */
 function detectCollision(
   tetriminoMatrix: Vector3Like[],
   boardMatrix: Vector3Like[],
