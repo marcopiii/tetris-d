@@ -2,6 +2,8 @@ import React from 'react';
 import * as THREE from 'three';
 import { useFrame, useThree } from '@react-three/fiber';
 import TWEEN from '@tweenjs/tween.js';
+import { play } from '../utils';
+import FX from '../audio';
 
 type CameraSetup = {
   position: [number, number, number];
@@ -41,6 +43,7 @@ export default function useCamera<K extends string>(
   const setCameraPosition = (selectedCameraSetup: K, noAnimation?: boolean) => {
     moveThreeCamera(selectedCameraSetup, noAnimation);
     trackCameraPosition(selectedCameraSetup);
+    play(FX.camera_move, 0.05);
   };
 
   const relativeAxes = React.useMemo(() => {

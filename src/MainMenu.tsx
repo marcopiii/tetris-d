@@ -12,7 +12,7 @@ type Props = {
 };
 
 export function MainMenu(props: Props) {
-  const [_, setCamera] = useCamera({
+  const [camera, setCamera] = useCamera({
     left: { position: [-10, 4, 10], lookAt: [0, 0, 0] },
     right: { position: [10, 4, 10], lookAt: [0, 0, 0] },
   });
@@ -33,11 +33,11 @@ export function MainMenu(props: Props) {
 
   const menuCameraHandler = React.useCallback(
     (command: 'moveL' | 'moveR'): void =>
-      match(command)
-        .with('moveL', () => setCamera('left'))
-        .with('moveR', () => setCamera('right'))
-        .exhaustive(),
-    [],
+      match([camera, command])
+        .with(['right', 'moveL'], () => setCamera('left'))
+        .with(['left', 'moveR'], () => setCamera('right'))
+        .otherwise(() => {}),
+    [camera],
   );
 
   const menuNavigationHandler = React.useCallback(

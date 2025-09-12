@@ -1,6 +1,8 @@
 import React from 'react';
 import { match, P } from 'ts-pattern';
+import FX from '../audio';
 import { VANISH_ZONE_ROWS } from '../params';
+import { play } from '../utils';
 import BagPanel from './BagPanel';
 import Board from './Board';
 import { PlaneCoords } from './Coords';
@@ -71,6 +73,9 @@ export default function Game() {
   // will be cleared in the next tick
   React.useEffect(() => {
     const completedLines = checkLines(false);
+    if (completedLines.length > 0) {
+      play(FX.line_clear, 0.75);
+    }
     addLines(completedLines);
   }, [checkLines]);
 
@@ -111,7 +116,7 @@ export default function Game() {
         relativeAxis.z.forwardInverted,
       ])
       .exhaustive();
-    match(action)
+    const success = match(action)
       .with('shiftL', () =>
         attempt(rightInverted ? shiftRight : shiftLeft)(board),
       )
@@ -127,16 +132,29 @@ export default function Game() {
       .with('rotateL', () => {
         for (let i = 0; i < 5; i++) {
           if (attempt(rightInverted ? rotateRight(i) : rotateLeft(i))(board))
-            break;
+            return true;
         }
+        return false;
       })
       .with('rotateR', () => {
         for (let i = 0; i < 5; i++) {
           if (attempt(rightInverted ? rotateLeft(i) : rotateRight(i))(board))
-            break;
+            return true;
         }
+        return false;
       })
       .exhaustive();
+    if (success) {
+      const fx = match(action)
+        .with('shiftL', () => FX.tetrimino_move)
+        .with('shiftR', () => FX.tetrimino_move)
+        .with('shiftF', () => FX.tetrimino_move)
+        .with('shiftB', () => FX.tetrimino_move)
+        .with('rotateL', () => FX.tetrimino_rotate)
+        .with('rotateR', () => FX.tetrimino_rotate)
+        .exhaustive();
+      play(fx, 0.15);
+    }
   }
 
   const clock = useClock(tick);
