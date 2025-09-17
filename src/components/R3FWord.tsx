@@ -8,7 +8,7 @@ import R3FChar from './R3FChar';
 type Props = {
   position: [number, number, number];
   text: string;
-  type: 'main' | 'primary' | 'half' | 'secondary';
+  type: 'main' | 'primary' | 'primary-half' | 'secondary' | 'secondary-half';
   font: 'alphabet' | 'numbers';
   disabled?: boolean;
   alignX?: 'left' | 'center' | 'right';
@@ -66,7 +66,11 @@ export default function R3FWord(props: Props) {
       cacheKey={centerCacheKey}
     >
       {chars.map((char, i) => {
-        const offset = charOffsets[i] * VOXEL_SIZE[props.type];
+        const offset =
+          charOffsets[i] *
+          VOXEL_SIZE[
+            props.type === 'secondary-half' ? 'secondary' : props.type
+          ];
         return (
           <R3FChar
             position={[offset, 0, 0]}

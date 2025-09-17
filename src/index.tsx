@@ -21,7 +21,9 @@ function App(props: { aspectRatio: number }) {
       />
     ))
     .with('play', () => <Game />)
-    .with('leaderboard', () => <Leaderboard />)
+    .with('leaderboard', () => (
+      <Leaderboard inserting newScore={10} newLevel={12} />
+    ))
     .with('controls', () => <></>)
     .exhaustive();
 
