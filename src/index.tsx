@@ -3,10 +3,11 @@ import { createRoot } from 'react-dom/client';
 import { match } from 'ts-pattern';
 import Game from './components/Game';
 import { GameCanvas } from './components/GameCanvas';
+import Leaderboard from './components/Leaderboard';
 import { MainMenu } from './MainMenu';
 import './style.css';
 
-type Scenario = 'main-menu' | 'play' | 'controls';
+type Scenario = 'main-menu' | 'play' | 'controls' | 'leaderboard';
 
 function App(props: { aspectRatio: number }) {
   const [scenario, setScenario] = React.useState<Scenario>('main-menu');
@@ -16,9 +17,11 @@ function App(props: { aspectRatio: number }) {
       <MainMenu
         onPlay={() => setScenario('play')}
         onControls={() => setScenario('controls')}
+        onLeaderboard={() => setScenario('leaderboard')}
       />
     ))
     .with('play', () => <Game />)
+    .with('leaderboard', () => <Leaderboard />)
     .with('controls', () => <></>)
     .exhaustive();
 
