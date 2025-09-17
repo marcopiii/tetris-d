@@ -6,6 +6,7 @@ import R3FWord from './R3FWord';
 import useCamera from './useCamera';
 import useGamepadManager from './useGamepadManager';
 import { useKeyboardManager } from './useKeyboardManager';
+import { useLocalStorage } from '@uidotdev/usehooks';
 
 export default function Leaderboard() {
   const [camera, setCamera] = useCamera({
@@ -44,6 +45,10 @@ export default function Leaderboard() {
     ),
   );
 
+  const [leaderboard] = useLocalStorage<
+    { name: string; score: number; level: number }[]
+  >('t3d-leaderboard', []);
+
   return (
     <group position={[0, 8, 0]}>
       <R3FWord
@@ -53,36 +58,71 @@ export default function Leaderboard() {
         alignX="center"
         position={[0, 0, 0]}
       />
-      <Center position={[0, -3, 0]}>
+      <Center position={[0, -2.5, 0]}>
         <R3FWord
-          text="rank"
-          type="primary"
+          text="#"
+          type="half"
           font="alphabet"
           alignX="center"
-          position={[-11, 0, 0]}
+          position={[-8, 0, 0]}
         />
         <R3FWord
           text="name"
-          type="primary"
+          type="half"
           font="alphabet"
           alignX="center"
-          position={[-4, -VOXEL_SIZE.primary, 0]}
+          position={[-3.5, -VOXEL_SIZE.primary, 0]}
         />
         <R3FWord
           text="score"
-          type="primary"
+          type="half"
           font="alphabet"
           alignX="center"
-          position={[4, -VOXEL_SIZE.primary, 0]}
+          position={[3.5, -VOXEL_SIZE.primary, 0]}
         />
         <R3FWord
           text="lvl"
-          type="primary"
+          type="half"
           font="alphabet"
           alignX="center"
-          position={[11, 0, 0]}
+          position={[9, 0, 0]}
         />
       </Center>
+      {leaderboard
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 9)
+        .map((entry, idx) => (
+          <Center key={idx} position={[0, -4.5 - idx * 1.25, 0]}>
+            <R3FWord
+              text={`${idx + 1}`}
+              type="secondary"
+              font="numbers"
+              alignX="center"
+              position={[-8, 0, 0]}
+            />
+            <R3FWord
+              text={entry.name}
+              type="secondary"
+              font="alphabet"
+              alignX="center"
+              position={[-3.5, 0, 0]}
+            />
+            <R3FWord
+              text={entry.score.toString()}
+              type="secondary"
+              font="numbers"
+              alignX="center"
+              position={[3.5, 0, 0]}
+            />
+            <R3FWord
+              text={entry.level.toString()}
+              type="secondary"
+              font="numbers"
+              alignX="center"
+              position={[9, 0, 0]}
+            />
+          </Center>
+        ))}
     </group>
   );
 }

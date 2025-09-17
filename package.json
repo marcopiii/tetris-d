@@ -28,6 +28,7 @@
     "@react-three/drei": "^10.7.4",
     "@react-three/fiber": "^9.1.2",
     "@tweenjs/tween.js": "^25.0.0",
+    "@uidotdev/usehooks": "^2.4.1",
     "es-toolkit": "^1.39.8",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

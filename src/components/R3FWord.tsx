@@ -8,7 +8,7 @@ import R3FChar from './R3FChar';
 type Props = {
   position: [number, number, number];
   text: string;
-  type: 'main' | 'primary' | 'secondary';
+  type: 'main' | 'primary' | 'half' | 'secondary';
   font: 'alphabet' | 'numbers';
   disabled?: boolean;
   alignX?: 'left' | 'center' | 'right';
