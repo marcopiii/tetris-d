@@ -67,26 +67,28 @@ export default function useTetriminoManager(
     [state],
   );
 
-  const hardDrop = (boardMatrix: Vector3Like[]) => {
-    const canDrop = (s: TetriminoState) => {
-      const newState = drop(s);
-      const newTetriminoMatrix = calculateMatrix(
-        newState.shape,
-        newState.position,
-        newState.plane,
-      );
-      const isValid = !detectCollision(newTetriminoMatrix, boardMatrix);
-      return isValid ? newState : undefined;
-    };
-
-    let currentState = state;
-    let nextState;
-    do {
-      nextState = canDrop(currentState);
-      if (nextState) currentState = nextState;
-    } while (nextState);
-    setState(currentState);
-  };
+  const hardDrop = React.useCallback(
+    (boardMatrix: Vector3Like[]) => {
+      const canDrop = (s: TetriminoState) => {
+        const newState = drop(s);
+        const newTetriminoMatrix = calculateMatrix(
+          newState.shape,
+          newState.position,
+          newState.plane,
+        );
+        const isValid = !detectCollision(newTetriminoMatrix, boardMatrix);
+        return isValid ? newState : undefined;
+      };
+      let currentState = state;
+      let nextState;
+      do {
+        nextState = canDrop(currentState);
+        if (nextState) currentState = nextState;
+      } while (nextState);
+      setState(currentState);
+    },
+    [state],
+  );
 
   /**
    * Projects the ghost of the current tetrimino onto the given board.

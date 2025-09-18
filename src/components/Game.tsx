@@ -35,7 +35,7 @@ export default function Game() {
   const bag = useBag();
 
   const { board, fixPiece, checkLines } = useBoardManager();
-  const { tetrimino, attempt, projectGhost } = useTetriminoManager(
+  const { tetrimino, attempt, hardDrop, projectGhost } = useTetriminoManager(
     bag.current,
     plane.current,
   );
@@ -117,6 +117,8 @@ export default function Game() {
       | 'rotateR'
       | 'dropH',
   ) {
+    if (isLocked) return;
+
     const [rightInverted, forwardInverted] = match(plane.current)
       .with('x', () => [
         relativeAxis.z.rightInverted,
