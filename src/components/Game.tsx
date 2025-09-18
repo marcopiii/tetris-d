@@ -51,6 +51,9 @@ export default function Game() {
 
   const { score, level, addLines } = useScoreTracker();
 
+  // lock the piece after hard drop until the next tick,
+  const [isLocked, setIsLocked] = React.useState(false);
+
   const tick = () => {
     checkLines(true);
     const collision = !attempt(drop)(board);
@@ -66,6 +69,7 @@ export default function Game() {
       // re-render that may be applied before the bag pull
       bag.pullNext();
       plane.change();
+      setIsLocked(false);
     }
   };
 
@@ -104,7 +108,14 @@ export default function Game() {
   }
 
   function gameAction(
-    action: 'shiftL' | 'shiftR' | 'shiftF' | 'shiftB' | 'rotateL' | 'rotateR',
+    action:
+      | 'shiftL'
+      | 'shiftR'
+      | 'shiftF'
+      | 'shiftB'
+      | 'rotateL'
+      | 'rotateR'
+      | 'dropH',
   ) {
     const [rightInverted, forwardInverted] = match(plane.current)
       .with('x', () => [
@@ -143,6 +154,11 @@ export default function Game() {
         }
         return false;
       })
+      .with('dropH', () => {
+        hardDrop(board);
+        setIsLocked(true);
+        return true;
+      })
       .exhaustive();
     if (success) {
       const fx = match(action)
@@ -152,6 +168,7 @@ export default function Game() {
         .with('shiftB', () => FX.tetrimino_move)
         .with('rotateL', () => FX.tetrimino_rotate)
         .with('rotateR', () => FX.tetrimino_rotate)
+        .with('dropH', () => FX.hard_drop)
         .exhaustive();
       play(fx, 0.15);
     }
@@ -168,7 +185,8 @@ export default function Game() {
       .with([true, 'press', 'KeyW'], () => gameAction('shiftF'))
       .with([true, 'press', 'KeyQ'], () => gameAction('rotateL'))
       .with([true, 'press', 'KeyE'], () => gameAction('rotateR'))
-      .with([true, 'press', 'KeyX'], () => bag.switchHold?.())
+      .with([true, 'press', 'Space'], () => gameAction('dropH'))
+      .with([true, 'press', 'KeyX'], () => !isLocked && bag.switchHold?.())
       .with([true, 'press', 'ArrowLeft'], () => cameraAction('left'))
       .with([true, 'press', 'ArrowRight'], () => cameraAction('right'))
       .with([true, 'press', 'KeyZ'], () => cutterAction('cut', 'left'))
@@ -187,6 +205,7 @@ export default function Game() {
       .with([true, 'press', 'padD'], () => gameAction('shiftB'))
       .with([true, 'press', 'X'], () => gameAction('rotateL'))
       .with([true, 'press', 'B'], () => gameAction('rotateR'))
+      .with([true, 'press', 'A'], () => gameAction('dropH'))
       .with([true, 'press', 'Y'], () => bag.switchHold?.())
       .with([true, 'press', 'LT'], () => cameraAction('left'))
       .with([true, 'press', 'RT'], () => cameraAction('right'))
