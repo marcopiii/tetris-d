@@ -3,7 +3,7 @@ import { Vector3Like } from 'three';
 import { COLS, ROWS, VANISH_ZONE_ROWS } from '../params';
 import { tetriminos } from '../tetrimino';
 import { Name as TetriminoType, Shape } from '../tetrimino/types';
-import { initPosition, TetriminoState } from './tetriminoMovement';
+import { drop, initPosition, TetriminoState } from './tetriminoMovement';
 
 /**
  * Manages the state of a Tetrimino in the game.
@@ -67,6 +67,27 @@ export default function useTetriminoManager(
     [state],
   );
 
+  const hardDrop = (boardMatrix: Vector3Like[]) => {
+    const canDrop = (s: TetriminoState) => {
+      const newState = drop(s);
+      const newTetriminoMatrix = calculateMatrix(
+        newState.shape,
+        newState.position,
+        newState.plane,
+      );
+      const isValid = !detectCollision(newTetriminoMatrix, boardMatrix);
+      return isValid ? newState : undefined;
+    };
+
+    let currentState = state;
+    let nextState;
+    do {
+      nextState = canDrop(currentState);
+      if (nextState) currentState = nextState;
+    } while (nextState);
+    setState(currentState);
+  };
+
   /**
    * Projects the ghost of the current tetrimino onto the given board.
    */
@@ -89,7 +110,7 @@ export default function useTetriminoManager(
     );
   };
 
-  return { tetrimino, attempt, projectGhost };
+  return { tetrimino, attempt, hardDrop, projectGhost };
 }
 
 function calculateMatrix(
