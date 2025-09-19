@@ -13,7 +13,7 @@ export default function Tetrion() {
   const scene = useThree((rootState) => rootState.scene);
 
   React.useEffect(() => {
-    scene.fog = new THREE.Fog('black', 10, 40);
+    scene.fog = new THREE.Fog('black', 10, 70);
     scene.background = new THREE.Color('#b5c5d2');
     return () => {
       scene.fog = null;
