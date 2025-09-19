@@ -1,9 +1,9 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { match } from 'ts-pattern';
-import Game from './components/Game';
 import { GameCanvas } from './components/GameCanvas';
 import Leaderboard from './components/Leaderboard';
+import Play from './components/Play';
 import { MainMenu } from './MainMenu';
 import './style.css';
 
@@ -20,10 +20,8 @@ function App(props: { aspectRatio: number }) {
         onLeaderboard={() => setScenario('leaderboard')}
       />
     ))
-    .with('play', () => <Game />)
-    .with('leaderboard', () => (
-      <Leaderboard inserting newScore={10} newLevel={12} />
-    ))
+    .with('play', () => <Play onBack={() => setScenario('main-menu')} />)
+    .with('leaderboard', () => <Leaderboard />)
     .with('controls', () => <></>)
     .exhaustive();
 

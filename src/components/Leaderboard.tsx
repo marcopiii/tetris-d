@@ -8,13 +8,14 @@ import useGamepadManager from './useGamepadManager';
 import { useKeyboardManager } from './useKeyboardManager';
 import { useLocalStorage } from '@uidotdev/usehooks';
 
-type Props =
+type Props = { onBack: () => void } & (
   | {
-      inserting: true;
+      gameOver: true;
       newScore: number;
       newLevel: number;
     }
-  | { inserting?: never };
+  | { gameOver?: never }
+);
 
 export default function Leaderboard(props: Props) {
   const [camera, setCamera] = useCamera({
@@ -38,7 +39,7 @@ export default function Leaderboard(props: Props) {
   const [handle, setHandle] = React.useState('_');
 
   const entries = (
-    props.inserting
+    props.gameOver
       ? [
           {
             score: props.newScore,
@@ -55,7 +56,7 @@ export default function Leaderboard(props: Props) {
 
   const top9 = entries.slice(0, 9);
 
-  const visibleEntries = props.inserting
+  const visibleEntries = props.gameOver
     ? top9.some((e) => e.editing)
       ? top9
       : entries.filter((e) => e.rank <= 9 || e.editing)
@@ -67,6 +68,7 @@ export default function Leaderboard(props: Props) {
         match([event, button])
           .with(['press', 'ArrowLeft'], () => cameraHandler('moveL'))
           .with(['press', 'ArrowRight'], () => cameraHandler('moveR'))
+          .with(['press', 'Escape'], () => props.onBack())
           // todo: handle name input when inserting
           .otherwise(() => {}),
       [cameraHandler],
@@ -87,7 +89,7 @@ export default function Leaderboard(props: Props) {
   return (
     <group position={[0, 8, 0]}>
       <R3FWord
-        text="Leaderboard"
+        text={props.gameOver ? 'game over' : 'Leaderboard'}
         type="main"
         font="alphabet"
         alignX="center"

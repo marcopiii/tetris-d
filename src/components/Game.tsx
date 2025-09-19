@@ -1,3 +1,4 @@
+import { set } from 'es-toolkit/compat';
 import React from 'react';
 import { match, P } from 'ts-pattern';
 import FX from '../audio';
@@ -30,7 +31,11 @@ import useCamera from './useCamera';
 import useScoreTracker from './useScoreTracker';
 import useTetriminoManager from './useTetriminoManager';
 
-export default function Game() {
+type Props = {
+  onGameOver: (score: number, level: number) => void;
+};
+
+export default function Game(props: Props) {
   const plane = usePlane();
   const bag = useBag();
 
@@ -59,10 +64,7 @@ export default function Game() {
     const collision = !attempt(drop)(board);
     if (collision) {
       if (tetrimino.every(({ y }) => y < VANISH_ZONE_ROWS)) {
-        // game over
-        clock.toggle();
-        alert(`Game Over! Your score: ${score}`);
-        return;
+        props.onGameOver(score, level);
       }
       fixPiece(bag.current, tetrimino);
       // note: the board change caused by fixing the piece will trigger a
@@ -180,7 +182,6 @@ export default function Game() {
 
   useKeyboardManager((event, button) =>
     match([clock.isRunning, event, button])
-      .with([P.any, 'press', 'Enter'], () => clock.toggle())
       .with([true, 'press', 'KeyA'], () => gameAction('shiftL'))
       .with([true, 'press', 'KeyD'], () => gameAction('shiftR'))
       .with([true, 'press', 'KeyS'], () => gameAction('shiftB'))
@@ -200,7 +201,6 @@ export default function Game() {
 
   useGamepadManager((event, button) =>
     match([clock.isRunning, event, button])
-      .with([P.any, 'press', 'start'], () => clock.toggle())
       .with([true, 'press', 'padL'], () => gameAction('shiftL'))
       .with([true, 'press', 'padR'], () => gameAction('shiftR'))
       .with([true, 'press', 'padU'], () => gameAction('shiftF'))

@@ -10,6 +10,8 @@ type Props = {
 };
 
 export default function Tetrimino(props: Props) {
+  //todo(marco): change appearance of the blocks in the vanish zone
+
   return (
     <group>
       {props.occupiedBlocks.map(({ y, x, z }) => {
