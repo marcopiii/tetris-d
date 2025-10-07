@@ -9,11 +9,17 @@ const tetrionWallGeometry = new THREE.PlaneGeometry(
   ROWS * MINO_SIZE,
 );
 
+const tetrionBaseGeometry = new THREE.ConeGeometry(
+  (COLS * MINO_SIZE) / Math.sqrt(2),
+  ROWS * MINO_SIZE,
+  4,
+);
+
 export default function Tetrion() {
   const scene = useThree((rootState) => rootState.scene);
 
   React.useEffect(() => {
-    scene.fog = new THREE.Fog('black', 10, 70);
+    // scene.fog = new THREE.Fog('black', 10, 70);
     scene.background = new THREE.Color('#b5c5d2');
     return () => {
       scene.fog = null;
@@ -34,6 +40,10 @@ export default function Tetrion() {
       />
       <TetrionWall position={[0, 0, -COLS / 2]} rotation={[0, 0, 0]} />
       <TetrionWall position={[0, 0, COLS / 2]} rotation={[0, Math.PI, 0]} />
+      <TetrionBase
+        position={[0, -ROWS, 0]}
+        rotation={[Math.PI, Math.PI / 4, 0]}
+      />
     </group>
   );
 }
@@ -47,5 +57,23 @@ function TetrionWall(props: {
       <edgesGeometry attach="geometry" args={[tetrionWallGeometry]} />
       <lineBasicMaterial attach="material" {...tetrionMaterial} />
     </lineSegments>
+  );
+}
+
+function TetrionBase(props: {
+  position: [number, number, number];
+  rotation: [number, number, number];
+}) {
+  return (
+    <mesh
+      geometry={tetrionBaseGeometry}
+      position={props.position}
+      rotation={props.rotation}
+    >
+      <meshBasicMaterial color="#FFB3BA" side={THREE.DoubleSide} />
+      <meshBasicMaterial color="red" side={THREE.DoubleSide} />
+      <meshBasicMaterial color="#green" side={THREE.DoubleSide} />
+      <meshBasicMaterial color="#blue" side={THREE.DoubleSide} />
+    </mesh>
   );
 }
