@@ -38,57 +38,49 @@ export default function useTetriminoManager(
    * The array of the coordinates of the blocks that are currently occupied by the tetrimino,
    * relative to the board coordinate system.
    */
-  const tetrimino = React.useMemo(
-    () => calculateMatrix(state.shape, state.position, state.plane),
-    [state.shape, state.position, state.plane],
-  );
+  const tetrimino = calculateMatrix(state.shape, state.position, state.plane);
 
   /**
    * Attempts to apply the given move function to the tetrimino inside the given board.
    * Returns true if the move was successful and the tetrimino state actually changed, false otherwise.
    */
-  const attempt = React.useCallback(
+  const attempt =
     (moveFn: (state: TetriminoState) => TetriminoState) =>
-      (boardMatrix: Vector3Like[]) => {
-        const newState = moveFn(state);
-        const newTetriminoMatrix = calculateMatrix(
-          newState.shape,
-          newState.position,
-          newState.plane,
-        );
-        const collision = detectCollision(newTetriminoMatrix, boardMatrix);
-        if (collision) {
-          return false;
-        } else {
-          setState(newState);
-          return true;
-        }
-      },
-    [state],
-  );
-
-  const hardDrop = React.useCallback(
     (boardMatrix: Vector3Like[]) => {
-      const canDrop = (s: TetriminoState) => {
-        const newState = drop(s);
-        const newTetriminoMatrix = calculateMatrix(
-          newState.shape,
-          newState.position,
-          newState.plane,
-        );
-        const isValid = !detectCollision(newTetriminoMatrix, boardMatrix);
-        return isValid ? newState : undefined;
-      };
-      let currentState = state;
-      let nextState;
-      do {
-        nextState = canDrop(currentState);
-        if (nextState) currentState = nextState;
-      } while (nextState);
-      setState(currentState);
-    },
-    [state],
-  );
+      const newState = moveFn(state);
+      const newTetriminoMatrix = calculateMatrix(
+        newState.shape,
+        newState.position,
+        newState.plane,
+      );
+      const collision = detectCollision(newTetriminoMatrix, boardMatrix);
+      if (collision) {
+        return false;
+      } else {
+        setState(newState);
+        return true;
+      }
+    };
+
+  const hardDrop = (boardMatrix: Vector3Like[]) => {
+    const canDrop = (s: TetriminoState) => {
+      const newState = drop(s);
+      const newTetriminoMatrix = calculateMatrix(
+        newState.shape,
+        newState.position,
+        newState.plane,
+      );
+      const isValid = !detectCollision(newTetriminoMatrix, boardMatrix);
+      return isValid ? newState : undefined;
+    };
+    let currentState = state;
+    let nextState;
+    do {
+      nextState = canDrop(currentState);
+      if (nextState) currentState = nextState;
+    } while (nextState);
+    setState(currentState);
+  };
 
   /**
    * Projects the ghost of the current tetrimino onto the given board.

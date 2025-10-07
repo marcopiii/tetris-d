@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import * as React from 'react';
 
 /** @see https://harddrop.com/wiki/Tetris_Worlds */
@@ -21,9 +20,9 @@ function useLockDelayManagement(loopCallback: () => void) {
   }, [loopCallback]);
 
   // a stable function to execute the loop callback
-  const execCounterResettingCallback = React.useCallback(() => {
+  const execCounterResettingCallback = () => {
     counterResettingCallbackRef.current();
-  }, [counterResettingCallbackRef]);
+  };
 
   return [lockDelayResetCounterRef, execCounterResettingCallback] as const;
 }
@@ -33,31 +32,28 @@ export default function useClock(callback: () => void) {
   const levelRef = React.useRef(1);
   const [isRunning, setIsRunning] = React.useState(true);
 
-  const speed = React.useCallback(
-    () => 1000 / (gravity[levelRef.current] * 60),
-    [],
-  );
+  const speed = () => 1000 / (gravity[levelRef.current] * 60);
 
-  const clear = React.useCallback(() => {
+  const clear = () => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = undefined;
     }
-  }, []);
+  };
 
   const [resetCounterRef, execLoop] = useLockDelayManagement(callback);
 
-  const toggle = React.useCallback(() => {
+  const toggle = () => {
     if (intervalRef.current) {
       clear();
     } else {
       intervalRef.current = setInterval(execLoop, speed());
     }
     setIsRunning((t) => !t);
-  }, [clear, execLoop, speed]);
+  };
 
   // Start the clock when the component mounts, and clear it when unmounting
-  useEffect(() => {
+  React.useEffect(() => {
     intervalRef.current = setInterval(execLoop, speed());
     return () => {
       clear();

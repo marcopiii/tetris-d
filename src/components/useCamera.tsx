@@ -46,38 +46,36 @@ export default function useCamera<K extends string>(
     play(FX.camera_move, 0.05);
   };
 
-  const relativeAxes = React.useMemo(() => {
-    const {
-      lookAt: [lookAtX, lookAtY, lookAtZ],
-      position: [positionX, positionY, positionZ],
-    } = pcs[cameraPosition];
+  const {
+    lookAt: [lookAtX, lookAtY, lookAtZ],
+    position: [positionX, positionY, positionZ],
+  } = pcs[cameraPosition];
 
-    const forward = new THREE.Vector3(
-      lookAtX - positionX,
-      lookAtY - positionY,
-      lookAtZ - positionZ,
-    ).normalize();
-    const up = new THREE.Vector3(0, 1, 0);
-    const right = new THREE.Vector3().crossVectors(forward, up);
+  const forward = new THREE.Vector3(
+    lookAtX - positionX,
+    lookAtY - positionY,
+    lookAtZ - positionZ,
+  ).normalize();
+  const up = new THREE.Vector3(0, 1, 0);
+  const right = new THREE.Vector3().crossVectors(forward, up);
 
-    const xAxis = new THREE.Vector3(1, 0, 0);
-    const zAxis = new THREE.Vector3(0, 0, 1);
-    const isXRight = right.dot(xAxis) > 0;
-    const isZRight = right.dot(zAxis) > 0;
+  const xAxis = new THREE.Vector3(1, 0, 0);
+  const zAxis = new THREE.Vector3(0, 0, 1);
+  const isXRight = right.dot(xAxis) > 0;
+  const isZRight = right.dot(zAxis) > 0;
 
-    return {
-      x: {
-        rightInverted: right.x < 0,
-        forwardInverted: forward.x < 0,
-        forwardRight: isXRight,
-      },
-      z: {
-        rightInverted: right.z < 0,
-        forwardInverted: forward.z < 0,
-        forwardRight: isZRight,
-      },
-    };
-  }, [pcs, cameraPosition]);
+  const relativeAxes = {
+    x: {
+      rightInverted: right.x < 0,
+      forwardInverted: forward.x < 0,
+      forwardRight: isXRight,
+    },
+    z: {
+      rightInverted: right.z < 0,
+      forwardInverted: forward.z < 0,
+      forwardRight: isZRight,
+    },
+  };
 
   React.useEffect(() => {
     moveThreeCamera(Object.keys(pcs)[0] as K, false);

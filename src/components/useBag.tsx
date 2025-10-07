@@ -16,18 +16,15 @@ export default function useBag() {
   const [hold, setHold] = React.useState<Tetrimino>();
   const [isHoldable, setHoldable] = React.useState(true);
 
-  const pullNext = React.useCallback(() => {
+  const pullNext = () => {
     const [_, ...rest] = bag.length > 2 ? bag : [...bag, ...regenBag()];
     setBag(rest);
     setHoldable(true);
-  }, [bag]);
+  };
 
-  const [current, next] = React.useMemo(() => {
-    const [current, next, ...rest] = bag;
-    return [current, next] as const;
-  }, [bag]);
+  const [current, next, ...rest] = bag;
 
-  const switchHold = React.useCallback(() => {
+  const switchHold = () => {
     if (hold) {
       const [current, ...rest] = bag;
       setHold(current);
@@ -37,7 +34,7 @@ export default function useBag() {
       pullNext();
     }
     setHoldable(false);
-  }, [current, bag, hold, pullNext]);
+  };
 
   return {
     current,

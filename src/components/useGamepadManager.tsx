@@ -13,7 +13,7 @@ export default function useGamepadManager(
 ) {
   const bufferRef = React.useRef<GamepadButton[][]>([]);
 
-  const poll = React.useCallback(() => {
+  const poll = () => {
     const gamepad = navigator.getGamepads()[0];
     if (!gamepad) return;
 
@@ -39,7 +39,7 @@ export default function useGamepadManager(
       0,
       BUFFER_SIZE,
     );
-  }, [handler]);
+  };
 
   useFrame(poll);
 }

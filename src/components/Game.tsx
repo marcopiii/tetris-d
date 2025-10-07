@@ -218,14 +218,11 @@ export default function Game(props: Props) {
       .otherwise(() => null),
   );
 
-  const boardCuttingProp = React.useMemo(
-    () => ({
-      plane: { [plane.current]: tetrimino[0][plane.current] } as PlaneCoords,
-      below: cut.below,
-      above: cut.above,
-    }),
-    [tetrimino, plane.current, cut.below, cut.above],
-  );
+  const boardCuttingProp = {
+    plane: { [plane.current]: tetrimino[0][plane.current] } as PlaneCoords,
+    below: cut.below,
+    above: cut.above,
+  };
 
   // todo: avoid unnecessary re-renders
   return (

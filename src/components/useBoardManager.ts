@@ -24,49 +24,42 @@ export default function useBoardManager() {
    * The array of coordinates of the blocks that are occupied by the pieces in
    * the board (relative to the board coordinate system), and their type.
    */
-  const board = React.useMemo(
-    () =>
-      matrix
-        .flatMap((layer, y) =>
-          layer.flatMap((xRow, x) =>
-            xRow.map((type, z) => (type ? { type, x, y, z } : undefined)),
-          ),
-        )
-        .filter((block) => !!block),
-    [matrix],
-  );
+  const board = matrix
+    .flatMap((layer, y) =>
+      layer.flatMap((xRow, x) =>
+        xRow.map((type, z) => (type ? { type, x, y, z } : undefined)),
+      ),
+    )
+    .filter((block) => !!block);
 
   /**
    * Copies each block of the tetrimino into the board. Alters the state of the
    * board but not the state of the current tetrimino.
    */
-  const fixPiece = React.useCallback(
-    (type: TetriminoType, tetrimino: { y: number; x: number; z: number }[]) => {
-      const newMatrix = copy(matrix);
-      tetrimino.forEach(({ y, x, z }) => {
-        newMatrix[y][x][z] = type;
-      });
-      setMatrix(newMatrix);
-    },
-    [matrix],
-  );
+  const fixPiece = (
+    type: TetriminoType,
+    tetrimino: { y: number; x: number; z: number }[],
+  ) => {
+    const newMatrix = copy(matrix);
+    tetrimino.forEach(({ y, x, z }) => {
+      newMatrix[y][x][z] = type;
+    });
+    setMatrix(newMatrix);
+  };
 
   /**
    * Checks for completed lines in the board and returns the coordinates
    * of the completed lines.
    * If `clear` is true, the completed lines are also removed from the board.
    */
-  const checkLines = React.useCallback(
-    (clear: boolean) => {
-      const completedLines = checkCompletedLines(board);
-      if (clear && completedLines.length > 0) {
-        const newMatrix = removeCompletedLines(matrix)(completedLines);
-        setMatrix(newMatrix);
-      }
-      return completedLines;
-    },
-    [board],
-  );
+  const checkLines = (clear: boolean) => {
+    const completedLines = checkCompletedLines(board);
+    if (clear && completedLines.length > 0) {
+      const newMatrix = removeCompletedLines(matrix)(completedLines);
+      setMatrix(newMatrix);
+    }
+    return completedLines;
+  };
 
   return {
     board,

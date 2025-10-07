@@ -33,51 +33,37 @@ export function MainMenu(props: Props) {
 
   const [options, selectedOption, navigate] = useMenuNavigation(menuItems);
 
-  const menuCameraHandler = React.useCallback(
-    (command: 'moveL' | 'moveR'): void =>
-      match([camera, command])
-        .with(['right', 'moveL'], () => setCamera('left'))
-        .with(['left', 'moveR'], () => setCamera('right'))
-        .otherwise(() => {}),
-    [camera],
+  const menuCameraHandler = (command: 'moveL' | 'moveR'): void =>
+    match([camera, command])
+      .with(['right', 'moveL'], () => setCamera('left'))
+      .with(['left', 'moveR'], () => setCamera('right'))
+      .otherwise(() => {});
+
+  const menuNavigationHandler = (command: 'up' | 'down' | 'confirm'): void =>
+    match(command)
+      .with('confirm', () => selectedOption.current.action())
+      .with('up', () => navigate('up'))
+      .with('down', () => navigate('down'))
+      .exhaustive();
+
+  useKeyboardManager((event, button) =>
+    match([event, button])
+      .with(['press', 'ArrowUp'], () => menuNavigationHandler('up'))
+      .with(['press', 'ArrowDown'], () => menuNavigationHandler('down'))
+      .with(['press', 'Enter'], () => menuNavigationHandler('confirm'))
+      .with(['press', 'ArrowLeft'], () => menuCameraHandler('moveL'))
+      .with(['press', 'ArrowRight'], () => menuCameraHandler('moveR'))
+      .otherwise(() => {}),
   );
 
-  const menuNavigationHandler = React.useCallback(
-    (command: 'up' | 'down' | 'confirm'): void =>
-      match(command)
-        .with('confirm', () => selectedOption.current.action())
-        .with('up', () => navigate('up'))
-        .with('down', () => navigate('down'))
-        .exhaustive(),
-    [navigate],
-  );
-
-  useKeyboardManager(
-    React.useCallback(
-      (event, button) =>
-        match([event, button])
-          .with(['press', 'ArrowUp'], () => menuNavigationHandler('up'))
-          .with(['press', 'ArrowDown'], () => menuNavigationHandler('down'))
-          .with(['press', 'Enter'], () => menuNavigationHandler('confirm'))
-          .with(['press', 'ArrowLeft'], () => menuCameraHandler('moveL'))
-          .with(['press', 'ArrowRight'], () => menuCameraHandler('moveR'))
-          .otherwise(() => {}),
-      [menuNavigationHandler, menuCameraHandler],
-    ),
-  );
-
-  useGamepadManager(
-    React.useCallback(
-      (event, button) =>
-        match([event, button])
-          .with(['press', 'padD'], () => menuNavigationHandler('down'))
-          .with(['press', 'padU'], () => menuNavigationHandler('up'))
-          .with(['press', 'A'], () => menuNavigationHandler('confirm'))
-          .with(['press', 'LT'], () => menuCameraHandler('moveL'))
-          .with(['press', 'RT'], () => menuCameraHandler('moveR'))
-          .otherwise(() => {}),
-      [menuNavigationHandler, menuCameraHandler],
-    ),
+  useGamepadManager((event, button) =>
+    match([event, button])
+      .with(['press', 'padD'], () => menuNavigationHandler('down'))
+      .with(['press', 'padU'], () => menuNavigationHandler('up'))
+      .with(['press', 'A'], () => menuNavigationHandler('confirm'))
+      .with(['press', 'LT'], () => menuCameraHandler('moveL'))
+      .with(['press', 'RT'], () => menuCameraHandler('moveR'))
+      .otherwise(() => {}),
   );
 
   return <Menu position={[0, 0, 0]} title="tetris-d" options={options} />;

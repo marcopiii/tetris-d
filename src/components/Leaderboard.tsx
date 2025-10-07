@@ -23,14 +23,11 @@ export default function Leaderboard(props: Props) {
     right: { position: [10, 4, 10], lookAt: [0, 0, 0] },
   });
 
-  const cameraHandler = React.useCallback(
-    (command: 'moveL' | 'moveR'): void =>
-      match([camera, command])
-        .with(['right', 'moveL'], () => setCamera('left'))
-        .with(['left', 'moveR'], () => setCamera('right'))
-        .otherwise(() => {}),
-    [camera],
-  );
+  const cameraHandler = (command: 'moveL' | 'moveR'): void =>
+    match([camera, command])
+      .with(['right', 'moveL'], () => setCamera('left'))
+      .with(['left', 'moveR'], () => setCamera('right'))
+      .otherwise(() => {});
 
   const [leaderboard] = useLocalStorage<
     { name: string; score: number; level: number }[]
@@ -62,28 +59,20 @@ export default function Leaderboard(props: Props) {
       : entries.filter((e) => e.rank <= 9 || e.editing)
     : top9;
 
-  useKeyboardManager(
-    React.useCallback(
-      (event, button) =>
-        match([event, button])
-          .with(['press', 'ArrowLeft'], () => cameraHandler('moveL'))
-          .with(['press', 'ArrowRight'], () => cameraHandler('moveR'))
-          .with(['press', 'Escape'], () => props.onBack())
-          // todo: handle name input when inserting
-          .otherwise(() => {}),
-      [cameraHandler],
-    ),
+  useKeyboardManager((event, button) =>
+    match([event, button])
+      .with(['press', 'ArrowLeft'], () => cameraHandler('moveL'))
+      .with(['press', 'ArrowRight'], () => cameraHandler('moveR'))
+      .with(['press', 'Escape'], () => props.onBack())
+      // todo: handle name input when inserting
+      .otherwise(() => {}),
   );
 
-  useGamepadManager(
-    React.useCallback(
-      (event, button) =>
-        match([event, button])
-          .with(['press', 'LT'], () => cameraHandler('moveL'))
-          .with(['press', 'RT'], () => cameraHandler('moveR'))
-          .otherwise(() => {}),
-      [cameraHandler],
-    ),
+  useGamepadManager((event, button) =>
+    match([event, button])
+      .with(['press', 'LT'], () => cameraHandler('moveL'))
+      .with(['press', 'RT'], () => cameraHandler('moveR'))
+      .otherwise(() => {}),
   );
 
   return (
