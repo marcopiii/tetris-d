@@ -1,11 +1,11 @@
 import { Center } from '@react-three/drei';
 import React from 'react';
-import { match, P } from 'ts-pattern';
+import { match } from 'ts-pattern';
 import { VOXEL_SIZE } from '../params';
 import R3FWord from './R3FWord';
 import useCamera from './useCamera';
 import useGamepadManager from './useGamepadManager';
-import { useKeyboardManager } from './useKeyboardManager';
+import useKeyboardManager from './useKeyboardManager';
 import { useLocalStorage } from '@uidotdev/usehooks';
 
 type Props = { onBack: () => void } & (

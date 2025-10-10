@@ -2,7 +2,7 @@ import React from 'react';
 import { match } from 'ts-pattern';
 import Menu from './components/Menu';
 import useGamepadManager from './components/useGamepadManager';
-import { useKeyboardManager } from './components/useKeyboardManager';
+import useKeyboardManager from './components/useKeyboardManager';
 import useCamera from './components/useCamera';
 import { useMenuNavigation } from './components/utils.';
 

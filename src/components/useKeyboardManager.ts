@@ -5,7 +5,7 @@ type KeyboardHandler = (
 
 import React from 'react';
 
-export function useKeyboardManager(handler: KeyboardHandler): void {
+export default function useKeyboardManager(handler: KeyboardHandler): void {
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) =>
       !event.repeat && handler('press', event.code);

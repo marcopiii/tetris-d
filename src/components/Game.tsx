@@ -25,7 +25,7 @@ import useBoardManager from './useBoardManager';
 import useClock from './useClock';
 import useCutter from './useCutter';
 import useGamepadManager from './useGamepadManager';
-import { useKeyboardManager } from './useKeyboardManager';
+import useKeyboardManager from './useKeyboardManager';
 import usePlane from './usePlane';
 import useCamera from './useCamera';
 import useScoreTracker from './useScoreTracker';
@@ -54,7 +54,11 @@ export default function Game(props: Props) {
 
   const [cut, setCut] = useCutter(camera);
 
-  const { score, level, addLines } = useScoreTracker();
+  const { score, level, gain, addLines } = useScoreTracker();
+
+  React.useEffect(() => {
+    console.log(gain);
+  }, [gain]);
 
   // lock the piece after hard drop until the next tick,
   const [isLocked, setIsLocked] = React.useState(false);
