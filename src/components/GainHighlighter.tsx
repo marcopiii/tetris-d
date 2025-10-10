@@ -1,6 +1,6 @@
 import { match, P } from 'ts-pattern';
 import { COLS } from '../params';
-import Mino from './Mino';
+import R3FWord from './R3FWord';
 import { translate } from './translations';
 import useScoreTracker from './useScoreTracker';
 
@@ -25,13 +25,25 @@ export default function GainHighlighter(props: Props) {
     .with({ z: P.number }, ({ z, y }) => translate(xAnchor, y, z))
     .exhaustive();
 
+  const [pointsRotation, pointsAlign] = match([firstLine, props.camera])
+    .with([{ x: P.number }, 'c1'], () => [-Math.PI / 2, 'right'] as const)
+    .with([{ x: P.number }, 'c2'], () => [Math.PI / 2, 'left'] as const)
+    .with([{ x: P.number }, 'c3'], () => [Math.PI / 2, 'right'] as const)
+    .with([{ x: P.number }, 'c4'], () => [-Math.PI / 2, 'left'] as const)
+    .with([{ z: P.number }, 'c1'], () => [0, 'left'] as const)
+    .with([{ z: P.number }, 'c2'], () => [0, 'right'] as const)
+    .with([{ z: P.number }, 'c3'], () => [Math.PI, 'left'] as const)
+    .with([{ z: P.number }, 'c4'], () => [-Math.PI, 'right'] as const)
+    .exhaustive();
+
   return (
-    <Mino position={pointsPosition} type="S" status="normal" />
-    // <R3FWord
-    //   position={pointsPosition}
-    //   text={`+${props.gain.points.toString()}`}
-    //   type="secondary-half"
-    //   font="numbers"
-    // />
+    <R3FWord
+      position={pointsPosition}
+      rotation={[0, pointsRotation, 0]}
+      alignX={pointsAlign}
+      text={`+${props.gain.points.toString()}`}
+      type="secondary-half"
+      font="numbers"
+    />
   );
 }

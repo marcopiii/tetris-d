@@ -7,6 +7,7 @@ import R3FChar from './R3FChar';
 
 type Props = {
   position: [number, number, number];
+  rotation?: [number, number, number];
   text: string;
   type: 'main' | 'primary' | 'primary-half' | 'secondary' | 'secondary-half';
   font: 'alphabet' | 'numbers';
@@ -63,6 +64,7 @@ export default function R3FWord(props: Props) {
       {...centerPropsY}
       {...centerPropsZ}
       position={props.position}
+      rotation={props.rotation}
       cacheKey={centerCacheKey}
     >
       {chars.map((char, i) => {

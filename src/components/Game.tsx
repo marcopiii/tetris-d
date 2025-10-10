@@ -237,15 +237,7 @@ export default function Game(props: Props) {
       <Board occupiedBlocks={board} cutting={boardCuttingProp} />
       <Tetrimino type={bag.current} occupiedBlocks={tetrimino} />
       <Ghost type={bag.current} occupiedBlocks={projectGhost(board)} />
-      <GainHighlighter
-        camera={camera}
-        gain={{
-          lines: [{ x: 3, y: 19 }],
-          cascade: false,
-          kind: 'std',
-          points: 450,
-        }}
-      />
+      {gain && <GainHighlighter camera={camera} gain={gain} />}
     </group>
   );
 }
