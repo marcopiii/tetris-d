@@ -8,6 +8,7 @@ type State = {
   score: number;
   lines: number;
   gainBuffer?: {
+    lines: LineCoord[];
     points: number;
     kind: ComboKind;
     cascade: boolean;
@@ -39,7 +40,12 @@ export default function useScoreTracker() {
             lines: prev.lines + lines.length,
             gainBuffer:
               lines.length > 0
-                ? { points: gain, kind: combo, cascade: isCascade }
+                ? {
+                    points: gain,
+                    kind: combo,
+                    cascade: isCascade,
+                    lines: lines,
+                  }
                 : prev.gainBuffer,
           };
         })

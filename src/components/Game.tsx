@@ -1,12 +1,12 @@
-import { set } from 'es-toolkit/compat';
 import React from 'react';
 import { match, P } from 'ts-pattern';
 import FX from '../audio';
-import { VANISH_ZONE_ROWS } from '../params';
+import { ROWS, VANISH_ZONE_ROWS } from '../params';
 import { play } from '../utils';
 import BagPanel from './BagPanel';
 import Board from './Board';
 import { PlaneCoords } from './Coords';
+import GainHighlighter from './GainHighlighter';
 import Ghost from './Ghost';
 import ProgressPanel from './ProgressPanel';
 import Tetrimino from './Tetrimino';
@@ -237,6 +237,15 @@ export default function Game(props: Props) {
       <Board occupiedBlocks={board} cutting={boardCuttingProp} />
       <Tetrimino type={bag.current} occupiedBlocks={tetrimino} />
       <Ghost type={bag.current} occupiedBlocks={projectGhost(board)} />
+      <GainHighlighter
+        camera={camera}
+        gain={{
+          lines: [{ x: 3, y: 19 }],
+          cascade: false,
+          kind: 'std',
+          points: 450,
+        }}
+      />
     </group>
   );
 }
