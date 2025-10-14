@@ -56,10 +56,6 @@ export default function Game(props: Props) {
 
   const { score, level, gain, addLines } = useScoreTracker();
 
-  React.useEffect(() => {
-    console.log(gain);
-  }, [gain]);
-
   // lock the piece after hard drop until the next tick,
   const [isLocked, setIsLocked] = React.useState(false);
 
