@@ -1,3 +1,4 @@
+import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { match } from 'ts-pattern';
@@ -28,6 +29,13 @@ function App(props: { aspectRatio: number }) {
   return (
     <GameCanvas aspectRatio={props.aspectRatio}>
       <axesHelper args={[10]} />
+      <EffectComposer>
+        <Bloom
+          luminanceThreshold={1}
+          luminanceSmoothing={0.5}
+          intensity={1.0}
+        />
+      </EffectComposer>
       {currentScenario}
     </GameCanvas>
   );

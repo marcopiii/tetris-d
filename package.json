@@ -29,6 +29,7 @@
   "dependencies": {
     "@react-three/drei": "^10.7.4",
     "@react-three/fiber": "^9.1.2",
+    "@react-three/postprocessing": "^3.0.4",
     "@tweenjs/tween.js": "^25.0.0",
     "@uidotdev/usehooks": "^2.4.1",
     "es-toolkit": "^1.39.8",

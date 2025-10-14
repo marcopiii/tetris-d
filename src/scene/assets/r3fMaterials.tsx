@@ -49,7 +49,7 @@ export type TriMaterial = [
 type MinoState = 'normal' | 'shade' | 'disabled' | 'deleting';
 
 const deletingMaterialProps = {
-  color: new THREE.Color(1.01, 1.01, 1.01),
+  color: new THREE.Color(2, 2, 2),
   fog: false,
 };
 
