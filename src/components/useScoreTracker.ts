@@ -7,12 +7,12 @@ const LINE_CLEAR_PER_LEVEL = 10;
 type State = {
   score: number;
   lines: number;
-  gainBuffer?: {
+  gainStream: {
     lines: LineCoord[];
-    points: number;
     kind: ComboKind;
-    cascade: boolean;
-  };
+    cascade: number;
+    points: number;
+  }[];
 };
 
 type Action =
@@ -26,7 +26,7 @@ export default function useScoreTracker() {
     (prev: State, action: Action) => {
       return match(action)
         .with({ type: 'add-lines' }, ({ lines }) => {
-          const isCascade = cascadeBuffer.current.length > 0;
+          const cascadeIndex = cascadeBuffer.current.length;
           const effectiveLines = lines.length
             ? [...lines, ...cascadeBuffer.current]
             : [];
@@ -38,33 +38,37 @@ export default function useScoreTracker() {
           return {
             score: prev.score + gain,
             lines: prev.lines + lines.length,
-            gainBuffer:
+            gainStream:
               lines.length > 0
-                ? {
-                    points: gain,
-                    kind: combo,
-                    cascade: isCascade,
-                    lines: lines,
-                  }
-                : prev.gainBuffer,
+                ? [
+                    ...prev.gainStream,
+                    {
+                      points: gain,
+                      kind: combo,
+                      cascade: cascadeIndex,
+                      lines: lines,
+                    },
+                  ]
+                : prev.gainStream,
           };
         })
         .with({ type: 'reset-gain' }, () => {
+          // fixme: keep each gain for 1s
           return { ...prev, gainBuffer: undefined };
         })
         .exhaustive();
     },
-    { score: 0, lines: 0 },
+    { score: 0, lines: 0, gainStream: [] },
   );
 
   React.useEffect(() => {
-    if (state.gainBuffer) {
+    if (state.gainStream) {
       const timeout = setTimeout(() => {
         dispatch({ type: 'reset-gain' });
-      }, 1000);
+      }, 1500);
       return () => clearTimeout(timeout);
     }
-  }, [state.gainBuffer]);
+  }, [state.gainStream]);
 
   const addLines = (lines: LineCoord[]) =>
     dispatch({ type: 'add-lines', lines });
@@ -72,7 +76,7 @@ export default function useScoreTracker() {
   return {
     score: state.score,
     level: level(state.lines),
-    gain: state.gainBuffer,
+    gainStream: state.gainStream,
     addLines,
   };
 }

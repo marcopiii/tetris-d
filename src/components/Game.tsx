@@ -54,7 +54,7 @@ export default function Game(props: Props) {
 
   const [cut, setCut] = useCutter(camera);
 
-  const { score, level, gain, addLines } = useScoreTracker();
+  const { score, level, gainStream, addLines } = useScoreTracker();
 
   // lock the piece after hard drop until the next tick,
   const [isLocked, setIsLocked] = React.useState(false);
@@ -233,7 +233,15 @@ export default function Game(props: Props) {
       <Board occupiedBlocks={board} cutting={boardCuttingProp} />
       <Tetrimino type={bag.current} occupiedBlocks={tetrimino} />
       <Ghost type={bag.current} occupiedBlocks={projectGhost(board)} />
-      {gain && <GainHighlighter camera={camera} gain={gain} />}
+      {gainStream.map((gain) => (
+        <GainHighlighter
+          camera={camera}
+          gain={gain}
+          key={gain.lines
+            .map(({ x, y, z }) => [x ?? '_', y, z ?? '_'].join(':'))
+            .join(',')}
+        />
+      ))}
     </group>
   );
 }

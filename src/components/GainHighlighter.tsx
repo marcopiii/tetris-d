@@ -9,7 +9,7 @@ import useScoreTracker from './useScoreTracker';
 
 type Props = {
   camera: 'c1' | 'c2' | 'c3' | 'c4';
-  gain: NonNullable<ReturnType<typeof useScoreTracker>['gain']>;
+  gain: ReturnType<typeof useScoreTracker>['gainStream'][0];
 };
 
 export default function GainHighlighter(props: Props) {
@@ -18,29 +18,28 @@ export default function GainHighlighter(props: Props) {
   const firstLine = sortedLines[0];
   if (!firstLine) return null;
 
-  const [yOffset, setYOffset] = React.useState(0);
-  const originalPointsPositioning = getPositioning(firstLine, props.camera);
-  const currentPointsPositioning = {
-    ...originalPointsPositioning,
-    position: [
-      originalPointsPositioning.position[0],
-      originalPointsPositioning.position[1] + yOffset,
-      originalPointsPositioning.position[2],
-    ] as [number, number, number],
-  };
-
-  useFrame((_, delta) => {
-    setYOffset((prev) => prev + 2 * delta);
+  const ls = sortedLines.map((line) => {
+    return getPositioning(line, props.camera);
   });
 
+  const [visible, next] = React.useReducer(
+    (v: number) => Math.min(v + 1, ls.length - 1),
+    0,
+  );
+
+  React.useEffect(() => {
+    const intervalId = setInterval(() => {
+      next();
+    }, 150);
+    return () => clearInterval(intervalId);
+  }, [next]);
+
   return (
-    <R3FWord
-      position={currentPointsPositioning.position}
-      rotation={currentPointsPositioning.rotation}
-      alignX={currentPointsPositioning.alignment}
-      text={`+${props.gain.points.toString()}`}
-      type="secondary-half"
-      font="numbers"
+    <LineHighlighter
+      position={ls[visible].position}
+      rotation={ls[visible].rotation}
+      alignX={ls[visible].alignment}
+      i={visible + 1}
     />
   );
 }
@@ -74,4 +73,32 @@ function getPositioning(line: LineCoord, camera: Props['camera']) {
     rotation: [0, yRotation, 0] as [number, number, number],
     alignment,
   };
+}
+
+function LineHighlighter(props: {
+  position: React.ComponentProps<typeof R3FWord>['position'];
+  rotation: React.ComponentProps<typeof R3FWord>['rotation'];
+  alignX: React.ComponentProps<typeof R3FWord>['alignX'];
+  i: number;
+}) {
+  const [yOffset, setYOffset] = React.useState(0);
+
+  useFrame((_, delta) => {
+    setYOffset((prev) => prev + 2 * delta);
+  });
+
+  return (
+    <R3FWord
+      position={[
+        props.position[0],
+        props.position[1] + yOffset,
+        props.position[2],
+      ]}
+      rotation={props.rotation}
+      alignX={props.alignX}
+      text={props.i.toString()}
+      type="secondary-half"
+      font="numbers"
+    />
+  );
 }
