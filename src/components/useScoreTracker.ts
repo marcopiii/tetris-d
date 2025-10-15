@@ -1,23 +1,28 @@
 import React from 'react';
+import { MathUtils } from 'three';
 import { match } from 'ts-pattern';
 import { LineCoord } from '../scenario/game/types';
+import { usePrevious } from '@uidotdev/usehooks';
 
 const LINE_CLEAR_PER_LEVEL = 10;
 
 type State = {
   score: number;
   lines: number;
-  gainStream: {
-    lines: LineCoord[];
-    kind: ComboKind;
-    cascade: number;
-    points: number;
-  }[];
+  gainStream: Record<
+    string,
+    {
+      lines: LineCoord[];
+      kind: ComboKind;
+      cascade: number;
+      points: number;
+    }
+  >;
 };
 
 type Action =
   | { type: 'add-lines'; lines: LineCoord[] }
-  | { type: 'reset-gain' };
+  | { type: 'clean-gain'; id: string };
 
 export default function useScoreTracker() {
   const cascadeBuffer = React.useRef<LineCoord[]>([]);
@@ -40,34 +45,34 @@ export default function useScoreTracker() {
             lines: prev.lines + lines.length,
             gainStream:
               lines.length > 0
-                ? [
+                ? {
                     ...prev.gainStream,
-                    {
+                    [MathUtils.generateUUID()]: {
                       points: gain,
                       kind: combo,
                       cascade: cascadeIndex,
                       lines: lines,
                     },
-                  ]
+                  }
                 : prev.gainStream,
           };
         })
-        .with({ type: 'reset-gain' }, () => {
-          // fixme: keep each gain for 1s
-          return { ...prev, gainBuffer: undefined };
+        .with({ type: 'clean-gain' }, ({ id }) => {
+          const { [id]: _, ...gainStream } = prev.gainStream;
+          return { ...prev, gainStream };
         })
         .exhaustive();
     },
-    { score: 0, lines: 0, gainStream: [] },
+    { score: 0, lines: 0, gainStream: {} },
   );
 
+  const prevGainStream = usePrevious(state.gainStream);
+
   React.useEffect(() => {
-    if (state.gainStream) {
-      const timeout = setTimeout(() => {
-        dispatch({ type: 'reset-gain' });
-      }, 1500);
-      return () => clearTimeout(timeout);
-    }
+    const g = diffKeys(prevGainStream ?? {}, state.gainStream)[0];
+    setTimeout(() => {
+      dispatch({ type: 'clean-gain', id: g });
+    }, 1500);
   }, [state.gainStream]);
 
   const addLines = (lines: LineCoord[]) =>
@@ -114,3 +119,7 @@ function planeMultiplier(comboKind: ComboKind) {
 }
 
 type ComboKind = 'std' | 'ort' | 'par';
+
+function diffKeys<T>(a: Record<string, T>, b: Record<string, T>): string[] {
+  return Object.keys(b).filter((key) => !(key in a));
+}

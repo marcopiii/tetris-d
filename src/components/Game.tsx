@@ -233,14 +233,8 @@ export default function Game(props: Props) {
       <Board occupiedBlocks={board} cutting={boardCuttingProp} />
       <Tetrimino type={bag.current} occupiedBlocks={tetrimino} />
       <Ghost type={bag.current} occupiedBlocks={projectGhost(board)} />
-      {gainStream.map((gain) => (
-        <GainHighlighter
-          camera={camera}
-          gain={gain}
-          key={gain.lines
-            .map(({ x, y, z }) => [x ?? '_', y, z ?? '_'].join(':'))
-            .join(',')}
-        />
+      {Object.entries(gainStream).map(([key, gain]) => (
+        <GainHighlighter camera={camera} gain={gain} key={key} />
       ))}
     </group>
   );
