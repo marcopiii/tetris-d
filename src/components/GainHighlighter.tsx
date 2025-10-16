@@ -22,25 +22,28 @@ export default function GainHighlighter(props: Props) {
     return getPositioning(line, props.camera);
   });
 
-  const [visible, next] = React.useReducer(
-    (v: number) => Math.min(v + 1, ls.length - 1),
-    0,
+  const [k, next] = React.useReducer(
+    (v: number) => Math.min(v + 1, ls.length),
+    -1,
   );
 
   React.useEffect(() => {
     const intervalId = setInterval(() => {
       next();
-    }, 150);
+    }, 100);
     return () => clearInterval(intervalId);
   }, [next]);
 
-  return (
-    <LineHighlighter
-      position={ls[visible].position}
-      rotation={ls[visible].rotation}
-      alignX={ls[visible].alignment}
-      i={visible + 1}
-    />
+  return ls.map(
+    (l, i) =>
+      [k - 1, k, k + 1].includes(i) && (
+        <LineHighlighter
+          position={l.position}
+          rotation={l.rotation}
+          alignX={l.alignment}
+          n={i + 1}
+        />
+      ),
   );
 }
 
@@ -79,13 +82,15 @@ function LineHighlighter(props: {
   position: React.ComponentProps<typeof R3FWord>['position'];
   rotation: React.ComponentProps<typeof R3FWord>['rotation'];
   alignX: React.ComponentProps<typeof R3FWord>['alignX'];
-  i: number;
+  n: number;
 }) {
   const [yOffset, setYOffset] = React.useState(0);
 
   useFrame((_, delta) => {
-    setYOffset((prev) => prev + 2 * delta);
+    setYOffset((prev) => prev + 1.5 * delta);
   });
+
+  const text = `+${props.n.toString()} LINE`;
 
   return (
     <R3FWord
@@ -96,7 +101,7 @@ function LineHighlighter(props: {
       ]}
       rotation={props.rotation}
       alignX={props.alignX}
-      text={props.i.toString()}
+      text={text}
       type="secondary-half"
       font="numbers"
     />
