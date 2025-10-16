@@ -1,5 +1,5 @@
 import { useFrame } from '@react-three/fiber';
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import { match, P } from 'ts-pattern';
 import { COLS } from '../params';
 import { LineCoord } from '../scenario/game/types';
@@ -23,7 +23,6 @@ export default function GainHighlighter(props: Props) {
       ? 'z'
       : 'x';
 
-  // order the lines based on camera position: farther lines first
   const lineOrderCriteria = (a: LineCoord, b: LineCoord) => {
     const yDiff = a.y - b.y;
 
@@ -50,10 +49,22 @@ export default function GainHighlighter(props: Props) {
 
   const sortedLines = props.gain.lines.toSorted(lineOrderCriteria);
 
-  const ls = sortedLines.map((line) => {
+  const firstLine = sortedLines[0];
+  const ls: Omit<
+    ComponentProps<typeof LineHighlighter> & { id: string },
+    'lineNumber'
+  >[] = sortedLines.map((line) => {
     const id = [line.x ?? '_', line.y, line.z ?? '_'].join(':');
     const layout = getPositioning(line, props.camera);
-    return { id, ...layout };
+    const kind = match([firstLine, line])
+      .with([{ x: P.number }, { x: P.number }], ([first, thiz]) =>
+        first.x !== thiz.x ? ('par' as const) : ('std' as const),
+      )
+      .with([{ z: P.number }, { z: P.number }], ([first, thiz]) =>
+        first.z !== thiz.z ? ('par' as const) : ('std' as const),
+      )
+      .otherwise(() => 'ort' as const);
+    return { id, kind, ...layout };
   });
 
   const [k, next] = React.useReducer(
@@ -69,14 +80,15 @@ export default function GainHighlighter(props: Props) {
   }, [next]);
 
   return ls.map(
-    (l, i) =>
+    (line, i) =>
       [k - 1, k, k + 1].includes(i) && (
         <LineHighlighter
-          key={l.id}
-          position={l.position}
-          rotation={l.rotation}
-          align={l.alignment}
-          n={i + 1}
+          key={line.id}
+          position={line.position}
+          rotation={line.rotation}
+          alignment={line.alignment}
+          kind={line.kind}
+          lineNumber={i + 1}
         />
       ),
   );
@@ -114,10 +126,11 @@ function getPositioning(line: LineCoord, camera: Props['camera']) {
 }
 
 function LineHighlighter(props: {
-  position: React.ComponentProps<typeof R3FWord>['position'];
+  position: NonNullable<React.ComponentProps<typeof R3FWord>['position']>;
   rotation: NonNullable<React.ComponentProps<typeof R3FWord>['rotation']>;
-  align: NonNullable<React.ComponentProps<typeof R3FWord>['alignX']>;
-  n: number;
+  alignment: NonNullable<React.ComponentProps<typeof R3FWord>['alignX']>;
+  lineNumber: number;
+  kind: 'std' | 'ort' | 'par';
 }) {
   const [yOffset, setYOffset] = React.useState(0);
 
@@ -125,7 +138,14 @@ function LineHighlighter(props: {
     setYOffset((prev) => prev + 1.5 * delta);
   });
 
-  const text = `+${props.n.toString()} LINE`;
+  const text = [
+    `+${props.lineNumber.toString()}`,
+    `LINE${props.lineNumber > 1 ? 'S' : ''}`,
+    ...match(props.kind)
+      .with('par', () => ['PAR'])
+      .with('ort', () => ['ORT'])
+      .otherwise(() => []),
+  ].join(' ');
 
   return (
     <R3FWord
@@ -135,7 +155,7 @@ function LineHighlighter(props: {
         props.position[2],
       ]}
       rotation={props.rotation}
-      alignX={props.align}
+      alignX={props.alignment}
       text={text}
       type="secondary-half"
       font="numbers"
