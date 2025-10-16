@@ -234,7 +234,11 @@ export default function Game(props: Props) {
       <Tetrimino type={bag.current} occupiedBlocks={tetrimino} />
       <Ghost type={bag.current} occupiedBlocks={projectGhost(board)} />
       {Object.entries(gainStream).map(([key, gain]) => (
-        <GainHighlighter camera={camera} gain={gain} key={key} />
+        <GainHighlighter
+          camera={{ position: camera, relativeAxis }}
+          gain={gain}
+          key={key}
+        />
       ))}
     </group>
   );

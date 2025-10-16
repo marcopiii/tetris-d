@@ -72,7 +72,7 @@ export default function useScoreTracker() {
     const g = diffKeys(prevGainStream ?? {}, state.gainStream)[0];
     setTimeout(() => {
       dispatch({ type: 'clean-gain', id: g });
-    }, 1500);
+    }, 1750);
   }, [state.gainStream]);
 
   const addLines = (lines: LineCoord[]) =>
