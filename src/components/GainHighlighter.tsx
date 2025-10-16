@@ -17,26 +17,38 @@ type Props = {
 };
 
 export default function GainHighlighter(props: Props) {
+  const primaryPlane =
+    props.gain.lines.filter((l) => 'x' in l).length >
+    props.gain.lines.filter((l) => 'z' in l).length
+      ? 'z'
+      : 'x';
+
   // order the lines based on camera position: farther lines first
   const lineOrderCriteria = (a: LineCoord, b: LineCoord) => {
     const yDiff = a.y - b.y;
-    const xDiff = (a.x ?? 0) - (b.x ?? 0);
-    const zDiff = (a.z ?? 0) - (b.z ?? 0);
-    return match([
-      props.camera.relativeAxis.x.forwardInverted,
-      props.camera.relativeAxis.z.forwardInverted,
-    ])
-      .with([false, false], () => -xDiff || -zDiff || yDiff)
-      .with([true, false], () => xDiff || -zDiff || yDiff)
-      .with([true, true], () => xDiff || zDiff || yDiff)
-      .with([false, true], () => -xDiff || zDiff || yDiff)
+
+    const xInverted = props.camera.relativeAxis.x.forwardInverted;
+    const zInverted = props.camera.relativeAxis.z.forwardInverted;
+
+    return match([a, b])
+      .with([{ x: P.number }, { x: P.number }], ([a, b]) => {
+        const xDiff = a.x - b.x;
+        return (xInverted ? xDiff : -xDiff) || yDiff;
+      })
+      .with([{ z: P.number }, { z: P.number }], ([a, b]) => {
+        const zDiff = a.z - b.z;
+        return (zInverted ? zDiff : -zDiff) || yDiff;
+      })
+      .with([{ x: P.number }, { z: P.number }], () =>
+        primaryPlane === 'x' ? 1 : -1,
+      )
+      .with([{ z: P.number }, { x: P.number }], () =>
+        primaryPlane === 'x' ? -1 : 1,
+      )
       .exhaustive();
   };
 
   const sortedLines = props.gain.lines.toSorted(lineOrderCriteria);
-
-  const firstLine = sortedLines[0];
-  if (!firstLine) return null;
 
   const ls = sortedLines.map((line) => {
     const id = [line.x ?? '_', line.y, line.z ?? '_'].join(':');
