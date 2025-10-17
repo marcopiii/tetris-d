@@ -1,5 +1,4 @@
 import { Center } from '@react-three/drei';
-import React from 'react';
 import { ScoreRecord } from '~/scene/shared';
 import { VOXEL_SIZE } from '../params';
 import Word from '../Word';

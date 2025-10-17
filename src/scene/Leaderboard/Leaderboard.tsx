@@ -1,4 +1,3 @@
-import React from 'react';
 import { match } from 'ts-pattern';
 import { useGamepadManager, useKeyboardManager } from '~/controls';
 import { Scoreboard, useCamera, useLeaderboard } from '~/scene/shared';
@@ -17,7 +16,7 @@ export default function Leaderboard(props: Props) {
       .with(['left', 'moveR'], () => setCamera('right'))
       .otherwise(() => {});
 
-  const leaderboard = useLeaderboard();
+  const [leaderboard] = useLeaderboard();
   const top9 = leaderboard.slice(0, 9);
 
   useKeyboardManager((event, button) =>

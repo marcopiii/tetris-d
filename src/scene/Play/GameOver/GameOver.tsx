@@ -2,6 +2,7 @@ import React from 'react';
 import { match } from 'ts-pattern';
 import { useGamepadManager, useKeyboardManager } from '~/controls';
 import { Scoreboard, useCamera, useLeaderboard } from '~/scene/shared';
+import usePlayerHandler from './usePlayerHandler';
 
 type Props = {
   onBack: () => void;
@@ -23,9 +24,9 @@ export default function GameOver(props: Props) {
       .with(['left', 'moveR'], () => setCamera('right'))
       .otherwise(() => {});
 
-  const [handle, setHandle] = React.useState('_');
+  const { handle, i, action: setHandle } = usePlayerHandler();
 
-  const leaderboard = useLeaderboard();
+  const [leaderboard, saveNewRecord] = useLeaderboard();
 
   const newPos = match(
     leaderboard.findIndex((e) => props.result.score > e.score),
@@ -33,10 +34,10 @@ export default function GameOver(props: Props) {
     .with(-1, () => leaderboard.length)
     .otherwise((idx) => idx);
 
-  const newEntry = {
+  const newRecord = {
     score: props.result.score,
     level: props.result.level,
-    name: handle,
+    name: handle.join(''),
     rank: newPos + 1,
     editing: true,
   };
@@ -45,9 +46,14 @@ export default function GameOver(props: Props) {
 
   const entries = [
     ...top8.slice(0, newPos),
-    newEntry,
+    newRecord,
     ...top8.slice(newPos, 8).map((e) => ({ ...e, rank: e.rank + 1 })),
   ];
+
+  const onConfirm = () => {
+    saveNewRecord(newRecord);
+    props.onBack();
+  };
 
   useKeyboardManager((event, button) =>
     match([event, button])
@@ -62,6 +68,13 @@ export default function GameOver(props: Props) {
     match([event, button])
       .with(['press', 'LT'], () => cameraHandler('moveL'))
       .with(['press', 'RT'], () => cameraHandler('moveR'))
+      .with(['press', 'padL'], () => setHandle.left())
+      .with(['press', 'padR'], () => setHandle.right())
+      .with(['press', 'padU'], () => setHandle.up())
+      .with(['press', 'padD'], () => setHandle.down())
+      .with(['press', 'A'], () => onConfirm())
+      .with(['press', 'B'], () => props.onBack())
+
       // todo: handle name input when inserting
       .otherwise(() => {}),
   );
