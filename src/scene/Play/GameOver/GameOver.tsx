@@ -1,0 +1,70 @@
+import React from 'react';
+import { match } from 'ts-pattern';
+import { useGamepadManager, useKeyboardManager } from '~/controls';
+import { Scoreboard, useCamera, useLeaderboard } from '~/scene/shared';
+
+type Props = {
+  onBack: () => void;
+  result: {
+    score: number;
+    level: number;
+  };
+};
+
+export default function GameOver(props: Props) {
+  const [camera, setCamera] = useCamera({
+    left: { position: [-10, 4, 10], lookAt: [0, 0, 0] },
+    right: { position: [10, 4, 10], lookAt: [0, 0, 0] },
+  });
+
+  const cameraHandler = (command: 'moveL' | 'moveR'): void =>
+    match([camera, command])
+      .with(['right', 'moveL'], () => setCamera('left'))
+      .with(['left', 'moveR'], () => setCamera('right'))
+      .otherwise(() => {});
+
+  const [handle, setHandle] = React.useState('_');
+
+  const leaderboard = useLeaderboard();
+
+  const newPos = match(
+    leaderboard.findIndex((e) => props.result.score > e.score),
+  )
+    .with(-1, () => leaderboard.length)
+    .otherwise((idx) => idx);
+
+  const newEntry = {
+    score: props.result.score,
+    level: props.result.level,
+    name: handle,
+    rank: newPos + 1,
+    editing: true,
+  };
+
+  const top8 = leaderboard.slice(0, 8);
+
+  const entries = [
+    ...top8.slice(0, newPos),
+    newEntry,
+    ...top8.slice(newPos, 8).map((e) => ({ ...e, rank: e.rank + 1 })),
+  ];
+
+  useKeyboardManager((event, button) =>
+    match([event, button])
+      .with(['press', 'ArrowLeft'], () => cameraHandler('moveL'))
+      .with(['press', 'ArrowRight'], () => cameraHandler('moveR'))
+      .with(['press', 'Escape'], () => props.onBack())
+      // todo: handle name input when inserting
+      .otherwise(() => {}),
+  );
+
+  useGamepadManager((event, button) =>
+    match([event, button])
+      .with(['press', 'LT'], () => cameraHandler('moveL'))
+      .with(['press', 'RT'], () => cameraHandler('moveR'))
+      // todo: handle name input when inserting
+      .otherwise(() => {}),
+  );
+
+  return <Scoreboard title="Game Over" entries={entries} />;
+}
