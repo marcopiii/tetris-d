@@ -5,7 +5,8 @@ import hard_drop from './hard_drop.mp3';
 import line_clear from './line_clear.mp3';
 import tetrimino_rotate from './tetrimino_rotate.mp3';
 import tetrimino_move from './tetrimino_move.mp3';
-
+import collision from './collision.mp3';
+import lock from './lock.mp3';
 
 export default {
   camera_move,
@@ -15,4 +16,6 @@ export default {
   line_clear,
   tetrimino_rotate,
   tetrimino_move,
-}
+  collision,
+  lock,
+};

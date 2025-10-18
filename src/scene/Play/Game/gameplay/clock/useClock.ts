@@ -14,33 +14,12 @@ export default function useClock(callback: () => void, level: number) {
 
   const speed = 1000 / (gravity[level] * 60);
 
-  const clear = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = undefined;
-    }
-  };
-
   // todo: expose and use resetCounterRef
   const [resetCounterRef, execLoop] = useLockDelayManagement(callback);
-
-  const toggle = () => {
-    if (intervalRef.current) {
-      clear();
-    } else {
-      intervalRef.current = setInterval(execLoop, speed);
-    }
-    setIsRunning((t) => !t);
-  };
 
   // Start the clock when the component mounts, and clear it when unmounting
   React.useEffect(() => {
     intervalRef.current = setInterval(execLoop, speed);
-    return clear;
+    return () => clearInterval(intervalRef.current);
   }, [execLoop, level]);
-
-  return {
-    isRunning,
-    toggle,
-  };
 }
