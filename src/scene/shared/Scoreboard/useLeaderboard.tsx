@@ -6,8 +6,10 @@ export default function useLeaderboard() {
     Omit<ScoreRecord, 'rank'>[]
   >('t3d-leaderboard', []);
 
-  const saveNew = (score: ScoreRecord) => {
-    const updated = [...leaderboard, score];
+  const saveNew = (record: ScoreRecord) => {
+    const { score, level, name } = record;
+    const pureRecord = { score, level, name };
+    const updated = [...leaderboard, pureRecord];
     setLeaderboard(updated);
   };
 

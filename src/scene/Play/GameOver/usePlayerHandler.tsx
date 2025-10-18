@@ -11,7 +11,7 @@ export default function usePlayerHandler() {
     focusedIndex: 0,
   });
 
-  const up = () => {
+  const down = () => {
     setState((prevState) => {
       const currentChar = prevState.characters[prevState.focusedIndex];
       const nextChar =
@@ -30,7 +30,7 @@ export default function usePlayerHandler() {
     });
   };
 
-  const down = () => {
+  const up = () => {
     setState((prevState) => {
       const currentChar = prevState.characters[prevState.focusedIndex];
       const prevChar =
