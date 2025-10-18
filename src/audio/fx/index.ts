@@ -7,6 +7,7 @@ import tetrimino_rotate from './tetrimino_rotate.mp3';
 import tetrimino_move from './tetrimino_move.mp3';
 import collision from './collision.mp3';
 import lock from './lock.mp3';
+import tick from './tick.mp3';
 
 export default {
   camera_move,
@@ -18,4 +19,5 @@ export default {
   tetrimino_move,
   collision,
   lock,
+  tick,
 };

@@ -72,14 +72,14 @@ export default function Game(props: Props) {
     checkLines(true);
     const collision = !attempt(drop)(board);
     if (collision) {
+      play(FX.collision, 0.15);
       if (tetrimino.every(({ y }) => y < VANISH_ZONE_ROWS)) {
         props.onGameOver(score, level);
-        return;
-      }
-      if (!lockDelayTimerRef.current) {
-        play(FX.collision, 0.15);
+      } else if (!lockDelayTimerRef.current) {
         lockDelayTimerRef.current = setTimeout(lock, 500);
       }
+    } else {
+      play(FX.tick, 0.15);
     }
   };
 
@@ -92,7 +92,6 @@ export default function Game(props: Props) {
     }
     addLines(completedLines);
   }, [checkLines]);
-  ñ;
 
   function cameraAction(action: 'left' | 'right') {
     match([camera, action])
