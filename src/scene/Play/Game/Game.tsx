@@ -58,6 +58,8 @@ export default function Game(props: Props) {
   const [isLocked, setIsLocked] = React.useState(false);
 
   const lockDelayTimerRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
+  const lockDelayCounterRef = React.useRef(0);
+
   const lock = () => {
     fixPiece(bag.current, tetrimino);
     bag.pullNext();
@@ -65,20 +67,46 @@ export default function Game(props: Props) {
     setIsLocked(false);
     clearTimeout(lockDelayTimerRef.current);
     lockDelayTimerRef.current = undefined;
+    lockDelayCounterRef.current = 0;
     play(FX.lock, 0.15);
+  };
+
+  const triggerLock = () => {
+    lockDelayTimerRef.current = setTimeout(lock, 1500);
+  };
+
+  const cancelLock = () => {
+    clearTimeout(lockDelayTimerRef.current);
+    lockDelayTimerRef.current = undefined;
+    lockDelayCounterRef.current = 0;
+  };
+
+  const delayLock = () => {
+    if (!lockDelayTimerRef.current) {
+      return;
+    }
+    if (lockDelayCounterRef.current >= 15) {
+      // fixme: locking immediately can cause floating pieces
+      lock();
+      return;
+    }
+    clearTimeout(lockDelayTimerRef.current);
+    triggerLock();
+    lockDelayCounterRef.current++;
   };
 
   const tick = () => {
     checkLines(true);
     const collision = !attempt(drop)(board);
     if (collision) {
-      play(FX.collision, 0.15);
       if (tetrimino.every(({ y }) => y < VANISH_ZONE_ROWS)) {
         props.onGameOver(score, level);
       } else if (!lockDelayTimerRef.current) {
-        lockDelayTimerRef.current = setTimeout(lock, 500);
+        play(FX.collision, 0.15);
+        triggerLock();
       }
     } else {
+      cancelLock();
       play(FX.tick, 0.15);
     }
   };
@@ -154,15 +182,19 @@ export default function Game(props: Props) {
       )
       .with('rotateL', () => {
         for (let i = 0; i < 5; i++) {
-          if (attempt(rightInverted ? rotateRight(i) : rotateLeft(i))(board))
+          if (attempt(rightInverted ? rotateRight(i) : rotateLeft(i))(board)) {
+            delayLock();
             return true;
+          }
         }
         return false;
       })
       .with('rotateR', () => {
         for (let i = 0; i < 5; i++) {
-          if (attempt(rightInverted ? rotateLeft(i) : rotateRight(i))(board))
+          if (attempt(rightInverted ? rotateLeft(i) : rotateRight(i))(board)) {
+            delayLock();
             return true;
+          }
         }
         return false;
       })
