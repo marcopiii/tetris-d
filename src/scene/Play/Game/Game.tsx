@@ -176,7 +176,7 @@ export default function Game(props: Props) {
     }
   }
 
-  const clock = useClock(tick);
+  const clock = useClock(tick, level);
 
   useKeyboardManager((event, button) =>
     match([clock.isRunning, event, button])

@@ -8,12 +8,11 @@ const gravity = [
 ];
 
 // todo: use useEffectEvent instead of Ref
-export default function useClock(callback: () => void) {
+export default function useClock(callback: () => void, level: number) {
   const intervalRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
-  const levelRef = React.useRef(1);
   const [isRunning, setIsRunning] = React.useState(true);
 
-  const speed = () => 1000 / (gravity[levelRef.current] * 60);
+  const speed = 1000 / (gravity[level] * 60);
 
   const clear = () => {
     if (intervalRef.current) {
@@ -29,16 +28,16 @@ export default function useClock(callback: () => void) {
     if (intervalRef.current) {
       clear();
     } else {
-      intervalRef.current = setInterval(execLoop, speed());
+      intervalRef.current = setInterval(execLoop, speed);
     }
     setIsRunning((t) => !t);
   };
 
   // Start the clock when the component mounts, and clear it when unmounting
   React.useEffect(() => {
-    intervalRef.current = setInterval(execLoop, speed());
+    intervalRef.current = setInterval(execLoop, speed);
     return clear;
-  }, [execLoop]);
+  }, [execLoop, level]);
 
   return {
     isRunning,
