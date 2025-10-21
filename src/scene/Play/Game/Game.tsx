@@ -17,7 +17,7 @@ import {
   shiftRight,
   useBag,
   useBoardManager,
-  useClock,
+  useGravity,
   useCutter,
   usePlane,
   useScoreTracker,
@@ -71,44 +71,55 @@ export default function Game(props: Props) {
     play(FX.lock, 0.15);
   };
 
-  const triggerLock = () => {
-    lockDelayTimerRef.current = setTimeout(lock, 1500);
-  };
-
   const cancelLock = () => {
-    clearTimeout(lockDelayTimerRef.current);
-    lockDelayTimerRef.current = undefined;
-    lockDelayCounterRef.current = 0;
+    // clearTimeout(lockDelayTimerRef.current);
+    // lockDelayTimerRef.current = undefined;
+    // lockDelayCounterRef.current = 0;
   };
 
   const delayLock = () => {
-    if (!lockDelayTimerRef.current) {
-      return;
-    }
-    if (lockDelayCounterRef.current >= 15) {
-      // fixme: locking immediately can cause floating pieces
-      lock();
-      return;
-    }
-    clearTimeout(lockDelayTimerRef.current);
-    triggerLock();
-    lockDelayCounterRef.current++;
+    // if (!lockDelayTimerRef.current) {
+    //   return;
+    // }
+    // if (lockDelayCounterRef.current >= 15) {
+    //   // fixme: locking immediately can cause floating pieces
+    //   lock();
+    //   return;
+    // }
+    // clearTimeout(lockDelayTimerRef.current);
+    // triggerLock();
+    // lockDelayCounterRef.current++;
   };
+
+  const ghost = projectGhost(board);
+
+  console.log(tetrimino);
+  console.log(ghost);
 
   const tick = () => {
     checkLines(true);
-    const collision = !attempt(drop)(board);
-    if (collision) {
-      if (tetrimino.every(({ y }) => y < VANISH_ZONE_ROWS)) {
-        props.onGameOver(score, level);
-      } else if (!lockDelayTimerRef.current) {
+    const success = attempt(drop)(board);
+    if (success) {
+      const triggerLock = tetrimino.every((t) =>
+        ghost.includes((g) => g.x === t.x && g.y === t.y && g.z === t.z),
+      );
+      if (triggerLock) {
         play(FX.collision, 0.15);
-        triggerLock();
+        lockDelayTimerRef.current = setTimeout(lock, 1500);
       }
-    } else {
-      cancelLock();
-      play(FX.tick, 0.15);
     }
+    // const collision = !attempt(drop)(board);
+    // if (collision) {
+    //   if (tetrimino.every(({ y }) => y < VANISH_ZONE_ROWS)) {
+    //     props.onGameOver(score, level);
+    //   } else if (!lockDelayTimerRef.current) {
+    //     play(FX.collision, 0.15);
+    //     triggerLock();
+    //   }
+    // } else {
+    //   cancelLock();
+    //   play(FX.tick, 0.15);
+    // }
   };
 
   // update the score as soon as the board is changed, while the lines
@@ -183,7 +194,6 @@ export default function Game(props: Props) {
       .with('rotateL', () => {
         for (let i = 0; i < 5; i++) {
           if (attempt(rightInverted ? rotateRight(i) : rotateLeft(i))(board)) {
-            delayLock();
             return true;
           }
         }
@@ -192,7 +202,6 @@ export default function Game(props: Props) {
       .with('rotateR', () => {
         for (let i = 0; i < 5; i++) {
           if (attempt(rightInverted ? rotateLeft(i) : rotateRight(i))(board)) {
-            delayLock();
             return true;
           }
         }
@@ -205,6 +214,7 @@ export default function Game(props: Props) {
       })
       .exhaustive();
     if (success) {
+      delayLock();
       const fx = match(action)
         .with('shiftL', () => FX.tetrimino_move)
         .with('shiftR', () => FX.tetrimino_move)
@@ -218,7 +228,7 @@ export default function Game(props: Props) {
     }
   }
 
-  useClock(tick, level);
+  useGravity(tick, level);
 
   useKeyboardManager((event, button) =>
     match([event, button])
@@ -273,8 +283,12 @@ export default function Game(props: Props) {
       <ProgressPanel camera={camera} score={score} level={level} />
       <BagPanel camera={camera} next={bag.next} hold={bag.hold} />
       <Board occupiedBlocks={board} cutting={boardCuttingProp} />
-      <Tetrimino type={bag.current} occupiedBlocks={tetrimino} />
-      <Ghost type={bag.current} occupiedBlocks={projectGhost(board)} />
+      <Tetrimino
+        type={bag.current}
+        occupiedBlocks={tetrimino}
+        locking={lockDelayTimerRef.current}
+      />
+      <Ghost type={bag.current} occupiedBlocks={ghost} />
       {Object.entries(gainStream).map(([key, gain]) => (
         <GainDisplay
           camera={{ position: camera, relativeAxis }}

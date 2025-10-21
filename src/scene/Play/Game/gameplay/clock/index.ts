@@ -1,3 +1,3 @@
-import useClock from './useClock';
+import useGravity from './useGravity';
 
-export default useClock;
+export default useGravity;

@@ -1,4 +1,4 @@
-import useClock from './clock';
+import useGravity from './clock';
 import checkCompletedLines from './checkCompletedLines';
 import initPosition from './initPosition';
 import useBag from './useBag';
@@ -11,7 +11,7 @@ import useCutter from './useCutter';
 export type { Gain, ComboKind } from './score';
 export * from './movement';
 export {
-  useClock,
+  useGravity,
   checkCompletedLines,
   initPosition,
   useBag,
