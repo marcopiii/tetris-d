@@ -1,5 +1,4 @@
 import * as React from 'react';
-import useLockDelayManagement from './useLockDelayManagement';
 
 /** @see https://harddrop.com/wiki/Tetris_Worlds */
 const gravity = [
@@ -10,10 +9,16 @@ const gravity = [
 export default function useGravity(callback: () => void, level: number) {
   const intervalRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
 
+  // todo: use `useEffectEvent`
+  const callbackRef = React.useRef(callback);
+  React.useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
+
   const speed = 1000 / (gravity[level] * 60);
 
   React.useEffect(() => {
-    intervalRef.current = setInterval(callback, speed);
+    intervalRef.current = setInterval(() => callbackRef.current(), speed);
     return () => clearInterval(intervalRef.current);
-  }, [callback, level]);
+  }, [level]);
 }

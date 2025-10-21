@@ -2,7 +2,7 @@ import React from 'react';
 import { match } from 'ts-pattern';
 import { FX, play } from '~/audio';
 import { useGamepadManager, useKeyboardManager } from '~/controls';
-import { VANISH_ZONE_ROWS } from '~/scene/Play/Game/params';
+import { useLockDelay } from '~/scene/Play/Game/gameplay/useLockDelay';
 import { useCamera } from '~/scene/shared';
 import BagPanel from './BagPanel';
 import Board from './Board';
@@ -54,73 +54,26 @@ export default function Game(props: Props) {
 
   const { score, level, gainStream, addLines } = useScoreTracker();
 
-  // lock the piece after hard drop until the next tick,
-  const [isLocked, setIsLocked] = React.useState(false);
+  const ghost = projectGhost(board);
 
-  const lockDelayTimerRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
-  const lockDelayCounterRef = React.useRef(0);
-
-  const lock = () => {
+  const [triggerLock, cancelLock, locked] = useLockDelay(() => {
     fixPiece(bag.current, tetrimino);
     bag.pullNext();
     plane.change();
-    setIsLocked(false);
-    clearTimeout(lockDelayTimerRef.current);
-    lockDelayTimerRef.current = undefined;
-    lockDelayCounterRef.current = 0;
     play(FX.lock, 0.15);
-  };
+  });
 
-  const cancelLock = () => {
-    // clearTimeout(lockDelayTimerRef.current);
-    // lockDelayTimerRef.current = undefined;
-    // lockDelayCounterRef.current = 0;
-  };
-
-  const delayLock = () => {
-    // if (!lockDelayTimerRef.current) {
-    //   return;
-    // }
-    // if (lockDelayCounterRef.current >= 15) {
-    //   // fixme: locking immediately can cause floating pieces
-    //   lock();
-    //   return;
-    // }
-    // clearTimeout(lockDelayTimerRef.current);
-    // triggerLock();
-    // lockDelayCounterRef.current++;
-  };
-
-  const ghost = projectGhost(board);
-
-  console.log(tetrimino);
-  console.log(ghost);
-
-  const tick = () => {
+  useGravity(() => {
     checkLines(true);
-    const success = attempt(drop)(board);
-    if (success) {
-      const triggerLock = tetrimino.every((t) =>
-        ghost.includes((g) => g.x === t.x && g.y === t.y && g.z === t.z),
-      );
-      if (triggerLock) {
-        play(FX.collision, 0.15);
-        lockDelayTimerRef.current = setTimeout(lock, 1500);
-      }
-    }
-    // const collision = !attempt(drop)(board);
-    // if (collision) {
-    //   if (tetrimino.every(({ y }) => y < VANISH_ZONE_ROWS)) {
-    //     props.onGameOver(score, level);
-    //   } else if (!lockDelayTimerRef.current) {
-    //     play(FX.collision, 0.15);
-    //     triggerLock();
-    //   }
-    // } else {
-    //   cancelLock();
-    //   play(FX.tick, 0.15);
-    // }
-  };
+    attempt(drop)(board);
+  }, level);
+
+  React.useEffect(() => {
+    const shouldLock = tetrimino.every((t) =>
+      ghost.some((g) => g.x === t.x && g.y === t.y && g.z === t.z),
+    );
+    shouldLock ? triggerLock() : cancelLock();
+  }, [tetrimino]);
 
   // update the score as soon as the board is changed, while the lines
   // will be cleared in the next tick
@@ -130,7 +83,7 @@ export default function Game(props: Props) {
       play(FX.line_clear, 0.75);
     }
     addLines(completedLines);
-  }, [checkLines]);
+  }, [board]);
 
   function cameraAction(action: 'left' | 'right') {
     match([camera, action])
@@ -166,7 +119,9 @@ export default function Game(props: Props) {
       | 'rotateR'
       | 'dropH',
   ) {
-    if (isLocked) return;
+    if (locked) {
+      return;
+    }
 
     const [rightInverted, forwardInverted] = match(plane.current)
       .with('x', () => [
@@ -209,12 +164,10 @@ export default function Game(props: Props) {
       })
       .with('dropH', () => {
         hardDrop(board);
-        setIsLocked(true);
         return true;
       })
       .exhaustive();
     if (success) {
-      delayLock();
       const fx = match(action)
         .with('shiftL', () => FX.tetrimino_move)
         .with('shiftR', () => FX.tetrimino_move)
@@ -228,8 +181,6 @@ export default function Game(props: Props) {
     }
   }
 
-  useGravity(tick, level);
-
   useKeyboardManager((event, button) =>
     match([event, button])
       .with(['press', 'KeyA'], () => gameAction('shiftL'))
@@ -239,7 +190,7 @@ export default function Game(props: Props) {
       .with(['press', 'KeyQ'], () => gameAction('rotateL'))
       .with(['press', 'KeyE'], () => gameAction('rotateR'))
       .with(['press', 'Space'], () => gameAction('dropH'))
-      .with(['press', 'KeyX'], () => !isLocked && bag.switchHold?.())
+      .with(['press', 'KeyX'], () => !locked && bag.switchHold?.())
       .with(['press', 'ArrowLeft'], () => cameraAction('left'))
       .with(['press', 'ArrowRight'], () => cameraAction('right'))
       .with(['press', 'KeyZ'], () => cutterAction('cut', 'left'))
@@ -258,7 +209,7 @@ export default function Game(props: Props) {
       .with(['press', 'X'], () => gameAction('rotateL'))
       .with(['press', 'B'], () => gameAction('rotateR'))
       .with(['press', 'A'], () => gameAction('dropH'))
-      .with(['press', 'Y'], () => bag.switchHold?.())
+      .with(['press', 'Y'], () => !locked && bag.switchHold?.())
       .with(['press', 'LT'], () => cameraAction('left'))
       .with(['press', 'RT'], () => cameraAction('right'))
       .with(['press', 'LB'], () => cutterAction('cut', 'left'))
@@ -283,11 +234,7 @@ export default function Game(props: Props) {
       <ProgressPanel camera={camera} score={score} level={level} />
       <BagPanel camera={camera} next={bag.next} hold={bag.hold} />
       <Board occupiedBlocks={board} cutting={boardCuttingProp} />
-      <Tetrimino
-        type={bag.current}
-        occupiedBlocks={tetrimino}
-        locking={lockDelayTimerRef.current}
-      />
+      <Tetrimino type={bag.current} occupiedBlocks={tetrimino} />
       <Ghost type={bag.current} occupiedBlocks={ghost} />
       {Object.entries(gainStream).map(([key, gain]) => (
         <GainDisplay

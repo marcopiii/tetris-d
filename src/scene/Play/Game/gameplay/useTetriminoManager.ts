@@ -36,7 +36,10 @@ export default function useTetriminoManager(type: Tetrimino, plane: Plane) {
    * The array of the coordinates of the blocks that are currently occupied by the tetrimino,
    * relative to the board coordinate system.
    */
-  const tetrimino = calculateMatrix(state.shape, state.position, state.plane);
+  const tetrimino = React.useMemo(
+    () => calculateMatrix(state.shape, state.position, state.plane),
+    [state.shape, state.position, state.plane],
+  );
 
   /**
    * Attempts to apply the given move function to the tetrimino inside the given board.
@@ -83,7 +86,9 @@ export default function useTetriminoManager(type: Tetrimino, plane: Plane) {
   /**
    * Projects the ghost of the current tetrimino onto the given board.
    */
-  const projectGhost = (boardMatrix: Vector3Like[]) => {
+  const projectGhost = (
+    boardMatrix: Vector3Like[],
+  ): { y: number; x: number; z: number }[] => {
     const ghostPosition = { ...state.position };
     let ghostMatrix = calculateMatrix(state.shape, ghostPosition, state.plane);
     if (detectCollision(ghostMatrix, boardMatrix)) {
@@ -97,9 +102,10 @@ export default function useTetriminoManager(type: Tetrimino, plane: Plane) {
     }
     ghostPosition.y--;
     ghostMatrix = calculateMatrix(state.shape, ghostPosition, state.plane);
-    return ghostMatrix.filter(
-      (g) => !tetrimino.some((t) => t.x === g.x && t.y === g.y && t.z === g.z),
-    );
+    return ghostMatrix;
+    // return ghostMatrix.filter(
+    //   (g) => !tetrimino.some((t) => t.x === g.x && t.y === g.y && t.z === g.z),
+    // );
   };
 
   return { tetrimino, attempt, hardDrop, projectGhost };

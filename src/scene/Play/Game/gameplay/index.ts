@@ -1,4 +1,4 @@
-import useGravity from './clock';
+import useGravity from './gravity';
 import checkCompletedLines from './checkCompletedLines';
 import initPosition from './initPosition';
 import useBag from './useBag';
