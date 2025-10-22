@@ -76,11 +76,16 @@ export default function useTetriminoManager(type: Tetrimino, plane: Plane) {
     };
     let currentState = state;
     let nextState;
+    let length = 0;
     do {
       nextState = canDrop(currentState);
-      if (nextState) currentState = nextState;
+      if (nextState) {
+        currentState = nextState;
+        length++;
+      }
     } while (nextState);
     setState(currentState);
+    return length;
   };
 
   /**

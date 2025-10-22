@@ -54,7 +54,8 @@ export default function Game(props: Props) {
 
   const [cut, setCut] = useCutter(camera);
 
-  const { score, level, gainStream, addLines } = useScoreTracker();
+  const { score, level, gainStream, trackLines, trackHardDrop } =
+    useScoreTracker();
 
   const ghost = projectGhost(board);
 
@@ -90,7 +91,7 @@ export default function Game(props: Props) {
     if (completedLines.length > 0) {
       play(FX.line_clear, 0.75);
     }
-    addLines(completedLines);
+    trackLines(completedLines);
   }, [board]);
 
   function cameraAction(action: CameraAction) {
@@ -161,7 +162,10 @@ export default function Game(props: Props) {
         return false;
       })
       .with('hDrop', () => {
-        hardDrop(board);
+        const dropLength = hardDrop(board);
+        if (dropLength) {
+          trackHardDrop(dropLength);
+        }
         return true;
       })
       .exhaustive();
