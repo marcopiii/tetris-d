@@ -2,8 +2,8 @@ import React from 'react';
 import { match } from 'ts-pattern';
 import { FX, play } from '~/audio';
 import { useGamepadManager, useKeyboardManager } from '~/controls';
-import { useLockDelay } from '~/scene/Play/Game/gameplay/useLockDelay';
-import { VANISH_ZONE_ROWS } from '~/scene/Play/Game/params';
+import { VANISH_ZONE_ROWS } from './params';
+import { BagAction, CameraAction, CutAction, Actions } from './types';
 import { useCamera } from '~/scene/shared';
 import BagPanel from './BagPanel';
 import Board from './Board';
@@ -23,6 +23,7 @@ import {
   usePlane,
   useScoreTracker,
   useTetriminoManager,
+  useLockDelay,
 } from './gameplay';
 import Ghost from './Ghost';
 import ProgressPanel from './ProgressPanel';
@@ -59,7 +60,7 @@ export default function Game(props: Props) {
 
   const hasHardDroppedRef = React.useRef(false);
 
-  const [triggerLock, cancelLock, locked] = useLockDelay(() => {
+  const [triggerLock, cancelLock, isLocked] = useLockDelay(() => {
     const isInVanishZone = tetrimino.every(({ y }) => y < VANISH_ZONE_ROWS);
     if (isInVanishZone) {
       props.onGameOver(score, level);
@@ -92,41 +93,32 @@ export default function Game(props: Props) {
     addLines(completedLines);
   }, [board]);
 
-  function cameraAction(action: 'left' | 'right') {
+  function cameraAction(action: CameraAction) {
     match([camera, action])
-      .with(['c1', 'right'], () => setCamera('c2'))
-      .with(['c2', 'right'], () => setCamera('c3'))
-      .with(['c3', 'right'], () => setCamera('c4'))
-      .with(['c4', 'right'], () => setCamera('c1'))
-      .with(['c1', 'left'], () => setCamera('c4'))
-      .with(['c4', 'left'], () => setCamera('c3'))
-      .with(['c3', 'left'], () => setCamera('c2'))
-      .with(['c2', 'left'], () => setCamera('c1'))
+      .with(['c1', 'cameraR'], () => setCamera('c2'))
+      .with(['c2', 'cameraR'], () => setCamera('c3'))
+      .with(['c3', 'cameraR'], () => setCamera('c4'))
+      .with(['c4', 'cameraR'], () => setCamera('c1'))
+      .with(['c1', 'cameraL'], () => setCamera('c4'))
+      .with(['c4', 'cameraL'], () => setCamera('c3'))
+      .with(['c3', 'cameraL'], () => setCamera('c2'))
+      .with(['c2', 'cameraL'], () => setCamera('c1'))
       .exhaustive();
   }
 
-  function cutterAction(action: 'cut' | 'uncut', side: 'left' | 'right') {
+  function cutterAction(action: CutAction, apply: 'apply' | 'remove') {
     const fwRx = match(plane.current)
       .with('x', () => relativeAxis.x.forwardRight)
       .with('z', () => relativeAxis.z.forwardRight)
       .exhaustive();
-    match(side)
-      .with('right', () => setCut(action, fwRx ? 'above' : 'below'))
-      .with('left', () => setCut(action, fwRx ? 'below' : 'above'))
+    match(action)
+      .with('cutR', () => setCut(apply, fwRx ? 'above' : 'below'))
+      .with('cutL', () => setCut(apply, fwRx ? 'below' : 'above'))
       .exhaustive();
   }
 
-  function gameAction(
-    action:
-      | 'shiftL'
-      | 'shiftR'
-      | 'shiftF'
-      | 'shiftB'
-      | 'rotateL'
-      | 'rotateR'
-      | 'dropH',
-  ) {
-    if (hasHardDroppedRef.current || locked) {
+  function moveAction(action: Actions) {
+    if (hasHardDroppedRef.current || isLocked) {
       return;
     }
     const [rightInverted, forwardInverted] = match(plane.current)
@@ -168,13 +160,13 @@ export default function Game(props: Props) {
         }
         return false;
       })
-      .with('dropH', () => {
+      .with('hDrop', () => {
         hardDrop(board);
         return true;
       })
       .exhaustive();
     if (success) {
-      hasHardDroppedRef.current = action === 'dropH';
+      hasHardDroppedRef.current = action === 'hDrop';
       const fx = match(action)
         .with('shiftL', () => FX.tetrimino_move)
         .with('shiftR', () => FX.tetrimino_move)
@@ -182,47 +174,54 @@ export default function Game(props: Props) {
         .with('shiftB', () => FX.tetrimino_move)
         .with('rotateL', () => FX.tetrimino_rotate)
         .with('rotateR', () => FX.tetrimino_rotate)
-        .with('dropH', () => FX.hard_drop)
+        .with('hDrop', () => FX.hard_drop)
         .exhaustive();
       play(fx, 0.15);
     }
   }
 
+  function bagAction(_action: BagAction) {
+    if (isLocked) {
+      return;
+    }
+    bag.switchHold?.();
+  }
+
   useKeyboardManager((event, button) =>
     match([event, button])
-      .with(['press', 'KeyA'], () => gameAction('shiftL'))
-      .with(['press', 'KeyD'], () => gameAction('shiftR'))
-      .with(['press', 'KeyS'], () => gameAction('shiftB'))
-      .with(['press', 'KeyW'], () => gameAction('shiftF'))
-      .with(['press', 'KeyQ'], () => gameAction('rotateL'))
-      .with(['press', 'KeyE'], () => gameAction('rotateR'))
-      .with(['press', 'Space'], () => gameAction('dropH'))
-      .with(['press', 'KeyX'], () => !locked && bag.switchHold?.())
-      .with(['press', 'ArrowLeft'], () => cameraAction('left'))
-      .with(['press', 'ArrowRight'], () => cameraAction('right'))
-      .with(['press', 'KeyZ'], () => cutterAction('cut', 'left'))
-      .with(['release', 'KeyZ'], () => cutterAction('uncut', 'left'))
-      .with(['press', 'KeyC'], () => cutterAction('cut', 'right'))
-      .with(['release', 'KeyC'], () => cutterAction('uncut', 'right'))
+      .with(['press', 'KeyA'], () => moveAction('shiftL'))
+      .with(['press', 'KeyD'], () => moveAction('shiftR'))
+      .with(['press', 'KeyS'], () => moveAction('shiftB'))
+      .with(['press', 'KeyW'], () => moveAction('shiftF'))
+      .with(['press', 'KeyQ'], () => moveAction('rotateL'))
+      .with(['press', 'KeyE'], () => moveAction('rotateR'))
+      .with(['press', 'Space'], () => moveAction('hDrop'))
+      .with(['press', 'KeyX'], () => bagAction('hold'))
+      .with(['press', 'ArrowLeft'], () => cameraAction('cameraL'))
+      .with(['press', 'ArrowRight'], () => cameraAction('cameraR'))
+      .with(['press', 'KeyZ'], () => cutterAction('cutL', 'apply'))
+      .with(['release', 'KeyZ'], () => cutterAction('cutL', 'remove'))
+      .with(['press', 'KeyC'], () => cutterAction('cutR', 'apply'))
+      .with(['release', 'KeyC'], () => cutterAction('cutL', 'remove'))
       .otherwise(() => null),
   );
 
   useGamepadManager((event, button) =>
     match([event, button])
-      .with(['press', 'padL'], () => gameAction('shiftL'))
-      .with(['press', 'padR'], () => gameAction('shiftR'))
-      .with(['press', 'padU'], () => gameAction('shiftF'))
-      .with(['press', 'padD'], () => gameAction('shiftB'))
-      .with(['press', 'X'], () => gameAction('rotateL'))
-      .with(['press', 'B'], () => gameAction('rotateR'))
-      .with(['press', 'A'], () => gameAction('dropH'))
-      .with(['press', 'Y'], () => !locked && bag.switchHold?.())
-      .with(['press', 'LT'], () => cameraAction('left'))
-      .with(['press', 'RT'], () => cameraAction('right'))
-      .with(['press', 'LB'], () => cutterAction('cut', 'left'))
-      .with(['release', 'LB'], () => cutterAction('uncut', 'left'))
-      .with(['press', 'RB'], () => cutterAction('cut', 'right'))
-      .with(['release', 'RB'], () => cutterAction('uncut', 'right'))
+      .with(['press', 'padL'], () => moveAction('shiftL'))
+      .with(['press', 'padR'], () => moveAction('shiftR'))
+      .with(['press', 'padU'], () => moveAction('shiftF'))
+      .with(['press', 'padD'], () => moveAction('shiftB'))
+      .with(['press', 'X'], () => moveAction('rotateL'))
+      .with(['press', 'B'], () => moveAction('rotateR'))
+      .with(['press', 'A'], () => moveAction('hDrop'))
+      .with(['press', 'Y'], () => bagAction('hold'))
+      .with(['press', 'LT'], () => cameraAction('cameraL'))
+      .with(['press', 'RT'], () => cameraAction('cameraR'))
+      .with(['press', 'LB'], () => cutterAction('cutL', 'apply'))
+      .with(['release', 'LB'], () => cutterAction('cutL', 'remove'))
+      .with(['press', 'RB'], () => cutterAction('cutR', 'apply'))
+      .with(['release', 'RB'], () => cutterAction('cutL', 'remove'))
       .otherwise(() => null),
   );
 

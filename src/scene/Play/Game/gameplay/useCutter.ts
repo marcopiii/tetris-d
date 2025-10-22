@@ -4,13 +4,13 @@ import { match } from 'ts-pattern';
 export default function useCutter(camera: string) {
   const [cut, setCut] = React.useState({ below: false, above: false });
 
-  const applyCut = (action: 'cut' | 'uncut', side: 'below' | 'above') => {
+  const applyCut = (apply: 'apply' | 'remove', side: 'below' | 'above') => {
     setCut((prev) =>
-      match([action, side])
-        .with(['cut', 'below'], () => ({ ...prev, below: true }))
-        .with(['uncut', 'below'], () => ({ ...prev, below: false }))
-        .with(['cut', 'above'], () => ({ ...prev, above: true }))
-        .with(['uncut', 'above'], () => ({ ...prev, above: false }))
+      match([apply, side])
+        .with(['apply', 'below'], () => ({ ...prev, below: true }))
+        .with(['remove', 'below'], () => ({ ...prev, below: false }))
+        .with(['apply', 'above'], () => ({ ...prev, above: true }))
+        .with(['remove', 'above'], () => ({ ...prev, above: false }))
         .otherwise(() => prev),
     );
   };

@@ -3,7 +3,7 @@ import React from 'react';
 const LOCK_DELAY_MS = 500;
 const MAX_LOCK_DELAY_RESETS = 15;
 
-export function useLockDelay(callback: () => void) {
+export default function useLockDelay(callback: () => void) {
   const [timerId, setTimerId] = React.useState<NodeJS.Timeout>();
   const [resetCounter, setResetCounter] = React.useState(0);
 

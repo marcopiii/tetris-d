@@ -7,6 +7,7 @@ import useBoardManager from './useBoardManager';
 import useTetriminoManager from './useTetriminoManager';
 import { useScoreTracker } from './score';
 import useCutter from './useCutter';
+import useLockDelay from './useLockDelay';
 
 export type { Gain, ComboKind } from './score';
 export * from './movement';
@@ -20,4 +21,5 @@ export {
   useTetriminoManager,
   useScoreTracker,
   useCutter,
+  useLockDelay,
 };

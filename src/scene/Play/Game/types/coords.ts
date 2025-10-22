@@ -1,5 +1,3 @@
-export type Plane = 'x' | 'z';
-
 export type PlaneCoords = { x: number } | { z: number };
 
 export type LineCoord = { y: number } & (
