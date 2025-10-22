@@ -5,7 +5,7 @@ import { match } from 'ts-pattern';
 import { usePrevious } from '@uidotdev/usehooks';
 import { LineCoord } from '../../types';
 import { Gain } from './types';
-import calcPoints from './calcPoints';
+import { pointsPerClear, pointsPerHardDrop } from './calculator';
 
 const LINE_CLEAR_PER_LEVEL = 10;
 
@@ -17,7 +17,8 @@ type State = {
 
 type Action =
   | { type: 'add-lines'; lines: LineCoord[] }
-  | { type: 'clean-gain'; id: string };
+  | { type: 'clean-gain'; id: string }
+  | { type: 'hard-drop'; length: number };
 
 export default function useScoreTracker() {
   const cascadeBuffer = React.useRef<LineCoord[]>([]);
@@ -32,7 +33,7 @@ export default function useScoreTracker() {
             : [];
           cascadeBuffer.current = effectiveLines;
           const level = getLevel(prev.lines);
-          const { gain, combo } = calcPoints(level)(effectiveLines);
+          const { gain, combo } = pointsPerClear(level)(effectiveLines);
           return {
             score: prev.score + gain,
             lines: prev.lines + lines.length,
@@ -54,6 +55,10 @@ export default function useScoreTracker() {
           const { [id]: _, ...gainStream } = prev.gainStream;
           return { ...prev, gainStream };
         })
+        .with({ type: 'hard-drop' }, ({ length }) => ({
+          ...prev,
+          score: prev.score + pointsPerHardDrop(length),
+        }))
         .exhaustive();
     },
     { score: 0, lines: 0, gainStream: {} },
@@ -71,14 +76,18 @@ export default function useScoreTracker() {
     }, 1750);
   }, [state.gainStream]);
 
-  const addLines = (lines: LineCoord[]) =>
+  const trackLines = (lines: LineCoord[]) =>
     dispatch({ type: 'add-lines', lines });
+
+  const trackHardDrop = (length: number) =>
+    dispatch({ type: 'hard-drop', length });
 
   return {
     score: state.score,
     level: getLevel(state.lines),
     gainStream: state.gainStream,
-    addLines,
+    trackLines,
+    trackHardDrop,
   };
 }
 
