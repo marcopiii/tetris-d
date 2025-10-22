@@ -60,7 +60,7 @@ export default function Game(props: Props) {
 
   const hasHardDroppedRef = React.useRef(false);
 
-  const [triggerLock, cancelLock, isLocked] = useLockDelay(() => {
+  const { triggerLock, cancelLock, canReset, lockTimer } = useLockDelay(() => {
     const isInVanishZone = tetrimino.every(({ y }) => y < VANISH_ZONE_ROWS);
     if (isInVanishZone) {
       props.onGameOver(score, level);
@@ -118,7 +118,7 @@ export default function Game(props: Props) {
   }
 
   function moveAction(action: Actions) {
-    if (hasHardDroppedRef.current || isLocked) {
+    if (hasHardDroppedRef.current || !canReset) {
       return;
     }
     const [rightInverted, forwardInverted] = match(plane.current)
@@ -181,7 +181,7 @@ export default function Game(props: Props) {
   }
 
   function bagAction(_action: BagAction) {
-    if (isLocked) {
+    if (!canReset) {
       return;
     }
     bag.switchHold?.();
@@ -240,7 +240,11 @@ export default function Game(props: Props) {
       <ProgressPanel camera={camera} score={score} level={level} />
       <BagPanel camera={camera} next={bag.next} hold={bag.hold} />
       <Board occupiedBlocks={board} cutting={boardCuttingProp} />
-      <Tetrimino type={bag.current} occupiedBlocks={tetrimino} />
+      <Tetrimino
+        type={bag.current}
+        occupiedBlocks={tetrimino}
+        lockTimer={lockTimer}
+      />
       <Ghost type={bag.current} occupiedBlocks={ghost} />
       {Object.entries(gainStream).map(([key, gain]) => (
         <GainDisplay
