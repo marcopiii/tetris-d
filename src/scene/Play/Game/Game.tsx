@@ -240,7 +240,11 @@ export default function Game(props: Props) {
       <ProgressPanel camera={camera} score={score} level={level} />
       <BagPanel camera={camera} next={bag.next} hold={bag.hold} />
       <Board occupiedBlocks={board} cutting={boardCuttingProp} />
-      <Tetrimino type={bag.current} occupiedBlocks={tetrimino} />
+      <Tetrimino
+        type={bag.current}
+        occupiedBlocks={tetrimino}
+        lockTimer={lockTimer}
+      />
       <Ghost type={bag.current} occupiedBlocks={ghost} />
       {Object.entries(gainStream).map(([key, gain]) => (
         <GainDisplay

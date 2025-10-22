@@ -9,7 +9,6 @@ import * as THREE from 'three';
 type Props = {
   position: [number, number, number];
   type: Tetrimino;
-
   hideFace?: ComponentProps<typeof Voxel>['hideFace'];
 } & (
   | { status: 'normal' | 'disabled' | 'deleting' | 'ghost' }
