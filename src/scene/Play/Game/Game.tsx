@@ -3,6 +3,7 @@ import { match } from 'ts-pattern';
 import { FX, play } from '~/audio';
 import { useGamepadManager, useKeyboardManager } from '~/controls';
 import { useLockDelay } from '~/scene/Play/Game/gameplay/useLockDelay';
+import { VANISH_ZONE_ROWS } from '~/scene/Play/Game/params';
 import { useCamera } from '~/scene/shared';
 import BagPanel from './BagPanel';
 import Board from './Board';
@@ -59,11 +60,16 @@ export default function Game(props: Props) {
   const hasHardDroppedRef = React.useRef(false);
 
   const [triggerLock, cancelLock, locked] = useLockDelay(() => {
-    fixPiece(bag.current, tetrimino);
-    bag.pullNext();
-    plane.change();
-    play(FX.lock, 0.15);
-    hasHardDroppedRef.current = false;
+    const isInVanishZone = tetrimino.every(({ y }) => y < VANISH_ZONE_ROWS);
+    if (isInVanishZone) {
+      props.onGameOver(score, level);
+    } else {
+      fixPiece(bag.current, tetrimino);
+      bag.pullNext();
+      plane.change();
+      play(FX.lock, 0.15);
+      hasHardDroppedRef.current = false;
+    }
   });
 
   useGravity(() => {
@@ -78,8 +84,6 @@ export default function Game(props: Props) {
     shouldLock ? triggerLock() : cancelLock();
   }, [tetrimino]);
 
-  // update the score as soon as the board is changed, while the lines
-  // will be cleared in the next tick
   React.useEffect(() => {
     const completedLines = checkLines(false);
     if (completedLines.length > 0) {
