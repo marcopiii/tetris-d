@@ -1,3 +1,2 @@
-export * from './tetrimino';
-export * from './wallKickData';
-export * from './types';
+export { tetriminos } from './tetriminos';
+export type { Tetrimino, Shape } from './types';
