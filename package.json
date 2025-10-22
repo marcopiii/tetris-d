@@ -24,7 +24,7 @@
     "babel-plugin-react-compiler": "^19.1.0-rc.3",
     "prettier": "^3.5.3",
     "typescript": "^5.8.2",
-    "vite": "^4.0.0"
+    "vite": "7.1.5"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.4",
