@@ -5,11 +5,10 @@ import useBag from './useBag';
 import usePlane from './usePlane';
 import useBoardManager from './useBoardManager';
 import useTetriminoManager from './useTetriminoManager';
-import { useScoreTracker } from './score';
+import { useScoreTracker, Gain, ComboKind } from './score';
 import useCutter from './useCutter';
-import useLockDelay from './useLockDelay';
+import { useLockDelay, LockTimer, LOCK_DELAY_MS } from './lockDelay';
 
-export type { Gain, ComboKind } from './score';
 export * from './movement';
 export {
   useGravity,
@@ -22,4 +21,6 @@ export {
   useScoreTracker,
   useCutter,
   useLockDelay,
+  LOCK_DELAY_MS,
 };
+export type { LockTimer, Gain, ComboKind };

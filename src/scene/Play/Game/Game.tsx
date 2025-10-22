@@ -60,7 +60,7 @@ export default function Game(props: Props) {
 
   const hasHardDroppedRef = React.useRef(false);
 
-  const [triggerLock, cancelLock, canReset] = useLockDelay(() => {
+  const { triggerLock, cancelLock, canReset, lockTimer } = useLockDelay(() => {
     const isInVanishZone = tetrimino.every(({ y }) => y < VANISH_ZONE_ROWS);
     if (isInVanishZone) {
       props.onGameOver(score, level);
@@ -118,7 +118,7 @@ export default function Game(props: Props) {
   }
 
   function moveAction(action: Actions) {
-    if (hasHardDroppedRef.current || canReset) {
+    if (hasHardDroppedRef.current || !canReset) {
       return;
     }
     const [rightInverted, forwardInverted] = match(plane.current)
@@ -181,7 +181,7 @@ export default function Game(props: Props) {
   }
 
   function bagAction(_action: BagAction) {
-    if (canReset) {
+    if (!canReset) {
       return;
     }
     bag.switchHold?.();
