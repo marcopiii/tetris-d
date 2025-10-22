@@ -56,11 +56,14 @@ export default function Game(props: Props) {
 
   const ghost = projectGhost(board);
 
+  const hasHardDroppedRef = React.useRef(false);
+
   const [triggerLock, cancelLock, locked] = useLockDelay(() => {
     fixPiece(bag.current, tetrimino);
     bag.pullNext();
     plane.change();
     play(FX.lock, 0.15);
+    hasHardDroppedRef.current = false;
   });
 
   useGravity(() => {
@@ -119,10 +122,9 @@ export default function Game(props: Props) {
       | 'rotateR'
       | 'dropH',
   ) {
-    if (locked) {
+    if (hasHardDroppedRef.current || locked) {
       return;
     }
-
     const [rightInverted, forwardInverted] = match(plane.current)
       .with('x', () => [
         relativeAxis.z.rightInverted,
@@ -168,6 +170,7 @@ export default function Game(props: Props) {
       })
       .exhaustive();
     if (success) {
+      hasHardDroppedRef.current = action === 'dropH';
       const fx = match(action)
         .with('shiftL', () => FX.tetrimino_move)
         .with('shiftR', () => FX.tetrimino_move)
