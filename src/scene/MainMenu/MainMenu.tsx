@@ -18,7 +18,7 @@ export default function MainMenu(props: Props) {
 
   const menuItems = [
     { name: 'play', action: props.onPlay, terminal: true },
-    { name: 'controls', action: props.onControls, terminal: true },
+    // { name: 'controls', action: props.onControls, terminal: true },
     { name: 'leaderboard', action: props.onLeaderboard, terminal: true },
     {
       name: 'about',
