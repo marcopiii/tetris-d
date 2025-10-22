@@ -25,7 +25,6 @@ export function Canvas(props: Props) {
       camera={{ ...frustumProps }}
       dpr={window.devicePixelRatio}
     >
-      <axesHelper args={[10]} />
       <EffectComposer>
         <Bloom
           luminanceThreshold={1}
