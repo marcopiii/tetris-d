@@ -41,7 +41,7 @@ function planeComboName(planeCombo: PlaneCombo) {
 function cascadeComboName(cascadeCombo: number) {
   return match(cascadeCombo)
     .with(1, () => 'CASCADE')
-    .with(P.number.gt(1), (n) => `${n}x CASCADE`)
+    .with(P.number.gt(1), (n) => `${n}X CASCADE`)
     .otherwise(() => undefined);
 }
 

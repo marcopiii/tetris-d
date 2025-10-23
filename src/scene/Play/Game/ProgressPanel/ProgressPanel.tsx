@@ -44,7 +44,7 @@ export default function ProgressPanel(props: Props) {
         <Popup
           key={id}
           position={[0, -1.5, 0.15]}
-          rotation={[0, 0, 0]}
+          rotation={0}
           alignX="left"
           text={`+${points.toString()}`}
           toward="fw"

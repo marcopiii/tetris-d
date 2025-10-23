@@ -52,7 +52,7 @@ export default function LineClearFeedback(props: Props) {
   return popups.map(
     (popupProps, i) =>
       visibleWindow.includes(i) && (
-        <Popup {...popupProps} key={popupProps.id} toward="up" />
+        <Popup {...popupProps} key={popupProps.id} />
       ),
   );
 }
@@ -96,7 +96,7 @@ function getPositioning(line: LineCoord, camera: Props['camera']) {
     .with({ z: P.number }, ({ z, y }) => translate(xAnchor, y, z))
     .exhaustive();
 
-  const [yRotation, alignment] = match([line, camera.position])
+  const [rotation, alignment] = match([line, camera.position])
     .with([{ x: P.number }, 'c1'], () => [-Math.PI / 2, 'right'] as const)
     .with([{ x: P.number }, 'c2'], () => [Math.PI / 2, 'left'] as const)
     .with([{ x: P.number }, 'c3'], () => [Math.PI / 2, 'right'] as const)
@@ -109,7 +109,8 @@ function getPositioning(line: LineCoord, camera: Props['camera']) {
 
   return {
     position,
-    rotation: [0, yRotation, 0] satisfies [number, number, number],
+    rotation,
     alignX: alignment,
+    toward: alignment === 'left' ? ('sx' as const) : ('rx' as const),
   };
 }

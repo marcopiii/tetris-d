@@ -6,7 +6,7 @@ import Character from './Char';
 
 type Props = {
   position: [number, number, number];
-  rotation?: [number, number, number];
+  rotation?: number;
   text: string;
   type: 'main' | 'primary' | 'primary-half' | 'secondary' | 'secondary-half';
   font: 'alphabet' | 'numbers';
@@ -68,9 +68,10 @@ export default function Word(props: Props) {
       {...centerPropsY}
       {...centerPropsZ}
       position={props.position}
-      rotation={props.rotation}
+      rotation={[0, props.rotation ?? 0, 0]}
       cacheKey={centerCacheKey}
     >
+      <axesHelper />
       {chars.map((char, i) => {
         const offset =
           charOffsets[i] *
