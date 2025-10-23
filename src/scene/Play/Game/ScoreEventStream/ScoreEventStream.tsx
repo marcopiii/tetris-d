@@ -12,20 +12,12 @@ type Props = {
 };
 
 export default function ScoreEventStream(props: Props) {
-  return (
-    <>
-      {props.scoreEventStream.map((event) =>
-        match(event)
-          .with({ kind: 'line-clear' }, (event) => (
-            <LineClearFeedback
-              key={event.id}
-              camera={props.camera}
-              event={event}
-            />
-          ))
-          .with({ kind: 'hard-drop' }, () => null)
-          .exhaustive(),
-      )}
-    </>
+  return props.scoreEventStream.map((event) =>
+    match(event)
+      .with({ kind: 'line-clear' }, (event) => (
+        <LineClearFeedback key={event.id} camera={props.camera} event={event} />
+      ))
+      .with({ kind: 'hard-drop' }, () => null)
+      .exhaustive(),
   );
 }

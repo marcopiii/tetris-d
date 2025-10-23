@@ -1,11 +1,10 @@
 import { ComponentProps } from 'react';
 import { match, P } from 'ts-pattern';
-import Popup from '~/scene/Play/Game/ScoreEventStream/Popup';
-import { ScoreEvent } from '../gameplay';
+import { LineClearEvent } from '../gameplay';
 import comboName from './comboName';
 import useSlidingWindow from './useSlidingWindow';
 import { COLS } from '../params';
-import { useCamera } from '~/scene/shared';
+import { Popup, useCamera } from '~/scene/shared';
 import { PlaneCombo } from '../gameplay';
 import { LineCoord, Plane } from '../types';
 import { translate } from '../utils';
@@ -15,7 +14,7 @@ type Props = {
     position: 'c1' | 'c2' | 'c3' | 'c4';
     relativeAxis: ReturnType<typeof useCamera>[2];
   };
-  event: Extract<ScoreEvent, { kind: 'line-clear' }>;
+  event: LineClearEvent;
 };
 
 export default function LineClearFeedback(props: Props) {
@@ -30,7 +29,8 @@ export default function LineClearFeedback(props: Props) {
   );
 
   const firstLine = sortedLines[0];
-  const gainLineProps: (ComponentProps<typeof Popup> & { id: string })[] =
+
+  const popups: (ComponentProps<typeof Popup> & { id: string })[] =
     sortedLines.map((line, i) => {
       const id = [line.x ?? '_', line.y, line.z ?? '_'].join(':');
       const layout = getPositioning(line, props.camera);
@@ -47,18 +47,12 @@ export default function LineClearFeedback(props: Props) {
       return { id, text, ...layout };
     });
 
-  const visibleWindow = useSlidingWindow(gainLineProps.length);
+  const visibleWindow = useSlidingWindow(popups.length);
 
-  return gainLineProps.map(
-    (line, i) =>
+  return popups.map(
+    (popupProps, i) =>
       visibleWindow.includes(i) && (
-        <Popup
-          key={line.id}
-          position={line.position}
-          rotation={line.rotation}
-          alignment={line.alignment}
-          text={line.text}
-        />
+        <Popup {...popupProps} key={popupProps.id} toward="up" />
       ),
   );
 }
@@ -116,6 +110,6 @@ function getPositioning(line: LineCoord, camera: Props['camera']) {
   return {
     position,
     rotation: [0, yRotation, 0] satisfies [number, number, number],
-    alignment,
+    alignX: alignment,
   };
 }

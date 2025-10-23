@@ -239,7 +239,11 @@ export default function Game(props: Props) {
   return (
     <group>
       <Tetrion />
-      <ProgressPanel camera={camera} progress={progress} />
+      <ProgressPanel
+        camera={camera}
+        progress={progress}
+        scoreEventStream={scoreEventStream}
+      />
       <BagPanel camera={camera} next={bag.next} hold={bag.hold} />
       <Board occupiedBlocks={board} cutting={boardCuttingProp} />
       <Tetrimino
