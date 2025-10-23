@@ -1,4 +1,4 @@
-import { Font } from './font';
+import { Font } from './types';
 
 /**
  * @see https://en.ac-illust.com/clip-art/24055671/pixel-font--numbers-and-symbols-

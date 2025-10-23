@@ -1,4 +1,4 @@
-import { type Font } from './font';
+import { type Font } from './types';
 
 /**
  * @see https://www.dafont.com/minecraft-standard.font

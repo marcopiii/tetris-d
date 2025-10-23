@@ -1,3 +1,3 @@
-export type Char = Array<Array<number>>;
+export type Char = (0 | 1)[][];
 
 export type Font = Record<string, Char>;
