@@ -12,10 +12,7 @@ export const pointsPerClear =
     const base = pointsPerLines(effectiveLines.length);
     const planeCombo = planeComboPerLines(effectiveLines);
     const multiplier = planeComboMultiplier(planeCombo);
-    return {
-      gain: base * multiplier * level,
-      combo: planeCombo,
-    };
+    return base * multiplier * level;
   };
 
 function pointsPerLines(n: number) {

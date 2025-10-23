@@ -1,11 +1,11 @@
 import { match } from 'ts-pattern';
+import { Progress } from '~/scene/Play/Game/gameplay';
 import { COLS, ROWS } from '~/scene/Play/Game/params';
 import LabeledNumber from './LabeledNumber';
 
 type Props = {
   camera: 'c1' | 'c2' | 'c3' | 'c4';
-  score: number;
-  level: number;
+  progress: Progress;
 };
 
 export default function ProgressPanel(props: Props) {
@@ -33,11 +33,15 @@ export default function ProgressPanel(props: Props) {
 
   return (
     <group position={position} rotation={rotation}>
-      <LabeledNumber position={[0, 0, 0]} label="score" value={props.score} />
+      <LabeledNumber
+        position={[0, 0, 0]}
+        label="score"
+        value={props.progress.score}
+      />
       <LabeledNumber
         position={[0, -3.5, 0]}
         label="level"
-        value={props.level}
+        value={props.progress.level}
       />
     </group>
   );
