@@ -1,7 +1,7 @@
 import { match } from 'ts-pattern';
-import type { Button } from './types';
+import type { GamepadButton } from './types';
 
-export default function gamepadLocalization(button: Button): string {
+export default function gamepadLocalization(button: GamepadButton): string {
   return match(button)
     .with('A', () => 'A')
     .with('B', () => 'B')

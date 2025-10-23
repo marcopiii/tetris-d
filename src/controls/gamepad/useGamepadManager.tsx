@@ -1,15 +1,18 @@
 import { useFrame } from '@react-three/fiber';
 import React from 'react';
 import { mapping } from './mapping';
-import type { Event, Button } from './types';
+import type { Event } from './types';
+import type { GamepadButton } from './types';
+
+type DOMGamepadButton = globalThis.GamepadButton;
 
 const HOLD_FRAMES = 12;
 const BUFFER_SIZE = HOLD_FRAMES + 1;
 
 export default function useGamepadManager(
-  handler: (event: Event, button: Button) => void,
+  handler: (event: Event, button: GamepadButton) => void,
 ) {
-  const bufferRef = React.useRef<GamepadButton[][]>([]);
+  const bufferRef = React.useRef<DOMGamepadButton[][]>([]);
 
   const poll = () => {
     const gamepad = navigator.getGamepads()[0];

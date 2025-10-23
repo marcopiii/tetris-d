@@ -1,6 +1,6 @@
-import { Button } from './types';
+import { GamepadButton } from './types';
 
-export function mapping(i: number): Button | undefined {
+export function mapping(i: number): GamepadButton | undefined {
   switch (i) {
     case 0:
       return 'A';

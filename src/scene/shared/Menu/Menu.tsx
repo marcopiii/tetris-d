@@ -1,4 +1,3 @@
-import React from 'react';
 import { VOXEL_SIZE } from '../params';
 import Word from '../Word';
 import { SelectableMenuItem } from './types';

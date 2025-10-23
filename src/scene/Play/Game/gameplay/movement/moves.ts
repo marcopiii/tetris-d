@@ -1,4 +1,3 @@
-import { Shape } from 'three';
 import { match } from 'ts-pattern';
 import { TetriminoState } from './types';
 import wallKickData from './wallKickData';

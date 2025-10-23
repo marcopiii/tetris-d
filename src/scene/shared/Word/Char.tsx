@@ -33,19 +33,17 @@ export default function Char(props: Props) {
   return (
     <group position={props.position}>
       {props.char.map((row, y) =>
-        row.map((v, x) => {
-          if (v) {
-            const position: [number, number, number] = [x * size, -y * size, 0];
-            return (
+        row.map(
+          (v, x) =>
+            v && (
               <Voxel
-                position={position}
+                position={[x * size, -y * size, 0]}
                 size={size}
                 material={material}
                 key={`${x}${y}`}
               />
-            );
-          }
-        }),
+            ),
+        ),
       )}
     </group>
   );

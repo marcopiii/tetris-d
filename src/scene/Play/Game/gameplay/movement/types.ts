@@ -1,4 +1,5 @@
-import { Plane, Shape, Tetrimino } from '../../types';
+import { Shape, Tetrimino } from '~/tetrimino';
+import { Plane } from '../../types';
 
 type RotationState = '0' | 'R' | '2' | 'L';
 

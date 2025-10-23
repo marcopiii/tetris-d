@@ -1,4 +1,4 @@
-import { Button as GamepadButton } from '../gamepad';
+import { GamepadButton } from '~/controls/gamepad/types';
 
 export type GamepadKeybindings = Record<SemanticButton, GamepadButton>;
 export type KeyboardKeybindings = Record<SemanticButton, KeyboardEvent['code']>;

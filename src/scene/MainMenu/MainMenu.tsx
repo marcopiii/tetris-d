@@ -1,4 +1,3 @@
-import React from 'react';
 import { match } from 'ts-pattern';
 import { useGamepadManager, useKeyboardManager } from '../../controls';
 import { Menu, useMenuNavigation } from '../shared/Menu';

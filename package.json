@@ -12,8 +12,9 @@
   "author": "marcopiii",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "serve": "vite preview"
+    "build": "tsc --noEmit && vite build",
+    "serve": "vite preview",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

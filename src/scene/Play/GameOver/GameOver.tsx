@@ -1,4 +1,3 @@
-import React from 'react';
 import { match } from 'ts-pattern';
 import { useGamepadManager, useKeyboardManager } from '~/controls';
 import { Scoreboard, useCamera, useLeaderboard } from '~/scene/shared';
@@ -24,7 +23,7 @@ export default function GameOver(props: Props) {
       .with(['left', 'moveR'], () => setCamera('right'))
       .otherwise(() => {});
 
-  const { handle, i, action: setHandle } = usePlayerHandler();
+  const { handle, action: setHandle } = usePlayerHandler();
 
   const [leaderboard, saveNewRecord] = useLeaderboard();
 

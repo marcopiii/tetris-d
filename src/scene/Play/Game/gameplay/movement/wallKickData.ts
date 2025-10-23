@@ -1,5 +1,5 @@
 import { match, P } from 'ts-pattern';
-import { Tetrimino } from '../types';
+import { Tetrimino } from '~/tetrimino';
 import { WallKickData } from './types';
 
 /**

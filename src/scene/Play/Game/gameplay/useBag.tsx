@@ -24,7 +24,7 @@ export default function useBag() {
     setHoldable(true);
   };
 
-  const [current, next, ...rest] = bag;
+  const [current, next, ..._rest] = bag;
 
   const switchHold = () => {
     if (hold) {

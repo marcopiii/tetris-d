@@ -1,7 +1,6 @@
 import { Center } from '@react-three/drei';
-import React from 'react';
 import { match, P } from 'ts-pattern';
-import { alphabet, Char, numbers } from '../../../font';
+import { alphabet, Char, numbers } from '~/font';
 import { VOXEL_SIZE } from '../params';
 import Character from './Char';
 

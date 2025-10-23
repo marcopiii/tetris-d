@@ -1,4 +1,3 @@
-import React from 'react';
 import * as THREE from 'three';
 import { tetrionMaterial } from '~/materials';
 import { COLS, ROWS } from '~/scene/Play/Game/params';

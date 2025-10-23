@@ -1,4 +1,4 @@
-export type Button =
+export type GamepadButton =
   | 'start'
   | 'select'
   | 'padL'

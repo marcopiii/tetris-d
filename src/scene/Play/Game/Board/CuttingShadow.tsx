@@ -1,8 +1,7 @@
-import React from 'react';
 import * as THREE from 'three';
 import { match, P } from 'ts-pattern';
-import { cuttingShadowMaterial } from '../../../../materials';
-import { MINO_SIZE } from '../../../shared';
+import { cuttingShadowMaterial } from '~/materials';
+import { MINO_SIZE } from '~/scene/shared';
 import { COLS, ROWS } from '../params';
 import { PlaneCoords } from '../types';
 
