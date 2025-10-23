@@ -1,15 +1,12 @@
 import { useFrame } from '@react-three/fiber';
 import React from 'react';
-import comboName from './comboName';
-import { PlaneCombo } from '../gameplay';
 import { Word } from '~/scene/shared';
 
 type Props = {
   position: NonNullable<React.ComponentProps<typeof Word>['position']>;
   rotation: NonNullable<React.ComponentProps<typeof Word>['rotation']>;
   alignment: NonNullable<React.ComponentProps<typeof Word>['alignX']>;
-  lineNumber: number;
-  kind: PlaneCombo;
+  text: string;
 };
 
 export default function GainLine(props: Props) {
@@ -18,15 +15,6 @@ export default function GainLine(props: Props) {
   useFrame((_, delta) => {
     setYOffset((prev) => prev + 1.5 * delta);
   });
-
-  const text = [
-    `+${props.lineNumber.toString()}`,
-    `LINE${props.lineNumber > 1 ? 'S' : ''}`,
-    ...match(props.kind)
-      .with('par', () => ['PAR'])
-      .with('ort', () => ['ORT'])
-      .otherwise(() => []),
-  ].join(' ');
 
   return (
     <Word
@@ -37,7 +25,7 @@ export default function GainLine(props: Props) {
       ]}
       rotation={props.rotation}
       alignX={props.alignment}
-      text={text}
+      text={props.text}
       type="secondary-half"
       font="numbers"
     />

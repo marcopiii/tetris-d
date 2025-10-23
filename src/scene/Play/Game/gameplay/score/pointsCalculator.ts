@@ -1,5 +1,5 @@
 import { match } from 'ts-pattern';
-import { comboKind } from './combo';
+import { planeComboPerLines } from '~/scene/Play/Game/gameplay/score/comboDetector';
 import { LineCoord } from '../../types';
 import { PlaneCombo } from './types';
 
@@ -10,11 +10,11 @@ export function pointsPerHardDrop(length: number) {
 export const pointsPerClear =
   (level: number) => (effectiveLines: LineCoord[]) => {
     const base = pointsPerLines(effectiveLines.length);
-    const combo = comboKind(effectiveLines);
-    const multiplier = planeComboMultiplier(combo);
+    const planeCombo = planeComboPerLines(effectiveLines);
+    const multiplier = planeComboMultiplier(planeCombo);
     return {
       gain: base * multiplier * level,
-      combo,
+      combo: planeCombo,
     };
   };
 

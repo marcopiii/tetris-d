@@ -7,7 +7,7 @@ import { BagAction, CameraAction, CutAction, Actions } from './types';
 import { useCamera } from '~/scene/shared';
 import BagPanel from './BagPanel';
 import Board from './Board';
-import GainDisplay from './GainDisplay';
+import ScoreEventDisplayer from './ScoreEventDisplayer';
 import {
   drop,
   rotateLeft,
@@ -250,10 +250,10 @@ export default function Game(props: Props) {
         lockTimer={lockTimer}
       />
       <Ghost type={bag.current} occupiedBlocks={ghost} />
-      {Object.entries(gainStream).map(([key, gain]) => (
-        <GainDisplay
+      {Object.entries(gainStream).map(([key, scoreEvent]) => (
+        <ScoreEventDisplayer
           camera={{ position: camera, relativeAxis }}
-          gain={gain}
+          scoreEvent={scoreEvent}
           key={key}
         />
       ))}

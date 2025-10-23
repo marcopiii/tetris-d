@@ -1,6 +1,6 @@
 import { isNotNil } from 'es-toolkit/predicate';
 import { match, P } from 'ts-pattern';
-import { Gain, PlaneCombo } from '../gameplay';
+import { PlaneCombo } from '../gameplay';
 
 function lineComboName(lineCombo: number): string {
   return match(lineCombo)
@@ -45,11 +45,15 @@ function cascadeComboName(cascadeCombo: number) {
     .otherwise(() => undefined);
 }
 
-export default function comboName(gain: Gain) {
+export default function comboName(
+  lines: number,
+  cascade: number,
+  planeCombo: PlaneCombo,
+) {
   return [
-    cascadeComboName(gain.cascade),
-    gain.cascade ? undefined : planeComboName(gain.planeCombo),
-    lineComboName(gain.lines.length),
+    cascadeComboName(cascade),
+    cascade ? undefined : planeComboName(planeCombo),
+    lineComboName(lines),
   ]
     .filter(isNotNil)
     .join(' ');

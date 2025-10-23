@@ -1,10 +1,9 @@
-import { LineCoord } from '../../types';
+import { LineCoord } from '~/scene/Play/Game/types';
 
 export type PlaneCombo = 'mono' | 'parallel' | 'orthogonal';
 
-export type Gain = {
+export type ScoreEvent = {
   lines: LineCoord[];
   planeCombo: PlaneCombo;
   cascade: number;
-  points: number;
 };

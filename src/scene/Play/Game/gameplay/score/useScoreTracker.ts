@@ -3,16 +3,16 @@ import React from 'react';
 import { MathUtils } from 'three';
 import { match } from 'ts-pattern';
 import { usePrevious } from '@uidotdev/usehooks';
+import { ScoreEvent } from './types';
 import { LineCoord } from '../../types';
-import { Gain } from './types';
-import { pointsPerClear, pointsPerHardDrop } from './calculator';
+import { pointsPerClear, pointsPerHardDrop } from './pointsCalculator';
 
 const LINE_CLEAR_PER_LEVEL = 10;
 
 type State = {
   score: number;
   lines: number;
-  gainStream: Record<string, Gain>;
+  gainStream: Record<string, ScoreEvent>;
 };
 
 type Action =
@@ -42,11 +42,10 @@ export default function useScoreTracker() {
                 ? {
                     ...prev.gainStream,
                     [MathUtils.generateUUID()]: {
-                      points: gain,
                       planeCombo: combo,
                       cascade: cascadeIndex,
                       lines: lines,
-                    } satisfies Gain,
+                    } satisfies ScoreEvent,
                   }
                 : prev.gainStream,
           };
