@@ -163,9 +163,7 @@ export default function Game(props: Props) {
       })
       .with('hDrop', () => {
         const dropLength = hardDrop(board);
-        if (dropLength) {
-          trackProgress.hardDrop(dropLength);
-        }
+        trackProgress.hardDrop(dropLength);
         return true;
       })
       .exhaustive();

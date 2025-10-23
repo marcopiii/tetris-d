@@ -32,6 +32,9 @@ export default function useScoreTracker() {
       lines: lines.length ? [...lines, ...cascadeBuffer.current.lines] : [],
       clears: lines.length ? cascadeBuffer.current.clears + 1 : 0,
     };
+
+    if (lines.length === 0) return;
+
     const level = getLevel(progress.lines);
     const points = pointsPerClear(level)(cascadeBuffer.current.lines);
     const planeCombo = planeComboPerLines(cascadeBuffer.current.lines);
@@ -49,6 +52,8 @@ export default function useScoreTracker() {
   };
 
   const trackHardDrop = (length: number) => {
+    if (length === 0) return;
+
     const points = pointsPerHardDrop(length);
 
     const scoreEvent: ScoreEvent = {
