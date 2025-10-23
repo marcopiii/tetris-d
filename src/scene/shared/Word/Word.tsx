@@ -22,7 +22,12 @@ export default function Word(props: Props) {
     .with('numbers', () => numbers)
     .exhaustive();
 
-  const chars: Array<Char> = props.text.split('').map((char) => font[char]);
+  const chars: Array<Char> = props.text.split('').map((char) => {
+    if (!font[char]) {
+      throw new Error(`Character "${char}" not found in font "${props.font}"`);
+    }
+    return font[char]!;
+  });
 
   const charWidths = chars.map((shape) => shape[0].length);
   const charOffsets = chars.map((_, i) =>
