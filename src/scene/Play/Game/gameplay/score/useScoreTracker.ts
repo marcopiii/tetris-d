@@ -27,6 +27,10 @@ export default function useScoreTracker() {
 
   const scoreEventStream = React.useRef<ScoreEvent[]>([]);
 
+  const pushEvent = (event: ScoreEvent) => {
+    scoreEventStream.current = [event, ...scoreEventStream.current];
+  };
+
   const trackLineClear = (lines: LineCoord[]) => {
     cascadeBuffer.current = {
       lines: lines.length ? [...lines, ...cascadeBuffer.current.lines] : [],
@@ -47,7 +51,7 @@ export default function useScoreTracker() {
       cascade: cascadeBuffer.current.clears - 1,
     };
 
-    scoreEventStream.current.push(scoreEvent);
+    pushEvent(scoreEvent);
     addProgress({ points, lines: lines.length });
   };
 
@@ -62,7 +66,7 @@ export default function useScoreTracker() {
       length: length,
     };
 
-    scoreEventStream.current.push(scoreEvent);
+    pushEvent(scoreEvent);
     addProgress({ points, lines: 0 });
   };
 

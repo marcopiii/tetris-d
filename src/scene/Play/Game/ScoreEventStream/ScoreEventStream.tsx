@@ -20,14 +20,14 @@ export default function ScoreEventStream(props: Props) {
 
   return (
     <>
-      {visibleEvents.map((event) => {
+      {visibleEvents.map((event) =>
         match(event)
           .with({ kind: 'line-clear' }, (event) => (
             <LineClearFeedback camera={props.camera} event={event} />
           ))
           .with({ kind: 'hard-drop' }, () => null)
-          .exhaustive();
-      })}
+          .exhaustive(),
+      )}
     </>
   );
 }
