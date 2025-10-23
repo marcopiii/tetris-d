@@ -1,10 +1,10 @@
 import { LineCoord } from '../../types';
 
-export type ComboKind = 'std' | 'ort' | 'par';
+export type PlaneCombo = 'mono' | 'parallel' | 'orthogonal';
 
 export type Gain = {
   lines: LineCoord[];
-  kind: ComboKind;
+  planeCombo: PlaneCombo;
   cascade: number;
   points: number;
 };

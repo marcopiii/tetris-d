@@ -43,10 +43,10 @@ export default function useScoreTracker() {
                     ...prev.gainStream,
                     [MathUtils.generateUUID()]: {
                       points: gain,
-                      kind: combo,
+                      planeCombo: combo,
                       cascade: cascadeIndex,
                       lines: lines,
-                    },
+                    } satisfies Gain,
                   }
                 : prev.gainStream,
           };

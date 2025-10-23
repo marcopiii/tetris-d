@@ -1,8 +1,9 @@
-import React, { ComponentProps } from 'react';
+import { ComponentProps } from 'react';
 import { match, P } from 'ts-pattern';
+import useSlidingWindow from '~/scene/Play/Game/GainDisplay/useSlidingWindow';
 import { COLS } from '~/scene/Play/Game/params';
 import { useCamera } from '~/scene/shared';
-import { ComboKind, Gain } from '../gameplay';
+import { PlaneCombo, Gain } from '../gameplay';
 import { LineCoord, Plane } from '../types';
 import { translate } from '../utils';
 import GainLine from './GainLine';
@@ -33,14 +34,14 @@ export default function GainDisplay(props: Props) {
   >[] = sortedLines.map((line) => {
     const id = [line.x ?? '_', line.y, line.z ?? '_'].join(':');
     const layout = getPositioning(line, props.camera);
-    const kind: ComboKind = match([firstLine, line])
+    const kind: PlaneCombo = match([firstLine, line])
       .with([{ x: P.number }, { x: P.number }], ([first, thiz]) =>
-        first.x !== thiz.x ? 'par' : 'std',
+        first.x !== thiz.x ? 'parallel' : 'mono',
       )
       .with([{ z: P.number }, { z: P.number }], ([first, thiz]) =>
-        first.z !== thiz.z ? 'par' : 'std',
+        first.z !== thiz.z ? 'parallel' : 'mono',
       )
-      .otherwise(() => 'ort');
+      .otherwise(() => 'orthogonal');
     return { id, kind, ...layout };
   });
 
@@ -116,17 +117,4 @@ function getPositioning(line: LineCoord, camera: Props['camera']) {
     rotation: [0, yRotation, 0] satisfies [number, number, number],
     alignment,
   };
-}
-
-function useSlidingWindow(range: number) {
-  const [k, next] = React.useReducer((v: number) => Math.min(v + 1, range), -1);
-
-  React.useEffect(() => {
-    const intervalId = setInterval(() => {
-      next();
-    }, 100);
-    return () => clearInterval(intervalId);
-  }, [next]);
-
-  return [k - 1, k, k + 1] as const;
 }

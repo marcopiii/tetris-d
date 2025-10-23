@@ -1,7 +1,7 @@
-import { ComboKind } from '~/scene/Play/Game/gameplay';
+import { PlaneCombo } from '~/scene/Play/Game/gameplay';
 import { LineCoord } from '~/scene/Play/Game/types';
 
-export function comboKind(lines: LineCoord[]): ComboKind {
+export function comboKind(lines: LineCoord[]): PlaneCombo {
   if (lines.length < 2) return 'std';
 
   const orthogonalPlanes =

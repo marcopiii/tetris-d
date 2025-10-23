@@ -1,6 +1,7 @@
 import { useFrame } from '@react-three/fiber';
 import React from 'react';
-import { match } from 'ts-pattern';
+import comboName from './comboName';
+import { PlaneCombo } from '../gameplay';
 import { Word } from '~/scene/shared';
 
 type Props = {
@@ -8,7 +9,7 @@ type Props = {
   rotation: NonNullable<React.ComponentProps<typeof Word>['rotation']>;
   alignment: NonNullable<React.ComponentProps<typeof Word>['alignX']>;
   lineNumber: number;
-  kind: 'std' | 'ort' | 'par';
+  kind: PlaneCombo;
 };
 
 export default function GainLine(props: Props) {

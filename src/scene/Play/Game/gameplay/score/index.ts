@@ -1,5 +1,5 @@
 import useScoreTracker from './useScoreTracker';
-import type { Gain, ComboKind } from './types';
+import type { Gain, PlaneCombo } from './types';
 
 export { useScoreTracker };
-export type { Gain, ComboKind };
+export type { Gain, PlaneCombo };
