@@ -5,6 +5,7 @@ import { planeComboPerLines } from './comboDetector';
 import { pointsPerClear, pointsPerHardDrop } from './pointsCalculator';
 
 const LINE_CLEAR_PER_LEVEL = 10;
+const EVENT_LIFESPAN_MS = 1500;
 
 type CascadeBuffer = {
   lines: LineCoord[];
@@ -25,10 +26,15 @@ export default function useScoreTracker() {
     { score: 0, lines: 0 },
   );
 
-  const scoreEventStream = React.useRef<ScoreEvent[]>([]);
+  const [scoreEventStream, setScoreEventStream] = React.useState<ScoreEvent[]>(
+    [],
+  );
 
   const pushEvent = (event: ScoreEvent) => {
-    scoreEventStream.current = [event, ...scoreEventStream.current];
+    setScoreEventStream((prev) => [event, ...prev]);
+    setTimeout(() => {
+      setScoreEventStream((prev) => prev.filter((e) => e.id !== event.id));
+    }, EVENT_LIFESPAN_MS);
   };
 
   const trackLineClear = (lines: LineCoord[]) => {
@@ -44,7 +50,7 @@ export default function useScoreTracker() {
     const planeCombo = planeComboPerLines(cascadeBuffer.current.lines);
 
     const scoreEvent: ScoreEvent = {
-      id: performance.now(),
+      id: Date.now(),
       kind: 'line-clear',
       lines: lines,
       planeCombo: planeCombo,
@@ -61,7 +67,7 @@ export default function useScoreTracker() {
     const points = pointsPerHardDrop(length);
 
     const scoreEvent: ScoreEvent = {
-      id: performance.now(),
+      id: Date.now(),
       kind: 'hard-drop',
       length: length,
     };
@@ -75,7 +81,7 @@ export default function useScoreTracker() {
       score: progress.score,
       level: getLevel(progress.lines),
     } satisfies Progress,
-    scoreEventStream: scoreEventStream.current,
+    scoreEventStream: scoreEventStream,
     trackProgress: {
       lineClear: trackLineClear,
       hardDrop: trackHardDrop,
