@@ -1,61 +1,63 @@
-import React, { ComponentProps } from 'react';
+import { ComponentProps } from 'react';
 import { match, P } from 'ts-pattern';
-import { COLS } from '~/scene/Play/Game/params';
+import Popup from '~/scene/Play/Game/ScoreEventStream/Popup';
+import { ScoreEvent } from '../gameplay';
+import comboName from './comboName';
+import useSlidingWindow from './useSlidingWindow';
+import { COLS } from '../params';
 import { useCamera } from '~/scene/shared';
-import { ComboKind, Gain } from '../gameplay';
+import { PlaneCombo } from '../gameplay';
 import { LineCoord, Plane } from '../types';
 import { translate } from '../utils';
-import GainLine from './GainLine';
 
 type Props = {
   camera: {
     position: 'c1' | 'c2' | 'c3' | 'c4';
     relativeAxis: ReturnType<typeof useCamera>[2];
   };
-  gain: Gain;
+  event: Extract<ScoreEvent, { kind: 'line-clear' }>;
 };
 
-export default function GainDisplay(props: Props) {
+export default function LineClearFeedback(props: Props) {
   const primaryPlane =
-    props.gain.lines.filter((l) => 'x' in l).length >
-    props.gain.lines.filter((l) => 'z' in l).length
+    props.event.lines.filter((l) => 'x' in l).length >
+    props.event.lines.filter((l) => 'z' in l).length
       ? 'z'
       : 'x';
 
-  const sortedLines = props.gain.lines.toSorted(
+  const sortedLines = props.event.lines.toSorted(
     lineOrderCriteria(props.camera.relativeAxis, primaryPlane),
   );
 
   const firstLine = sortedLines[0];
-  const gainLineProps: Omit<
-    ComponentProps<typeof GainLine> & { id: string },
-    'lineNumber'
-  >[] = sortedLines.map((line) => {
-    const id = [line.x ?? '_', line.y, line.z ?? '_'].join(':');
-    const layout = getPositioning(line, props.camera);
-    const kind: ComboKind = match([firstLine, line])
-      .with([{ x: P.number }, { x: P.number }], ([first, thiz]) =>
-        first.x !== thiz.x ? 'par' : 'std',
-      )
-      .with([{ z: P.number }, { z: P.number }], ([first, thiz]) =>
-        first.z !== thiz.z ? 'par' : 'std',
-      )
-      .otherwise(() => 'ort');
-    return { id, kind, ...layout };
-  });
+  const gainLineProps: (ComponentProps<typeof Popup> & { id: string })[] =
+    sortedLines.map((line, i) => {
+      const id = [line.x ?? '_', line.y, line.z ?? '_'].join(':');
+      const layout = getPositioning(line, props.camera);
+      const planeCombo: PlaneCombo = match([firstLine, line])
+        .with([{ x: P.number }, { x: P.number }], ([first, thiz]) =>
+          first.x !== thiz.x ? 'parallel' : 'mono',
+        )
+        .with([{ z: P.number }, { z: P.number }], ([first, thiz]) =>
+          first.z !== thiz.z ? 'parallel' : 'mono',
+        )
+        .otherwise(() => 'orthogonal');
+
+      const text = comboName(i + 1, props.event.cascade, planeCombo);
+      return { id, text, ...layout };
+    });
 
   const visibleWindow = useSlidingWindow(gainLineProps.length);
 
   return gainLineProps.map(
     (line, i) =>
       visibleWindow.includes(i) && (
-        <GainLine
+        <Popup
           key={line.id}
           position={line.position}
           rotation={line.rotation}
           alignment={line.alignment}
-          kind={line.kind}
-          lineNumber={i + 1}
+          text={line.text}
         />
       ),
   );
@@ -116,17 +118,4 @@ function getPositioning(line: LineCoord, camera: Props['camera']) {
     rotation: [0, yRotation, 0] satisfies [number, number, number],
     alignment,
   };
-}
-
-function useSlidingWindow(range: number) {
-  const [k, next] = React.useReducer((v: number) => Math.min(v + 1, range), -1);
-
-  React.useEffect(() => {
-    const intervalId = setInterval(() => {
-      next();
-    }, 100);
-    return () => clearInterval(intervalId);
-  }, [next]);
-
-  return [k - 1, k, k + 1] as const;
 }

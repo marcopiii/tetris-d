@@ -1,5 +1,6 @@
 import React from 'react';
 import { match } from 'ts-pattern';
+import { Progress } from '~/scene/Play/Game/gameplay';
 import Game from './Game';
 import GameOver from './GameOver';
 
@@ -13,7 +14,7 @@ type ScenarioState =
     }
   | {
       state: 'game-over';
-      result: React.ComponentProps<typeof GameOver>['result'];
+      result: Progress;
     };
 
 export default function Play(props: Props) {
@@ -22,8 +23,8 @@ export default function Play(props: Props) {
   return match(state)
     .with({ state: 'playing' }, () => (
       <Game
-        onGameOver={(score, level) =>
-          setState({ state: 'game-over', result: { score, level } })
+        onGameOver={(progress) =>
+          setState({ state: 'game-over', result: progress })
         }
       />
     ))

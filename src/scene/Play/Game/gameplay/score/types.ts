@@ -1,10 +1,23 @@
-import { LineCoord } from '../../types';
+import { LineCoord } from '~/scene/Play/Game/types';
 
-export type ComboKind = 'std' | 'ort' | 'par';
+export type Progress = {
+  score: number;
+  level: number;
+};
 
-export type Gain = {
+export type PlaneCombo = 'mono' | 'parallel' | 'orthogonal';
+
+export type ScoreEvent = { id: number } & (
+  | ({ kind: 'line-clear' } & LineClearEvent)
+  | ({ kind: 'hard-drop' } & HardDropEvent)
+);
+
+type LineClearEvent = {
   lines: LineCoord[];
-  kind: ComboKind;
+  planeCombo: PlaneCombo;
   cascade: number;
-  points: number;
+};
+
+type HardDropEvent = {
+  length: number;
 };

@@ -7,7 +7,7 @@ import { BagAction, CameraAction, CutAction, Actions } from './types';
 import { useCamera } from '~/scene/shared';
 import BagPanel from './BagPanel';
 import Board from './Board';
-import GainDisplay from './GainDisplay';
+import ScoreEventStream from './ScoreEventStream';
 import {
   drop,
   rotateLeft,
@@ -24,6 +24,7 @@ import {
   useScoreTracker,
   useTetriminoManager,
   useLockDelay,
+  Progress,
 } from './gameplay';
 import Ghost from './Ghost';
 import ProgressPanel from './ProgressPanel';
@@ -32,7 +33,7 @@ import Tetrion from './Tetrion';
 import { PlaneCoords } from './types';
 
 type Props = {
-  onGameOver: (score: number, level: number) => void;
+  onGameOver: (progress: Progress) => void;
 };
 
 export default function Game(props: Props) {
@@ -54,8 +55,7 @@ export default function Game(props: Props) {
 
   const [cut, setCut] = useCutter(camera);
 
-  const { score, level, gainStream, trackLines, trackHardDrop } =
-    useScoreTracker();
+  const { progress, scoreEventStream, trackProgress } = useScoreTracker();
 
   const ghost = projectGhost(board);
 
@@ -64,7 +64,7 @@ export default function Game(props: Props) {
   const { triggerLock, cancelLock, canReset, lockTimer } = useLockDelay(() => {
     const isInVanishZone = tetrimino.every(({ y }) => y < VANISH_ZONE_ROWS);
     if (isInVanishZone) {
-      props.onGameOver(score, level);
+      props.onGameOver(progress);
     } else {
       fixPiece(bag.current, tetrimino);
       bag.pullNext();
@@ -77,7 +77,7 @@ export default function Game(props: Props) {
   useGravity(() => {
     checkLines(true);
     attempt(drop)(board);
-  }, level);
+  }, progress.level);
 
   React.useEffect(() => {
     const shouldLock = tetrimino.every((t) =>
@@ -91,7 +91,7 @@ export default function Game(props: Props) {
     if (completedLines.length > 0) {
       play(FX.line_clear, 0.75);
     }
-    trackLines(completedLines);
+    trackProgress.lineClear(completedLines);
   }, [board]);
 
   function cameraAction(action: CameraAction) {
@@ -163,9 +163,7 @@ export default function Game(props: Props) {
       })
       .with('hDrop', () => {
         const dropLength = hardDrop(board);
-        if (dropLength) {
-          trackHardDrop(dropLength);
-        }
+        trackProgress.hardDrop(dropLength);
         return true;
       })
       .exhaustive();
@@ -241,7 +239,7 @@ export default function Game(props: Props) {
   return (
     <group>
       <Tetrion />
-      <ProgressPanel camera={camera} score={score} level={level} />
+      <ProgressPanel camera={camera} progress={progress} />
       <BagPanel camera={camera} next={bag.next} hold={bag.hold} />
       <Board occupiedBlocks={board} cutting={boardCuttingProp} />
       <Tetrimino
@@ -250,13 +248,10 @@ export default function Game(props: Props) {
         lockTimer={lockTimer}
       />
       <Ghost type={bag.current} occupiedBlocks={ghost} />
-      {Object.entries(gainStream).map(([key, gain]) => (
-        <GainDisplay
-          camera={{ position: camera, relativeAxis }}
-          gain={gain}
-          key={key}
-        />
-      ))}
+      <ScoreEventStream
+        camera={{ position: camera, relativeAxis }}
+        scoreEventStream={scoreEventStream}
+      />
     </group>
   );
 }

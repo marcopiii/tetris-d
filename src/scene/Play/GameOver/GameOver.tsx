@@ -1,14 +1,12 @@
 import { match } from 'ts-pattern';
 import { useGamepadManager, useKeyboardManager } from '~/controls';
+import { Progress } from '~/scene/Play/Game/gameplay';
 import { Scoreboard, useCamera, useLeaderboard } from '~/scene/shared';
 import usePlayerHandler from './usePlayerHandler';
 
 type Props = {
   onBack: () => void;
-  result: {
-    score: number;
-    level: number;
-  };
+  result: Progress;
 };
 
 export default function GameOver(props: Props) {
