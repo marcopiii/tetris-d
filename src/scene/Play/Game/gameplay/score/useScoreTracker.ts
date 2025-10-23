@@ -55,6 +55,7 @@ export default function useScoreTracker() {
       lines: lines,
       planeCombo: planeCombo,
       cascade: cascadeBuffer.current.clears - 1,
+      points: points,
     };
 
     pushEvent(scoreEvent);
@@ -70,6 +71,7 @@ export default function useScoreTracker() {
       id: Date.now(),
       kind: 'hard-drop',
       length: length,
+      points: points,
     };
 
     pushEvent(scoreEvent);
