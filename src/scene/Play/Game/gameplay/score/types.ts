@@ -7,9 +7,10 @@ export type Progress = {
 
 export type PlaneCombo = 'mono' | 'parallel' | 'orthogonal';
 
-export type ScoreEvent =
+export type ScoreEvent = { id: number } & (
   | ({ kind: 'line-clear' } & LineClearEvent)
-  | ({ kind: 'hard-drop' } & HardDropEvent);
+  | ({ kind: 'hard-drop' } & HardDropEvent)
+);
 
 type LineClearEvent = {
   lines: LineCoord[];

@@ -1,5 +1,6 @@
 import { ComponentProps } from 'react';
 import { match, P } from 'ts-pattern';
+import Popup from '~/scene/Play/Game/ScoreEventStream/Popup';
 import { ScoreEvent } from '../gameplay';
 import comboName from './comboName';
 import useSlidingWindow from './useSlidingWindow';
@@ -8,29 +9,28 @@ import { useCamera } from '~/scene/shared';
 import { PlaneCombo } from '../gameplay';
 import { LineCoord, Plane } from '../types';
 import { translate } from '../utils';
-import GainLine from './GainLine';
 
 type Props = {
   camera: {
     position: 'c1' | 'c2' | 'c3' | 'c4';
     relativeAxis: ReturnType<typeof useCamera>[2];
   };
-  scoreEvent: ScoreEvent;
+  event: Extract<ScoreEvent, { kind: 'line-clear' }>;
 };
 
-export default function ScoreEventDisplayer(props: Props) {
+export default function LineClearFeedback(props: Props) {
   const primaryPlane =
-    props.scoreEvent.lines.filter((l) => 'x' in l).length >
-    props.scoreEvent.lines.filter((l) => 'z' in l).length
+    props.event.lines.filter((l) => 'x' in l).length >
+    props.event.lines.filter((l) => 'z' in l).length
       ? 'z'
       : 'x';
 
-  const sortedLines = props.scoreEvent.lines.toSorted(
+  const sortedLines = props.event.lines.toSorted(
     lineOrderCriteria(props.camera.relativeAxis, primaryPlane),
   );
 
   const firstLine = sortedLines[0];
-  const gainLineProps: (ComponentProps<typeof GainLine> & { id: string })[] =
+  const gainLineProps: (ComponentProps<typeof Popup> & { id: string })[] =
     sortedLines.map((line, i) => {
       const id = [line.x ?? '_', line.y, line.z ?? '_'].join(':');
       const layout = getPositioning(line, props.camera);
@@ -43,7 +43,7 @@ export default function ScoreEventDisplayer(props: Props) {
         )
         .otherwise(() => 'orthogonal');
 
-      const text = comboName(i + 1, props.scoreEvent.cascade, planeCombo);
+      const text = comboName(i + 1, props.event.cascade, planeCombo);
       return { id, text, ...layout };
     });
 
@@ -52,7 +52,7 @@ export default function ScoreEventDisplayer(props: Props) {
   return gainLineProps.map(
     (line, i) =>
       visibleWindow.includes(i) && (
-        <GainLine
+        <Popup
           key={line.id}
           position={line.position}
           rotation={line.rotation}

@@ -9,7 +9,7 @@ type Props = {
   text: string;
 };
 
-export default function GainLine(props: Props) {
+export default function Popup(props: Props) {
   const [yOffset, setYOffset] = React.useState(0);
 
   useFrame((_, delta) => {

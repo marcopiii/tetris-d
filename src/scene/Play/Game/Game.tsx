@@ -7,7 +7,7 @@ import { BagAction, CameraAction, CutAction, Actions } from './types';
 import { useCamera } from '~/scene/shared';
 import BagPanel from './BagPanel';
 import Board from './Board';
-import ScoreEventDisplayer from './ScoreEventDisplayer';
+import ScoreEventStream from './ScoreEventStream';
 import {
   drop,
   rotateLeft,
@@ -55,7 +55,7 @@ export default function Game(props: Props) {
 
   const [cut, setCut] = useCutter(camera);
 
-  const { progress, trackProgress } = useScoreTracker();
+  const { progress, scoreEventStream, trackProgress } = useScoreTracker();
 
   const ghost = projectGhost(board);
 
@@ -250,13 +250,10 @@ export default function Game(props: Props) {
         lockTimer={lockTimer}
       />
       <Ghost type={bag.current} occupiedBlocks={ghost} />
-      {Object.entries(gainStream).map(([key, scoreEvent]) => (
-        <ScoreEventDisplayer
-          camera={{ position: camera, relativeAxis }}
-          scoreEvent={scoreEvent}
-          key={key}
-        />
-      ))}
+      <ScoreEventStream
+        camera={{ position: camera, relativeAxis }}
+        scoreEventStream={scoreEventStream}
+      />
     </group>
   );
 }

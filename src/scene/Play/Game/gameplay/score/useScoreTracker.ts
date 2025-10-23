@@ -1,12 +1,21 @@
 import React from 'react';
-import { Progress } from './types';
+import { Progress, ScoreEvent } from './types';
 import { LineCoord } from '../../types';
+import { planeComboPerLines } from './comboDetector';
 import { pointsPerClear, pointsPerHardDrop } from './pointsCalculator';
 
 const LINE_CLEAR_PER_LEVEL = 10;
 
+type CascadeBuffer = {
+  lines: LineCoord[];
+  clears: number;
+};
+
 export default function useScoreTracker() {
-  const cascadeBuffer = React.useRef<LineCoord[]>([]);
+  const cascadeBuffer = React.useRef<CascadeBuffer>({
+    lines: [],
+    clears: 0,
+  });
 
   const [progress, addProgress] = React.useReducer(
     (prev, action: { points: number; lines: number }) => ({
@@ -16,18 +25,39 @@ export default function useScoreTracker() {
     { score: 0, lines: 0 },
   );
 
+  const scoreEventStream = React.useRef<ScoreEvent[]>([]);
+
   const trackLineClear = (lines: LineCoord[]) => {
-    const effectiveLines = lines.length
-      ? [...lines, ...cascadeBuffer.current]
-      : [];
-    cascadeBuffer.current = effectiveLines;
+    cascadeBuffer.current = {
+      lines: lines.length ? [...lines, ...cascadeBuffer.current.lines] : [],
+      clears: lines.length ? cascadeBuffer.current.clears + 1 : 0,
+    };
     const level = getLevel(progress.lines);
-    const points = pointsPerClear(level)(effectiveLines);
+    const points = pointsPerClear(level)(cascadeBuffer.current.lines);
+    const planeCombo = planeComboPerLines(cascadeBuffer.current.lines);
+
+    const scoreEvent: ScoreEvent = {
+      id: performance.now(),
+      kind: 'line-clear',
+      lines: lines,
+      planeCombo: planeCombo,
+      cascade: cascadeBuffer.current.clears - 1,
+    };
+
+    scoreEventStream.current.push(scoreEvent);
     addProgress({ points, lines: lines.length });
   };
 
   const trackHardDrop = (length: number) => {
     const points = pointsPerHardDrop(length);
+
+    const scoreEvent: ScoreEvent = {
+      id: performance.now(),
+      kind: 'hard-drop',
+      length: length,
+    };
+
+    scoreEventStream.current.push(scoreEvent);
     addProgress({ points, lines: 0 });
   };
 
@@ -36,6 +66,7 @@ export default function useScoreTracker() {
       score: progress.score,
       level: getLevel(progress.lines),
     } satisfies Progress,
+    scoreEventStream: scoreEventStream.current,
     trackProgress: {
       lineClear: trackLineClear,
       hardDrop: trackHardDrop,
