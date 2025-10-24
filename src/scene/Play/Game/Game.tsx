@@ -2,6 +2,7 @@ import React from 'react';
 import { match } from 'ts-pattern';
 import { FX, play } from '~/audio';
 import { useGamepadManager, useKeyboardManager } from '~/controls';
+import { spinDetector } from '~/scene/Play/Game/gameplay/score/spinDetector';
 import { VANISH_ZONE_ROWS } from './params';
 import { BagAction, CameraAction, CutAction, Actions } from './types';
 import { useCamera } from '~/scene/shared';
@@ -62,9 +63,7 @@ export default function Game(props: Props) {
   const hasHardDroppedRef = React.useRef(false);
 
   const lastMoveSpinDataRef =
-    React.useRef<Pick<TetriminoState, 'position' | 'rotationState'>>(undefined);
-
-  console.log(lastMoveSpinDataRef.current);
+    React.useRef<Omit<TetriminoState, 'shape'>>(undefined);
 
   const { triggerLock, cancelLock, canReset, lockTimer } = useLockDelay(() => {
     const isInVanishZone = tetrimino.every(({ y }) => y < VANISH_ZONE_ROWS);
@@ -76,14 +75,13 @@ export default function Game(props: Props) {
       plane.change();
       play(FX.lock, 0.15);
       hasHardDroppedRef.current = false;
-      lastMoveSpinDataRef.current = undefined;
     }
   });
 
   useGravity(() => {
-    checkLines(true);
-    const success = attempt(drop)(board);
-    if (success) {
+    const deletedLines = checkLines(true);
+    const dropSuccess = !!attempt(drop)(board);
+    if (deletedLines.length > 0 || dropSuccess) {
       lastMoveSpinDataRef.current = undefined;
     }
   }, progress.level);
@@ -98,6 +96,9 @@ export default function Game(props: Props) {
 
   // every time the board changes, due to a piece being fixed or lines being cleared
   React.useEffect(() => {
+    if (lastMoveSpinDataRef.current) {
+      const tSpin = spinDetector(lastMoveSpinDataRef.current, board);
+    }
     const completedLines = checkLines(false);
     if (completedLines.length > 0) {
       play(FX.line_clear, 0.75);
