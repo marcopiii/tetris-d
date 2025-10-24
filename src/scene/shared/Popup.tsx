@@ -1,6 +1,8 @@
 import { useFrame } from '@react-three/fiber';
+import TWEEN from '@tweenjs/tween.js';
 import * as THREE from 'three';
 import React from 'react';
+import { EVENT_LIFESPAN_MS } from '~/scene/Play/Game/gameplay';
 import Word from './Word';
 
 type Props = Omit<
@@ -11,8 +13,13 @@ type Props = Omit<
 export default function Popup(props: Props) {
   const [offset, setOffset] = React.useState(0);
 
-  useFrame((_, delta) => {
-    setOffset((prev) => prev + delta);
+  const t0 = React.useRef(performance.now());
+
+  useFrame(() => {
+    const dt = performance.now() - t0.current;
+    const p = dt / EVENT_LIFESPAN_MS;
+    const delta = TWEEN.Easing.Circular.Out(p) * 2;
+    setOffset(delta);
   });
 
   const positionVector = props.position

@@ -5,14 +5,15 @@ import { planeComboPerLines } from './comboDetector';
 import { pointsPerClear, pointsPerHardDrop } from './pointsCalculator';
 
 const LINE_CLEAR_PER_LEVEL = 10;
-const EVENT_LIFESPAN_MS = 1500;
+
+export const EVENT_LIFESPAN_MS = 1500;
 
 type CascadeBuffer = {
   lines: LineCoord[];
   clears: number;
 };
 
-export default function useScoreTracker() {
+export function useScoreTracker() {
   const cascadeBuffer = React.useRef<CascadeBuffer>({
     lines: [],
     clears: 0,

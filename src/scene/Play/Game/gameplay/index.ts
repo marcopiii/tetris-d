@@ -7,6 +7,7 @@ import useBoardManager from './useBoardManager';
 import useTetriminoManager from './useTetriminoManager';
 import {
   useScoreTracker,
+  EVENT_LIFESPAN_MS,
   PlaneCombo,
   ScoreEvent,
   Progress,
@@ -29,6 +30,7 @@ export {
   useCutter,
   useLockDelay,
   LOCK_DELAY_MS,
+  EVENT_LIFESPAN_MS,
 };
 export type {
   LockTimer,
