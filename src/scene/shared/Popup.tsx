@@ -12,7 +12,7 @@ export default function Popup(props: Props) {
   const [offset, setOffset] = React.useState(0);
 
   useFrame((_, delta) => {
-    setOffset((prev) => prev + 0.1 * delta);
+    setOffset((prev) => prev + delta);
   });
 
   const positionVector = props.position
@@ -24,11 +24,11 @@ export default function Popup(props: Props) {
     props.toward === 'fw' ? offset : 0,
   ).applyEuler(new THREE.Euler(0, props.rotation ?? 0, 0));
 
-  const position = positionVector.add(offsetVector);
+  const position = positionVector.add(offsetVector).toArray();
 
   return (
     <Word
-      position={[position.x, position.y, position.z]}
+      position={position}
       rotation={props.rotation}
       alignX={props.alignX}
       text={props.text}

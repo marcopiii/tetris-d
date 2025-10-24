@@ -71,7 +71,6 @@ export default function Word(props: Props) {
       rotation={[0, props.rotation ?? 0, 0]}
       cacheKey={centerCacheKey}
     >
-      <axesHelper />
       {chars.map((char, i) => {
         const offset =
           charOffsets[i] *
