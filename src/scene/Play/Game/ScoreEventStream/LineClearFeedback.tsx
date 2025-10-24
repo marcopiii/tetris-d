@@ -44,7 +44,7 @@ export default function LineClearFeedback(props: Props) {
         .otherwise(() => 'orthogonal');
 
       const text = comboName(i + 1, props.event.cascade, planeCombo);
-      return { id, text, ...layout };
+      return { ...layout, id, text, distance: 1 };
     });
 
   const visibleWindow = useSlidingWindow(popups.length);

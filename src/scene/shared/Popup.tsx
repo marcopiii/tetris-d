@@ -8,7 +8,7 @@ import Word from './Word';
 type Props = Omit<
   React.ComponentProps<typeof Word>,
   'type' | 'font' | 'disabled' | 'alignY' | 'alignZ'
-> & { toward: 'up' | 'fw' | 'rx' | 'sx' };
+> & { toward: 'up' | 'fw' | 'rx' | 'sx'; distance: number };
 
 export default function Popup(props: Props) {
   const [offset, setOffset] = React.useState(0);
@@ -17,8 +17,8 @@ export default function Popup(props: Props) {
 
   useFrame(() => {
     const dt = performance.now() - t0.current;
-    const p = dt / EVENT_LIFESPAN_MS;
-    const delta = TWEEN.Easing.Circular.Out(p) * 2;
+    const progress = TWEEN.Easing.Circular.Out(dt / EVENT_LIFESPAN_MS);
+    const delta = progress * props.distance;
     setOffset(delta);
   });
 

@@ -48,6 +48,7 @@ export default function ProgressPanel(props: Props) {
           alignX="left"
           text={`+${points.toString()}`}
           toward="fw"
+          distance={2}
         />
       ))}
       <LabeledNumber
