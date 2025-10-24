@@ -1,11 +1,13 @@
 import { match } from 'ts-pattern';
-import { Progress } from '~/scene/Play/Game/gameplay';
-import { COLS, ROWS } from '~/scene/Play/Game/params';
+import { Popup } from '~/scene/shared';
+import { Progress, ScoreEvent } from '../gameplay';
+import { COLS, ROWS } from '../params';
 import LabeledNumber from './LabeledNumber';
 
 type Props = {
   camera: 'c1' | 'c2' | 'c3' | 'c4';
   progress: Progress;
+  scoreEventStream: ScoreEvent[];
 };
 
 export default function ProgressPanel(props: Props) {
@@ -38,6 +40,17 @@ export default function ProgressPanel(props: Props) {
         label="score"
         value={props.progress.score}
       />
+      {props.scoreEventStream.map(({ points, id }) => (
+        <Popup
+          key={id}
+          position={[0, -1.5, 0.15]}
+          rotation={0}
+          alignX="left"
+          text={`+${points.toString()}`}
+          toward="fw"
+          distance={2}
+        />
+      ))}
       <LabeledNumber
         position={[0, -3.5, 0]}
         label="level"

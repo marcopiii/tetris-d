@@ -1,11 +1,10 @@
 import { ComponentProps } from 'react';
 import { match, P } from 'ts-pattern';
-import Popup from '~/scene/Play/Game/ScoreEventStream/Popup';
-import { ScoreEvent } from '../gameplay';
+import { LineClearEvent } from '../gameplay';
 import comboName from './comboName';
 import useSlidingWindow from './useSlidingWindow';
 import { COLS } from '../params';
-import { useCamera } from '~/scene/shared';
+import { Popup, useCamera } from '~/scene/shared';
 import { PlaneCombo } from '../gameplay';
 import { LineCoord, Plane } from '../types';
 import { translate } from '../utils';
@@ -15,7 +14,7 @@ type Props = {
     position: 'c1' | 'c2' | 'c3' | 'c4';
     relativeAxis: ReturnType<typeof useCamera>[2];
   };
-  event: Extract<ScoreEvent, { kind: 'line-clear' }>;
+  event: LineClearEvent;
 };
 
 export default function LineClearFeedback(props: Props) {
@@ -30,7 +29,8 @@ export default function LineClearFeedback(props: Props) {
   );
 
   const firstLine = sortedLines[0];
-  const gainLineProps: (ComponentProps<typeof Popup> & { id: string })[] =
+
+  const popups: (ComponentProps<typeof Popup> & { id: string })[] =
     sortedLines.map((line, i) => {
       const id = [line.x ?? '_', line.y, line.z ?? '_'].join(':');
       const layout = getPositioning(line, props.camera);
@@ -44,21 +44,15 @@ export default function LineClearFeedback(props: Props) {
         .otherwise(() => 'orthogonal');
 
       const text = comboName(i + 1, props.event.cascade, planeCombo);
-      return { id, text, ...layout };
+      return { ...layout, id, text, distance: 1 };
     });
 
-  const visibleWindow = useSlidingWindow(gainLineProps.length);
+  const visibleWindow = useSlidingWindow(popups.length);
 
-  return gainLineProps.map(
-    (line, i) =>
+  return popups.map(
+    (popupProps, i) =>
       visibleWindow.includes(i) && (
-        <Popup
-          key={line.id}
-          position={line.position}
-          rotation={line.rotation}
-          alignment={line.alignment}
-          text={line.text}
-        />
+        <Popup {...popupProps} key={popupProps.id} />
       ),
   );
 }
@@ -102,7 +96,7 @@ function getPositioning(line: LineCoord, camera: Props['camera']) {
     .with({ z: P.number }, ({ z, y }) => translate(xAnchor, y, z))
     .exhaustive();
 
-  const [yRotation, alignment] = match([line, camera.position])
+  const [rotation, alignment] = match([line, camera.position])
     .with([{ x: P.number }, 'c1'], () => [-Math.PI / 2, 'right'] as const)
     .with([{ x: P.number }, 'c2'], () => [Math.PI / 2, 'left'] as const)
     .with([{ x: P.number }, 'c3'], () => [Math.PI / 2, 'right'] as const)
@@ -115,7 +109,8 @@ function getPositioning(line: LineCoord, camera: Props['camera']) {
 
   return {
     position,
-    rotation: [0, yRotation, 0] satisfies [number, number, number],
-    alignment,
+    rotation,
+    alignX: alignment,
+    toward: alignment === 'left' ? ('sx' as const) : ('rx' as const),
   };
 }

@@ -5,7 +5,15 @@ import useBag from './useBag';
 import usePlane from './usePlane';
 import useBoardManager from './useBoardManager';
 import useTetriminoManager from './useTetriminoManager';
-import { useScoreTracker, PlaneCombo, ScoreEvent, Progress } from './score';
+import {
+  useScoreTracker,
+  EVENT_LIFESPAN_MS,
+  PlaneCombo,
+  ScoreEvent,
+  Progress,
+  LineClearEvent,
+  HardDropEvent,
+} from './score';
 import useCutter from './useCutter';
 import { useLockDelay, LockTimer, LOCK_DELAY_MS } from './lockDelay';
 
@@ -22,5 +30,13 @@ export {
   useCutter,
   useLockDelay,
   LOCK_DELAY_MS,
+  EVENT_LIFESPAN_MS,
 };
-export type { LockTimer, PlaneCombo, ScoreEvent, Progress };
+export type {
+  LockTimer,
+  PlaneCombo,
+  ScoreEvent,
+  Progress,
+  LineClearEvent,
+  HardDropEvent,
+};
