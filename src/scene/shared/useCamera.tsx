@@ -33,7 +33,7 @@ export default function useCamera<K extends string>(
     }
 
     new TWEEN.Tween(camera.position, tweenGroup.current)
-      .to(new THREE.Vector3(...cameraSetup.position), 500)
+      .to(new THREE.Vector3(...cameraSetup.position), 750)
       .easing(TWEEN.Easing.Exponential.Out)
       .onUpdate(() => camera.lookAt(...cameraSetup.lookAt))
       .start();
