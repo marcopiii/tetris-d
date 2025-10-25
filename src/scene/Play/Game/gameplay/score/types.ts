@@ -25,4 +25,5 @@ export type HardDropEvent = {
 
 export type TSpinEvent = {
   mini: boolean;
+  pivot: LineCoord;
 };

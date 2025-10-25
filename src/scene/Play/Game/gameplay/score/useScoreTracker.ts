@@ -79,14 +79,13 @@ export function useScoreTracker() {
     addProgress({ points, lines: 0 });
   };
 
-  const trackTSpin = (kind?: 'mini' | 'full') => {
-    if (!kind) return;
-
+  const trackTSpin = (kind: 'mini' | 'full', pivot: LineCoord) => {
     // todo: calculate points for t-spin
     const scoreEvent: ScoreEvent = {
       id: Date.now(),
       kind: 't-spin',
       mini: kind === 'mini',
+      pivot: pivot,
       points: 0,
     };
 

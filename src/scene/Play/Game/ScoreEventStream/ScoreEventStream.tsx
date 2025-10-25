@@ -1,4 +1,5 @@
 import { match } from 'ts-pattern';
+import TSpinFeedback from '~/scene/Play/Game/ScoreEventStream/TSpinFeedback';
 import LineClearFeedback from './LineClearFeedback';
 import { ScoreEvent } from '../gameplay';
 import { useCamera } from '~/scene/shared';
@@ -18,7 +19,9 @@ export default function ScoreEventStream(props: Props) {
         <LineClearFeedback key={event.id} camera={props.camera} event={event} />
       ))
       .with({ kind: 'hard-drop' }, () => null)
-      .with({ kind: 't-spin' }, () => null)
+      .with({ kind: 't-spin' }, (event) => (
+        <TSpinFeedback key={event.id} camera={props.camera} event={event} />
+      ))
       .exhaustive(),
   );
 }

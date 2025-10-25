@@ -97,7 +97,9 @@ export default function Game(props: Props) {
   // every time the board changes, due to a piece being fixed or lines being cleared
   React.useEffect(() => {
     const tSpin = spinDetector(lastMoveSpinDataRef.current, board);
-    trackProgress.tSpin(tSpin);
+    if (tSpin) {
+      trackProgress.tSpin(...tSpin);
+    }
     const completedLines = checkLines(false);
     if (completedLines.length > 0) {
       play(FX.line_clear, 0.75);

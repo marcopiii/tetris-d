@@ -1,6 +1,7 @@
 import { partition } from 'es-toolkit';
 import { match } from 'ts-pattern';
 import { TetriminoState } from '~/scene/Play/Game/gameplay';
+import { LineCoord } from '~/scene/Play/Game/types';
 import { Tetrimino } from '~/tetrimino';
 
 export function spinDetector(
@@ -11,6 +12,11 @@ export function spinDetector(
   if (state.type != 'T') return undefined;
 
   const { position: p, rotationState: r, plane } = state;
+
+  const pivot: LineCoord = match(plane)
+    .with('x', () => ({ y: p.y + 1, z: p.z + 1 }))
+    .with('z', () => ({ y: p.y + 1, x: p.x + 1 }))
+    .exhaustive();
 
   // https://tetris.wiki/T-Spin
   const cornersCoord = {
@@ -83,9 +89,11 @@ export function spinDetector(
     0,
   );
 
-  return match([fc, bc])
+  const kind = match([fc, bc])
     .with([1, 2], () => 'mini' as const)
     .with([2, 1], () => 'full' as const)
     .with([2, 2], () => 'full' as const)
     .otherwise(() => undefined);
+
+  return kind ? ([kind, pivot] as const) : undefined;
 }
