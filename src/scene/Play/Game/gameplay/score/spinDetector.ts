@@ -85,5 +85,6 @@ export function spinDetector(
   return match([fc, bc])
     .with([1, 2], () => 'mini' as const)
     .with([2, 1], () => 'full' as const)
+    .with([2, 2], () => 'full' as const)
     .otherwise(() => undefined);
 }
