@@ -1,6 +1,6 @@
 import React from 'react';
 import { match, P } from 'ts-pattern';
-import { Progress, ScoreEvent } from './types';
+import { Progress, ScoreEvent, TSpinKind } from './types';
 import { LineCoord } from '../../types';
 import { planeComboPerLines } from './comboDetector';
 import {
@@ -85,7 +85,7 @@ export function useScoreTracker() {
   };
 
   const trackTSpin = (
-    spinData: ['mini' | 'full', LineCoord] | undefined,
+    spinData: [TSpinKind, LineCoord] | undefined,
     completedLines: LineCoord[],
   ) => {
     if (!spinData) return;

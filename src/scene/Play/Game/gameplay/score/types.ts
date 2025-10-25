@@ -7,6 +7,8 @@ export type Progress = {
 
 export type PlaneCombo = 'mono' | 'parallel' | 'orthogonal';
 
+export type TSpinKind = 'mini' | 'full';
+
 export type ScoreEvent = { id: number; points: number } & (
   | ({ kind: 'line-clear' } & LineClearEvent)
   | ({ kind: 'hard-drop' } & HardDropEvent)

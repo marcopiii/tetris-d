@@ -1,13 +1,14 @@
 import { partition } from 'es-toolkit';
 import { match } from 'ts-pattern';
-import { TetriminoState } from '~/scene/Play/Game/gameplay';
-import { LineCoord } from '~/scene/Play/Game/types';
+import { TetriminoState } from '../../gameplay';
+import { TSpinKind } from './types';
+import { LineCoord } from '../../types';
 import { Tetrimino } from '~/tetrimino';
 
 export function spinDetector(
   state: Omit<TetriminoState, 'shape'> | undefined,
   board: { type: Tetrimino; x: number; y: number; z: number }[],
-) {
+): [TSpinKind, LineCoord] | undefined {
   if (!state) return undefined;
   if (state.type != 'T') return undefined;
 
@@ -95,7 +96,5 @@ export function spinDetector(
     .with([2, 2], () => 'full' as const)
     .otherwise(() => undefined);
 
-  return kind
-    ? ([kind, pivot] satisfies ['mini' | 'full', LineCoord])
-    : undefined;
+  return kind ? [kind, pivot] : undefined;
 }

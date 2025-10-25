@@ -6,6 +6,7 @@ import type {
   LineClearEvent,
   HardDropEvent,
   TSpinEvent,
+  TSpinKind,
 } from './types';
 
 export { useScoreTracker, EVENT_LIFESPAN_MS };
@@ -16,4 +17,5 @@ export type {
   LineClearEvent,
   HardDropEvent,
   TSpinEvent,
+  TSpinKind,
 };
