@@ -18,6 +18,7 @@ export default function ScoreEventStream(props: Props) {
         <LineClearFeedback key={event.id} camera={props.camera} event={event} />
       ))
       .with({ kind: 'hard-drop' }, () => null)
+      .with({ kind: 't-spin' }, () => null)
       .exhaustive(),
   );
 }

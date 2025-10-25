@@ -4,9 +4,10 @@ import { TetriminoState } from '~/scene/Play/Game/gameplay';
 import { Tetrimino } from '~/tetrimino';
 
 export function spinDetector(
-  state: Omit<TetriminoState, 'shape'>,
+  state: Omit<TetriminoState, 'shape'> | undefined,
   board: { type: Tetrimino; x: number; y: number; z: number }[],
 ) {
+  if (!state) return undefined;
   if (state.type != 'T') return undefined;
 
   const { position: p, rotationState: r, plane } = state;
