@@ -1,8 +1,13 @@
 import React from 'react';
+import { match, P } from 'ts-pattern';
 import { Progress, ScoreEvent } from './types';
 import { LineCoord } from '../../types';
 import { planeComboPerLines } from './comboDetector';
-import { pointsPerClear, pointsPerHardDrop } from './pointsCalculator';
+import {
+  pointsPerClear,
+  pointsPerHardDrop,
+  pointsPerTSpin,
+} from './pointsCalculator';
 
 const LINE_CLEAR_PER_LEVEL = 10;
 
@@ -79,18 +84,33 @@ export function useScoreTracker() {
     addProgress({ points, lines: 0 });
   };
 
-  const trackTSpin = (kind: 'mini' | 'full', pivot: LineCoord) => {
-    // todo: calculate points for t-spin
+  const trackTSpin = (
+    spinData: ['mini' | 'full', LineCoord] | undefined,
+    completedLines: LineCoord[],
+  ) => {
+    if (!spinData) return;
+    const [kind, pivot] = spinData;
+
+    const relevantLines = completedLines.filter((line) =>
+      match(pivot)
+        .with({ x: P.number }, () => 'z' in line)
+        .with({ y: P.number }, () => 'x' in line)
+        .exhaustive(),
+    );
+
+    const level = getLevel(progress.lines);
+    const points = pointsPerTSpin(level)(relevantLines.length, kind);
+
     const scoreEvent: ScoreEvent = {
       id: Date.now(),
       kind: 't-spin',
       mini: kind === 'mini',
       pivot: pivot,
-      points: 0,
+      points: points,
     };
 
     pushEvent(scoreEvent);
-    addProgress({ points: 0, lines: 0 });
+    addProgress({ points, lines: 0 });
   };
 
   return {

@@ -27,3 +27,19 @@ function planeComboMultiplier(combo: PlaneCombo) {
     .with('orthogonal', () => 1.5)
     .exhaustive();
 }
+
+export const pointsPerTSpin =
+  (level: number) => (clears: number, kind: 'mini' | 'full') => {
+    const base = match([clears, kind])
+      .with([0, 'mini'], () => 100)
+      .with([0, 'full'], () => 400)
+      .with([1, 'mini'], () => 200)
+      .with([1, 'full'], () => 800)
+      .with([2, 'mini'], () => 400)
+      .with([2, 'full'], () => 1200)
+      .with([3, 'full'], () => 1600)
+      .otherwise(() => {
+        throw new Error('impossibiru');
+      });
+    return base * level;
+  };

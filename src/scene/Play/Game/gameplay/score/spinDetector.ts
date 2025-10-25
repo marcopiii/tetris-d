@@ -95,5 +95,7 @@ export function spinDetector(
     .with([2, 2], () => 'full' as const)
     .otherwise(() => undefined);
 
-  return kind ? ([kind, pivot] as const) : undefined;
+  return kind
+    ? ([kind, pivot] satisfies ['mini' | 'full', LineCoord])
+    : undefined;
 }
