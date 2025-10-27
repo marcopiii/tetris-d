@@ -5,15 +5,27 @@ import { emptyMatrix } from './matrices';
 import { BoardMatrix } from './types';
 import { Tetrimino } from '~/tetrimino';
 import { COLS } from '../../params';
-import { LineCoord } from '../../types';
+import { LineCoord, PlaneCoords } from '../../types';
 import checkCompletedLines from '../checkCompletedLines';
 
+type TriggerData =
+  | {
+      reason: 'piece-fix';
+    }
+  | {
+      reason: 'line-clear';
+      deletedLines: LineCoord[];
+    };
+
 export function useBoardManager(effect: {
-  onLinesDeleted: (cascadeCompletedLines: LineCoord[]) => void;
+  onLinesDeleted: (
+    clearedPlanes: PlaneCoords[],
+    cascadeCompletedLines: LineCoord[],
+  ) => void;
   onPieceFixed: (completedLines: LineCoord[]) => void;
 }) {
   const [matrix, setMatrix] = React.useState<BoardMatrix>(emptyMatrix);
-  const triggerRef = React.useRef<'piece-fix' | 'line-clear'>(undefined);
+  const triggerRef = React.useRef<TriggerData>(undefined);
 
   /**
    * The array of coordinates of the blocks that are occupied by the pieces in
@@ -39,7 +51,7 @@ export function useBoardManager(effect: {
     tetrimino.forEach(({ y, x, z }) => {
       newMatrix[y][x][z] = type;
     });
-    triggerRef.current = 'piece-fix';
+    triggerRef.current = { reason: 'piece-fix' };
     setMatrix(newMatrix);
   };
 
@@ -51,20 +63,37 @@ export function useBoardManager(effect: {
     const completedLines = checkCompletedLines(board);
     if (completedLines.length > 0) {
       const newMatrix = removeCompletedLines(matrix)(completedLines);
-      triggerRef.current = 'line-clear';
+      triggerRef.current = {
+        reason: 'line-clear',
+        deletedLines: completedLines,
+      };
       setMatrix(newMatrix);
+    } else {
+      triggerRef.current = undefined;
     }
     return completedLines;
   };
 
+  function isPlaneClear(planeCoords: PlaneCoords): boolean {
+    return match(planeCoords)
+      .with({ x: P.number }, ({ x }) => board.every((mino) => mino.x !== x))
+      .with({ z: P.number }, ({ z }) => board.every((mino) => mino.z !== z))
+      .exhaustive();
+  }
+
   useEffect(() => {
     const completedLines = checkCompletedLines(board);
     match(triggerRef.current)
-      .with('piece-fix', () => {
+      .with({ reason: 'piece-fix' }, () => {
         effect.onPieceFixed(completedLines);
       })
-      .with('line-clear', () => {
-        effect.onLinesDeleted(completedLines);
+      .with({ reason: 'line-clear' }, ({ deletedLines }) => {
+        const involvedPlanes = uniqBy(
+          deletedLines.map(planeCoord),
+          JSON.stringify,
+        );
+        const clearedPlanes = involvedPlanes.filter(isPlaneClear);
+        effect.onLinesDeleted(clearedPlanes, completedLines);
       })
       .otherwise(noop);
   }, [matrix]);
@@ -109,3 +138,9 @@ const removeCompletedLines = (matrix: BoardMatrix) => (lines: LineCoord[]) => {
   blockToDelete.forEach(deleteBlock);
   return newMatriz;
 };
+
+const planeCoord = (line: LineCoord): PlaneCoords =>
+  match(line)
+    .with({ x: P.number }, ({ x }) => ({ x }))
+    .with({ z: P.number }, ({ z }) => ({ z }))
+    .exhaustive();
