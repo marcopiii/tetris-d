@@ -1,7 +1,7 @@
 import { cloneDeep, uniqBy } from 'es-toolkit';
 import React from 'react';
 import { match, P } from 'ts-pattern';
-import { Tetrimino } from '../../../../tetrimino';
+import { Tetrimino } from '~/tetrimino';
 import { COLS, ROWS, VANISH_ZONE_ROWS } from '../params';
 import { LineCoord } from '../types';
 import checkCompletedLines from './checkCompletedLines';

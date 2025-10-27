@@ -43,7 +43,8 @@ export default function useTetriminoManager(type: Tetrimino, plane: Plane) {
 
   /**
    * Attempts to apply the given move function to the tetrimino inside the given board.
-   * Returns true if the move was successful and the tetrimino state actually changed, false otherwise.
+   * @return the new `TetriminoState` if the move was successful and the tetrimino state
+   * actually changed, undefined otherwise.
    */
   const attempt =
     (moveFn: (state: TetriminoState) => TetriminoState) =>
@@ -56,10 +57,10 @@ export default function useTetriminoManager(type: Tetrimino, plane: Plane) {
       );
       const collision = detectCollision(newTetriminoMatrix, boardMatrix);
       if (collision) {
-        return false;
+        return undefined;
       } else {
         setState(newState);
-        return true;
+        return newState;
       }
     };
 

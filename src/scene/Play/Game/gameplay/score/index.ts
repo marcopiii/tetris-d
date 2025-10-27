@@ -5,7 +5,17 @@ import type {
   Progress,
   LineClearEvent,
   HardDropEvent,
+  TSpinEvent,
+  TSpinKind,
 } from './types';
 
 export { useScoreTracker, EVENT_LIFESPAN_MS };
-export type { PlaneCombo, ScoreEvent, Progress, LineClearEvent, HardDropEvent };
+export type {
+  PlaneCombo,
+  ScoreEvent,
+  Progress,
+  LineClearEvent,
+  HardDropEvent,
+  TSpinEvent,
+  TSpinKind,
+};

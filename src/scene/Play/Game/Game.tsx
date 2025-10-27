@@ -2,6 +2,7 @@ import React from 'react';
 import { match } from 'ts-pattern';
 import { FX, play } from '~/audio';
 import { useGamepadManager, useKeyboardManager } from '~/controls';
+import { spinDetector } from '~/scene/Play/Game/gameplay/score/spinDetector';
 import { VANISH_ZONE_ROWS } from './params';
 import { BagAction, CameraAction, CutAction, Actions } from './types';
 import { useCamera } from '~/scene/shared';
@@ -25,6 +26,7 @@ import {
   useTetriminoManager,
   useLockDelay,
   Progress,
+  TetriminoState,
 } from './gameplay';
 import Ghost from './Ghost';
 import ProgressPanel from './ProgressPanel';
@@ -45,6 +47,7 @@ export default function Game(props: Props) {
     bag.current,
     plane.current,
   );
+  const ghost = projectGhost(board);
 
   const [camera, setCamera, relativeAxis] = useCamera({
     c1: { position: [-10, 5, 10], lookAt: [0, 1, 0] },
@@ -57,9 +60,10 @@ export default function Game(props: Props) {
 
   const { progress, scoreEventStream, trackProgress } = useScoreTracker();
 
-  const ghost = projectGhost(board);
-
   const hasHardDroppedRef = React.useRef(false);
+
+  const lastMoveSpinDataRef =
+    React.useRef<Omit<TetriminoState, 'shape'>>(undefined);
 
   const { triggerLock, cancelLock, canReset, lockTimer } = useLockDelay(() => {
     const isInVanishZone = tetrimino.every(({ y }) => y < VANISH_ZONE_ROWS);
@@ -75,10 +79,14 @@ export default function Game(props: Props) {
   });
 
   useGravity(() => {
-    checkLines(true);
-    attempt(drop)(board);
+    const deletedLines = checkLines(true);
+    const dropSuccess = !!attempt(drop)(board);
+    if (deletedLines.length > 0 || dropSuccess) {
+      lastMoveSpinDataRef.current = undefined;
+    }
   }, progress.level);
 
+  // every time the tetrimino moves, by player action or gravity
   React.useEffect(() => {
     const shouldLock = tetrimino.every((t) =>
       ghost.some((g) => g.x === t.x && g.y === t.y && g.z === t.z),
@@ -86,12 +94,15 @@ export default function Game(props: Props) {
     shouldLock ? triggerLock() : cancelLock();
   }, [tetrimino]);
 
+  // every time the board changes, due to a piece being fixed or lines being cleared
   React.useEffect(() => {
+    const spinData = spinDetector(lastMoveSpinDataRef.current, board);
     const completedLines = checkLines(false);
     if (completedLines.length > 0) {
       play(FX.line_clear, 0.75);
     }
     trackProgress.lineClear(completedLines);
+    trackProgress.tSpin(spinData, completedLines);
   }, [board]);
 
   function cameraAction(action: CameraAction) {
@@ -122,7 +133,7 @@ export default function Game(props: Props) {
     if (hasHardDroppedRef.current || !canReset) {
       return;
     }
-    const [rightInverted, forwardInverted] = match(plane.current)
+    const [rxInverted, fwInverted] = match(plane.current)
       .with('x', () => [
         relativeAxis.z.rightInverted,
         relativeAxis.x.forwardInverted,
@@ -133,21 +144,44 @@ export default function Game(props: Props) {
       ])
       .exhaustive();
     const success = match(action)
-      .with('shiftL', () =>
-        attempt(rightInverted ? shiftRight : shiftLeft)(board),
-      )
-      .with('shiftR', () =>
-        attempt(rightInverted ? shiftLeft : shiftRight)(board),
-      )
-      .with('shiftF', () =>
-        attempt(forwardInverted ? shiftBackward : shiftForward)(board),
-      )
-      .with('shiftB', () =>
-        attempt(forwardInverted ? shiftForward : shiftBackward)(board),
-      )
+      .with('shiftL', () => {
+        const shift = rxInverted ? shiftRight : shiftLeft;
+        const mutatedTetriminoState = attempt(shift)(board);
+        if (mutatedTetriminoState) {
+          lastMoveSpinDataRef.current = undefined;
+        }
+        return !!mutatedTetriminoState;
+      })
+      .with('shiftR', () => {
+        const shift = rxInverted ? shiftLeft : shiftRight;
+        const mutatedTetriminoState = attempt(shift)(board);
+        if (mutatedTetriminoState) {
+          lastMoveSpinDataRef.current = undefined;
+        }
+        return !!mutatedTetriminoState;
+      })
+      .with('shiftF', () => {
+        const shift = fwInverted ? shiftBackward : shiftForward;
+        const mutatedTetriminoState = attempt(shift)(board);
+        if (mutatedTetriminoState) {
+          lastMoveSpinDataRef.current = undefined;
+        }
+        return !!mutatedTetriminoState;
+      })
+      .with('shiftB', () => {
+        const shift = fwInverted ? shiftForward : shiftBackward;
+        const mutatedTetriminoState = attempt(shift)(board);
+        if (mutatedTetriminoState) {
+          lastMoveSpinDataRef.current = undefined;
+        }
+        return !!mutatedTetriminoState;
+      })
       .with('rotateL', () => {
         for (let i = 0; i < 5; i++) {
-          if (attempt(rightInverted ? rotateRight(i) : rotateLeft(i))(board)) {
+          const rotation = rxInverted ? rotateRight(i) : rotateLeft(i);
+          const mutatedTetriminoState = attempt(rotation)(board);
+          if (mutatedTetriminoState) {
+            lastMoveSpinDataRef.current = mutatedTetriminoState;
             return true;
           }
         }
@@ -155,7 +189,10 @@ export default function Game(props: Props) {
       })
       .with('rotateR', () => {
         for (let i = 0; i < 5; i++) {
-          if (attempt(rightInverted ? rotateLeft(i) : rotateRight(i))(board)) {
+          const rotation = rxInverted ? rotateLeft(i) : rotateRight(i);
+          const mutatedTetriminoState = attempt(rotation)(board);
+          if (mutatedTetriminoState) {
+            lastMoveSpinDataRef.current = mutatedTetriminoState;
             return true;
           }
         }
@@ -163,7 +200,10 @@ export default function Game(props: Props) {
       })
       .with('hDrop', () => {
         const dropLength = hardDrop(board);
-        trackProgress.hardDrop(dropLength);
+        if (dropLength > 0) {
+          lastMoveSpinDataRef.current = undefined;
+          trackProgress.hardDrop(dropLength);
+        }
         return true;
       })
       .exhaustive();
