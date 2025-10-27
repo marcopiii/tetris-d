@@ -42,11 +42,28 @@ export default function Game(props: Props) {
   const plane = usePlane();
   const bag = useBag();
 
-  const { board, fixPiece, checkLines } = useBoardManager();
   const { tetrimino, attempt, hardDrop, projectGhost } = useTetriminoManager(
     bag.current,
     plane.current,
   );
+
+  const { board, fixPiece, checkLines } = useBoardManager({
+    onLinesDeleted: (cascadeCompletedLines) => {
+      if (cascadeCompletedLines.length > 0) {
+        play(FX.line_clear, 0.75);
+      }
+      trackProgress.lineClear(cascadeCompletedLines);
+    },
+    onPieceFixed: (completedLines) => {
+      const spinData = spinDetector(lastMoveSpinDataRef.current, board);
+      if (completedLines.length > 0) {
+        play(FX.line_clear, 0.75);
+      }
+      trackProgress.lineClear(completedLines);
+      trackProgress.tSpin(spinData, completedLines);
+    },
+  });
+
   const ghost = projectGhost(board);
 
   const [camera, setCamera, relativeAxis] = useCamera({
@@ -93,17 +110,6 @@ export default function Game(props: Props) {
     );
     shouldLock ? triggerLock() : cancelLock();
   }, [tetrimino]);
-
-  // every time the board changes, due to a piece being fixed or lines being cleared
-  React.useEffect(() => {
-    const spinData = spinDetector(lastMoveSpinDataRef.current, board);
-    const completedLines = checkLines(false);
-    if (completedLines.length > 0) {
-      play(FX.line_clear, 0.75);
-    }
-    trackProgress.lineClear(completedLines);
-    trackProgress.tSpin(spinData, completedLines);
-  }, [board]);
 
   function cameraAction(action: CameraAction) {
     match([camera, action])

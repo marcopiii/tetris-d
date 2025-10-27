@@ -1,5 +1,5 @@
-import { cloneDeep, uniqBy } from 'es-toolkit';
-import React from 'react';
+import { cloneDeep, noop, uniqBy } from 'es-toolkit';
+import React, { useEffect } from 'react';
 import { match, P } from 'ts-pattern';
 import { emptyMatrix } from './matrices';
 import { BoardMatrix } from './types';
@@ -8,8 +8,12 @@ import { COLS } from '../../params';
 import { LineCoord } from '../../types';
 import checkCompletedLines from '../checkCompletedLines';
 
-export function useBoardManager() {
+export function useBoardManager(effect: {
+  onLinesDeleted: (cascadeCompletedLines: LineCoord[]) => void;
+  onPieceFixed: (completedLines: LineCoord[]) => void;
+}) {
   const [matrix, setMatrix] = React.useState<BoardMatrix>(emptyMatrix);
+  const triggerRef = React.useRef<'piece-fix' | 'line-clear'>(undefined);
 
   /**
    * The array of coordinates of the blocks that are occupied by the pieces in
@@ -35,6 +39,7 @@ export function useBoardManager() {
     tetrimino.forEach(({ y, x, z }) => {
       newMatrix[y][x][z] = type;
     });
+    triggerRef.current = 'piece-fix';
     setMatrix(newMatrix);
   };
 
@@ -47,10 +52,23 @@ export function useBoardManager() {
     const completedLines = checkCompletedLines(board);
     if (clear && completedLines.length > 0) {
       const newMatrix = removeCompletedLines(matrix)(completedLines);
+      triggerRef.current = 'line-clear';
       setMatrix(newMatrix);
     }
     return completedLines;
   };
+
+  useEffect(() => {
+    const completedLines = checkLines(false);
+    match(triggerRef.current)
+      .with('piece-fix', () => {
+        effect.onPieceFixed(completedLines);
+      })
+      .with('line-clear', () => {
+        effect.onLinesDeleted(completedLines);
+      })
+      .otherwise(noop);
+  }, [matrix]);
 
   return {
     board,
