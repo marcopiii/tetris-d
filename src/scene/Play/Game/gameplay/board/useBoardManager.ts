@@ -1,4 +1,4 @@
-import { cloneDeep, noop, uniqBy } from 'es-toolkit';
+import { cloneDeep, countBy, noop, uniqBy } from 'es-toolkit';
 import React, { useEffect } from 'react';
 import { match, P } from 'ts-pattern';
 import { emptyMatrix } from './matrices';
@@ -19,7 +19,7 @@ type TriggerData =
 
 export function useBoardManager(effect: {
   onLinesDeleted: (
-    clearedPlanes: PlaneCoords[],
+    clearedPlanes: { plane: PlaneCoords; linesCount: number }[],
     cascadeCompletedLines: LineCoord[],
   ) => void;
   onPieceFixed: (completedLines: LineCoord[]) => void;
@@ -88,12 +88,16 @@ export function useBoardManager(effect: {
         effect.onPieceFixed(completedLines);
       })
       .with({ reason: 'line-clear' }, ({ deletedLines }) => {
-        const involvedPlanes = uniqBy(
-          deletedLines.map(planeCoord),
-          JSON.stringify,
+        const planesWithCount = Object.entries(
+          countBy(deletedLines, (line) => JSON.stringify(planeCoord(line))),
+        ).map(([planeKey, count]) => ({
+          plane: JSON.parse(planeKey) as PlaneCoords,
+          linesCount: count,
+        }));
+        const clearedPlanesWithCount = planesWithCount.filter(({ plane }) =>
+          isPlaneClear(plane),
         );
-        const clearedPlanes = involvedPlanes.filter(isPlaneClear);
-        effect.onLinesDeleted(clearedPlanes, completedLines);
+        effect.onLinesDeleted(clearedPlanesWithCount, completedLines);
       })
       .otherwise(noop);
   }, [matrix]);

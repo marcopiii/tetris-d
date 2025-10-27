@@ -42,6 +42,8 @@ export default function Game(props: Props) {
   const plane = usePlane();
   const bag = useBag();
 
+  const { progress, scoreEventStream, trackProgress } = useScoreTracker();
+
   const { tetrimino, attempt, hardDrop, projectGhost } = useTetriminoManager(
     bag.current,
     plane.current,
@@ -49,7 +51,7 @@ export default function Game(props: Props) {
 
   const { board, fixPiece, deleteLines } = useBoardManager({
     onLinesDeleted: (clearedPlanes, cascadeCompletedLines) => {
-      console.log(clearedPlanes);
+      trackProgress.perfectClear(clearedPlanes);
       if (cascadeCompletedLines.length > 0) {
         play(FX.line_clear, 0.75);
       }
@@ -66,17 +68,6 @@ export default function Game(props: Props) {
   });
 
   const ghost = projectGhost(board);
-
-  const [camera, setCamera, relativeAxis] = useCamera({
-    c1: { position: [-10, 5, 10], lookAt: [0, 1, 0] },
-    c2: { position: [10, 5, 10], lookAt: [0, 1, 0] },
-    c3: { position: [10, 5, -10], lookAt: [0, 1, 0] },
-    c4: { position: [-10, 5, -10], lookAt: [0, 1, 0] },
-  });
-
-  const [cut, setCut] = useCutter(camera);
-
-  const { progress, scoreEventStream, trackProgress } = useScoreTracker();
 
   const hasHardDroppedRef = React.useRef(false);
 
@@ -111,6 +102,15 @@ export default function Game(props: Props) {
     );
     shouldLock ? triggerLock() : cancelLock();
   }, [tetrimino]);
+
+  const [camera, setCamera, relativeAxis] = useCamera({
+    c1: { position: [-10, 5, 10], lookAt: [0, 1, 0] },
+    c2: { position: [10, 5, 10], lookAt: [0, 1, 0] },
+    c3: { position: [10, 5, -10], lookAt: [0, 1, 0] },
+    c4: { position: [-10, 5, -10], lookAt: [0, 1, 0] },
+  });
+
+  const [cut, setCut] = useCutter(camera);
 
   function cameraAction(action: CameraAction) {
     match([camera, action])

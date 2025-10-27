@@ -1,12 +1,14 @@
 import React from 'react';
 import { match, P } from 'ts-pattern';
 import { Progress, ScoreEvent, TSpinKind } from './types';
-import { LineCoord } from '../../types';
-import { planeComboPerLines } from './comboDetector';
+import { LineCoord, PlaneCoords } from '../../types';
+import { planeComboPerLines, planeComboPerPlanes } from './comboDetector';
 import {
-  pointsPerClear,
+  pointsPerLineClear,
   pointsPerHardDrop,
   pointsPerTSpin,
+  pointsPerPlaneClear,
+  planeComboMultiplier,
 } from './pointsCalculator';
 
 const LINE_CLEAR_PER_LEVEL = 10;
@@ -52,7 +54,7 @@ export function useScoreTracker() {
     if (lines.length === 0) return;
 
     const level = getLevel(progress.lines);
-    const points = pointsPerClear(level)(cascadeBuffer.current.lines);
+    const points = pointsPerLineClear(level)(cascadeBuffer.current.lines);
     const planeCombo = planeComboPerLines(cascadeBuffer.current.lines);
 
     const scoreEvent: ScoreEvent = {
@@ -66,6 +68,25 @@ export function useScoreTracker() {
 
     pushEvent(scoreEvent);
     addProgress({ points, lines: lines.length });
+  };
+
+  const trackPerfectClear = (
+    clearedPlanes: { plane: PlaneCoords; linesCount: number }[],
+  ) => {
+    if (clearedPlanes.length === 0) return;
+
+    const level = getLevel(progress.lines);
+    const basePoints = clearedPlanes
+      .map(({ linesCount }) => pointsPerPlaneClear(level)(linesCount))
+      .reduce((a, b) => a + b, 0);
+    const planeCombo = planeComboPerPlanes(
+      clearedPlanes.map(({ plane }) => plane),
+    );
+    const comboMultiplier = planeComboMultiplier(planeCombo);
+    const points = basePoints * comboMultiplier;
+
+    // todo: push event
+    addProgress({ points, lines: 0 });
   };
 
   const trackHardDrop = (length: number) => {
@@ -123,6 +144,7 @@ export function useScoreTracker() {
       lineClear: trackLineClear,
       hardDrop: trackHardDrop,
       tSpin: trackTSpin,
+      perfectClear: trackPerfectClear,
     },
   };
 }
