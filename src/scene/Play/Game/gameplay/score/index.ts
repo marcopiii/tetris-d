@@ -7,6 +7,7 @@ import type {
   HardDropEvent,
   TSpinEvent,
   TSpinKind,
+  PerfectClearEvent,
 } from './types';
 
 export { useScoreTracker, EVENT_LIFESPAN_MS };
@@ -18,4 +19,5 @@ export type {
   HardDropEvent,
   TSpinEvent,
   TSpinKind,
+  PerfectClearEvent,
 };

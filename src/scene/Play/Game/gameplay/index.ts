@@ -14,6 +14,7 @@ import {
   LineClearEvent,
   HardDropEvent,
   TSpinEvent,
+  PerfectClearEvent,
 } from './score';
 import useCutter from './useCutter';
 import { useLockDelay, LockTimer, LOCK_DELAY_MS } from './lockDelay';
@@ -41,4 +42,5 @@ export type {
   LineClearEvent,
   HardDropEvent,
   TSpinEvent,
+  PerfectClearEvent,
 };
