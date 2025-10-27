@@ -7,7 +7,7 @@ export function pointsPerHardDrop(length: number) {
   return length * 2;
 }
 
-export const pointsPerClear =
+export const pointsPerLineClear =
   (level: number) => (effectiveLines: LineCoord[]) => {
     const base = pointsPerLines(effectiveLines.length);
     const planeCombo = planeComboPerLines(effectiveLines);
@@ -20,7 +20,7 @@ function pointsPerLines(n: number) {
   return 50 * n ** 2 + 50 * n;
 }
 
-function planeComboMultiplier(combo: PlaneCombo) {
+export function planeComboMultiplier(combo: PlaneCombo) {
   return match(combo)
     .with('mono', () => 1)
     .with('parallel', () => 1.25)
@@ -44,3 +44,16 @@ export const pointsPerTSpin =
       });
     return base * level;
   };
+
+// https://tetris.wiki/Scoring#Recent_guideline_compatible_games
+export const pointsPerPlaneClear = (level: number) => (lines: number) => {
+  const base = match(lines)
+    .with(1, () => 800)
+    .with(2, () => 1200)
+    .with(3, () => 1800)
+    .with(4, () => 2000)
+    .otherwise(() => {
+      throw new Error('impossibiru');
+    });
+  return base * level;
+};

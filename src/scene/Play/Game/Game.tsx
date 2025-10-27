@@ -42,23 +42,35 @@ export default function Game(props: Props) {
   const plane = usePlane();
   const bag = useBag();
 
-  const { board, fixPiece, checkLines } = useBoardManager();
+  const { progress, scoreEventStream, trackProgress } = useScoreTracker();
+
   const { tetrimino, attempt, hardDrop, projectGhost } = useTetriminoManager(
     bag.current,
     plane.current,
   );
-  const ghost = projectGhost(board);
 
-  const [camera, setCamera, relativeAxis] = useCamera({
-    c1: { position: [-10, 5, 10], lookAt: [0, 1, 0] },
-    c2: { position: [10, 5, 10], lookAt: [0, 1, 0] },
-    c3: { position: [10, 5, -10], lookAt: [0, 1, 0] },
-    c4: { position: [-10, 5, -10], lookAt: [0, 1, 0] },
+  const { board, fixPiece, deleteLines } = useBoardManager({
+    onLinesDeleted: (clearedPlanes, cascadeCompletedLines) => {
+      if (clearedPlanes.length > 0) {
+        play(FX.perfect_clear, 0.75);
+      }
+      trackProgress.perfectClear(clearedPlanes);
+      if (cascadeCompletedLines.length > 0) {
+        play(FX.line_clear, 0.75);
+      }
+      trackProgress.lineClear(cascadeCompletedLines);
+    },
+    onPieceFixed: (completedLines) => {
+      const spinData = spinDetector(lastMoveSpinDataRef.current, board);
+      if (completedLines.length > 0) {
+        play(FX.line_clear, 0.75);
+      }
+      trackProgress.lineClear(completedLines);
+      trackProgress.tSpin(spinData, completedLines);
+    },
   });
 
-  const [cut, setCut] = useCutter(camera);
-
-  const { progress, scoreEventStream, trackProgress } = useScoreTracker();
+  const ghost = projectGhost(board);
 
   const hasHardDroppedRef = React.useRef(false);
 
@@ -79,7 +91,7 @@ export default function Game(props: Props) {
   });
 
   useGravity(() => {
-    const deletedLines = checkLines(true);
+    const deletedLines = deleteLines();
     const dropSuccess = !!attempt(drop)(board);
     if (deletedLines.length > 0 || dropSuccess) {
       lastMoveSpinDataRef.current = undefined;
@@ -94,16 +106,14 @@ export default function Game(props: Props) {
     shouldLock ? triggerLock() : cancelLock();
   }, [tetrimino]);
 
-  // every time the board changes, due to a piece being fixed or lines being cleared
-  React.useEffect(() => {
-    const spinData = spinDetector(lastMoveSpinDataRef.current, board);
-    const completedLines = checkLines(false);
-    if (completedLines.length > 0) {
-      play(FX.line_clear, 0.75);
-    }
-    trackProgress.lineClear(completedLines);
-    trackProgress.tSpin(spinData, completedLines);
-  }, [board]);
+  const [camera, setCamera, relativeAxis] = useCamera({
+    c1: { position: [-10, 5, 10], lookAt: [0, 1, 0] },
+    c2: { position: [10, 5, 10], lookAt: [0, 1, 0] },
+    c3: { position: [10, 5, -10], lookAt: [0, 1, 0] },
+    c4: { position: [-10, 5, -10], lookAt: [0, 1, 0] },
+  });
+
+  const [cut, setCut] = useCutter(camera);
 
   function cameraAction(action: CameraAction) {
     match([camera, action])

@@ -1,4 +1,5 @@
 import { match } from 'ts-pattern';
+import PerfectClearFeedback from '~/scene/Play/Game/ScoreEventStream/PerfectClearFeedback';
 import TSpinFeedback from '~/scene/Play/Game/ScoreEventStream/TSpinFeedback';
 import LineClearFeedback from './LineClearFeedback';
 import { ScoreEvent } from '../gameplay';
@@ -17,6 +18,13 @@ export default function ScoreEventStream(props: Props) {
     match(event)
       .with({ kind: 'line-clear' }, (event) => (
         <LineClearFeedback key={event.id} camera={props.camera} event={event} />
+      ))
+      .with({ kind: 'perfect-clear' }, (event) => (
+        <PerfectClearFeedback
+          key={event.id}
+          camera={props.camera}
+          event={event}
+        />
       ))
       .with({ kind: 'hard-drop' }, () => null)
       .with({ kind: 't-spin' }, (event) => (

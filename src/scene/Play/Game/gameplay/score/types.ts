@@ -1,4 +1,4 @@
-import { LineCoord } from '~/scene/Play/Game/types';
+import { LineCoord, PlaneCoords } from '~/scene/Play/Game/types';
 
 export type Progress = {
   score: number;
@@ -11,6 +11,7 @@ export type TSpinKind = 'mini' | 'full';
 
 export type ScoreEvent = { id: number; points: number } & (
   | ({ kind: 'line-clear' } & LineClearEvent)
+  | ({ kind: 'perfect-clear' } & PerfectClearEvent)
   | ({ kind: 'hard-drop' } & HardDropEvent)
   | ({ kind: 't-spin' } & TSpinEvent)
 );
@@ -19,6 +20,11 @@ export type LineClearEvent = {
   lines: LineCoord[];
   planeCombo: PlaneCombo;
   cascade: number;
+};
+
+export type PerfectClearEvent = {
+  planes: PlaneCoords[];
+  planeCombo: PlaneCombo;
 };
 
 export type HardDropEvent = {

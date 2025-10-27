@@ -1,4 +1,4 @@
-import { LineCoord } from '../../types';
+import { LineCoord, PlaneCoords } from '../../types';
 import { PlaneCombo } from './types';
 
 export function planeComboPerLines(lines: LineCoord[]): PlaneCombo {
@@ -14,4 +14,15 @@ export function planeComboPerLines(lines: LineCoord[]): PlaneCombo {
   if (parallelPlanes) return 'parallel';
 
   return 'mono';
+}
+
+export function planeComboPerPlanes(planes: PlaneCoords[]): PlaneCombo {
+  if (planes.length < 2) return 'mono';
+
+  const orthogonalPlanes =
+    planes.some((plane) => 'x' in plane) &&
+    planes.some((plane) => 'z' in plane);
+  if (orthogonalPlanes) return 'orthogonal';
+
+  return 'parallel';
 }
