@@ -18,6 +18,7 @@ export default function ScoreEventStream(props: Props) {
       .with({ kind: 'line-clear' }, (event) => (
         <LineClearFeedback key={event.id} camera={props.camera} event={event} />
       ))
+      .with({ kind: 'perfect-clear' }, () => null)
       .with({ kind: 'hard-drop' }, () => null)
       .with({ kind: 't-spin' }, (event) => (
         <TSpinFeedback key={event.id} camera={props.camera} event={event} />

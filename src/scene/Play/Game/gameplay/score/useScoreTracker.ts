@@ -85,7 +85,15 @@ export function useScoreTracker() {
     const comboMultiplier = planeComboMultiplier(planeCombo);
     const points = basePoints * comboMultiplier;
 
-    // todo: push event
+    const scoreEvent: ScoreEvent = {
+      id: Date.now(),
+      kind: 'perfect-clear',
+      planes: clearedPlanes.map(({ plane }) => plane),
+      planeCombo: planeCombo,
+      points: points,
+    };
+
+    pushEvent(scoreEvent);
     addProgress({ points, lines: 0 });
   };
 
