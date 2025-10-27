@@ -58,7 +58,7 @@ export default function Game(props: Props) {
       if (cascadeCompletedLines.length > 0) {
         play(FX.line_clear, 0.75);
       }
-      trackProgress.lineClear(cascadeCompletedLines);
+      trackProgress.lineClear(cascadeCompletedLines, true);
     },
     onPieceFixed: (completedLines) => {
       const spinData = spinDetector(lastMoveSpinDataRef.current, board);

@@ -4,11 +4,11 @@ import { Progress, ScoreEvent, TSpinKind } from './types';
 import { LineCoord, PlaneCoords } from '../../types';
 import { planeComboPerLines, planeComboPerPlanes } from './comboDetector';
 import {
-  pointsPerLineClear,
   pointsPerHardDrop,
   pointsPerTSpin,
   pointsPerPlaneClear,
   planeComboMultiplier,
+  pointsPerLines,
 } from './pointsCalculator';
 
 const LINE_CLEAR_PER_LEVEL = 10;
@@ -21,6 +21,7 @@ type CascadeBuffer = {
 };
 
 export function useScoreTracker() {
+  const comboCounter = React.useRef(-1);
   const cascadeBuffer = React.useRef<CascadeBuffer>({
     lines: [],
     clears: 0,
@@ -45,17 +46,34 @@ export function useScoreTracker() {
     }, EVENT_LIFESPAN_MS);
   };
 
-  const trackLineClear = (lines: LineCoord[]) => {
-    cascadeBuffer.current = {
-      lines: lines.length ? [...lines, ...cascadeBuffer.current.lines] : [],
-      clears: lines.length ? cascadeBuffer.current.clears + 1 : 0,
-    };
+  const trackLineClear = (lines: LineCoord[], isCascade: boolean = false) => {
+    cascadeBuffer.current = isCascade
+      ? {
+          lines: lines.length ? [...lines, ...cascadeBuffer.current.lines] : [],
+          clears: lines.length ? cascadeBuffer.current.clears + 1 : 0,
+        }
+      : { lines: [...lines], clears: 0 };
 
-    if (lines.length === 0) return;
+    comboCounter.current = isCascade
+      ? comboCounter.current
+      : lines.length > 0
+        ? comboCounter.current + 1
+        : -1;
+
+    if (lines.length === 0) {
+      return;
+    }
 
     const level = getLevel(progress.lines);
-    const points = pointsPerLineClear(level)(cascadeBuffer.current.lines);
+
+    const base = pointsPerLines(cascadeBuffer.current.lines.length);
     const planeCombo = planeComboPerLines(cascadeBuffer.current.lines);
+    const multiplier = planeComboMultiplier(planeCombo);
+
+    const clearLinesPoints = base * multiplier * level;
+    const comboPoints = 50 * comboCounter.current * level;
+
+    const points = clearLinesPoints + comboPoints;
 
     const scoreEvent: ScoreEvent = {
       id: Date.now(),

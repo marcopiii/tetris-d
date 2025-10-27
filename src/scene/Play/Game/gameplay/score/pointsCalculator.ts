@@ -1,21 +1,11 @@
 import { match } from 'ts-pattern';
-import { planeComboPerLines } from './comboDetector';
-import { LineCoord } from '../../types';
 import { PlaneCombo, TSpinKind } from './types';
 
 export function pointsPerHardDrop(length: number) {
   return length * 2;
 }
 
-export const pointsPerLineClear =
-  (level: number) => (effectiveLines: LineCoord[]) => {
-    const base = pointsPerLines(effectiveLines.length);
-    const planeCombo = planeComboPerLines(effectiveLines);
-    const multiplier = planeComboMultiplier(planeCombo);
-    return base * multiplier * level;
-  };
-
-function pointsPerLines(n: number) {
+export function pointsPerLines(n: number) {
   if (n < 1) return 0;
   return 50 * n ** 2 + 50 * n;
 }
