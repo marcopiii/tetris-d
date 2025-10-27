@@ -47,7 +47,7 @@ export default function Game(props: Props) {
     plane.current,
   );
 
-  const { board, fixPiece, checkLines } = useBoardManager({
+  const { board, fixPiece, deleteLines } = useBoardManager({
     onLinesDeleted: (cascadeCompletedLines) => {
       if (cascadeCompletedLines.length > 0) {
         play(FX.line_clear, 0.75);
@@ -96,7 +96,7 @@ export default function Game(props: Props) {
   });
 
   useGravity(() => {
-    const deletedLines = checkLines(true);
+    const deletedLines = deleteLines();
     const dropSuccess = !!attempt(drop)(board);
     if (deletedLines.length > 0 || dropSuccess) {
       lastMoveSpinDataRef.current = undefined;

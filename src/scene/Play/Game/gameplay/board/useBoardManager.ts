@@ -44,13 +44,12 @@ export function useBoardManager(effect: {
   };
 
   /**
-   * Checks for completed lines in the board and returns the coordinates
-   * of the completed lines.
-   * If `clear` is true, the completed lines are also removed from the board.
+   * Checks for completed lines in the board, physically deletes them and
+   * returns their coordinates.
    */
-  const checkLines = (clear: boolean) => {
+  const deleteLines = () => {
     const completedLines = checkCompletedLines(board);
-    if (clear && completedLines.length > 0) {
+    if (completedLines.length > 0) {
       const newMatrix = removeCompletedLines(matrix)(completedLines);
       triggerRef.current = 'line-clear';
       setMatrix(newMatrix);
@@ -59,7 +58,7 @@ export function useBoardManager(effect: {
   };
 
   useEffect(() => {
-    const completedLines = checkLines(false);
+    const completedLines = checkCompletedLines(board);
     match(triggerRef.current)
       .with('piece-fix', () => {
         effect.onPieceFixed(completedLines);
@@ -73,7 +72,7 @@ export function useBoardManager(effect: {
   return {
     board,
     fixPiece,
-    checkLines,
+    deleteLines,
   };
 }
 
