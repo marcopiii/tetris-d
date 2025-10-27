@@ -51,6 +51,9 @@ export default function Game(props: Props) {
 
   const { board, fixPiece, deleteLines } = useBoardManager({
     onLinesDeleted: (clearedPlanes, cascadeCompletedLines) => {
+      if (clearedPlanes.length > 0) {
+        play(FX.perfect_clear, 0.75);
+      }
       trackProgress.perfectClear(clearedPlanes);
       if (cascadeCompletedLines.length > 0) {
         play(FX.line_clear, 0.75);
