@@ -1,23 +1,15 @@
 import { cloneDeep, uniqBy } from 'es-toolkit';
 import React from 'react';
 import { match, P } from 'ts-pattern';
+import { emptyMatrix } from './matrices';
+import { BoardMatrix } from './types';
 import { Tetrimino } from '~/tetrimino';
-import { COLS, ROWS, VANISH_ZONE_ROWS } from '../params';
-import { LineCoord } from '../types';
-import checkCompletedLines from './checkCompletedLines';
+import { COLS } from '../../params';
+import { LineCoord } from '../../types';
+import checkCompletedLines from '../checkCompletedLines';
 
-export type BoardMatrix = (Tetrimino | null)[][][];
-
-const emptyMatrix: BoardMatrix = Array(ROWS + VANISH_ZONE_ROWS)
-  .fill(null)
-  .map(() =>
-    Array(COLS)
-      .fill(null)
-      .map(() => Array(COLS).fill(null)),
-  );
-
-export default function useBoardManager() {
-  const [matrix, setMatrix] = React.useState(emptyMatrix);
+export function useBoardManager() {
+  const [matrix, setMatrix] = React.useState<BoardMatrix>(emptyMatrix);
 
   /**
    * The array of coordinates of the blocks that are occupied by the pieces in

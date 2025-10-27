@@ -3,7 +3,7 @@ import checkCompletedLines from './checkCompletedLines';
 import initPosition from './initPosition';
 import useBag from './useBag';
 import usePlane from './usePlane';
-import useBoardManager from './useBoardManager';
+import { useBoardManager } from './board';
 import useTetriminoManager from './useTetriminoManager';
 import {
   useScoreTracker,
