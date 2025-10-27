@@ -13,20 +13,24 @@ type Props = {
 };
 
 export default function PerfectClearFeedback(props: Props) {
+  const flipX = props.camera.relativeAxis.x.rightInverted;
+  const flipZ = props.camera.relativeAxis.z.rightInverted;
+
   return props.event.planes.map((plane) => {
+    const y = ROWS + VANISH_ZONE_ROWS - 1;
     const [position, rotation] = match(plane)
       .with(
         { x: P.number },
         ({ x }) =>
           [
-            translate(x, ROWS + VANISH_ZONE_ROWS, COLS / 2),
-            Math.PI / 2,
+            translate(x, y, (COLS - 1) / 2),
+            flipZ ? Math.PI / 2 : -Math.PI / 2,
           ] as const,
       )
       .with(
         { z: P.number },
         ({ z }) =>
-          [translate(COLS / 2, ROWS + VANISH_ZONE_ROWS, z), 0] as const,
+          [translate((COLS - 1) / 2, y, z), flipX ? Math.PI : 0] as const,
       )
       .exhaustive();
 
