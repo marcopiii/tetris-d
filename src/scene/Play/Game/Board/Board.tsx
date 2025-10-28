@@ -1,5 +1,6 @@
 import React from 'react';
 import { match, P } from 'ts-pattern';
+import { MinoCoord } from '~/scene/Play/Game/types';
 import Mino from '../Mino';
 import { Tetrimino } from '~/tetrimino';
 import { checkCompletedLines } from '../gameplay';
@@ -14,7 +15,7 @@ type Props = {
 export default function Board(props: Props) {
   const completedLines = checkCompletedLines(props.occupiedBlocks);
 
-  const visibleBlocks = props.occupiedBlocks.filter((block) =>
+  const isVisible = (block: MinoCoord) =>
     match(props.cutting.plane)
       .with(
         { x: P.number },
@@ -28,12 +29,11 @@ export default function Board(props: Props) {
           (!props.cutting.below || block.z >= plane.z) &&
           (!props.cutting.above || block.z <= plane.z),
       )
-      .exhaustive(),
-  );
+      .exhaustive();
 
   return (
     <group>
-      {visibleBlocks.map(({ type, y, x, z }) => {
+      {props.occupiedBlocks.map(({ type, y, x, z }) => {
         const position = translate(x, y, z);
         const deleting = completedLines.some((line) =>
           match(line)
@@ -47,12 +47,14 @@ export default function Board(props: Props) {
             )
             .exhaustive(),
         );
+
         return (
           <Mino
             key={`${y}.${x}.${z}`}
             type={type}
             position={position}
             status={deleting ? 'deleting' : 'normal'}
+            cuttingProgress={isVisible({ y, x, z }) ? 0 : 1}
           />
         );
       })}

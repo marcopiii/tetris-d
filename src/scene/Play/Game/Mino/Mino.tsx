@@ -10,6 +10,7 @@ type Props = {
   position: [number, number, number];
   type: Tetrimino;
   hideFace?: ComponentProps<typeof Voxel>['hideFace'];
+  cuttingProgress: number;
 } & (
   | { status: 'normal' | 'disabled' | 'deleting' | 'ghost' }
   | { status: 'locking'; lockProgress: number }
@@ -26,9 +27,11 @@ export default function Mino(props: Props) {
     )
     .otherwise(({ status }) => minoMaterials[props.type][status]);
 
+  const size = props.cuttingProgress ? MINO_SIZE * 0.1 : MINO_SIZE;
+
   return (
     <Voxel
-      size={MINO_SIZE}
+      size={size}
       position={props.position}
       material={material}
       hideFace={props.hideFace}
