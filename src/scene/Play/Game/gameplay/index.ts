@@ -16,7 +16,7 @@ import {
   TSpinEvent,
   PerfectClearEvent,
 } from './score';
-import useCutter from './useCutter';
+import { useCutter } from './cutter';
 import { useLockDelay, LockTimer, LOCK_DELAY_MS } from './lockDelay';
 
 export * from './movement';

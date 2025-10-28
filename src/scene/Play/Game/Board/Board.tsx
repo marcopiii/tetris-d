@@ -1,3 +1,4 @@
+import TWEEN from '@tweenjs/tween.js';
 import React from 'react';
 import { match, P } from 'ts-pattern';
 import { MinoCoord } from '~/scene/Play/Game/types';
@@ -14,6 +15,8 @@ type Props = {
 
 export default function Board(props: Props) {
   const completedLines = checkCompletedLines(props.occupiedBlocks);
+
+  const tweenGroupRef = React.useRef(new TWEEN.Group());
 
   const isVisible = (block: MinoCoord) =>
     match(props.cutting.plane)
@@ -55,6 +58,7 @@ export default function Board(props: Props) {
             position={position}
             status={deleting ? 'deleting' : 'normal'}
             isHidden={!isVisible({ y, x, z })}
+            tweenGroupRef={tweenGroupRef}
           />
         );
       })}
