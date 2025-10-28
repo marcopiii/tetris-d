@@ -254,7 +254,7 @@ export default function Game(props: Props) {
       .with(['press', 'KeyZ'], () => cutterAction('cutL', 'apply'))
       .with(['release', 'KeyZ'], () => cutterAction('cutL', 'remove'))
       .with(['press', 'KeyC'], () => cutterAction('cutR', 'apply'))
-      .with(['release', 'KeyC'], () => cutterAction('cutL', 'remove'))
+      .with(['release', 'KeyC'], () => cutterAction('cutR', 'remove'))
       .otherwise(() => null),
   );
 
@@ -273,7 +273,7 @@ export default function Game(props: Props) {
       .with(['press', 'LB'], () => cutterAction('cutL', 'apply'))
       .with(['release', 'LB'], () => cutterAction('cutL', 'remove'))
       .with(['press', 'RB'], () => cutterAction('cutR', 'apply'))
-      .with(['release', 'RB'], () => cutterAction('cutL', 'remove'))
+      .with(['release', 'RB'], () => cutterAction('cutR', 'remove'))
       .otherwise(() => null),
   );
 
