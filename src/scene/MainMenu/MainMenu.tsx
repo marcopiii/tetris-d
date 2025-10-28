@@ -1,7 +1,7 @@
 import { match } from 'ts-pattern';
 import { useGamepadManager, useKeyboardManager } from '../../controls';
 import { Menu, useMenuNavigation } from '../shared/Menu';
-import useCamera from '../shared/useCamera';
+import { useCamera } from '~/scene/shared/camera';
 
 type Props = {
   onPlay: () => void;

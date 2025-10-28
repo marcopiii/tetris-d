@@ -113,7 +113,7 @@ export default function Game(props: Props) {
     c4: { position: [-10, 5, -10], lookAt: [0, 1, 0] },
   });
 
-  const [cut, setCut] = useCutter(camera);
+  const [cut, setCut] = useCutter(plane.current, relativeAxis);
 
   function cameraAction(action: CameraAction) {
     match([camera, action])
@@ -129,14 +129,11 @@ export default function Game(props: Props) {
   }
 
   function cutterAction(action: CutAction, apply: 'apply' | 'remove') {
-    const fwRx = match(plane.current)
-      .with('x', () => relativeAxis.x.forwardRight)
-      .with('z', () => relativeAxis.z.forwardRight)
+    const relativeSide = match(action)
+      .with('cutL', () => 'left' as const)
+      .with('cutR', () => 'right' as const)
       .exhaustive();
-    match(action)
-      .with('cutR', () => setCut(apply, fwRx ? 'above' : 'below'))
-      .with('cutL', () => setCut(apply, fwRx ? 'below' : 'above'))
-      .exhaustive();
+    setCut(apply, relativeSide);
   }
 
   function moveAction(action: Actions) {
@@ -254,7 +251,7 @@ export default function Game(props: Props) {
       .with(['press', 'KeyZ'], () => cutterAction('cutL', 'apply'))
       .with(['release', 'KeyZ'], () => cutterAction('cutL', 'remove'))
       .with(['press', 'KeyC'], () => cutterAction('cutR', 'apply'))
-      .with(['release', 'KeyC'], () => cutterAction('cutL', 'remove'))
+      .with(['release', 'KeyC'], () => cutterAction('cutR', 'remove'))
       .otherwise(() => null),
   );
 
@@ -273,7 +270,7 @@ export default function Game(props: Props) {
       .with(['press', 'LB'], () => cutterAction('cutL', 'apply'))
       .with(['release', 'LB'], () => cutterAction('cutL', 'remove'))
       .with(['press', 'RB'], () => cutterAction('cutR', 'apply'))
-      .with(['release', 'RB'], () => cutterAction('cutL', 'remove'))
+      .with(['release', 'RB'], () => cutterAction('cutR', 'remove'))
       .otherwise(() => null),
   );
 

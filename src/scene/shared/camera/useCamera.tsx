@@ -2,7 +2,8 @@ import React from 'react';
 import * as THREE from 'three';
 import { useFrame, useThree } from '@react-three/fiber';
 import TWEEN from '@tweenjs/tween.js';
-import { FX, play } from '../../audio';
+import { RelativeAxes } from '~/scene/shared/camera';
+import { FX, play } from '~/audio';
 
 type CameraSetup = {
   position: [number, number, number];
@@ -63,7 +64,7 @@ export default function useCamera<K extends string>(
   const isXRight = right.dot(xAxis) > 0;
   const isZRight = right.dot(zAxis) > 0;
 
-  const relativeAxes = {
+  const relativeAxes: RelativeAxes = {
     x: {
       rightInverted: right.x < 0,
       forwardInverted: forward.x < 0,
