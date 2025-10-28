@@ -54,7 +54,7 @@ export default function Board(props: Props) {
             type={type}
             position={position}
             status={deleting ? 'deleting' : 'normal'}
-            cuttingProgress={isVisible({ y, x, z }) ? 0 : 1}
+            isHidden={!isVisible({ y, x, z })}
           />
         );
       })}
