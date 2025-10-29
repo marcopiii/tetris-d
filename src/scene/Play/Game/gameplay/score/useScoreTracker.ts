@@ -1,7 +1,15 @@
+import { isNotNil } from 'es-toolkit/predicate';
 import React from 'react';
 import { match, P } from 'ts-pattern';
-import { Progress, ScoreEvent, TSpinKind } from './types';
-import { LineCoord, PlaneCoords } from '../../types';
+import {
+  HardDropData,
+  LineClearData,
+  PerfectClearData,
+  TrackData,
+  TSpinData,
+} from './TrackEvent';
+import { Progress, ScoreEvent } from './types';
+import { LineCoord } from '../../types';
 import { planeComboPerLines, planeComboPerPlanes } from './comboDetector';
 import {
   pointsPerHardDrop,
@@ -39,14 +47,19 @@ export function useScoreTracker() {
     [],
   );
 
-  const pushEvent = (event: ScoreEvent) => {
-    setScoreEventStream((prev) => [event, ...prev]);
+  const pushEvents = (events: ScoreEvent[]) => {
+    setScoreEventStream((prev) => [...events, ...prev]);
     setTimeout(() => {
-      setScoreEventStream((prev) => prev.filter((e) => e.id !== event.id));
+      setScoreEventStream((prev) =>
+        prev.filter((e) => !events.map((e) => e.id).includes(e.id)),
+      );
     }, EVENT_LIFESPAN_MS);
   };
 
-  const trackLineClear = (lines: LineCoord[], isCascade: boolean = false) => {
+  const digestClearing = ({
+    lines,
+    isCascade,
+  }: LineClearData): ScoreEvent | undefined => {
     cascadeBuffer.current = isCascade
       ? {
           lines: lines.length ? [...lines, ...cascadeBuffer.current.lines] : [],
@@ -75,7 +88,7 @@ export function useScoreTracker() {
 
     const points = clearLinesPoints + comboPoints;
 
-    const scoreEvent: ScoreEvent = {
+    return {
       id: Date.now(),
       kind: 'line-clear',
       lines: lines,
@@ -83,81 +96,92 @@ export function useScoreTracker() {
       cascade: cascadeBuffer.current.clears - 1,
       points: points,
     };
-
-    pushEvent(scoreEvent);
-    addProgress({ points, lines: lines.length });
   };
 
-  const trackPerfectClear = (
-    clearedPlanes: { plane: PlaneCoords; linesCount: number }[],
-  ) => {
-    if (clearedPlanes.length === 0) return;
+  const digestHardDrop = (data: HardDropData): ScoreEvent | undefined => {
+    if (data.length === 0) return;
 
-    const level = getLevel(progress.lines);
-    const basePoints = clearedPlanes
-      .map(({ linesCount }) => pointsPerPlaneClear(level)(linesCount))
-      .reduce((a, b) => a + b, 0);
-    const planeCombo = planeComboPerPlanes(
-      clearedPlanes.map(({ plane }) => plane),
-    );
-    const comboMultiplier = planeComboMultiplier(planeCombo);
-    const points = basePoints * comboMultiplier;
+    const points = pointsPerHardDrop(data.length);
 
-    const scoreEvent: ScoreEvent = {
-      id: Date.now(),
-      kind: 'perfect-clear',
-      planes: clearedPlanes.map(({ plane }) => plane),
-      planeCombo: planeCombo,
-      points: points,
-    };
-
-    pushEvent(scoreEvent);
-    addProgress({ points, lines: 0 });
-  };
-
-  const trackHardDrop = (length: number) => {
-    if (length === 0) return;
-
-    const points = pointsPerHardDrop(length);
-
-    const scoreEvent: ScoreEvent = {
+    return {
       id: Date.now(),
       kind: 'hard-drop',
-      length: length,
       points: points,
     };
-
-    pushEvent(scoreEvent);
-    addProgress({ points, lines: 0 });
   };
 
-  const trackTSpin = (
-    spinData: [TSpinKind, LineCoord] | undefined,
-    completedLines: LineCoord[],
-  ) => {
+  const digestTSpin = (
+    spinData: TSpinData,
+    completedLines?: LineClearData,
+  ): ScoreEvent | undefined => {
     if (!spinData) return;
-    const [kind, pivot] = spinData;
+    const { kind, pivot } = spinData;
 
-    const relevantLines = completedLines.filter((line) =>
-      match(pivot)
-        .with({ x: P.number }, () => 'z' in line)
-        .with({ y: P.number }, () => 'x' in line)
-        .exhaustive(),
-    );
+    // lines in the plane of the spin
+    const relevantLines = completedLines?.isCascade
+      ? []
+      : (completedLines?.lines.filter((line) =>
+          match(pivot)
+            .with({ x: P.number }, () => 'z' in line)
+            .with({ y: P.number }, () => 'x' in line)
+            .exhaustive(),
+        ) ?? []);
 
     const level = getLevel(progress.lines);
     const points = pointsPerTSpin(level)(relevantLines.length, kind);
 
-    const scoreEvent: ScoreEvent = {
+    return {
       id: Date.now(),
       kind: 't-spin',
       mini: kind === 'mini',
       pivot: pivot,
       points: points,
     };
+  };
 
-    pushEvent(scoreEvent);
-    addProgress({ points, lines: 0 });
+  const digestPerfectClear = (
+    data: PerfectClearData[],
+  ): ScoreEvent | undefined => {
+    if (data.length === 0) return;
+
+    const planes = data.map(({ plane }) => plane);
+
+    const level = getLevel(progress.lines);
+    const basePoints = data
+      .map(({ lines }) => pointsPerPlaneClear(level)(lines))
+      .reduce((a, b) => a + b, 0);
+    const planeCombo = planeComboPerPlanes(planes);
+    const comboMultiplier = planeComboMultiplier(planeCombo);
+    const points = basePoints * comboMultiplier;
+
+    return {
+      id: Date.now(),
+      kind: 'perfect-clear',
+      planes: planes,
+      planeCombo: planeCombo,
+      points: points,
+    };
+  };
+
+  const track = (trackData: TrackData) => {
+    const lineClearEvent =
+      trackData.clearing && digestClearing(trackData.clearing);
+    const moveEvent = match(trackData.rewardingMove)
+      .with({ move: 'hard-drop' }, (data) => digestHardDrop(data))
+      .with({ move: 't-spin' }, (data) => digestTSpin(data, trackData.clearing))
+      .otherwise(() => undefined);
+    const perfectClearEvent =
+      trackData.perfectClear && digestPerfectClear(trackData.perfectClear);
+
+    const events = [lineClearEvent, moveEvent, perfectClearEvent].filter(
+      isNotNil,
+    );
+
+    pushEvents(events);
+    addProgress({
+      points: events.map((e) => e.points).reduce((a, b) => a + b, 0),
+      lines: trackData.clearing?.lines.length ?? 0,
+    });
   };
 
   return {
@@ -165,13 +189,8 @@ export function useScoreTracker() {
       score: progress.score,
       level: getLevel(progress.lines),
     } satisfies Progress,
-    scoreEventStream: scoreEventStream,
-    trackProgress: {
-      lineClear: trackLineClear,
-      hardDrop: trackHardDrop,
-      tSpin: trackTSpin,
-      perfectClear: trackPerfectClear,
-    },
+    scoreEventStream,
+    track,
   };
 }
 

@@ -12,7 +12,7 @@ export type TSpinKind = 'mini' | 'full';
 export type ScoreEvent = { id: number; points: number } & (
   | ({ kind: 'line-clear' } & LineClearEvent)
   | ({ kind: 'perfect-clear' } & PerfectClearEvent)
-  | ({ kind: 'hard-drop' } & HardDropEvent)
+  | { kind: 'hard-drop' }
   | ({ kind: 't-spin' } & TSpinEvent)
 );
 
@@ -25,10 +25,6 @@ export type LineClearEvent = {
 export type PerfectClearEvent = {
   planes: PlaneCoords[];
   planeCombo: PlaneCombo;
-};
-
-export type HardDropEvent = {
-  length: number;
 };
 
 export type TSpinEvent = {
