@@ -1,6 +1,7 @@
 import { isNotNil } from 'es-toolkit/predicate';
 import React from 'react';
 import { match, P } from 'ts-pattern';
+import { ScoreEvent } from './ScoreEvent';
 import {
   HardDropData,
   LineClearData,
@@ -8,7 +9,7 @@ import {
   TrackData,
   TSpinData,
 } from './TrackEvent';
-import { Progress, ScoreEvent } from './types';
+import { Progress } from './types';
 import { LineCoord } from '../../types';
 import { planeComboPerLines, planeComboPerPlanes } from './comboDetector';
 import {
@@ -56,10 +57,12 @@ export function useScoreTracker() {
     }, EVENT_LIFESPAN_MS);
   };
 
-  const digestClearing = ({
-    lines,
-    isCascade,
-  }: LineClearData): ScoreEvent | undefined => {
+  const digestClearing = (
+    data?: LineClearData,
+  ): [ScoreEvent | undefined, ScoreEvent | undefined] => {
+    if (!data) return [undefined, undefined];
+    const { lines, isCascade } = data;
+
     cascadeBuffer.current = isCascade
       ? {
           lines: lines.length ? [...lines, ...cascadeBuffer.current.lines] : [],
@@ -74,7 +77,7 @@ export function useScoreTracker() {
         : -1;
 
     if (lines.length === 0) {
-      return;
+      return [undefined, undefined];
     }
 
     const level = getLevel(progress.lines);
@@ -88,14 +91,26 @@ export function useScoreTracker() {
 
     const points = clearLinesPoints + comboPoints;
 
-    return {
+    const lineClearEvent = {
       id: Date.now(),
       kind: 'line-clear',
       lines: lines,
       planeCombo: planeCombo,
       cascade: cascadeBuffer.current.clears - 1,
       points: points,
-    };
+    } satisfies ScoreEvent;
+
+    const comboEvent =
+      comboCounter.current > 0
+        ? ({
+            id: Date.now() + 1,
+            kind: 'combo',
+            count: comboCounter.current,
+            points: comboPoints,
+          } satisfies ScoreEvent)
+        : undefined;
+
+    return [lineClearEvent, comboEvent];
   };
 
   const digestHardDrop = (data: HardDropData): ScoreEvent | undefined => {
@@ -164,8 +179,7 @@ export function useScoreTracker() {
   };
 
   const track = (trackData: TrackData) => {
-    const lineClearEvent =
-      trackData.clearing && digestClearing(trackData.clearing);
+    const [lineClearEvent, comboEvent] = digestClearing(trackData.clearing);
     const moveEvent = match(trackData.rewardingMove)
       .with({ move: 'hard-drop' }, (data) => digestHardDrop(data))
       .with({ move: 't-spin' }, (data) => digestTSpin(data, trackData.clearing))
@@ -173,9 +187,12 @@ export function useScoreTracker() {
     const perfectClearEvent =
       trackData.perfectClear && digestPerfectClear(trackData.perfectClear);
 
-    const events = [lineClearEvent, moveEvent, perfectClearEvent].filter(
-      isNotNil,
-    );
+    const events = [
+      lineClearEvent,
+      comboEvent,
+      moveEvent,
+      perfectClearEvent,
+    ].filter(isNotNil);
 
     pushEvents(events);
     addProgress({

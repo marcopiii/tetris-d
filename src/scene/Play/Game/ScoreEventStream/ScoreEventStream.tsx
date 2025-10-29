@@ -27,6 +27,7 @@ export default function ScoreEventStream(props: Props) {
         />
       ))
       .with({ kind: 'hard-drop' }, () => null)
+      .with({ kind: 'combo' }, () => null)
       .with({ kind: 't-spin' }, (event) => (
         <TSpinFeedback key={event.id} camera={props.camera} event={event} />
       ))
