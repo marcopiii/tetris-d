@@ -1,5 +1,6 @@
 import { partition } from 'es-toolkit';
 import { match } from 'ts-pattern';
+import { COLS } from '../../params';
 import { TetriminoState } from '../../gameplay';
 import { TSpinKind } from './types';
 import { LineCoord } from '../../types';
@@ -20,61 +21,32 @@ export function spinDetector(
     .exhaustive();
 
   // https://tetris.wiki/T-Spin
-  const cornersCoord = {
-    topLeft: { x: p.x, y: p.y, z: p.z, front: ['0', 'L'].includes(r) },
-    topRight:
-      plane == 'x'
-        ? { x: p.x, y: p.y, z: p.z + 2, front: ['0', 'R'].includes(r) }
-        : { x: p.x + 2, y: p.y, z: p.z, front: ['0', 'R'].includes(r) },
-    bottomLeft:
-      plane == 'x'
-        ? { x: p.x, y: p.y + 2, z: p.z, front: ['2', 'L'].includes(r) }
-        : { x: p.x, y: p.y + 2, z: p.z, front: ['2', 'L'].includes(r) },
-    bottomRight:
-      plane == 'x'
-        ? { x: p.x, y: p.y + 2, z: p.z + 2, front: ['2', 'R'].includes(r) }
-        : { x: p.x + 2, y: p.y + 2, z: p.z, front: ['2', 'R'].includes(r) },
-  };
+  const topLeft = { x: p.x, y: p.y, z: p.z, isFront: ['0', 'L'].includes(r) };
+  const topRight =
+    plane == 'x'
+      ? { x: p.x, y: p.y, z: p.z + 2, isFront: ['0', 'R'].includes(r) }
+      : { x: p.x + 2, y: p.y, z: p.z, isFront: ['0', 'R'].includes(r) };
+  const bottomLeft =
+    plane == 'x'
+      ? { x: p.x, y: p.y + 2, z: p.z, isFront: ['2', 'L'].includes(r) }
+      : { x: p.x, y: p.y + 2, z: p.z, isFront: ['2', 'L'].includes(r) };
+  const bottomRight =
+    plane == 'x'
+      ? { x: p.x, y: p.y + 2, z: p.z + 2, isFront: ['2', 'R'].includes(r) }
+      : { x: p.x + 2, y: p.y + 2, z: p.z, isFront: ['2', 'R'].includes(r) };
 
-  // todo: check for walls
-  const corners = [
-    [
-      board.some(
-        (b) =>
-          b.x === cornersCoord.topLeft.x &&
-          b.y === cornersCoord.topLeft.y &&
-          b.z === cornersCoord.topLeft.z,
-      ),
-      cornersCoord.topLeft.front,
-    ] as const,
-    [
-      board.some(
-        (b) =>
-          b.x === cornersCoord.topRight.x &&
-          b.y === cornersCoord.topRight.y &&
-          b.z === cornersCoord.topRight.z,
-      ),
-      cornersCoord.topRight.front,
-    ] as const,
-    [
-      board.some(
-        (b) =>
-          b.x === cornersCoord.bottomLeft.x &&
-          b.y === cornersCoord.bottomLeft.y &&
-          b.z === cornersCoord.bottomLeft.z,
-      ),
-      cornersCoord.bottomLeft.front,
-    ] as const,
-    [
-      board.some(
-        (b) =>
-          b.x === cornersCoord.bottomRight.x &&
-          b.y === cornersCoord.bottomRight.y &&
-          b.z === cornersCoord.bottomRight.z,
-      ),
-      cornersCoord.bottomRight.front,
-    ] as const,
-  ];
+  const isOccupied = (p: { x: number; y: number; z: number }) =>
+    board.some((b) => b.x === p.x && b.y === p.y && b.z === p.z);
+
+  const isOutOfWalls = (p: { x: number; y: number; z: number }) =>
+    p.x < 0 || p.x >= COLS || p.z < 0 || p.z >= COLS;
+
+  const check = (p: { x: number; y: number; z: number }) =>
+    isOutOfWalls(p) || isOccupied(p);
+
+  const corners = [topLeft, topRight, bottomLeft, bottomRight].map(
+    (corner) => [check(corner), corner.isFront] as const,
+  );
 
   const [frontCorners, backCorners] = partition(
     corners,
