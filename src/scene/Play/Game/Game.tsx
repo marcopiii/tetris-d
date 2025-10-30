@@ -56,7 +56,7 @@ export default function Game(props: Props) {
       }
       if (cascadeCompletedLines.length > 0) {
         play(FX.line_clear, 0.75);
-        setTimeout(() => deleteLines(), 500);
+        triggerLineDeletionPhase();
       } else {
         resumeGravity();
       }
@@ -71,14 +71,14 @@ export default function Game(props: Props) {
     onPieceFixed: (completedLines) => {
       const spinData = spinDetector(lastMoveSpinDataRef.current, board);
       lastMoveSpinDataRef.current = undefined;
+      hasHardDroppedRef.current = false;
       track({
         clearing: { lines: completedLines, isCascade: false },
         rewardingMove: spinData && { move: 't-spin', ...spinData },
       });
       if (completedLines.length > 0) {
         play(FX.line_clear, 0.75);
-        pauseGravity();
-        setTimeout(() => deleteLines(), 500);
+        triggerLineDeletionPhase();
       }
     },
   });
@@ -97,19 +97,22 @@ export default function Game(props: Props) {
     } else {
       fixPiece(bag.current, tetrimino);
       play(FX.lock, 0.15);
-      hasHardDroppedRef.current = false;
       bag.pullNext();
       plane.change();
     }
   });
 
   const { pauseGravity, resumeGravity } = useGravity(() => {
-    // const deletedLines = deleteLines();
     const dropSuccess = !!attempt(drop)(board);
     if (dropSuccess) {
       lastMoveSpinDataRef.current = undefined;
     }
   }, progress.level);
+
+  const triggerLineDeletionPhase = () => {
+    pauseGravity();
+    setTimeout(() => deleteLines(), 500);
+  };
 
   // every time the tetrimino moves, by player action or gravity
   React.useEffect(() => {
