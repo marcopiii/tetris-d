@@ -1,6 +1,7 @@
 import { cloneDeep, countBy, noop, uniqBy } from 'es-toolkit';
 import React, { useEffect } from 'react';
 import { match, P } from 'ts-pattern';
+import { PerfectClearData } from '~/scene/Play/Game/gameplay/score/TrackEvent';
 import { emptyMatrix } from './matrices';
 import { BoardMatrix } from './types';
 import { Tetrimino } from '~/tetrimino';
@@ -19,7 +20,7 @@ type TriggerData =
 
 export function useBoardManager(effect: {
   onLinesDeleted: (
-    clearedPlanes: { plane: PlaneCoords; linesCount: number }[],
+    clearedPlanes: PerfectClearData[],
     cascadeCompletedLines: LineCoord[],
   ) => void;
   onPieceFixed: (completedLines: LineCoord[]) => void;
@@ -92,12 +93,12 @@ export function useBoardManager(effect: {
           countBy(deletedLines, (line) => JSON.stringify(planeCoord(line))),
         ).map(([planeKey, count]) => ({
           plane: JSON.parse(planeKey) as PlaneCoords,
-          linesCount: count,
+          lines: count,
         }));
-        const clearedPlanesWithCount = planesWithCount.filter(({ plane }) =>
+        const perfectClearData = planesWithCount.filter(({ plane }) =>
           isPlaneClear(plane),
         );
-        effect.onLinesDeleted(clearedPlanesWithCount, completedLines);
+        effect.onLinesDeleted(perfectClearData, completedLines);
       })
       .otherwise(noop);
   }, [matrix]);

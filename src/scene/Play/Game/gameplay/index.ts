@@ -12,7 +12,6 @@ import {
   ScoreEvent,
   Progress,
   LineClearEvent,
-  HardDropEvent,
   TSpinEvent,
   PerfectClearEvent,
 } from './score';
@@ -40,7 +39,6 @@ export type {
   ScoreEvent,
   Progress,
   LineClearEvent,
-  HardDropEvent,
   TSpinEvent,
   PerfectClearEvent,
 };

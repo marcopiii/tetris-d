@@ -42,7 +42,7 @@ export default function Game(props: Props) {
   const plane = usePlane();
   const bag = useBag();
 
-  const { progress, scoreEventStream, trackProgress } = useScoreTracker();
+  const { progress, scoreEventStream, track } = useScoreTracker();
 
   const { tetrimino, attempt, hardDrop, projectGhost } = useTetriminoManager(
     bag.current,
@@ -54,19 +54,26 @@ export default function Game(props: Props) {
       if (clearedPlanes.length > 0) {
         play(FX.perfect_clear, 0.75);
       }
-      trackProgress.perfectClear(clearedPlanes);
       if (cascadeCompletedLines.length > 0) {
         play(FX.line_clear, 0.75);
       }
-      trackProgress.lineClear(cascadeCompletedLines);
+      track({
+        perfectClear: clearedPlanes,
+        clearing: {
+          lines: cascadeCompletedLines,
+          isCascade: true,
+        },
+      });
     },
     onPieceFixed: (completedLines) => {
       const spinData = spinDetector(lastMoveSpinDataRef.current, board);
       if (completedLines.length > 0) {
         play(FX.line_clear, 0.75);
       }
-      trackProgress.lineClear(completedLines);
-      trackProgress.tSpin(spinData, completedLines);
+      track({
+        clearing: { lines: completedLines, isCascade: false },
+        rewardingMove: spinData && { move: 't-spin', ...spinData },
+      });
     },
   });
 
@@ -209,7 +216,12 @@ export default function Game(props: Props) {
         const dropLength = hardDrop(board);
         if (dropLength > 0) {
           lastMoveSpinDataRef.current = undefined;
-          trackProgress.hardDrop(dropLength);
+          track({
+            rewardingMove: {
+              move: 'hard-drop',
+              length: dropLength,
+            },
+          });
         }
         return true;
       })
