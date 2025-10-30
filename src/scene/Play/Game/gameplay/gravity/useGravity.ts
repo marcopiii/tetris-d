@@ -21,4 +21,19 @@ export default function useGravity(callback: () => void, level: number) {
     intervalRef.current = setInterval(() => callbackRef.current(), speed);
     return () => clearInterval(intervalRef.current);
   }, [level]);
+
+  const pauseGravity = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = undefined;
+    }
+  };
+
+  const resumeGravity = () => {
+    if (!intervalRef.current) {
+      intervalRef.current = setInterval(() => callbackRef.current(), speed);
+    }
+  };
+
+  return { pauseGravity, resumeGravity } as const;
 }
