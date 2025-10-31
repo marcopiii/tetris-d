@@ -15,3 +15,9 @@ export type GamepadButton =
   | 'RT';
 
 export type Event = 'press' | 'hold' | 'release' | 'lift';
+
+export type GamepadAxis = {
+  which: 'left' | 'right';
+  x: number;
+  y: number;
+};

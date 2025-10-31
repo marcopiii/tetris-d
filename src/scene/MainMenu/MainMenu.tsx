@@ -53,14 +53,20 @@ export default function MainMenu(props: Props) {
       .otherwise(() => {}),
   );
 
-  useGamepadManager((event, button) =>
-    match([event, button])
-      .with(['press', 'padD'], () => menuNavigationHandler('down'))
-      .with(['press', 'padU'], () => menuNavigationHandler('up'))
-      .with(['press', 'A'], () => menuNavigationHandler('confirm'))
-      .with(['press', 'LT'], () => menuCameraHandler('moveL'))
-      .with(['press', 'RT'], () => menuCameraHandler('moveR'))
-      .otherwise(() => {}),
+  useGamepadManager(
+    (event, button) =>
+      match([event, button])
+        .with(['press', 'padD'], () => menuNavigationHandler('down'))
+        .with(['press', 'padU'], () => menuNavigationHandler('up'))
+        .with(['press', 'A'], () => menuNavigationHandler('confirm'))
+        // .with(['press', 'LT'], () => menuCameraHandler('moveL'))
+        // .with(['press', 'RT'], () => menuCameraHandler('moveR'))
+        .otherwise(() => {}),
+    (axis) =>
+      match(axis)
+        .with({ which: 'right', x: -1.0 }, () => menuCameraHandler('moveL'))
+        .with({ which: 'right', x: 1.0 }, () => menuCameraHandler('moveR'))
+        .otherwise(() => {}),
   );
 
   return <Menu position={[0, 0, 0]} title="tetris-d" options={options} />;
