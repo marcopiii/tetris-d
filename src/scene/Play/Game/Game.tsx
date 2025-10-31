@@ -4,6 +4,7 @@ import { match } from 'ts-pattern';
 import { FX, play } from '~/audio';
 import { useGamepadManager, useKeyboardManager } from '~/controls';
 import { spinDetector } from '~/scene/Play/Game/gameplay/score/spinDetector';
+import { useControlsMiddleware } from '~/scene/shared/camera/useControlsMiddleware';
 import { VANISH_ZONE_ROWS } from './params';
 import { BagAction, CameraAction, CutAction, Actions } from './types';
 import { useCamera } from '~/scene/shared';
@@ -277,6 +278,11 @@ export default function Game(props: Props) {
       .otherwise(noop),
   );
 
+  const handleRightStickInput = useControlsMiddleware({
+    onHardLeft: () => cameraAction('cameraL'),
+    onHardRight: () => cameraAction('cameraR'),
+  });
+
   useGamepadManager(
     (event, button) =>
       match([event, button])
@@ -288,14 +294,16 @@ export default function Game(props: Props) {
         .with(['press', 'B'], () => moveAction('rotateR'))
         .with(['press', 'A'], () => moveAction('hDrop'))
         .with(['press', 'Y'], () => bagAction('hold'))
-        .with(['press', 'LT'], () => cameraAction('cameraL'))
-        .with(['press', 'RT'], () => cameraAction('cameraR'))
         .with(['press', 'LB'], () => cutterAction('cutL', 'apply'))
         .with(['release', 'LB'], () => cutterAction('cutL', 'remove'))
         .with(['press', 'RB'], () => cutterAction('cutR', 'apply'))
         .with(['release', 'RB'], () => cutterAction('cutR', 'remove'))
         .otherwise(noop),
-    console.log,
+    (status, stick) => {
+      if (stick === 'right') {
+        handleRightStickInput(status);
+      }
+    },
   );
 
   const boardCuttingProp = {
