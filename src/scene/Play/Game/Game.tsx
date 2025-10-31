@@ -1,8 +1,10 @@
+import { noop } from 'es-toolkit';
 import React from 'react';
 import { match } from 'ts-pattern';
 import { FX, play } from '~/audio';
 import { useGamepadManager, useKeyboardManager } from '~/controls';
 import { spinDetector } from '~/scene/Play/Game/gameplay/score/spinDetector';
+import { useControlsMiddleware } from '~/scene/shared/camera/useControlsMiddleware';
 import { VANISH_ZONE_ROWS } from './params';
 import { BagAction, CameraAction, CutAction, Actions } from './types';
 import { useCamera } from '~/scene/shared';
@@ -122,14 +124,14 @@ export default function Game(props: Props) {
     shouldLock ? triggerLock() : cancelLock();
   }, [tetrimino]);
 
-  const [camera, setCamera, relativeAxis] = useCamera({
+  const { camera, setCamera, tiltCamera, relativeAxes } = useCamera({
     c1: { position: [-10, 5, 10], lookAt: [0, 1, 0] },
     c2: { position: [10, 5, 10], lookAt: [0, 1, 0] },
     c3: { position: [10, 5, -10], lookAt: [0, 1, 0] },
     c4: { position: [-10, 5, -10], lookAt: [0, 1, 0] },
   });
 
-  const [cut, setCut] = useCutter(plane.current, relativeAxis);
+  const [cut, setCut] = useCutter(plane.current, relativeAxes);
 
   function cameraAction(action: CameraAction) {
     match([camera, action])
@@ -158,12 +160,12 @@ export default function Game(props: Props) {
     }
     const [rxInverted, fwInverted] = match(plane.current)
       .with('x', () => [
-        relativeAxis.z.rightInverted,
-        relativeAxis.x.forwardInverted,
+        relativeAxes.z.rightInverted,
+        relativeAxes.x.forwardInverted,
       ])
       .with('z', () => [
-        relativeAxis.x.rightInverted,
-        relativeAxis.z.forwardInverted,
+        relativeAxes.x.rightInverted,
+        relativeAxes.z.forwardInverted,
       ])
       .exhaustive();
     const success = match(action)
@@ -273,26 +275,36 @@ export default function Game(props: Props) {
       .with(['release', 'KeyZ'], () => cutterAction('cutL', 'remove'))
       .with(['press', 'KeyC'], () => cutterAction('cutR', 'apply'))
       .with(['release', 'KeyC'], () => cutterAction('cutR', 'remove'))
-      .otherwise(() => null),
+      .otherwise(noop),
   );
 
-  useGamepadManager((event, button) =>
-    match([event, button])
-      .with(['press', 'padL'], () => moveAction('shiftL'))
-      .with(['press', 'padR'], () => moveAction('shiftR'))
-      .with(['press', 'padU'], () => moveAction('shiftF'))
-      .with(['press', 'padD'], () => moveAction('shiftB'))
-      .with(['press', 'X'], () => moveAction('rotateL'))
-      .with(['press', 'B'], () => moveAction('rotateR'))
-      .with(['press', 'A'], () => moveAction('hDrop'))
-      .with(['press', 'Y'], () => bagAction('hold'))
-      .with(['press', 'LT'], () => cameraAction('cameraL'))
-      .with(['press', 'RT'], () => cameraAction('cameraR'))
-      .with(['press', 'LB'], () => cutterAction('cutL', 'apply'))
-      .with(['release', 'LB'], () => cutterAction('cutL', 'remove'))
-      .with(['press', 'RB'], () => cutterAction('cutR', 'apply'))
-      .with(['release', 'RB'], () => cutterAction('cutR', 'remove'))
-      .otherwise(() => null),
+  const handleRightStickInput = useControlsMiddleware({
+    onHardLeft: () => cameraAction('cameraL'),
+    onHardRight: () => cameraAction('cameraR'),
+    onTilt: ({ x, y }) => tiltCamera(x, y),
+  });
+
+  useGamepadManager(
+    (event, button) =>
+      match([event, button])
+        .with(['press', 'padL'], () => moveAction('shiftL'))
+        .with(['press', 'padR'], () => moveAction('shiftR'))
+        .with(['press', 'padU'], () => moveAction('shiftF'))
+        .with(['press', 'padD'], () => moveAction('shiftB'))
+        .with(['press', 'X'], () => moveAction('rotateL'))
+        .with(['press', 'B'], () => moveAction('rotateR'))
+        .with(['press', 'A'], () => moveAction('hDrop'))
+        .with(['press', 'Y'], () => bagAction('hold'))
+        .with(['press', 'LB'], () => cutterAction('cutL', 'apply'))
+        .with(['lift', 'LB'], () => cutterAction('cutL', 'remove'))
+        .with(['press', 'RB'], () => cutterAction('cutR', 'apply'))
+        .with(['lift', 'RB'], () => cutterAction('cutR', 'remove'))
+        .otherwise(noop),
+    (status, stick) => {
+      if (stick === 'right') {
+        handleRightStickInput(status);
+      }
+    },
   );
 
   const boardCuttingProp = {
@@ -321,7 +333,7 @@ export default function Game(props: Props) {
       />
       <Ghost type={bag.current} occupiedBlocks={ghost} />
       <ScoreEventStream
-        camera={{ position: camera, relativeAxis }}
+        camera={{ position: camera, relativeAxes }}
         scoreEventStream={scoreEventStream}
       />
     </group>

@@ -7,14 +7,14 @@ import { Popup, useCamera } from '~/scene/shared';
 type Props = {
   camera: {
     position: 'c1' | 'c2' | 'c3' | 'c4';
-    relativeAxis: ReturnType<typeof useCamera>[2];
+    relativeAxes: ReturnType<typeof useCamera>['relativeAxes'];
   };
   event: PerfectClearEvent;
 };
 
 export default function PerfectClearFeedback(props: Props) {
-  const flipX = props.camera.relativeAxis.x.rightInverted;
-  const flipZ = props.camera.relativeAxis.z.rightInverted;
+  const flipX = props.camera.relativeAxes.x.rightInverted;
+  const flipZ = props.camera.relativeAxes.z.rightInverted;
 
   return props.event.planes.map((plane) => {
     const y = ROWS + VANISH_ZONE_ROWS - 1;

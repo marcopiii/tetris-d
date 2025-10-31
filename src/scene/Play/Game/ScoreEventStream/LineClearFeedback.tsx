@@ -12,7 +12,7 @@ import { translate } from '../utils';
 type Props = {
   camera: {
     position: 'c1' | 'c2' | 'c3' | 'c4';
-    relativeAxis: ReturnType<typeof useCamera>[2];
+    relativeAxes: ReturnType<typeof useCamera>['relativeAxes'];
   };
   event: LineClearEvent;
 };
@@ -25,7 +25,7 @@ export default function LineClearFeedback(props: Props) {
       : 'x';
 
   const sortedLines = props.event.lines.toSorted(
-    lineOrderCriteria(props.camera.relativeAxis, primaryPlane),
+    lineOrderCriteria(props.camera.relativeAxes, primaryPlane),
   );
 
   const firstLine = sortedLines[0];
@@ -58,10 +58,13 @@ export default function LineClearFeedback(props: Props) {
 }
 
 const lineOrderCriteria =
-  (relativeAxis: ReturnType<typeof useCamera>[2], primaryPlane: Plane) =>
+  (
+    relativeAxes: ReturnType<typeof useCamera>['relativeAxes'],
+    primaryPlane: Plane,
+  ) =>
   (a: LineCoord, b: LineCoord) => {
-    const xInverted = relativeAxis.x.forwardInverted;
-    const zInverted = relativeAxis.z.forwardInverted;
+    const xInverted = relativeAxes.x.forwardInverted;
+    const zInverted = relativeAxes.z.forwardInverted;
 
     const yDiff = a.y - b.y;
 
