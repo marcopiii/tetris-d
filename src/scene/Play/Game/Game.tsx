@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { match } from 'ts-pattern';
 import { FX, play } from '~/audio';
 import { useGamepadManager, useKeyboardManager } from '~/controls';
@@ -33,6 +33,7 @@ import ProgressPanel from './ProgressPanel';
 import Tetrimino from './Tetrimino';
 import Tetrion from './Tetrion';
 import { PlaneCoords } from './types';
+import { gravity } from './gameplay/gravity/useGravity';
 
 type Props = {
   onGameOver: (progress: Progress) => void;
@@ -41,6 +42,9 @@ type Props = {
 export default function Game(props: Props) {
   const plane = usePlane();
   const bag = useBag();
+
+  const [rotated, setRotated] = useState(false);
+  const [isDropping, setIsDropping] = useState(false);
 
   const { progress, scoreEventStream, trackProgress } = useScoreTracker();
 
@@ -90,13 +94,16 @@ export default function Game(props: Props) {
     }
   });
 
-  useGravity(() => {
-    const deletedLines = deleteLines();
-    const dropSuccess = !!attempt(drop)(board);
-    if (deletedLines.length > 0 || dropSuccess) {
-      lastMoveSpinDataRef.current = undefined;
-    }
-  }, progress.level);
+  useGravity(
+    () => {
+      const deletedLines = deleteLines();
+      const dropSuccess = !!attempt(drop)(board);
+      if (deletedLines.length > 0 || dropSuccess) {
+        lastMoveSpinDataRef.current = undefined;
+      }
+    },
+    isDropping ? gravity.length - 1 : progress.level,
+  );
 
   // every time the tetrimino moves, by player action or gravity
   React.useEffect(() => {
@@ -213,6 +220,14 @@ export default function Game(props: Props) {
         }
         return true;
       })
+      .with('startDrop', () => {
+        console.log('attivo');
+        setIsDropping(true);
+      })
+      .with('stopDrop', () => {
+        console.log('disattivo');
+        setIsDropping(false);
+      })
       .exhaustive();
     if (success) {
       hasHardDroppedRef.current = action === 'hDrop';
@@ -224,8 +239,11 @@ export default function Game(props: Props) {
         .with('rotateL', () => FX.tetrimino_rotate)
         .with('rotateR', () => FX.tetrimino_rotate)
         .with('hDrop', () => FX.hard_drop)
-        .exhaustive();
-      play(fx, 0.15);
+        .otherwise(() => undefined);
+
+      if (fx) {
+        play(fx, 0.15);
+      }
     }
   }
 
@@ -265,18 +283,25 @@ export default function Game(props: Props) {
         .with(['press', 'X'], () => moveAction('hDrop'))
         .with(['press', 'B'], () => moveAction('rotateR'))
         .with(['press', 'A'], () => moveAction('rotateL'))
-        .with(['press', 'Y'], () => bagAction('hold'))
-        // .with(['press', 'LT'], () => cameraAction('cameraL'))
-        // .with(['press', 'RT'], () => cameraAction('cameraR'))
-        .with(['press', 'LB'], () => cutterAction('cutL', 'apply'))
-        .with(['release', 'LB'], () => cutterAction('cutL', 'remove'))
-        .with(['press', 'RB'], () => cutterAction('cutR', 'apply'))
-        .with(['release', 'RB'], () => cutterAction('cutR', 'remove'))
+        .with(['press', 'LB'], () => moveAction('startDrop'))
+        .with(['release', 'LB'], () => moveAction('stopDrop'))
+        .with(['press', 'RB'], () => bagAction('hold'))
+        .with(['press', 'LT'], () => cutterAction('cutL', 'apply'))
+        .with(['release', 'LT'], () => cutterAction('cutL', 'remove'))
+        .with(['press', 'RT'], () => cutterAction('cutR', 'apply'))
+        .with(['release', 'RT'], () => cutterAction('cutR', 'remove'))
         .otherwise(() => null),
     (axis) =>
-      match(axis)
-        .with({ which: 'right', x: -1.0 }, () => cameraAction('cameraL'))
-        .with({ which: 'right', x: 1.0 }, () => cameraAction('cameraR'))
+      match({ axis, rotated })
+        .with({ axis: { which: 'right', x: -1.0 }, rotated: false }, () => {
+          setRotated(true);
+          cameraAction('cameraL');
+        })
+        .with({ axis: { which: 'right', x: 1.0 }, rotated: false }, () => {
+          setRotated(true);
+          cameraAction('cameraR');
+        })
+        .with({ axis: { which: 'right', x: 0 } }, () => setRotated(false))
         .otherwise(() => {}),
   );
 

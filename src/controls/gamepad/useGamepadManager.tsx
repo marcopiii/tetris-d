@@ -47,9 +47,9 @@ export default function useGamepadManager(
     ].slice(0, BUFFER_SIZE);
 
     const lx = Math.abs(gamepad.axes[0]) < DEADZONE ? 0 : gamepad.axes[0];
-    const ly = Math.abs(gamepad.axes[1]) < DEADZONE ? 0 : gamepad.axes[1];
+    const ly = Math.abs(gamepad.axes[1]) < DEADZONE ? 0 : -1 * gamepad.axes[1];
     const rx = Math.abs(gamepad.axes[2]) < DEADZONE ? 0 : gamepad.axes[2];
-    const ry = Math.abs(gamepad.axes[3]) < DEADZONE ? 0 : gamepad.axes[3];
+    const ry = Math.abs(gamepad.axes[3]) < DEADZONE ? 0 : -1 * gamepad.axes[3];
 
     const [left, right] = axesBufferRef.current;
 
@@ -58,7 +58,7 @@ export default function useGamepadManager(
       axesBufferRef.current = [{ x: lx, y: ly }, right];
       axisHandler(new_value);
     }
-    if (right === undefined || right.x !== lx || right.y !== ly) {
+    if (right === undefined || right.x !== rx || right.y !== ry) {
       const new_value: GamepadAxis = { which: 'right', x: rx, y: ry };
       axesBufferRef.current = [left, { x: rx, y: ry }];
       axisHandler(new_value);
