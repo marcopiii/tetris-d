@@ -20,6 +20,8 @@ export default function useCamera<K extends string>(
   const [selectedCameraPosition, trackSelectedCameraPosition] =
     React.useState<K>(Object.keys(pcs)[0] as K);
 
+  const tiltSuppressionRef = React.useRef(false);
+
   const camera = useThree((rootState) => rootState.camera);
   const tweenGroup = React.useRef(new TWEEN.Group());
 
@@ -34,11 +36,15 @@ export default function useCamera<K extends string>(
       return;
     }
 
+    tiltSuppressionRef.current = true;
     new TWEEN.Tween(camera.position, tweenGroup.current)
       .to(new THREE.Vector3(...targetSetup.position), 750)
       .easing(TWEEN.Easing.Exponential.Out)
       .onUpdate(() => camera.lookAt(...targetSetup.lookAt))
-      .start();
+      .start()
+      .onComplete(() => {
+        tiltSuppressionRef.current = false;
+      });
   };
 
   const setCameraPosition = (selectedCameraSetup: K, noAnimation?: boolean) => {
@@ -80,6 +86,8 @@ export default function useCamera<K extends string>(
    * @param vertical the percentage to tilt vertically (-1 to 1)
    */
   const tiltCamera = (horizontal: number, vertical: number) => {
+    if (tiltSuppressionRef.current) return;
+
     // camera spherical coordinates relative to lookAt point
     const spherical = new THREE.Spherical().setFromVector3(
       forward.clone().multiplyScalar(-1),
