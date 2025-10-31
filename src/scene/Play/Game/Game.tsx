@@ -328,6 +328,8 @@ export default function Game(props: Props) {
         .with(['press', 'padD'], () => moveAction('shiftB'))
         .with(['press', 'X'], () => moveAction('rotateL'))
         .with(['press', 'B'], () => moveAction('rotateR'))
+        .with(['press', 'LB'], () => moveAction('sDropStart'))
+        .with(['lift', 'LB'], () => moveAction('sDropEnd'))
         .with(['press', 'A'], () => moveAction('hDrop'))
         .with(['press', 'Y'], () => bagAction('hold'))
         .with(['press', 'start'], () => togglePause())
