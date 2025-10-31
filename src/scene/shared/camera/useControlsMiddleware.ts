@@ -6,6 +6,7 @@ const HARD_THRESHOLD = 0.85;
 export function useControlsMiddleware(effect: {
   onHardLeft: () => void;
   onHardRight: () => void;
+  onTilt: (direction: GamepadStickStatus) => void;
 }) {
   const rightStickBufferRef = React.useRef<GamepadStickStatus>({ x: 0, y: 0 });
 
@@ -14,6 +15,8 @@ export function useControlsMiddleware(effect: {
     const prevX = rightStickBufferRef.current.x;
     rightStickBufferRef.current = status;
 
+    effect.onTilt(status);
+    
     if (!isHardLeft(prevX) && isHardLeft(currX)) {
       effect.onHardLeft();
     }

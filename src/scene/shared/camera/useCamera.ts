@@ -5,6 +5,8 @@ import TWEEN from '@tweenjs/tween.js';
 import { RelativeAxes } from '~/scene/shared/camera';
 import { FX, play } from '~/audio';
 
+const MAX_TILT_DEG = 5;
+
 type CameraSetup = {
   position: [number, number, number];
   lookAt: [number, number, number];
@@ -15,47 +17,42 @@ type PossibleCameraSetups<K extends string> = Record<K, CameraSetup>;
 export default function useCamera<K extends string>(
   pcs: PossibleCameraSetups<K>,
 ) {
-  const [cameraPosition, trackCameraPosition] = React.useState<K>(
-    Object.keys(pcs)[0] as K,
-  );
+  const [selectedCameraPosition, trackSelectedCameraPosition] =
+    React.useState<K>(Object.keys(pcs)[0] as K);
 
   const camera = useThree((rootState) => rootState.camera);
   const tweenGroup = React.useRef(new TWEEN.Group());
 
   useFrame(() => tweenGroup.current.update());
 
-  const moveThreeCamera = (selectedCameraSetup: K, noAnimation?: boolean) => {
-    const cameraSetup = pcs[selectedCameraSetup];
+  const moveThreeCamera = (targetCameraPosition: K, noAnimation?: boolean) => {
+    const targetSetup = pcs[targetCameraPosition];
 
     if (noAnimation) {
-      camera.position.set(...cameraSetup.position);
-      camera.lookAt(...cameraSetup.lookAt);
+      camera.position.set(...targetSetup.position);
+      camera.lookAt(...targetSetup.lookAt);
       return;
     }
 
     new TWEEN.Tween(camera.position, tweenGroup.current)
-      .to(new THREE.Vector3(...cameraSetup.position), 750)
+      .to(new THREE.Vector3(...targetSetup.position), 750)
       .easing(TWEEN.Easing.Exponential.Out)
-      .onUpdate(() => camera.lookAt(...cameraSetup.lookAt))
+      .onUpdate(() => camera.lookAt(...targetSetup.lookAt))
       .start();
   };
 
   const setCameraPosition = (selectedCameraSetup: K, noAnimation?: boolean) => {
     moveThreeCamera(selectedCameraSetup, noAnimation);
-    trackCameraPosition(selectedCameraSetup);
+    trackSelectedCameraPosition(selectedCameraSetup);
     play(FX.camera_move, 0.05);
   };
 
-  const {
-    lookAt: [lookAtX, lookAtY, lookAtZ],
-    position: [positionX, positionY, positionZ],
-  } = pcs[cameraPosition];
+  const lookAtPoint = new THREE.Vector3(...pcs[selectedCameraPosition].lookAt);
+  const currentPosition = new THREE.Vector3(
+    ...pcs[selectedCameraPosition].position,
+  );
 
-  const forward = new THREE.Vector3(
-    lookAtX - positionX,
-    lookAtY - positionY,
-    lookAtZ - positionZ,
-  ).normalize();
+  const forward = lookAtPoint.clone().sub(currentPosition);
   const up = new THREE.Vector3(0, 1, 0);
   const right = new THREE.Vector3().crossVectors(forward, up);
 
@@ -77,9 +74,38 @@ export default function useCamera<K extends string>(
     },
   };
 
+  /**
+   * Tilts the camera from the current position.
+   * @param horizontal the percentage to tilt horizontally (-1 to 1)
+   * @param vertical the percentage to tilt vertically (-1 to 1)
+   */
+  const tiltCamera = (horizontal: number, vertical: number) => {
+    // camera spherical coordinates relative to lookAt point
+    const spherical = new THREE.Spherical().setFromVector3(
+      forward.clone().multiplyScalar(-1),
+    );
+
+    const hRad = THREE.MathUtils.degToRad(horizontal * MAX_TILT_DEG);
+    const vRad = THREE.MathUtils.degToRad(vertical * MAX_TILT_DEG);
+    spherical.theta += hRad;
+    spherical.phi += vRad;
+
+    const targetCameraPosition = lookAtPoint
+      .clone()
+      .add(new THREE.Vector3().setFromSpherical(spherical));
+
+    camera.position.copy(targetCameraPosition);
+    camera.lookAt(lookAtPoint);
+  };
+
   React.useEffect(() => {
     moveThreeCamera(Object.keys(pcs)[0] as K, false);
   }, []);
 
-  return [cameraPosition, setCameraPosition, relativeAxes] as const;
+  return {
+    camera: selectedCameraPosition,
+    setCamera: setCameraPosition,
+    tiltCamera,
+    relativeAxes,
+  } as const;
 }

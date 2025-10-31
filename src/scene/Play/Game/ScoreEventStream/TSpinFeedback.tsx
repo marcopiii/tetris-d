@@ -7,7 +7,7 @@ import { Popup, useCamera } from '~/scene/shared';
 type Props = {
   camera: {
     position: 'c1' | 'c2' | 'c3' | 'c4';
-    relativeAxis: ReturnType<typeof useCamera>[2];
+    relativeAxes: ReturnType<typeof useCamera>['relativeAxes'];
   };
   event: TSpinEvent;
 };

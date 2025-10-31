@@ -1,6 +1,6 @@
 import { match } from 'ts-pattern';
-import PerfectClearFeedback from '~/scene/Play/Game/ScoreEventStream/PerfectClearFeedback';
-import TSpinFeedback from '~/scene/Play/Game/ScoreEventStream/TSpinFeedback';
+import PerfectClearFeedback from './PerfectClearFeedback';
+import TSpinFeedback from './TSpinFeedback';
 import LineClearFeedback from './LineClearFeedback';
 import { ScoreEvent } from '../gameplay';
 import { useCamera } from '~/scene/shared';
@@ -8,7 +8,7 @@ import { useCamera } from '~/scene/shared';
 type Props = {
   camera: {
     position: 'c1' | 'c2' | 'c3' | 'c4';
-    relativeAxis: ReturnType<typeof useCamera>[2];
+    relativeAxes: ReturnType<typeof useCamera>['relativeAxes'];
   };
   scoreEventStream: ScoreEvent[];
 };
