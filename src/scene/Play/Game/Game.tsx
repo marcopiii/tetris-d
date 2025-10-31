@@ -1,3 +1,4 @@
+import { noop } from 'es-toolkit';
 import React from 'react';
 import { match } from 'ts-pattern';
 import { FX, play } from '~/audio';
@@ -273,7 +274,7 @@ export default function Game(props: Props) {
       .with(['release', 'KeyZ'], () => cutterAction('cutL', 'remove'))
       .with(['press', 'KeyC'], () => cutterAction('cutR', 'apply'))
       .with(['release', 'KeyC'], () => cutterAction('cutR', 'remove'))
-      .otherwise(() => null),
+      .otherwise(noop),
   );
 
   useGamepadManager(
@@ -293,7 +294,7 @@ export default function Game(props: Props) {
         .with(['release', 'LB'], () => cutterAction('cutL', 'remove'))
         .with(['press', 'RB'], () => cutterAction('cutR', 'apply'))
         .with(['release', 'RB'], () => cutterAction('cutR', 'remove'))
-        .otherwise(() => null),
+        .otherwise(noop),
     console.log,
   );
 

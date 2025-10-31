@@ -1,7 +1,8 @@
 import { useFrame } from '@react-three/fiber';
+import { isEqual, round } from 'es-toolkit';
 import React from 'react';
 import { mapping } from './mapping';
-import type { Event, GamepadAxis } from './types';
+import { GamepadButtonEvent, GamepadStick, GamepadStickStatus } from './types';
 import type { GamepadButton } from './types';
 
 type DOMGamepadButton = globalThis.GamepadButton;
@@ -11,13 +12,16 @@ const BUFFER_SIZE = HOLD_FRAMES + 1;
 const DEADZONE = 0.1;
 
 export default function useGamepadManager(
-  handler: (event: Event, button: GamepadButton) => void,
-  axisHandler: (axis: GamepadAxis) => void,
+  buttonHandler: (event: GamepadButtonEvent, button: GamepadButton) => void,
+  stickHandler: (status: GamepadStickStatus, stick: GamepadStick) => void,
 ) {
   const buttonBufferRef = React.useRef<DOMGamepadButton[][]>([]);
-  const axesBufferRef = React.useRef<
-    [{ x: number; y: number } | undefined, { x: number; y: number } | undefined]
-  >([undefined, undefined]);
+  const stickBufferRef = React.useRef<[GamepadStickStatus, GamepadStickStatus]>(
+    [
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+    ],
+  );
 
   const poll = () => {
     const gamepad = navigator.getGamepads()[0];
@@ -34,11 +38,12 @@ export default function useGamepadManager(
         .every((b) => b[i]?.pressed ?? false);
       const wasHeld = buffer.every((b) => b[i]?.pressed ?? false);
 
-      if (button.pressed && !wasPressed) handler('press', buttonCode);
-      if (button.pressed && isHolding && !wasHeld) handler('hold', buttonCode);
+      if (button.pressed && !wasPressed) buttonHandler('press', buttonCode);
+      if (button.pressed && isHolding && !wasHeld)
+        buttonHandler('hold', buttonCode);
       if (!button.pressed && wasPressed && !wasHeld)
-        handler('lift', buttonCode);
-      if (!button.pressed && wasHeld) handler('release', buttonCode);
+        buttonHandler('lift', buttonCode);
+      if (!button.pressed && wasHeld) buttonHandler('release', buttonCode);
     });
 
     buttonBufferRef.current = [
@@ -46,24 +51,24 @@ export default function useGamepadManager(
       ...buttonBufferRef.current,
     ].slice(0, BUFFER_SIZE);
 
-    const lx = Math.abs(gamepad.axes[0]) < DEADZONE ? 0 : gamepad.axes[0];
-    const ly = Math.abs(gamepad.axes[1]) < DEADZONE ? 0 : -1 * gamepad.axes[1];
-    const rx = Math.abs(gamepad.axes[2]) < DEADZONE ? 0 : gamepad.axes[2];
-    const ry = Math.abs(gamepad.axes[3]) < DEADZONE ? 0 : -1 * gamepad.axes[3];
+    const [lx, ly, rx, ry] = gamepad.axes
+      .map(roundAxisValue)
+      .map(applyDeadzone);
+    const leftStick = { x: lx, y: ly };
+    const rightStick = { x: rx, y: ry };
 
-    const [left, right] = axesBufferRef.current;
-
-    if (left === undefined || left.x !== lx || left.y !== ly) {
-      const new_value: GamepadAxis = { which: 'left', x: lx, y: ly };
-      axesBufferRef.current = [{ x: lx, y: ly }, right];
-      axisHandler(new_value);
+    const [prevLeft, prevRight] = stickBufferRef.current;
+    stickBufferRef.current = [leftStick, rightStick];
+    if (!isEqual(leftStick, prevLeft)) {
+      stickHandler(leftStick, 'left');
     }
-    if (right === undefined || right.x !== rx || right.y !== ry) {
-      const new_value: GamepadAxis = { which: 'right', x: rx, y: ry };
-      axesBufferRef.current = [left, { x: rx, y: ry }];
-      axisHandler(new_value);
+    if (!isEqual(rightStick, prevRight)) {
+      stickHandler(rightStick, 'right');
     }
   };
 
   useFrame(poll);
 }
+
+const roundAxisValue = (v: number) => round(v, 2);
+const applyDeadzone = (v: number) => (Math.abs(v) < DEADZONE ? 0 : v);

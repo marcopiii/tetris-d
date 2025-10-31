@@ -1,36 +1,21 @@
+import { match } from 'ts-pattern';
 import { GamepadButton } from './types';
 
 export function mapping(i: number): GamepadButton | undefined {
-  switch (i) {
-    case 0:
-      return 'A';
-    case 1:
-      return 'B';
-    case 2:
-      return 'X';
-    case 3:
-      return 'Y';
-    case 4:
-      return 'LB';
-    case 5:
-      return 'RB';
-    case 6:
-      return 'LT';
-    case 7:
-      return 'RT';
-    case 8:
-      return 'select';
-    case 9:
-      return 'start';
-    case 12:
-      return 'padU';
-    case 13:
-      return 'padD';
-    case 14:
-      return 'padL';
-    case 15:
-      return 'padR';
-    default:
-      return undefined;
-  }
+  return match(i)
+    .with(0, () => 'A' as const)
+    .with(1, () => 'B' as const)
+    .with(2, () => 'X' as const)
+    .with(3, () => 'Y' as const)
+    .with(4, () => 'LB' as const)
+    .with(5, () => 'RB' as const)
+    .with(6, () => 'LT' as const)
+    .with(7, () => 'RT' as const)
+    .with(8, () => 'select' as const)
+    .with(9, () => 'start' as const)
+    .with(12, () => 'padU' as const)
+    .with(13, () => 'padD' as const)
+    .with(14, () => 'padL' as const)
+    .with(15, () => 'padR' as const)
+    .otherwise(() => undefined);
 }
