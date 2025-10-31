@@ -5,6 +5,8 @@ export type Actions =
   | 'shiftB'
   | 'rotateL'
   | 'rotateR'
+  | 'startDrop'
+  | 'stopDrop'
   | 'hDrop';
 
 export type CameraAction = 'cameraL' | 'cameraR';
