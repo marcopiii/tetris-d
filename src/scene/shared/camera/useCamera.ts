@@ -5,7 +5,8 @@ import TWEEN from '@tweenjs/tween.js';
 import { RelativeAxes } from '~/scene/shared/camera';
 import { FX, play } from '~/audio';
 
-const MAX_TILT_DEG = 5;
+const MAX_H_TILT_DEG = 12;
+const MAX_V_TILT_DEG = 6;
 
 type CameraSetup = {
   position: [number, number, number];
@@ -93,8 +94,8 @@ export default function useCamera<K extends string>(
       forward.clone().multiplyScalar(-1),
     );
 
-    const hRad = THREE.MathUtils.degToRad(horizontal * MAX_TILT_DEG);
-    const vRad = THREE.MathUtils.degToRad(vertical * MAX_TILT_DEG);
+    const hRad = THREE.MathUtils.degToRad(horizontal * MAX_H_TILT_DEG);
+    const vRad = THREE.MathUtils.degToRad(vertical * MAX_V_TILT_DEG);
     spherical.theta += hRad;
     spherical.phi += vRad;
 

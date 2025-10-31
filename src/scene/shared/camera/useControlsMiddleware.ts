@@ -1,7 +1,7 @@
 import React from 'react';
 import { GamepadStickStatus } from '~/controls/gamepad/types';
 
-const HARD_THRESHOLD = 0.85;
+const HARD_THRESHOLD = 0.9;
 
 export function useControlsMiddleware(effect: {
   onHardLeft: () => void;
@@ -16,7 +16,7 @@ export function useControlsMiddleware(effect: {
     rightStickBufferRef.current = status;
 
     effect.onTilt(status);
-    
+
     if (!isHardLeft(prevX) && isHardLeft(currX)) {
       effect.onHardLeft();
     }
