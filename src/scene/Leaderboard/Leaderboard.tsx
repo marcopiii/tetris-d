@@ -27,12 +27,14 @@ export default function Leaderboard(props: Props) {
       .otherwise(() => {}),
   );
 
-  useGamepadManager((event, button) =>
-    match([event, button])
-      .with(['press', 'LT'], () => cameraHandler('moveL'))
-      .with(['press', 'RT'], () => cameraHandler('moveR'))
-      .with(['press', 'B'], () => props.onBack())
-      .otherwise(() => {}),
+  useGamepadManager(
+    (event, button) =>
+      match([event, button])
+        .with(['press', 'LT'], () => cameraHandler('moveL'))
+        .with(['press', 'RT'], () => cameraHandler('moveR'))
+        .with(['press', 'B'], () => props.onBack())
+        .otherwise(() => {}),
+    console.log,
   );
 
   return <Scoreboard title="Leaderboard" entries={top9} />;

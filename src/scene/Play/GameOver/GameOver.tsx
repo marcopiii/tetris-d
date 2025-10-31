@@ -61,19 +61,21 @@ export default function GameOver(props: Props) {
       .otherwise(() => {}),
   );
 
-  useGamepadManager((event, button) =>
-    match([event, button])
-      .with(['press', 'LT'], () => cameraHandler('moveL'))
-      .with(['press', 'RT'], () => cameraHandler('moveR'))
-      .with(['press', 'padL'], () => setHandle.left())
-      .with(['press', 'padR'], () => setHandle.right())
-      .with(['press', 'padU'], () => setHandle.up())
-      .with(['press', 'padD'], () => setHandle.down())
-      .with(['press', 'A'], () => onConfirm())
-      .with(['press', 'B'], () => props.onBack())
+  useGamepadManager(
+    (event, button) =>
+      match([event, button])
+        .with(['press', 'LT'], () => cameraHandler('moveL'))
+        .with(['press', 'RT'], () => cameraHandler('moveR'))
+        .with(['press', 'padL'], () => setHandle.left())
+        .with(['press', 'padR'], () => setHandle.right())
+        .with(['press', 'padU'], () => setHandle.up())
+        .with(['press', 'padD'], () => setHandle.down())
+        .with(['press', 'A'], () => onConfirm())
+        .with(['press', 'B'], () => props.onBack())
 
-      // todo: handle name input when inserting
-      .otherwise(() => {}),
+        // todo: handle name input when inserting
+        .otherwise(() => {}),
+    console.log,
   );
 
   return <Scoreboard title="Game Over" entries={entries} />;

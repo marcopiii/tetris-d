@@ -276,23 +276,25 @@ export default function Game(props: Props) {
       .otherwise(() => null),
   );
 
-  useGamepadManager((event, button) =>
-    match([event, button])
-      .with(['press', 'padL'], () => moveAction('shiftL'))
-      .with(['press', 'padR'], () => moveAction('shiftR'))
-      .with(['press', 'padU'], () => moveAction('shiftF'))
-      .with(['press', 'padD'], () => moveAction('shiftB'))
-      .with(['press', 'X'], () => moveAction('rotateL'))
-      .with(['press', 'B'], () => moveAction('rotateR'))
-      .with(['press', 'A'], () => moveAction('hDrop'))
-      .with(['press', 'Y'], () => bagAction('hold'))
-      .with(['press', 'LT'], () => cameraAction('cameraL'))
-      .with(['press', 'RT'], () => cameraAction('cameraR'))
-      .with(['press', 'LB'], () => cutterAction('cutL', 'apply'))
-      .with(['release', 'LB'], () => cutterAction('cutL', 'remove'))
-      .with(['press', 'RB'], () => cutterAction('cutR', 'apply'))
-      .with(['release', 'RB'], () => cutterAction('cutR', 'remove'))
-      .otherwise(() => null),
+  useGamepadManager(
+    (event, button) =>
+      match([event, button])
+        .with(['press', 'padL'], () => moveAction('shiftL'))
+        .with(['press', 'padR'], () => moveAction('shiftR'))
+        .with(['press', 'padU'], () => moveAction('shiftF'))
+        .with(['press', 'padD'], () => moveAction('shiftB'))
+        .with(['press', 'X'], () => moveAction('rotateL'))
+        .with(['press', 'B'], () => moveAction('rotateR'))
+        .with(['press', 'A'], () => moveAction('hDrop'))
+        .with(['press', 'Y'], () => bagAction('hold'))
+        .with(['press', 'LT'], () => cameraAction('cameraL'))
+        .with(['press', 'RT'], () => cameraAction('cameraR'))
+        .with(['press', 'LB'], () => cutterAction('cutL', 'apply'))
+        .with(['release', 'LB'], () => cutterAction('cutL', 'remove'))
+        .with(['press', 'RB'], () => cutterAction('cutR', 'apply'))
+        .with(['release', 'RB'], () => cutterAction('cutR', 'remove'))
+        .otherwise(() => null),
+    console.log,
   );
 
   const boardCuttingProp = {
