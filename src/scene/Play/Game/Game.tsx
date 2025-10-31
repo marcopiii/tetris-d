@@ -102,7 +102,9 @@ export default function Game(props: Props) {
         lastMoveSpinDataRef.current = undefined;
       }
     },
-    isDropping ? gravity.length - 1 : progress.level,
+    isDropping
+      ? Math.min(progress.level + 5, gravity.length - 1)
+      : progress.level,
   );
 
   // every time the tetrimino moves, by player action or gravity
@@ -220,14 +222,8 @@ export default function Game(props: Props) {
         }
         return true;
       })
-      .with('startDrop', () => {
-        console.log('attivo');
-        setIsDropping(true);
-      })
-      .with('stopDrop', () => {
-        console.log('disattivo');
-        setIsDropping(false);
-      })
+      .with('startDrop', () => setIsDropping(true))
+      .with('stopDrop', () => setIsDropping(false))
       .exhaustive();
     if (success) {
       hasHardDroppedRef.current = action === 'hDrop';

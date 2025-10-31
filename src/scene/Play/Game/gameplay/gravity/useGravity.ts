@@ -7,7 +7,6 @@ export const gravity = [
 ];
 
 export default function useGravity(callback: () => void, level: number) {
-  console.log(level);
   const intervalRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
 
   // todo: use `useEffectEvent`
