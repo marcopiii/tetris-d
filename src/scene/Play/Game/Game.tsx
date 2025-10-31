@@ -295,9 +295,9 @@ export default function Game(props: Props) {
         .with(['press', 'A'], () => moveAction('hDrop'))
         .with(['press', 'Y'], () => bagAction('hold'))
         .with(['press', 'LB'], () => cutterAction('cutL', 'apply'))
-        .with(['release', 'LB'], () => cutterAction('cutL', 'remove'))
+        .with(['lift', 'LB'], () => cutterAction('cutL', 'remove'))
         .with(['press', 'RB'], () => cutterAction('cutR', 'apply'))
-        .with(['release', 'RB'], () => cutterAction('cutR', 'remove'))
+        .with(['lift', 'RB'], () => cutterAction('cutR', 'remove'))
         .otherwise(noop),
     (status, stick) => {
       if (stick === 'right') {
