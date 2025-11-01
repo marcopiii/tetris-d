@@ -300,6 +300,7 @@ export default function Game(props: Props) {
         .with(['press', 'RB'], () => cutterAction('cutR', 'apply'))
         .with(['lift', 'RB'], () => cutterAction('cutR', 'remove'))
         .otherwise(noop),
+    console.log,
     (status, stick) => {
       if (stick === 'right') {
         handleRightStickInput(status);
