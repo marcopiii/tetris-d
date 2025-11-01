@@ -263,10 +263,6 @@ export default function Game(props: Props) {
       .with(['press', 'KeyX'], () => bagAction('hold'))
       .with(['press', 'ArrowLeft'], () => cameraAction('cameraL'))
       .with(['press', 'ArrowRight'], () => cameraAction('cameraR'))
-      // .with(['press', 'KeyZ'], () => cutterAction('cutL', 'apply'))
-      // .with(['release', 'KeyZ'], () => cutterAction('cutL', 'remove'))
-      // .with(['press', 'KeyC'], () => cutterAction('cutR', 'apply'))
-      // .with(['release', 'KeyC'], () => cutterAction('cutR', 'remove'))
       .otherwise(noop),
   );
 
@@ -287,10 +283,6 @@ export default function Game(props: Props) {
         .with(['press', 'B'], () => moveAction('rotateR'))
         .with(['press', 'A'], () => moveAction('hDrop'))
         .with(['press', 'Y'], () => bagAction('hold'))
-        // .with(['press', 'LB'], () => cutterAction('cutL', 'apply'))
-        // .with(['lift', 'LB'], () => cutterAction('cutL', 'remove'))
-        // .with(['press', 'RB'], () => cutterAction('cutR', 'apply'))
-        // .with(['lift', 'RB'], () => cutterAction('cutR', 'remove'))
         .otherwise(noop),
     (status, trigger) => {
       match(trigger)
@@ -309,9 +301,8 @@ export default function Game(props: Props) {
     plane: {
       [plane.current]: tetrimino[0][plane.current],
     } as PlaneCoords,
-    // todo: use the continuous value
-    below: cut.below > 0,
-    above: cut.above > 0,
+    below: cut.below,
+    above: cut.above,
   };
 
   // todo: avoid unnecessary re-renders
