@@ -6,15 +6,12 @@ import { RelativeAxes } from '~/scene/shared/camera';
 
 export default function useCutter(plane: Plane, relativeAxes: RelativeAxes) {
   const [relativeCut, setRelativeCut] = React.useState<RelativeCut>({
-    left: false,
-    right: false,
+    left: 0,
+    right: 0,
   });
 
-  const toggleRelativeCut = (
-    toggle: 'apply' | 'remove',
-    side: RelativeSide,
-  ) => {
-    setRelativeCut((prev) => ({ ...prev, [side]: toggle === 'apply' }));
+  const applyRelativeCut = (side: RelativeSide, value: number) => {
+    setRelativeCut((prev) => ({ ...prev, [side]: value }));
   };
 
   const fwRx = match(plane)
@@ -27,5 +24,5 @@ export default function useCutter(plane: Plane, relativeAxes: RelativeAxes) {
     above: fwRx ? relativeCut.right : relativeCut.left,
   };
 
-  return [absolutCut, toggleRelativeCut] as const;
+  return [absolutCut, applyRelativeCut] as const;
 }
