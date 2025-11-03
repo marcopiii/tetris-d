@@ -4,7 +4,7 @@ import { match } from 'ts-pattern';
 import { TriMaterial } from '~/materials/types';
 import { minoMaterials } from '~/materials';
 import { Tetrimino } from '~/tetrimino';
-import { MINO_SIZE, Voxel } from '../../../shared';
+import { MINO_SIZE, Voxel, useInterpolatedValue } from '../../../shared';
 
 type Props = {
   position: [number, number, number];
@@ -17,22 +17,7 @@ type Props = {
 );
 
 export default function Mino(props: Props) {
-  // const [cuttingProgress, setCuttingProgress] = React.useState(0);
-
-  // useFrame(() => {
-  //   if (props.isHidden !== undefined) {
-  //     props.tweenGroupRef.current.update();
-  //   }
-  // });
-
-  // React.useEffect(() => {
-  //   if (props.isHidden === undefined) return;
-  //   new TWEEN.Tween({ progress: cuttingProgress }, props.tweenGroupRef.current)
-  //     .to({ progress: props.isHidden ? 1 : 0 }, 100)
-  //     .easing(TWEEN.Easing.Linear.InOut)
-  //     .onUpdate(({ progress }) => setCuttingProgress(progress))
-  //     .start();
-  // }, [props.isHidden]);
+  const interpolatedShrink = useInterpolatedValue(props.shrink ?? 0, 30);
 
   const material = match(props)
     .with(
@@ -44,7 +29,7 @@ export default function Mino(props: Props) {
     )
     .otherwise(({ status }) => minoMaterials[props.type][status]);
 
-  const size = MINO_SIZE * (1 - (props.shrink ?? 0));
+  const size = MINO_SIZE * (1 - interpolatedShrink);
 
   return (
     <Voxel
