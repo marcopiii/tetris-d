@@ -1,3 +1,4 @@
+import { noop } from 'es-toolkit';
 import { match } from 'ts-pattern';
 import { useGamepadManager, useKeyboardManager } from '../../controls';
 import { Menu, useMenuNavigation } from '../shared/Menu';
@@ -62,9 +63,8 @@ export default function MainMenu(props: Props) {
         .with(['press', 'LT'], () => menuCameraHandler('moveL'))
         .with(['press', 'RT'], () => menuCameraHandler('moveR'))
         .otherwise(() => {}),
-    (axis) => {
-      console.log(axis);
-    },
+    noop,
+    noop,
   );
 
   return <Menu position={[0, 0, 0]} title="tetris-d" options={options} />;

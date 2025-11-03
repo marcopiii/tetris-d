@@ -7,8 +7,8 @@ import { PlaneCoords } from '../types';
 
 type Props = {
   plane: PlaneCoords;
-  below: boolean;
-  above: boolean;
+  below: number;
+  above: number;
 };
 
 export default function CuttingShadow(props: Props) {

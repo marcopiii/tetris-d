@@ -1,4 +1,3 @@
-import TWEEN from '@tweenjs/tween.js';
 import React from 'react';
 import { match, P } from 'ts-pattern';
 import { MinoCoord } from '~/scene/Play/Game/types';
@@ -16,22 +15,20 @@ type Props = {
 export default function Board(props: Props) {
   const completedLines = checkCompletedLines(props.occupiedBlocks);
 
-  const tweenGroupRef = React.useRef(new TWEEN.Group());
-
-  const isVisible = (block: MinoCoord) =>
+  const cuttingLevel = (block: MinoCoord) =>
     match(props.cutting.plane)
-      .with(
-        { x: P.number },
-        (plane) =>
-          (!props.cutting.below || block.x >= plane.x) &&
-          (!props.cutting.above || block.x <= plane.x),
-      )
-      .with(
-        { z: P.number },
-        (plane) =>
-          (!props.cutting.below || block.z >= plane.z) &&
-          (!props.cutting.above || block.z <= plane.z),
-      )
+      .with({ x: P.number }, (plane) => {
+        return match(block.x)
+          .with(P.number.lt(plane.x), () => props.cutting.below)
+          .with(P.number.gt(plane.x), () => props.cutting.above)
+          .otherwise(() => 0);
+      })
+      .with({ z: P.number }, (plane) => {
+        return match(block.z)
+          .with(P.number.lt(plane.z), () => props.cutting.below)
+          .with(P.number.gt(plane.z), () => props.cutting.above)
+          .otherwise(() => 0);
+      })
       .exhaustive();
 
   return (
@@ -57,8 +54,7 @@ export default function Board(props: Props) {
             type={type}
             position={position}
             status={deleting ? 'deleting' : 'normal'}
-            isHidden={!isVisible({ y, x, z })}
-            tweenGroupRef={tweenGroupRef}
+            shrink={cuttingLevel({ y, x, z })}
           />
         );
       })}

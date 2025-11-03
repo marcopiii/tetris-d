@@ -6,7 +6,7 @@ import { useGamepadManager, useKeyboardManager } from '~/controls';
 import { spinDetector } from '~/scene/Play/Game/gameplay/score/spinDetector';
 import { useControlsMiddleware } from '~/scene/shared/camera/useControlsMiddleware';
 import { VANISH_ZONE_ROWS } from './params';
-import { BagAction, CameraAction, CutAction, Actions } from './types';
+import { BagAction, CameraAction, Actions } from './types';
 import { useCamera } from '~/scene/shared';
 import BagPanel from './BagPanel';
 import Board from './Board';
@@ -146,14 +146,6 @@ export default function Game(props: Props) {
       .exhaustive();
   }
 
-  function cutterAction(action: CutAction, apply: 'apply' | 'remove') {
-    const relativeSide = match(action)
-      .with('cutL', () => 'left' as const)
-      .with('cutR', () => 'right' as const)
-      .exhaustive();
-    setCut(apply, relativeSide);
-  }
-
   function moveAction(action: Actions) {
     if (hasHardDroppedRef.current || !canReset) {
       return;
@@ -271,10 +263,6 @@ export default function Game(props: Props) {
       .with(['press', 'KeyX'], () => bagAction('hold'))
       .with(['press', 'ArrowLeft'], () => cameraAction('cameraL'))
       .with(['press', 'ArrowRight'], () => cameraAction('cameraR'))
-      .with(['press', 'KeyZ'], () => cutterAction('cutL', 'apply'))
-      .with(['release', 'KeyZ'], () => cutterAction('cutL', 'remove'))
-      .with(['press', 'KeyC'], () => cutterAction('cutR', 'apply'))
-      .with(['release', 'KeyC'], () => cutterAction('cutR', 'remove'))
       .otherwise(noop),
   );
 
@@ -295,11 +283,13 @@ export default function Game(props: Props) {
         .with(['press', 'B'], () => moveAction('rotateR'))
         .with(['press', 'A'], () => moveAction('hDrop'))
         .with(['press', 'Y'], () => bagAction('hold'))
-        .with(['press', 'LB'], () => cutterAction('cutL', 'apply'))
-        .with(['lift', 'LB'], () => cutterAction('cutL', 'remove'))
-        .with(['press', 'RB'], () => cutterAction('cutR', 'apply'))
-        .with(['lift', 'RB'], () => cutterAction('cutR', 'remove'))
         .otherwise(noop),
+    (status, trigger) => {
+      match(trigger)
+        .with('LT', () => setCut('left', status))
+        .with('RT', () => setCut('right', status))
+        .exhaustive();
+    },
     (status, stick) => {
       if (stick === 'right') {
         handleRightStickInput(status);

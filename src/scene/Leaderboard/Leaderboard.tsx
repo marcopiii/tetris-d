@@ -1,3 +1,4 @@
+import { noop } from 'es-toolkit';
 import { match } from 'ts-pattern';
 import { useGamepadManager, useKeyboardManager } from '~/controls';
 import { Scoreboard, useCamera, useLeaderboard } from '~/scene/shared';
@@ -34,7 +35,8 @@ export default function Leaderboard(props: Props) {
         .with(['press', 'RT'], () => cameraHandler('moveR'))
         .with(['press', 'B'], () => props.onBack())
         .otherwise(() => {}),
-    console.log,
+    noop,
+    noop,
   );
 
   return <Scoreboard title="Leaderboard" entries={top9} />;

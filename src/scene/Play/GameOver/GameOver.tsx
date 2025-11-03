@@ -1,3 +1,4 @@
+import { noop } from 'es-toolkit';
 import { match } from 'ts-pattern';
 import { useGamepadManager, useKeyboardManager } from '~/controls';
 import { Progress } from '~/scene/Play/Game/gameplay';
@@ -72,10 +73,10 @@ export default function GameOver(props: Props) {
         .with(['press', 'padD'], () => setHandle.down())
         .with(['press', 'A'], () => onConfirm())
         .with(['press', 'B'], () => props.onBack())
-
         // todo: handle name input when inserting
         .otherwise(() => {}),
-    console.log,
+    noop,
+    noop,
   );
 
   return <Scoreboard title="Game Over" entries={entries} />;
