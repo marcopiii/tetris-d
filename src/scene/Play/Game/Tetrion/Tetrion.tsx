@@ -3,7 +3,6 @@ import React from 'react';
 import * as THREE from 'three';
 import { COLS, ROWS } from '~/scene/Play/Game/params';
 import { MINO_SIZE } from '~/scene/shared';
-import TetrionBase from './TetrionBase';
 import TetrionWall from './TetrionWall';
 
 export default function Tetrion() {
@@ -31,10 +30,6 @@ export default function Tetrion() {
       />
       <TetrionWall position={[0, 0, -COLS / 2]} rotation={[0, 0, 0]} />
       <TetrionWall position={[0, 0, COLS / 2]} rotation={[0, Math.PI, 0]} />
-      <TetrionBase
-        position={[0, -ROWS, 0]}
-        rotation={[Math.PI, Math.PI / 4, 0]}
-      />
     </group>
   );
 }
