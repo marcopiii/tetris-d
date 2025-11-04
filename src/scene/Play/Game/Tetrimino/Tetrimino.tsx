@@ -36,6 +36,10 @@ export default function Tetrimino(props: Props) {
           status: props.isPaused ? ('disabled' as const) : ('normal' as const),
         };
 
+  const shadeProps = props.isPaused
+    ? { status: 'disabled' as const, type: props.type }
+    : { status: 'normal' as const, type: props.type };
+
   return (
     <group>
       {props.occupiedBlocks.map(({ y, x, z }) => {
@@ -44,22 +48,22 @@ export default function Tetrimino(props: Props) {
           <>
             <Mino type={props.type} position={[tx, ty, tz]} {...minoProps} />
             <MinoShade
-              type={props.type}
+              {...shadeProps}
               rotation={[0, 0, 0]}
               position={[tx, ty, -COLS / 2]}
             />
             <MinoShade
-              type={props.type}
+              {...shadeProps}
               rotation={[0, Math.PI / 2, 0]}
               position={[-COLS / 2, ty, tz]}
             />
             <MinoShade
-              type={props.type}
+              {...shadeProps}
               rotation={[0, Math.PI, 0]}
               position={[tx, ty, COLS / 2]}
             />
             <MinoShade
-              type={props.type}
+              {...shadeProps}
               rotation={[0, -Math.PI / 2, 0]}
               position={[COLS / 2, ty, tz]}
             />
