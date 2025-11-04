@@ -107,12 +107,20 @@ export default function Game(props: Props) {
   const isOnLineDeletionPhaseRef = React.useRef(false);
   const [isOnPause, setIsOnPause] = React.useState(false);
 
-  const { pauseGravity, resumeGravity } = useGravity(() => {
-    const dropSuccess = !!attempt(drop)(board);
-    if (dropSuccess) {
-      lastMoveSpinDataRef.current = undefined;
-    }
-  }, progress.level);
+  const { pauseGravity, resumeGravity, setSoftDropping } = useGravity(
+    (isSoftDropping) => {
+      const dropSuccess = !!attempt(drop)(board);
+      if (dropSuccess) {
+        lastMoveSpinDataRef.current = undefined;
+        if (isSoftDropping) {
+          track({
+            rewardingMove: { move: 'soft-drop' },
+          });
+        }
+      }
+    },
+    progress.level,
+  );
 
   const triggerLineDeletionPhase = () => {
     isOnLineDeletionPhaseRef.current = true;
@@ -245,6 +253,14 @@ export default function Game(props: Props) {
         }
         return false;
       })
+      .with('sDropStart', () => {
+        setSoftDropping(true);
+        return true;
+      })
+      .with('sDropEnd', () => {
+        setSoftDropping(false);
+        return true;
+      })
       .with('hDrop', () => {
         const dropLength = hardDrop(board);
         if (dropLength > 0) {
@@ -269,8 +285,8 @@ export default function Game(props: Props) {
         .with('rotateL', () => FX.tetrimino_rotate)
         .with('rotateR', () => FX.tetrimino_rotate)
         .with('hDrop', () => FX.hard_drop)
-        .exhaustive();
-      play(fx, 0.15);
+        .otherwise(() => undefined);
+      fx && play(fx, 0.15);
     }
   }
 
@@ -312,6 +328,8 @@ export default function Game(props: Props) {
         .with(['press', 'padD'], () => moveAction('shiftB'))
         .with(['press', 'X'], () => moveAction('rotateL'))
         .with(['press', 'B'], () => moveAction('rotateR'))
+        .with(['press', 'LB'], () => moveAction('sDropStart'))
+        .with(['lift', 'LB'], () => moveAction('sDropEnd'))
         .with(['press', 'A'], () => moveAction('hDrop'))
         .with(['press', 'Y'], () => bagAction('hold'))
         .with(['press', 'start'], () => togglePause())

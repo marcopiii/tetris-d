@@ -5,6 +5,7 @@ export type ScoreEvent = { id: number; points: number } & (
   | ({ kind: 'line-clear' } & LineClearEvent)
   | ({ kind: 'combo' } & ComboEvent)
   | ({ kind: 'perfect-clear' } & PerfectClearEvent)
+  | { kind: 'soft-drop' }
   | { kind: 'hard-drop' }
   | ({ kind: 't-spin' } & TSpinEvent)
 );

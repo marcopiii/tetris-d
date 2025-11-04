@@ -5,10 +5,10 @@ export type Actions =
   | 'shiftB'
   | 'rotateL'
   | 'rotateR'
+  | 'sDropStart'
+  | 'sDropEnd'
   | 'hDrop';
 
 export type CameraAction = 'cameraL' | 'cameraR';
-
-export type CutAction = 'cutL' | 'cutR';
 
 export type BagAction = 'hold';
