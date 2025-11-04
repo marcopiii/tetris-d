@@ -8,6 +8,7 @@ export type TrackData = {
 };
 
 type RewardingMoveData =
+  | { move: 'soft-drop' }
   | ({ move: 'hard-drop' } & HardDropData)
   | ({ move: 't-spin' } & TSpinData);
 

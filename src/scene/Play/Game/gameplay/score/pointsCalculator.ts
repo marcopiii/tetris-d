@@ -1,6 +1,10 @@
 import { match } from 'ts-pattern';
 import { PlaneCombo, TSpinKind } from './types';
 
+export function pointsPerSoftDrop(length: number) {
+  return length;
+}
+
 export function pointsPerHardDrop(length: number) {
   return length * 2;
 }

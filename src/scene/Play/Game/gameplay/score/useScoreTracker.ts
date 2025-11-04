@@ -18,6 +18,7 @@ import {
   pointsPerPlaneClear,
   planeComboMultiplier,
   pointsPerLines,
+  pointsPerSoftDrop,
 } from './pointsCalculator';
 
 const LINE_CLEAR_PER_LEVEL = 10;
@@ -113,6 +114,15 @@ export function useScoreTracker() {
     return [lineClearEvent, comboEvent];
   };
 
+  const digestSoftDrop = (): ScoreEvent | undefined => {
+    const points = pointsPerSoftDrop(1);
+    return {
+      id: Date.now(),
+      kind: 'soft-drop',
+      points: points,
+    };
+  };
+
   const digestHardDrop = (data: HardDropData): ScoreEvent | undefined => {
     if (data.length === 0) return;
 
@@ -181,6 +191,7 @@ export function useScoreTracker() {
   const track = (trackData: TrackData) => {
     const [lineClearEvent, comboEvent] = digestClearing(trackData.clearing);
     const moveEvent = match(trackData.rewardingMove)
+      .with({ move: 'soft-drop' }, () => digestSoftDrop())
       .with({ move: 'hard-drop' }, (data) => digestHardDrop(data))
       .with({ move: 't-spin' }, (data) => digestTSpin(data, trackData.clearing))
       .otherwise(() => undefined);

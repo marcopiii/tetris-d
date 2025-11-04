@@ -107,12 +107,20 @@ export default function Game(props: Props) {
   const isOnLineDeletionPhaseRef = React.useRef(false);
   const [isOnPause, setIsOnPause] = React.useState(false);
 
-  const { pauseGravity, resumeGravity, setSoftDropping } = useGravity(() => {
-    const dropSuccess = !!attempt(drop)(board);
-    if (dropSuccess) {
-      lastMoveSpinDataRef.current = undefined;
-    }
-  }, progress.level);
+  const { pauseGravity, resumeGravity, setSoftDropping } = useGravity(
+    (isSoftDropping) => {
+      const dropSuccess = !!attempt(drop)(board);
+      if (dropSuccess) {
+        lastMoveSpinDataRef.current = undefined;
+        if (isSoftDropping) {
+          track({
+            rewardingMove: { move: 'soft-drop' },
+          });
+        }
+      }
+    },
+    progress.level,
+  );
 
   const triggerLineDeletionPhase = () => {
     isOnLineDeletionPhaseRef.current = true;
