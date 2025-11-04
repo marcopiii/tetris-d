@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { FPS } from '../params';
 
 /** @see https://harddrop.com/wiki/Tetris_Worlds */
 const gravity = [
@@ -19,7 +20,7 @@ export default function useGravity(
   const appliedGravity = isSoftDropping
     ? Math.max(SOFT_DROP_G, gravity[level])
     : gravity[level];
-  const rowsPerSecond = appliedGravity * 60;
+  const rowsPerSecond = appliedGravity * FPS;
   const speed = 1000 / rowsPerSecond;
 
   // todo: use `useEffectEvent`
