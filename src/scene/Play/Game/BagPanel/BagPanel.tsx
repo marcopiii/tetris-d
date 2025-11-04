@@ -7,6 +7,7 @@ type Props = {
   next: Tetrimino;
   hold?: Tetrimino;
   camera: 'c1' | 'c2' | 'c3' | 'c4';
+  isPaused: boolean;
 };
 
 export default function BagPanel(props: Props) {
@@ -38,11 +39,13 @@ export default function BagPanel(props: Props) {
         position={[0, 0, 0]}
         label="next"
         tetrimino={props.next}
+        isPaused={props.isPaused}
       />
       <LabeledTetrimino
         position={[0, -5, 0]}
         label="hold"
         tetrimino={props.hold}
+        isPaused={props.isPaused}
       />
     </group>
   );

@@ -293,6 +293,7 @@ export default function Game(props: Props) {
       .with(['press', 'KeyX'], () => bagAction('hold'))
       .with(['press', 'ArrowLeft'], () => cameraAction('cameraL'))
       .with(['press', 'ArrowRight'], () => cameraAction('cameraR'))
+      .with(['press', 'KeyP'], () => togglePause())
       .otherwise(noop),
   );
 
@@ -344,8 +345,14 @@ export default function Game(props: Props) {
         camera={camera}
         progress={progress}
         scoreEventStream={scoreEventStream}
+        isPaused={isOnPause}
       />
-      <BagPanel camera={camera} next={bag.next} hold={bag.hold} />
+      <BagPanel
+        camera={camera}
+        next={bag.next}
+        hold={bag.hold}
+        isPaused={isOnPause}
+      />
       <Board
         occupiedBlocks={board}
         cutting={boardCuttingProp}

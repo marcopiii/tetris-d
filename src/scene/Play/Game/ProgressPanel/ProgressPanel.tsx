@@ -8,6 +8,7 @@ type Props = {
   camera: 'c1' | 'c2' | 'c3' | 'c4';
   progress: Progress;
   scoreEventStream: ScoreEvent[];
+  isPaused: boolean;
 };
 
 export default function ProgressPanel(props: Props) {
@@ -39,6 +40,7 @@ export default function ProgressPanel(props: Props) {
         position={[0, 0, 0]}
         label="score"
         value={props.progress.score}
+        isPaused={props.isPaused}
       />
       {props.scoreEventStream.map(({ points, id }) => (
         <Popup
@@ -55,6 +57,7 @@ export default function ProgressPanel(props: Props) {
         position={[0, -3.5, 0]}
         label="level"
         value={props.progress.level}
+        isPaused={props.isPaused}
       />
     </group>
   );
