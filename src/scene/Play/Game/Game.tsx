@@ -1,6 +1,6 @@
 import { noop } from 'es-toolkit';
 import React from 'react';
-import { match } from 'ts-pattern';
+import { match, P } from 'ts-pattern';
 import { FX, play } from '~/audio';
 import { useGamepadManager, useKeyboardManager } from '~/controls';
 import { RelativeSide } from '~/scene/Play/Game/gameplay/cutter/types';
@@ -329,7 +329,7 @@ export default function Game(props: Props) {
         .with(['press', 'X'], () => moveAction('rotateL'))
         .with(['press', 'B'], () => moveAction('rotateR'))
         .with(['press', 'LB'], () => moveAction('sDropStart'))
-        .with(['lift', 'LB'], () => moveAction('sDropEnd'))
+        .with([P.union('lift', 'release'), 'LB'], () => moveAction('sDropEnd'))
         .with(['press', 'A'], () => moveAction('hDrop'))
         .with(['press', 'Y'], () => bagAction('hold'))
         .with(['press', 'start'], () => togglePause())
