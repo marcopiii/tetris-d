@@ -13,7 +13,9 @@ export default function useGravity(callback: () => void, level: number) {
 
   const [isSoftDropping, setSoftDropping] = React.useState(false);
 
-  const appliedGravity = isSoftDropping ? SOFT_DROP_G : gravity[level];
+  const appliedGravity = isSoftDropping
+    ? Math.max(SOFT_DROP_G, gravity[level])
+    : gravity[level];
   const rowsPerSecond = appliedGravity * 60;
   const speed = 1000 / rowsPerSecond;
 
