@@ -291,6 +291,13 @@ export default function Game(props: Props) {
     }
   }
 
+  const { activateDAS, stopDAS } = useDAS({
+    shiftL: () => moveAction('shiftL'),
+    shiftR: () => moveAction('shiftR'),
+    shiftF: () => moveAction('shiftF'),
+    shiftB: () => moveAction('shiftB'),
+  });
+
   function bagAction(_action: BagAction) {
     if (isInteractionBlocked()) {
       return;
@@ -319,8 +326,6 @@ export default function Game(props: Props) {
     onHardRight: () => cameraAction('cameraR'),
     onTilt: ({ x, y }) => tiltCamera(x, y),
   });
-
-  const { activateDAS, stopDAS } = useDAS();
 
   useGamepadManager(
     (event, button) =>
