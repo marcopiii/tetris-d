@@ -60,7 +60,7 @@ export default function Game(props: Props) {
         play(FX.line_clear, 0.75);
         triggerLineDeletionPhase();
       } else {
-        resumeGravity();
+        endLineDeletionPhase();
       }
       track({
         perfectClear: clearedPlanes,
@@ -87,8 +87,6 @@ export default function Game(props: Props) {
 
   const ghost = projectGhost(board);
 
-  const hasHardDroppedRef = React.useRef(false);
-
   const lastMoveSpinDataRef =
     React.useRef<Omit<TetriminoState, 'shape'>>(undefined);
 
@@ -104,6 +102,9 @@ export default function Game(props: Props) {
     }
   });
 
+  const hasHardDroppedRef = React.useRef(false);
+  const isOnLineDeletionPhaseRef = React.useRef(false);
+
   const { pauseGravity, resumeGravity } = useGravity(() => {
     const dropSuccess = !!attempt(drop)(board);
     if (dropSuccess) {
@@ -112,8 +113,14 @@ export default function Game(props: Props) {
   }, progress.level);
 
   const triggerLineDeletionPhase = () => {
+    isOnLineDeletionPhaseRef.current = true;
     pauseGravity();
     setTimeout(() => deleteLines(), 500);
+  };
+
+  const endLineDeletionPhase = () => {
+    isOnLineDeletionPhaseRef.current = false;
+    resumeGravity();
   };
 
   // every time the tetrimino moves, by player action or gravity
@@ -146,8 +153,11 @@ export default function Game(props: Props) {
       .exhaustive();
   }
 
+  const isInteractionBlocked = () =>
+    hasHardDroppedRef.current || isOnLineDeletionPhaseRef.current || !canReset;
+
   function moveAction(action: Actions) {
-    if (hasHardDroppedRef.current || !canReset) {
+    if (isInteractionBlocked()) {
       return;
     }
     const [rxInverted, fwInverted] = match(plane.current)
@@ -245,7 +255,7 @@ export default function Game(props: Props) {
   }
 
   function bagAction(_action: BagAction) {
-    if (!canReset) {
+    if (isInteractionBlocked()) {
       return;
     }
     bag.switchHold?.();
