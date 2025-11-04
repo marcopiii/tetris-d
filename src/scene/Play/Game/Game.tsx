@@ -107,7 +107,7 @@ export default function Game(props: Props) {
   const isOnLineDeletionPhaseRef = React.useRef(false);
   const [isOnPause, setIsOnPause] = React.useState(false);
 
-  const { pauseGravity, resumeGravity } = useGravity(() => {
+  const { pauseGravity, resumeGravity, setSoftDropping } = useGravity(() => {
     const dropSuccess = !!attempt(drop)(board);
     if (dropSuccess) {
       lastMoveSpinDataRef.current = undefined;
@@ -245,6 +245,14 @@ export default function Game(props: Props) {
         }
         return false;
       })
+      .with('sDropStart', () => {
+        setSoftDropping(true);
+        return true;
+      })
+      .with('sDropEnd', () => {
+        setSoftDropping(false);
+        return true;
+      })
       .with('hDrop', () => {
         const dropLength = hardDrop(board);
         if (dropLength > 0) {
@@ -269,8 +277,8 @@ export default function Game(props: Props) {
         .with('rotateL', () => FX.tetrimino_rotate)
         .with('rotateR', () => FX.tetrimino_rotate)
         .with('hDrop', () => FX.hard_drop)
-        .exhaustive();
-      play(fx, 0.15);
+        .otherwise(() => undefined);
+      fx && play(fx, 0.15);
     }
   }
 

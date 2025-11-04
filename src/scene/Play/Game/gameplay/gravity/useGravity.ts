@@ -6,8 +6,16 @@ const gravity = [
   0.1775, 0.2598, 0.388, 0.59, 0.92, 1.46, 2.36,
 ];
 
+const SOFT_DROP_G = 1 / 3;
+
 export default function useGravity(callback: () => void, level: number) {
   const intervalRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
+
+  const [isSoftDropping, setSoftDropping] = React.useState(false);
+
+  const appliedGravity = isSoftDropping ? SOFT_DROP_G : gravity[level];
+  const rowsPerSecond = appliedGravity * 60;
+  const speed = 1000 / rowsPerSecond;
 
   // todo: use `useEffectEvent`
   const callbackRef = React.useRef(callback);
@@ -15,12 +23,10 @@ export default function useGravity(callback: () => void, level: number) {
     callbackRef.current = callback;
   }, [callback]);
 
-  const speed = 1000 / (gravity[level] * 60);
-
   React.useEffect(() => {
     intervalRef.current = setInterval(() => callbackRef.current(), speed);
     return () => clearInterval(intervalRef.current);
-  }, [level]);
+  }, [level, speed]);
 
   const pauseGravity = () => {
     if (intervalRef.current) {
@@ -35,5 +41,5 @@ export default function useGravity(callback: () => void, level: number) {
     }
   };
 
-  return { pauseGravity, resumeGravity } as const;
+  return { pauseGravity, resumeGravity, setSoftDropping } as const;
 }
