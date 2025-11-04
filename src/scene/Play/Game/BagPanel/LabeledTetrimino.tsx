@@ -7,6 +7,7 @@ export default function LabeledTetrimino(props: {
   position: [number, number, number];
   label: string;
   tetrimino?: Tetrimino;
+  isPaused: boolean;
 }) {
   return (
     <group position={props.position}>
@@ -17,6 +18,7 @@ export default function LabeledTetrimino(props: {
         text={props.label}
         type="secondary"
         font="alphabet"
+        disabled={props.isPaused}
       />
       {props.tetrimino && (
         <Center position={[0, -2, 0]} front cacheKey={props.tetrimino}>
@@ -27,7 +29,7 @@ export default function LabeledTetrimino(props: {
                   <Mino
                     type={props.tetrimino!}
                     position={[dx, -dy, 0]}
-                    status="normal"
+                    status={props.isPaused ? 'disabled' : 'normal'}
                   />
                 )
               );

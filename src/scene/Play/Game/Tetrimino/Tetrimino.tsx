@@ -11,6 +11,7 @@ type Props = {
   type: TetriminoType;
   occupiedBlocks: { y: number; x: number; z: number }[];
   lockTimer: React.RefObject<LockTimer | undefined>;
+  isPaused?: boolean;
 };
 
 export default function Tetrimino(props: Props) {
@@ -31,7 +32,13 @@ export default function Tetrimino(props: Props) {
   const minoProps =
     lockProgress > 0
       ? { status: 'locking' as const, lockProgress }
-      : { status: 'normal' as const };
+      : {
+          status: props.isPaused ? ('disabled' as const) : ('normal' as const),
+        };
+
+  const shadeProps = props.isPaused
+    ? { status: 'disabled' as const, type: props.type }
+    : { status: 'normal' as const, type: props.type };
 
   return (
     <group>
@@ -41,22 +48,22 @@ export default function Tetrimino(props: Props) {
           <>
             <Mino type={props.type} position={[tx, ty, tz]} {...minoProps} />
             <MinoShade
-              type={props.type}
+              {...shadeProps}
               rotation={[0, 0, 0]}
               position={[tx, ty, -COLS / 2]}
             />
             <MinoShade
-              type={props.type}
+              {...shadeProps}
               rotation={[0, Math.PI / 2, 0]}
               position={[-COLS / 2, ty, tz]}
             />
             <MinoShade
-              type={props.type}
+              {...shadeProps}
               rotation={[0, Math.PI, 0]}
               position={[tx, ty, COLS / 2]}
             />
             <MinoShade
-              type={props.type}
+              {...shadeProps}
               rotation={[0, -Math.PI / 2, 0]}
               position={[COLS / 2, ty, tz]}
             />

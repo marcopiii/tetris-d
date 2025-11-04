@@ -3,6 +3,7 @@ import React from 'react';
 import { match } from 'ts-pattern';
 import { FX, play } from '~/audio';
 import { useGamepadManager, useKeyboardManager } from '~/controls';
+import { RelativeSide } from '~/scene/Play/Game/gameplay/cutter/types';
 import { spinDetector } from '~/scene/Play/Game/gameplay/score/spinDetector';
 import { useControlsMiddleware } from '~/scene/shared/camera/useControlsMiddleware';
 import { VANISH_ZONE_ROWS } from './params';
@@ -104,6 +105,7 @@ export default function Game(props: Props) {
 
   const hasHardDroppedRef = React.useRef(false);
   const isOnLineDeletionPhaseRef = React.useRef(false);
+  const [isOnPause, setIsOnPause] = React.useState(false);
 
   const { pauseGravity, resumeGravity } = useGravity(() => {
     const dropSuccess = !!attempt(drop)(board);
@@ -140,6 +142,11 @@ export default function Game(props: Props) {
 
   const [cut, setCut] = useCutter(plane.current, relativeAxes);
 
+  function cutterAction(side: RelativeSide, value: number) {
+    if (isOnPause) return;
+    setCut(side, value);
+  }
+
   function cameraAction(action: CameraAction) {
     match([camera, action])
       .with(['c1', 'cameraR'], () => setCamera('c2'))
@@ -153,8 +160,21 @@ export default function Game(props: Props) {
       .exhaustive();
   }
 
+  function togglePause() {
+    if (isOnPause) {
+      setIsOnPause(false);
+      resumeGravity();
+    } else {
+      setIsOnPause(true);
+      pauseGravity();
+    }
+  }
+
   const isInteractionBlocked = () =>
-    hasHardDroppedRef.current || isOnLineDeletionPhaseRef.current || !canReset;
+    isOnPause ||
+    hasHardDroppedRef.current ||
+    isOnLineDeletionPhaseRef.current ||
+    !canReset;
 
   function moveAction(action: Actions) {
     if (isInteractionBlocked()) {
@@ -273,6 +293,7 @@ export default function Game(props: Props) {
       .with(['press', 'KeyX'], () => bagAction('hold'))
       .with(['press', 'ArrowLeft'], () => cameraAction('cameraL'))
       .with(['press', 'ArrowRight'], () => cameraAction('cameraR'))
+      .with(['press', 'KeyP'], () => togglePause())
       .otherwise(noop),
   );
 
@@ -293,11 +314,12 @@ export default function Game(props: Props) {
         .with(['press', 'B'], () => moveAction('rotateR'))
         .with(['press', 'A'], () => moveAction('hDrop'))
         .with(['press', 'Y'], () => bagAction('hold'))
+        .with(['press', 'start'], () => togglePause())
         .otherwise(noop),
     (status, trigger) => {
       match(trigger)
-        .with('LT', () => setCut('left', status))
-        .with('RT', () => setCut('right', status))
+        .with('LT', () => cutterAction('left', status))
+        .with('RT', () => cutterAction('right', status))
         .exhaustive();
     },
     (status, stick) => {
@@ -323,15 +345,26 @@ export default function Game(props: Props) {
         camera={camera}
         progress={progress}
         scoreEventStream={scoreEventStream}
+        isPaused={isOnPause}
       />
-      <BagPanel camera={camera} next={bag.next} hold={bag.hold} />
-      <Board occupiedBlocks={board} cutting={boardCuttingProp} />
+      <BagPanel
+        camera={camera}
+        next={bag.next}
+        hold={bag.hold}
+        isPaused={isOnPause}
+      />
+      <Board
+        occupiedBlocks={board}
+        cutting={boardCuttingProp}
+        isPaused={isOnPause}
+      />
       <Tetrimino
         type={bag.current}
         occupiedBlocks={tetrimino}
         lockTimer={lockTimer}
+        isPaused={isOnPause}
       />
-      <Ghost type={bag.current} occupiedBlocks={ghost} />
+      {!isOnPause && <Ghost type={bag.current} occupiedBlocks={ghost} />}
       <ScoreEventStream
         camera={{ position: camera, relativeAxes }}
         scoreEventStream={scoreEventStream}

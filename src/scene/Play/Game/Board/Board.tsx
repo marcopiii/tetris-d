@@ -10,6 +10,7 @@ import CuttingShadow from './CuttingShadow';
 type Props = {
   occupiedBlocks: { type: Tetrimino; y: number; x: number; z: number }[];
   cutting: React.ComponentProps<typeof CuttingShadow>;
+  isPaused: boolean;
 };
 
 export default function Board(props: Props) {
@@ -53,7 +54,9 @@ export default function Board(props: Props) {
             key={`${y}.${x}.${z}`}
             type={type}
             position={position}
-            status={deleting ? 'deleting' : 'normal'}
+            status={
+              deleting ? 'deleting' : props.isPaused ? 'disabled' : 'normal'
+            }
             shrink={cuttingLevel({ y, x, z })}
           />
         );

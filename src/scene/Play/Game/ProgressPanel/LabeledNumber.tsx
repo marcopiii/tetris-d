@@ -5,6 +5,7 @@ export default function LabeledNumber(props: {
   position: [number, number, number];
   label: string;
   value: number;
+  isPaused: boolean;
 }) {
   const centerCacheKey = props.value.toString.length;
 
@@ -23,6 +24,7 @@ export default function LabeledNumber(props: {
         text={props.label}
         type="secondary"
         font="alphabet"
+        disabled={props.isPaused}
       />
       <Word
         position={[0, -1.5, 0]}
@@ -30,6 +32,7 @@ export default function LabeledNumber(props: {
         text={props.value.toString()}
         type="primary"
         font="numbers"
+        disabled={props.isPaused}
       />
     </Center>
   );
