@@ -36,6 +36,7 @@ import ProgressPanel from './ProgressPanel';
 import Tetrimino from './Tetrimino';
 import Tetrion from './Tetrion';
 import { PlaneCoords } from './types';
+import { useDAS } from './gameplay/useDAS';
 
 type Props = {
   onGameOver: (progress: Progress) => void;
@@ -319,6 +320,8 @@ export default function Game(props: Props) {
     onTilt: ({ x, y }) => tiltCamera(x, y),
   });
 
+  const { activateDAS, stopDAS } = useDAS();
+
   useGamepadManager(
     (event, button) =>
       match([event, button])
@@ -326,6 +329,13 @@ export default function Game(props: Props) {
         .with(['press', 'padR'], () => moveAction('shiftR'))
         .with(['press', 'padU'], () => moveAction('shiftF'))
         .with(['press', 'padD'], () => moveAction('shiftB'))
+        .with(['hold', 'padL'], () => activateDAS('shiftL'))
+        .with(['hold', 'padR'], () => activateDAS('shiftR'))
+        .with(['hold', 'padU'], () => activateDAS('shiftF'))
+        .with(['hold', 'padD'], () => activateDAS('shiftB'))
+        .with(['release', P.union('padL', 'padR', 'padU', 'padD')], () =>
+          stopDAS(),
+        )
         .with(['press', 'X'], () => moveAction('rotateL'))
         .with(['press', 'B'], () => moveAction('rotateR'))
         .with(['press', 'LB'], () => moveAction('sDropStart'))
