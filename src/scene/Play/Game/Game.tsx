@@ -330,17 +330,34 @@ export default function Game(props: Props) {
   useGamepadManager(
     (event, button) =>
       match([event, button])
-        .with(['press', 'padL'], () => moveAction('shiftL'))
-        .with(['press', 'padR'], () => moveAction('shiftR'))
-        .with(['press', 'padU'], () => moveAction('shiftF'))
-        .with(['press', 'padD'], () => moveAction('shiftB'))
-        .with(['hold', 'padL'], () => activateDAS('shiftL'))
-        .with(['hold', 'padR'], () => activateDAS('shiftR'))
-        .with(['hold', 'padU'], () => activateDAS('shiftF'))
-        .with(['hold', 'padD'], () => activateDAS('shiftB'))
-        .with(['release', P.union('padL', 'padR', 'padU', 'padD')], () =>
-          stopDAS(),
-        )
+        .with([P.any, 'padL'], ([evnt]) => {
+          match(evnt)
+            .with('press', () => moveAction('shiftL'))
+            .with('hold', () => activateDAS('shiftL'))
+            .with('release', () => stopDAS())
+            .otherwise(noop);
+        })
+        .with([P.any, 'padR'], ([evnt]) => {
+          match(evnt)
+            .with('press', () => moveAction('shiftR'))
+            .with('hold', () => activateDAS('shiftR'))
+            .with('release', () => stopDAS())
+            .otherwise(noop);
+        })
+        .with([P.any, 'padU'], ([evnt]) => {
+          match(evnt)
+            .with('press', () => moveAction('shiftF'))
+            .with('hold', () => activateDAS('shiftF'))
+            .with('release', () => stopDAS())
+            .otherwise(noop);
+        })
+        .with([P.any, 'padD'], ([evnt]) => {
+          match(evnt)
+            .with('press', () => moveAction('shiftB'))
+            .with('hold', () => activateDAS('shiftB'))
+            .with('release', () => stopDAS())
+            .otherwise(noop);
+        })
         .with(['press', 'X'], () => moveAction('rotateL'))
         .with(['press', 'B'], () => moveAction('rotateR'))
         .with(['press', 'LB'], () => moveAction('sDropStart'))
