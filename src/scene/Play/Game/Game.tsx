@@ -105,7 +105,7 @@ export default function Game(props: Props) {
 
   const hasHardDroppedRef = React.useRef(false);
   const isOnLineDeletionPhaseRef = React.useRef(false);
-  const isOnPauseRef = React.useRef(false);
+  const [isOnPause, setIsOnPause] = React.useState(false);
 
   const { pauseGravity, resumeGravity } = useGravity(() => {
     const dropSuccess = !!attempt(drop)(board);
@@ -143,7 +143,7 @@ export default function Game(props: Props) {
   const [cut, setCut] = useCutter(plane.current, relativeAxes);
 
   function cutterAction(side: RelativeSide, value: number) {
-    if (isOnPauseRef.current) return;
+    if (isOnPause) return;
     setCut(side, value);
   }
 
@@ -161,17 +161,17 @@ export default function Game(props: Props) {
   }
 
   function togglePause() {
-    if (isOnPauseRef.current) {
-      isOnPauseRef.current = false;
+    if (isOnPause) {
+      setIsOnPause(false);
       resumeGravity();
     } else {
-      isOnPauseRef.current = true;
+      setIsOnPause(true);
       pauseGravity();
     }
   }
 
   const isInteractionBlocked = () =>
-    isOnPauseRef.current ||
+    isOnPause ||
     hasHardDroppedRef.current ||
     isOnLineDeletionPhaseRef.current ||
     !canReset;
@@ -346,13 +346,18 @@ export default function Game(props: Props) {
         scoreEventStream={scoreEventStream}
       />
       <BagPanel camera={camera} next={bag.next} hold={bag.hold} />
-      <Board occupiedBlocks={board} cutting={boardCuttingProp} />
+      <Board
+        occupiedBlocks={board}
+        cutting={boardCuttingProp}
+        isPaused={isOnPause}
+      />
       <Tetrimino
         type={bag.current}
         occupiedBlocks={tetrimino}
         lockTimer={lockTimer}
+        isPaused={isOnPause}
       />
-      <Ghost type={bag.current} occupiedBlocks={ghost} />
+      {!isOnPause && <Ghost type={bag.current} occupiedBlocks={ghost} />}
       <ScoreEventStream
         camera={{ position: camera, relativeAxes }}
         scoreEventStream={scoreEventStream}

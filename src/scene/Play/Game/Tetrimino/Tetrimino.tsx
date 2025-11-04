@@ -11,6 +11,7 @@ type Props = {
   type: TetriminoType;
   occupiedBlocks: { y: number; x: number; z: number }[];
   lockTimer: React.RefObject<LockTimer | undefined>;
+  isPaused?: boolean;
 };
 
 export default function Tetrimino(props: Props) {
@@ -31,7 +32,9 @@ export default function Tetrimino(props: Props) {
   const minoProps =
     lockProgress > 0
       ? { status: 'locking' as const, lockProgress }
-      : { status: 'normal' as const };
+      : {
+          status: props.isPaused ? ('disabled' as const) : ('normal' as const),
+        };
 
   return (
     <group>
