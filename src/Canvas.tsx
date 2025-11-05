@@ -1,6 +1,7 @@
 import React from 'react';
 import { Canvas as R3FCanvas } from '@react-three/fiber';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
+import { Background } from '~/Background';
 
 type Props = {
   aspectRatio: number;
@@ -32,6 +33,7 @@ export function Canvas(props: Props) {
           intensity={1.0}
         />
       </EffectComposer>
+      <Background />
       {props.children}
     </R3FCanvas>
   );
