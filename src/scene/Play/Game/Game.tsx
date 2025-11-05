@@ -105,7 +105,7 @@ export default function Game(props: Props) {
   });
 
   const hasHardDroppedRef = React.useRef(false);
-  const isOnLineDeletionPhaseRef = React.useRef(false);
+  const [isOnLineDeletionPhase, setIsOnLineDeletionPhase] = React.useState(false);
   const [isOnPause, setIsOnPause] = React.useState(false);
 
   const { pauseGravity, resumeGravity, setSoftDropping } = useGravity(
@@ -124,13 +124,13 @@ export default function Game(props: Props) {
   );
 
   const triggerLineDeletionPhase = () => {
-    isOnLineDeletionPhaseRef.current = true;
+    setIsOnLineDeletionPhase(true);
     pauseGravity();
     setTimeout(() => deleteLines(), 500);
   };
 
   const endLineDeletionPhase = () => {
-    isOnLineDeletionPhaseRef.current = false;
+    setIsOnLineDeletionPhase(false);
     resumeGravity();
   };
 
@@ -182,7 +182,7 @@ export default function Game(props: Props) {
   const isInteractionBlocked = () =>
     isOnPause ||
     hasHardDroppedRef.current ||
-    isOnLineDeletionPhaseRef.current ||
+    isOnLineDeletionPhase ||
     !canReset;
 
   function moveAction(action: Actions) {
@@ -414,7 +414,7 @@ export default function Game(props: Props) {
         lockTimer={lockTimer}
         isPaused={isOnPause}
       />
-      {!isOnPause && <Ghost type={bag.current} occupiedBlocks={ghost} />}
+      {!isOnPause && !isOnLineDeletionPhase && <Ghost type={bag.current} occupiedBlocks={ghost} />}
       <ScoreEventStream
         camera={{ position: camera, relativeAxes }}
         scoreEventStream={scoreEventStream}
