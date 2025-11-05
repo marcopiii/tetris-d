@@ -20,5 +20,5 @@ export const colors = {
   tetrimino: tetrimino,
   text: text,
   disabled: '#cfcfcf',
-  tetrion: '#8797a4',
+  tetrion: '#ffffff',
 };
