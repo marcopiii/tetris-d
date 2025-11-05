@@ -2,10 +2,13 @@ import { noop } from 'es-toolkit';
 import React from 'react';
 import { match, P } from 'ts-pattern';
 import { FX, play } from '~/audio';
-import { useGamepadManager, useKeyboardManager } from '~/controls';
+import {
+  useControlsMiddleware,
+  useGamepadManager,
+  useKeyboardManager,
+} from '~/controls';
 import { RelativeSide } from '~/scene/Play/Game/gameplay/cutter/types';
 import { spinDetector } from '~/scene/Play/Game/gameplay/score/spinDetector';
-import { useControlsMiddleware } from '~/scene/shared/camera/useControlsMiddleware';
 import { VANISH_ZONE_ROWS } from './params';
 import { BagAction, CameraAction, Actions } from './types';
 import { useCamera } from '~/scene/shared';
@@ -105,7 +108,8 @@ export default function Game(props: Props) {
   });
 
   const hasHardDroppedRef = React.useRef(false);
-  const [isOnLineDeletionPhase, setIsOnLineDeletionPhase] = React.useState(false);
+  const [isOnLineDeletionPhase, setIsOnLineDeletionPhase] =
+    React.useState(false);
   const [isOnPause, setIsOnPause] = React.useState(false);
 
   const { pauseGravity, resumeGravity, setSoftDropping } = useGravity(
@@ -414,7 +418,9 @@ export default function Game(props: Props) {
         lockTimer={lockTimer}
         isPaused={isOnPause}
       />
-      {!isOnPause && !isOnLineDeletionPhase && <Ghost type={bag.current} occupiedBlocks={ghost} />}
+      {!isOnPause && !isOnLineDeletionPhase && (
+        <Ghost type={bag.current} occupiedBlocks={ghost} />
+      )}
       <ScoreEventStream
         camera={{ position: camera, relativeAxes }}
         scoreEventStream={scoreEventStream}
