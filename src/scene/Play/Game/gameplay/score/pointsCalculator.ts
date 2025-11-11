@@ -1,5 +1,6 @@
 import { match } from 'ts-pattern';
-import { PlaneCombo, TSpinKind } from './types';
+import { ZicData } from '~/scene/Play/Game/gameplay/score/TrackEvent';
+import { PlaneCombo, TSpinKind, ZicKind } from './types';
 
 export function pointsPerSoftDrop(length: number) {
   return length;
@@ -36,6 +37,12 @@ export const pointsPerTSpin =
       .otherwise(() => {
         throw new Error('impossibiru');
       });
+    return base * level;
+  };
+
+export const pointsPerZic =
+  (level: number) => (clears: number, kind: ZicKind) => {
+    const base = 100; // todo: define base points for Zic
     return base * level;
   };
 

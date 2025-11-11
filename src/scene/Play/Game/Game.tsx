@@ -84,7 +84,9 @@ export default function Game(props: Props) {
       hasHardDroppedRef.current = false;
       track({
         clearing: { lines: completedLines, isCascade: false },
-        rewardingMove: spinData && { move: 't-spin', ...spinData },
+        rewardingMove:
+          (spinData && { move: 't-spin', ...spinData }) ||
+          (zicData && { move: 'zic', ...zicData }),
       });
       if (completedLines.length > 0) {
         play(FX.line_clear, 0.75);

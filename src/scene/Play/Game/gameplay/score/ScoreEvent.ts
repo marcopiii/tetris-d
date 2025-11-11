@@ -8,6 +8,7 @@ export type ScoreEvent = { id: number; points: number } & (
   | { kind: 'soft-drop' }
   | { kind: 'hard-drop' }
   | ({ kind: 't-spin' } & TSpinEvent)
+  | ({ kind: 'zic' } & ZicEvent)
 );
 
 export type LineClearEvent = {
@@ -24,6 +25,10 @@ export type PerfectClearEvent = {
 export type TSpinEvent = {
   mini: boolean;
   pivot: LineCoord;
+};
+
+export type ZicEvent = {
+  mini: boolean;
 };
 
 type ComboEvent = {

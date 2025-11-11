@@ -8,6 +8,7 @@ import {
   PerfectClearData,
   TrackData,
   TSpinData,
+  ZicData,
 } from './TrackEvent';
 import { Progress } from './types';
 import { LineCoord } from '../../types';
@@ -19,6 +20,7 @@ import {
   planeComboMultiplier,
   pointsPerLines,
   pointsPerSoftDrop,
+  pointsPerZic,
 } from './pointsCalculator';
 
 const LINE_CLEAR_PER_LEVEL = 10;
@@ -139,7 +141,6 @@ export function useScoreTracker() {
     spinData: TSpinData,
     completedLines?: LineClearData,
   ): ScoreEvent | undefined => {
-    if (!spinData) return;
     const { kind, pivot } = spinData;
 
     // lines in the plane of the spin
@@ -160,6 +161,27 @@ export function useScoreTracker() {
       kind: 't-spin',
       mini: kind === 'mini',
       pivot: pivot,
+      points: points,
+    };
+  };
+
+  const digestZic = (
+    zicData: ZicData,
+    completedLines?: LineClearData,
+  ): ScoreEvent | undefined => {
+    const { kind } = zicData;
+
+    // todo: calculate relevant lines for zic
+    // lines in the plane of the zic
+    const relevantLines = [];
+
+    const level = getLevel(progress.lines);
+    const points = pointsPerZic(level)(relevantLines.length, kind);
+
+    return {
+      id: Date.now(),
+      kind: 'zic',
+      mini: kind === 'mini',
       points: points,
     };
   };
@@ -194,6 +216,7 @@ export function useScoreTracker() {
       .with({ move: 'soft-drop' }, () => digestSoftDrop())
       .with({ move: 'hard-drop' }, (data) => digestHardDrop(data))
       .with({ move: 't-spin' }, (data) => digestTSpin(data, trackData.clearing))
+      .with({ move: 'zic' }, (data) => digestZic(data, trackData.clearing))
       .otherwise(() => undefined);
     const perfectClearEvent =
       trackData.perfectClear && digestPerfectClear(trackData.perfectClear);
