@@ -1,5 +1,4 @@
 import { match } from 'ts-pattern';
-import { ZicData } from '~/scene/Play/Game/gameplay/score/TrackEvent';
 import { PlaneCombo, TSpinKind, ZicKind } from './types';
 
 export function pointsPerSoftDrop(length: number) {
