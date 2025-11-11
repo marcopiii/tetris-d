@@ -1,7 +1,8 @@
 import React from 'react';
 import { Vector3Like } from 'three';
-import { COLS, ROWS, VANISH_ZONE_ROWS } from '~/scene/Play/Game/params';
-import { Shape, Tetrimino, tetriminos } from '~/tetrimino';
+import { calculateMatrix } from '~/scene/Play/Game/gameplay/calculateMatrix';
+import { detectCollision } from '~/scene/Play/Game/gameplay/detectCollision';
+import { Tetrimino, tetriminos } from '~/tetrimino';
 import { Plane } from '../types';
 import initPosition from './initPosition';
 import { type TetriminoState, drop } from './movement';
@@ -115,45 +116,4 @@ export default function useTetriminoManager(type: Tetrimino, plane: Plane) {
   };
 
   return { tetrimino, attempt, hardDrop, projectGhost };
-}
-
-function calculateMatrix(shape: Shape, position: Vector3Like, plane: Plane) {
-  return shape
-    .flatMap((layer, dy) =>
-      layer.map((exists, k) => {
-        if (!exists) return undefined;
-        const dx = plane === 'x' ? 0 : k;
-        const dz = plane === 'z' ? 0 : k;
-        return {
-          y: position.y + dy,
-          x: position.x + dx,
-          z: position.z + dz,
-        };
-      }),
-    )
-    .filter((b) => !!b);
-}
-
-/**
- * Detects if the given tetrimino collides with the given board. A collision can be:
- * - floor collision: any block of the tetrimino is below the floor
- * - wall collision: any block of the tetrimino is outside the walls
- * - stack collision: any block of the tetrimino overlaps with any block of the board
- */
-function detectCollision(
-  tetriminoMatrix: Vector3Like[],
-  boardMatrix: Vector3Like[],
-) {
-  const floorCollision = tetriminoMatrix.some(
-    ({ y }) => y >= ROWS + VANISH_ZONE_ROWS,
-  );
-  const wallCollision = tetriminoMatrix.some(
-    ({ x, z }) => x < 0 || x >= COLS || z < 0 || z >= COLS,
-  );
-  const stackCollision = tetriminoMatrix.some(({ y: ty, x: tx, z: tz }) =>
-    boardMatrix.some(
-      ({ y: by, x: bx, z: bz }) => ty === by && tx === bx && tz === bz,
-    ),
-  );
-  return floorCollision || wallCollision || stackCollision;
 }

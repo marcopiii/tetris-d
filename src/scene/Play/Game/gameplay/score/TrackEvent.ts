@@ -1,4 +1,4 @@
-import { TSpinKind } from './types';
+import { TSpinKind, ZicKind } from './types';
 import { LineCoord, PlaneCoords } from '~/scene/Play/Game/types';
 
 export type TrackData = {
@@ -19,6 +19,10 @@ export type HardDropData = {
 export type TSpinData = {
   kind: TSpinKind;
   pivot: LineCoord;
+};
+
+export type ZicData = {
+  kind: ZicKind;
 };
 
 export type LineClearData = {
