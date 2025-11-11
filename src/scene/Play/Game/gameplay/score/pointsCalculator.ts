@@ -41,7 +41,21 @@ export const pointsPerTSpin =
 
 export const pointsPerZic =
   (level: number) => (clears: number, kind: ZicKind) => {
-    const base = 100; // todo: define base points for Zic
+    // todo: better define zic base points
+    const base = match([clears, kind])
+      .with([0, 'mini'], () => 100)
+      .with([0, 'full'], () => 400)
+      .with([1, 'mini'], () => 200)
+      .with([1, 'full'], () => 800)
+      .with([2, 'mini'], () => 400)
+      .with([2, 'full'], () => 1200)
+      .with([3, 'mini'], () => 800)
+      .with([3, 'full'], () => 1600)
+      .with([4, 'mini'], () => 1600)
+      .with([4, 'full'], () => 2000)
+      .otherwise(() => {
+        throw new Error('impossibiru');
+      });
     return base * level;
   };
 
