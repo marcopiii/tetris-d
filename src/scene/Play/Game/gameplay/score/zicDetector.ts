@@ -18,6 +18,11 @@ export function zicDetector(
     state.plane,
   );
 
+  const rails = match(state.plane)
+    .with('x', () => fixedPieceMinos.map(({ y, z }) => ({ y, z })))
+    .with('z', () => fixedPieceMinos.map(({ y, x }) => ({ y, x })))
+    .exhaustive();
+
   const checkMino = checkMinoOn(board);
 
   const isPerfectFit = fixedPieceMinos.every((fp) => {
@@ -33,7 +38,11 @@ export function zicDetector(
       .exhaustive();
     return [over, under, left, right].map(checkMino).every(Boolean);
   });
-  if (isPerfectFit) return { kind: 'full' };
+  if (isPerfectFit)
+    return {
+      kind: 'full',
+      rails: rails,
+    };
 
   // the provided board already includes the fixed piece
   // so we need to remove the fixed piece from the board
@@ -49,9 +58,10 @@ export function zicDetector(
   const canMoveOnPlane = [undrop, shiftLeft, shiftRight]
     .map(testMove)
     .some(Boolean);
-  return canMoveOnPlane ? undefined : { kind: 'mini' };
+  return canMoveOnPlane ? undefined : { kind: 'mini', rails: rails };
 }
 
+/** Check if a position is occupied by a mino or out of bound */
 const checkMinoOn = (board: MinoCoord[]) => (mino: MinoCoord) => {
   return (
     mino.y >= ROWS + VANISH_ZONE_ROWS ||

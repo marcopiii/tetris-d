@@ -24,6 +24,9 @@ export type TSpinData = {
 
 export type ZicData = {
   kind: ZicKind;
+  rails:
+    | Extract<LineCoord, { x: number }>[]
+    | Extract<LineCoord, { z: number }>[];
 };
 
 export type LineClearData = {
