@@ -6,7 +6,7 @@ import { emptyMatrix } from './matrices';
 import { BoardMatrix } from './types';
 import { Tetrimino } from '~/tetrimino';
 import { COLS } from '../../params';
-import { LineCoord, PlaneCoords } from '../../types';
+import { LineCoord, MinoCoord, PlaneCoords } from '../../types';
 import checkCompletedLines from '../checkCompletedLines';
 
 type TriggerData =
@@ -32,7 +32,7 @@ export function useBoardManager(effect: {
    * The array of coordinates of the blocks that are occupied by the pieces in
    * the board (relative to the board coordinate system), and their type.
    */
-  const board = matrix
+  const board: (MinoCoord & { type: Tetrimino })[] = matrix
     .flatMap((layer, y) =>
       layer.flatMap((xRow, x) =>
         xRow.map((type, z) => (type ? { type, x, y, z } : undefined)),

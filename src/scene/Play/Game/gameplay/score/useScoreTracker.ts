@@ -95,7 +95,7 @@ export function useScoreTracker() {
     const points = clearLinesPoints + comboPoints;
 
     const lineClearEvent = {
-      id: Date.now(),
+      id: performance.now(),
       kind: 'line-clear',
       lines: lines,
       planeCombo: planeCombo,
@@ -106,7 +106,7 @@ export function useScoreTracker() {
     const comboEvent =
       comboCounter.current > 0
         ? ({
-            id: Date.now() + 1,
+            id: performance.now() + 1,
             kind: 'combo',
             count: comboCounter.current,
             points: comboPoints,
@@ -119,7 +119,7 @@ export function useScoreTracker() {
   const digestSoftDrop = (): ScoreEvent | undefined => {
     const points = pointsPerSoftDrop(1);
     return {
-      id: Date.now(),
+      id: performance.now(),
       kind: 'soft-drop',
       points: points,
     };
@@ -131,7 +131,7 @@ export function useScoreTracker() {
     const points = pointsPerHardDrop(data.length);
 
     return {
-      id: Date.now(),
+      id: performance.now(),
       kind: 'hard-drop',
       points: points,
     };
@@ -157,7 +157,7 @@ export function useScoreTracker() {
     const points = pointsPerTSpin(level)(relevantLines.length, kind);
 
     return {
-      id: Date.now(),
+      id: performance.now(),
       kind: 't-spin',
       mini: kind === 'mini',
       pivot: pivot,
@@ -179,7 +179,7 @@ export function useScoreTracker() {
     const points = pointsPerZic(level)(relevantLines.length, kind);
 
     return {
-      id: Date.now(),
+      id: performance.now(),
       kind: 'zic',
       mini: kind === 'mini',
       points: points,
@@ -202,7 +202,7 @@ export function useScoreTracker() {
     const points = basePoints * comboMultiplier;
 
     return {
-      id: Date.now(),
+      id: performance.now(),
       kind: 'perfect-clear',
       planes: planes,
       planeCombo: planeCombo,
@@ -227,6 +227,8 @@ export function useScoreTracker() {
       moveEvent,
       perfectClearEvent,
     ].filter(isNotNil);
+
+    if (events.length > 0) console.log(events);
 
     pushEvents(events);
     addProgress({

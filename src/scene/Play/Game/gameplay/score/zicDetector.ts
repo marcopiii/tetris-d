@@ -2,13 +2,13 @@ import { match } from 'ts-pattern';
 import { calculateMatrix } from '~/scene/Play/Game/gameplay/calculateMatrix';
 import { detectCollision } from '~/scene/Play/Game/gameplay/detectCollision';
 import { COLS, ROWS, VANISH_ZONE_ROWS } from '~/scene/Play/Game/params';
+import { MinoCoord } from '~/scene/Play/Game/types';
 import { ZicData } from './TrackEvent';
 import { shiftLeft, shiftRight, TetriminoState, undrop } from '../../gameplay';
-import { Tetrimino } from '~/tetrimino';
 
 export function zicDetector(
   state: TetriminoState | undefined,
-  board: { type: Tetrimino; x: number; y: number; z: number }[],
+  board: MinoCoord[],
 ): ZicData | undefined {
   if (!state) return undefined;
 
@@ -31,7 +31,6 @@ export function zicDetector(
       .with('x', () => ({ x: fp.x, y: fp.y, z: fp.z + 1 }))
       .with('z', () => ({ x: fp.x + 1, y: fp.y, z: fp.z }))
       .exhaustive();
-    console.log([over, under, left, right].map(checkMino));
     return [over, under, left, right].map(checkMino).every(Boolean);
   });
   if (isPerfectFit) return { kind: 'full' };
@@ -53,35 +52,19 @@ export function zicDetector(
   return canMoveOnPlane ? undefined : { kind: 'mini' };
 }
 
-const checkMinoOn =
-  (
-    board: {
-      x: number;
-      y: number;
-      z: number;
-    }[],
-  ) =>
-  (mino: { x: number; y: number; z: number }) => {
-    return (
-      mino.y >= ROWS + VANISH_ZONE_ROWS ||
-      mino.x < 0 ||
-      mino.x >= COLS ||
-      mino.z < 0 ||
-      mino.z >= COLS ||
-      board.some((b) => b.x === mino.x && b.y === mino.y && b.z === mino.z)
-    );
-  };
+const checkMinoOn = (board: MinoCoord[]) => (mino: MinoCoord) => {
+  return (
+    mino.y >= ROWS + VANISH_ZONE_ROWS ||
+    mino.x < 0 ||
+    mino.x >= COLS ||
+    mino.z < 0 ||
+    mino.z >= COLS ||
+    board.some((b) => b.x === mino.x && b.y === mino.y && b.z === mino.z)
+  );
+};
 
 const testMoveOn =
-  (
-    state: TetriminoState,
-    board: {
-      type: Tetrimino;
-      x: number;
-      y: number;
-      z: number;
-    }[],
-  ) =>
+  (state: TetriminoState, board: MinoCoord[]) =>
   (move: (state: TetriminoState) => TetriminoState) => {
     const { shape, position, plane } = move(state);
     const testingPosition = calculateMatrix(shape, position, plane);

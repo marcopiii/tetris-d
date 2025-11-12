@@ -1,5 +1,5 @@
-import { Vector3Like } from 'three';
 import { COLS, ROWS, VANISH_ZONE_ROWS } from '~/scene/Play/Game/params';
+import { MinoCoord } from '~/scene/Play/Game/types';
 
 /**
  * Detects if the given tetrimino collides with the given board. A collision can be:
@@ -8,8 +8,8 @@ import { COLS, ROWS, VANISH_ZONE_ROWS } from '~/scene/Play/Game/params';
  * - stack collision: any block of the tetrimino overlaps with any block of the board
  */
 export function detectCollision(
-  tetriminoMatrix: Vector3Like[],
-  boardMatrix: Vector3Like[],
+  tetriminoMatrix: MinoCoord[],
+  boardMatrix: MinoCoord[],
 ) {
   const floorCollision = tetriminoMatrix.some(
     ({ y }) => y >= ROWS + VANISH_ZONE_ROWS,

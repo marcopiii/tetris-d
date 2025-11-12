@@ -1,12 +1,12 @@
 import { Vector3Like } from 'three';
-import { Plane } from '~/scene/Play/Game/types';
+import { MinoCoord, Plane } from '~/scene/Play/Game/types';
 import { Shape } from '~/tetrimino';
 
 export function calculateMatrix(
   shape: Shape,
   position: Vector3Like,
   plane: Plane,
-) {
+): MinoCoord[] {
   return shape
     .flatMap((layer, dy) =>
       layer.map((exists, k) => {
