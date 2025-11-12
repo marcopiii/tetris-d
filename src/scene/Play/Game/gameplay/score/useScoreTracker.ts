@@ -171,9 +171,13 @@ export function useScoreTracker() {
   ): ScoreEvent | undefined => {
     const { kind } = zicData;
 
-    // todo: calculate relevant lines for zic
     // lines in the plane of the zic
-    const relevantLines = [];
+    const relevantLines = (completedLines?.lines ?? []).filter((line) =>
+      match(zicData.rails)
+        .with(P.array({ x: P.number }), () => 'z' in line)
+        .with(P.array({ z: P.number }), () => 'x' in line)
+        .exhaustive(),
+    );
 
     const level = getLevel(progress.lines);
     const points = pointsPerZic(level)(relevantLines.length, kind);
