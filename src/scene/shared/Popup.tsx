@@ -7,7 +7,7 @@ import Word from './Word';
 
 type Props = Omit<
   React.ComponentProps<typeof Word>,
-  'type' | 'font' | 'disabled' | 'alignY' | 'alignZ'
+  'textStyle' | 'disabled' | 'alignY' | 'alignZ'
 > & { toward: 'up' | 'fw' | 'rx' | 'sx'; distance: number };
 
 export default function Popup(props: Props) {
@@ -39,8 +39,7 @@ export default function Popup(props: Props) {
       rotation={props.rotation}
       alignX={props.alignX}
       text={props.text}
-      type="secondary-half"
-      font="numbers"
+      textStyle="hudFeedback"
     />
   );
 }

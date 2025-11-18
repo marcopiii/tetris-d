@@ -1,6 +1,6 @@
 import { Center } from '@react-three/drei';
 import { ScoreRecord } from '~/scene/shared';
-import { VOXEL_SIZE } from '../params';
+import { textStyleConfig } from '~/scene/shared/Word/textStyleConfig';
 import Word from '../Word';
 
 type Props = {
@@ -9,41 +9,38 @@ type Props = {
 };
 
 export default function Scoreboard(props: Props) {
+  const yOffset = textStyleConfig.menuSelected.size;
+
   return (
     <group position={[0, 8, 0]}>
       <Word
         text={props.title}
-        type="main"
-        font="alphabet"
+        textStyle="main"
         alignX="center"
         position={[0, 0, 0]}
       />
       <Center position={[0, -2.5, 0]}>
         <Word
           text="#"
-          type="primary-half"
-          font="alphabet"
+          textStyle="scoreboardHeader"
           alignX="center"
           position={[-8, 0, 0]}
         />
         <Word
           text="name"
-          type="primary-half"
-          font="alphabet"
+          textStyle="scoreboardHeader"
           alignX="center"
-          position={[-3.5, -VOXEL_SIZE.primary, 0]}
+          position={[-3.5, -yOffset, 0]}
         />
         <Word
           text="score"
-          type="primary-half"
-          font="alphabet"
+          textStyle="scoreboardHeader"
           alignX="center"
-          position={[3.5, -VOXEL_SIZE.primary, 0]}
+          position={[3.5, -yOffset, 0]}
         />
         <Word
           text="lvl"
-          type="primary-half"
-          font="alphabet"
+          textStyle="scoreboardHeader"
           alignX="center"
           position={[9, 0, 0]}
         />
@@ -52,28 +49,32 @@ export default function Scoreboard(props: Props) {
         <Center key={idx} position={[0, -4.5 - idx * 1.25, 0]}>
           <Word
             text={entry.rank.toString()}
-            type={entry.editing ? 'secondary-half' : 'secondary'}
-            font="numbers"
+            textStyle={
+              entry.editing ? 'scoreboardEntrySelected' : 'scoreboardEntry'
+            }
             position={[-8, 0, 0]}
           />
           <Word
             text={entry.name}
-            type={entry.editing ? 'secondary-half' : 'secondary'}
-            font="alphabet"
+            textStyle={
+              entry.editing ? 'scoreboardEntrySelected' : 'scoreboardEntry'
+            }
             alignX="center"
             position={[-3.5, 0, 0]}
           />
           <Word
             text={entry.score.toString()}
-            type={entry.editing ? 'secondary-half' : 'secondary'}
-            font="numbers"
+            textStyle={
+              entry.editing ? 'scoreboardEntrySelected' : 'scoreboardEntry'
+            }
             alignX="center"
             position={[3.5, 0, 0]}
           />
           <Word
             text={entry.level.toString()}
-            type={entry.editing ? 'secondary-half' : 'secondary'}
-            font="numbers"
+            textStyle={
+              entry.editing ? 'scoreboardEntrySelected' : 'scoreboardEntry'
+            }
             alignX="center"
             position={[9, 0, 0]}
           />
