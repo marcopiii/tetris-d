@@ -1,5 +1,5 @@
-import { match } from 'ts-pattern';
-import { PlaneCombo, TSpinKind } from './types';
+import { match, P } from 'ts-pattern';
+import { PlaneCombo, TSpinKind, ZicKind } from './types';
 
 export function pointsPerSoftDrop(length: number) {
   return length;
@@ -27,12 +27,29 @@ export const pointsPerTSpin =
   (level: number) => (clears: number, kind: TSpinKind) => {
     const base = match([clears, kind])
       .with([0, 'mini'], () => 100)
-      .with([0, 'full'], () => 400)
       .with([1, 'mini'], () => 200)
-      .with([1, 'full'], () => 800)
       .with([2, 'mini'], () => 400)
+      .with([0, 'full'], () => 400)
+      .with([1, 'full'], () => 800)
       .with([2, 'full'], () => 1200)
       .with([3, 'full'], () => 1600)
+      .otherwise(() => {
+        throw new Error('impossibiru');
+      });
+    return base * level;
+  };
+
+export const pointsPerZic =
+  (level: number) => (clears: number, kind: ZicKind) => {
+    const base = match([clears, kind])
+      .with([0, 'mini'], () => 100)
+      .with([1, 'mini'], () => 200)
+      .with([2, 'mini'], () => 400)
+      .with([P.number.between(3, 4), 'mini'], () => 800)
+      .with([0, 'full'], () => 400)
+      .with([1, 'full'], () => 800)
+      .with([2, 'full'], () => 1200)
+      .with([P.number.between(3, 4), 'full'], () => 1600)
       .otherwise(() => {
         throw new Error('impossibiru');
       });

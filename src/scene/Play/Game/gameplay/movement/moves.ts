@@ -9,6 +9,13 @@ export function drop(state: TetriminoState): TetriminoState {
   };
 }
 
+export function undrop(state: TetriminoState): TetriminoState {
+  return {
+    ...state,
+    position: { ...state.position, y: state.position.y - 1 },
+  };
+}
+
 export function shiftRight(state: TetriminoState): TetriminoState {
   return match(state.plane)
     .with('x', () => ({

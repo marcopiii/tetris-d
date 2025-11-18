@@ -9,6 +9,7 @@ import {
 } from '~/controls';
 import { RelativeSide } from '~/scene/Play/Game/gameplay/cutter/types';
 import { spinDetector } from '~/scene/Play/Game/gameplay/score/spinDetector';
+import { zicDetector } from '~/scene/Play/Game/gameplay/score/zicDetector';
 import { VANISH_ZONE_ROWS } from './params';
 import { BagAction, CameraAction, Actions } from './types';
 import { useCamera } from '~/scene/shared';
@@ -77,11 +78,15 @@ export default function Game(props: Props) {
     },
     onPieceFixed: (completedLines) => {
       const spinData = spinDetector(lastMoveSpinDataRef.current, board);
+      const zicData = zicDetector(lastMoveZicDataRef.current, board);
       lastMoveSpinDataRef.current = undefined;
+      lastMoveZicDataRef.current = undefined;
       hasHardDroppedRef.current = false;
       track({
         clearing: { lines: completedLines, isCascade: false },
-        rewardingMove: spinData && { move: 't-spin', ...spinData },
+        rewardingMove:
+          (spinData && { move: 't-spin', ...spinData }) ||
+          (zicData && { move: 'zic', ...zicData }),
       });
       if (completedLines.length > 0) {
         play(FX.line_clear, 0.75);
@@ -92,8 +97,8 @@ export default function Game(props: Props) {
 
   const ghost = projectGhost(board);
 
-  const lastMoveSpinDataRef =
-    React.useRef<Omit<TetriminoState, 'shape'>>(undefined);
+  const lastMoveSpinDataRef = React.useRef<TetriminoState>(undefined);
+  const lastMoveZicDataRef = React.useRef<TetriminoState>(undefined);
 
   const { triggerLock, cancelLock, canReset, lockTimer } = useLockDelay(() => {
     const isInVanishZone = tetrimino.every(({ y }) => y < VANISH_ZONE_ROWS);
@@ -117,6 +122,7 @@ export default function Game(props: Props) {
       const dropSuccess = !!attempt(drop)(board);
       if (dropSuccess) {
         lastMoveSpinDataRef.current = undefined;
+        lastMoveZicDataRef.current = undefined;
         if (isSoftDropping) {
           track({
             rewardingMove: { move: 'soft-drop' },
@@ -209,6 +215,7 @@ export default function Game(props: Props) {
         const mutatedTetriminoState = attempt(shift)(board);
         if (mutatedTetriminoState) {
           lastMoveSpinDataRef.current = undefined;
+          lastMoveZicDataRef.current = undefined;
         }
         return !!mutatedTetriminoState;
       })
@@ -217,6 +224,7 @@ export default function Game(props: Props) {
         const mutatedTetriminoState = attempt(shift)(board);
         if (mutatedTetriminoState) {
           lastMoveSpinDataRef.current = undefined;
+          lastMoveZicDataRef.current = undefined;
         }
         return !!mutatedTetriminoState;
       })
@@ -225,6 +233,7 @@ export default function Game(props: Props) {
         const mutatedTetriminoState = attempt(shift)(board);
         if (mutatedTetriminoState) {
           lastMoveSpinDataRef.current = undefined;
+          lastMoveZicDataRef.current = mutatedTetriminoState;
         }
         return !!mutatedTetriminoState;
       })
@@ -233,6 +242,7 @@ export default function Game(props: Props) {
         const mutatedTetriminoState = attempt(shift)(board);
         if (mutatedTetriminoState) {
           lastMoveSpinDataRef.current = undefined;
+          lastMoveZicDataRef.current = mutatedTetriminoState;
         }
         return !!mutatedTetriminoState;
       })
@@ -242,6 +252,7 @@ export default function Game(props: Props) {
           const mutatedTetriminoState = attempt(rotation)(board);
           if (mutatedTetriminoState) {
             lastMoveSpinDataRef.current = mutatedTetriminoState;
+            lastMoveZicDataRef.current = undefined;
             return true;
           }
         }
@@ -253,6 +264,7 @@ export default function Game(props: Props) {
           const mutatedTetriminoState = attempt(rotation)(board);
           if (mutatedTetriminoState) {
             lastMoveSpinDataRef.current = mutatedTetriminoState;
+            lastMoveZicDataRef.current = undefined;
             return true;
           }
         }
@@ -270,6 +282,7 @@ export default function Game(props: Props) {
         const dropLength = hardDrop(board);
         if (dropLength > 0) {
           lastMoveSpinDataRef.current = undefined;
+          lastMoveZicDataRef.current = undefined;
           track({
             rewardingMove: {
               move: 'hard-drop',

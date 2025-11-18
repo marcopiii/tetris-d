@@ -8,6 +8,7 @@ import {
   PerfectClearData,
   TrackData,
   TSpinData,
+  ZicData,
 } from './TrackEvent';
 import { Progress } from './types';
 import { LineCoord } from '../../types';
@@ -19,6 +20,7 @@ import {
   planeComboMultiplier,
   pointsPerLines,
   pointsPerSoftDrop,
+  pointsPerZic,
 } from './pointsCalculator';
 
 const LINE_CLEAR_PER_LEVEL = 10;
@@ -93,7 +95,7 @@ export function useScoreTracker() {
     const points = clearLinesPoints + comboPoints;
 
     const lineClearEvent = {
-      id: Date.now(),
+      id: performance.now(),
       kind: 'line-clear',
       lines: lines,
       planeCombo: planeCombo,
@@ -104,7 +106,7 @@ export function useScoreTracker() {
     const comboEvent =
       comboCounter.current > 0
         ? ({
-            id: Date.now() + 1,
+            id: performance.now() + 1,
             kind: 'combo',
             count: comboCounter.current,
             points: comboPoints,
@@ -117,7 +119,7 @@ export function useScoreTracker() {
   const digestSoftDrop = (): ScoreEvent | undefined => {
     const points = pointsPerSoftDrop(1);
     return {
-      id: Date.now(),
+      id: performance.now(),
       kind: 'soft-drop',
       points: points,
     };
@@ -129,7 +131,7 @@ export function useScoreTracker() {
     const points = pointsPerHardDrop(data.length);
 
     return {
-      id: Date.now(),
+      id: performance.now(),
       kind: 'hard-drop',
       points: points,
     };
@@ -139,7 +141,6 @@ export function useScoreTracker() {
     spinData: TSpinData,
     completedLines?: LineClearData,
   ): ScoreEvent | undefined => {
-    if (!spinData) return;
     const { kind, pivot } = spinData;
 
     // lines in the plane of the spin
@@ -156,10 +157,35 @@ export function useScoreTracker() {
     const points = pointsPerTSpin(level)(relevantLines.length, kind);
 
     return {
-      id: Date.now(),
+      id: performance.now(),
       kind: 't-spin',
       mini: kind === 'mini',
       pivot: pivot,
+      points: points,
+    };
+  };
+
+  const digestZic = (
+    zicData: ZicData,
+    completedLines?: LineClearData,
+  ): ScoreEvent | undefined => {
+    const { kind } = zicData;
+
+    // lines in the plane of the zic
+    const relevantLines = (completedLines?.lines ?? []).filter((line) =>
+      match(zicData.rails)
+        .with(P.array({ x: P.number }), () => 'z' in line)
+        .with(P.array({ z: P.number }), () => 'x' in line)
+        .exhaustive(),
+    );
+
+    const level = getLevel(progress.lines);
+    const points = pointsPerZic(level)(relevantLines.length, kind);
+
+    return {
+      id: performance.now(),
+      kind: 'zic',
+      mini: kind === 'mini',
       points: points,
     };
   };
@@ -180,7 +206,7 @@ export function useScoreTracker() {
     const points = basePoints * comboMultiplier;
 
     return {
-      id: Date.now(),
+      id: performance.now(),
       kind: 'perfect-clear',
       planes: planes,
       planeCombo: planeCombo,
@@ -194,6 +220,7 @@ export function useScoreTracker() {
       .with({ move: 'soft-drop' }, () => digestSoftDrop())
       .with({ move: 'hard-drop' }, (data) => digestHardDrop(data))
       .with({ move: 't-spin' }, (data) => digestTSpin(data, trackData.clearing))
+      .with({ move: 'zic' }, (data) => digestZic(data, trackData.clearing))
       .otherwise(() => undefined);
     const perfectClearEvent =
       trackData.perfectClear && digestPerfectClear(trackData.perfectClear);
@@ -204,6 +231,8 @@ export function useScoreTracker() {
       moveEvent,
       perfectClearEvent,
     ].filter(isNotNil);
+
+    if (events.length > 0) console.log(events);
 
     pushEvents(events);
     addProgress({

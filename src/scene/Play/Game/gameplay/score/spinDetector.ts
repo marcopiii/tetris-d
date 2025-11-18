@@ -3,12 +3,11 @@ import { match } from 'ts-pattern';
 import { TSpinData } from '~/scene/Play/Game/gameplay/score/TrackEvent';
 import { COLS } from '../../params';
 import { TetriminoState } from '../../gameplay';
-import { LineCoord } from '../../types';
-import { Tetrimino } from '~/tetrimino';
+import { LineCoord, MinoCoord } from '../../types';
 
 export function spinDetector(
   state: Omit<TetriminoState, 'shape'> | undefined,
-  board: { type: Tetrimino; x: number; y: number; z: number }[],
+  board: MinoCoord[],
 ): TSpinData | undefined {
   if (!state) return undefined;
   if (state.type != 'T') return undefined;

@@ -32,6 +32,7 @@ export default function ScoreEventStream(props: Props) {
       .with({ kind: 't-spin' }, (event) => (
         <TSpinFeedback key={event.id} camera={props.camera} event={event} />
       ))
+      .with({ kind: 'zic' }, (event) => null)
       .exhaustive(),
   );
 }
