@@ -423,6 +423,7 @@ export default function Game(props: Props) {
         camera={camera}
         next={bag.next}
         hold={bag.hold}
+        currentPlane={plane.current}
         isPaused={isOnPause}
       />
       <Board
