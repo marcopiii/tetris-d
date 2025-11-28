@@ -10,7 +10,7 @@ import {
 import { RelativeSide } from '~/scene/Play/Game/gameplay/cutter/types';
 import { spinDetector } from '~/scene/Play/Game/gameplay/score/spinDetector';
 import { zicDetector } from '~/scene/Play/Game/gameplay/score/zicDetector';
-import { subtract } from '~/scene/Play/Game/utils';
+import { overlaps, subtract } from '~/scene/Play/Game/utils';
 import { VANISH_ZONE_ROWS } from './params';
 import { BagAction, CameraAction, Actions } from './types';
 import { useCamera } from '~/scene/shared';
@@ -145,12 +145,15 @@ export default function Game(props: Props) {
     resumeGravity();
   };
 
-  // every time the tetrimino moves, by player action or gravity
+  // triggers every time the tetrimino changes. it can be due to: gravity, player action or new piece spawn
   React.useEffect(() => {
+    const isOverlappingBoard = tetrimino.some((t) => board.some(overlaps(t)));
+    if (isOverlappingBoard) {
+      // this can only happen when a new piece spawns
+      return props.onGameOver(progress);
+    }
     // if the tetrimino perfectly overlaps the ghost, it means it should lock
-    const shouldLock = tetrimino.every((t) =>
-      ghost.some((g) => g.x === t.x && g.y === t.y && g.z === t.z),
-    );
+    const shouldLock = tetrimino.every((t) => ghost.some(overlaps(t)));
     shouldLock ? triggerLock() : cancelLock();
   }, [tetrimino]);
 
