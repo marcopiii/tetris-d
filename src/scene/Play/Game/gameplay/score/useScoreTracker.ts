@@ -232,8 +232,6 @@ export function useScoreTracker() {
       perfectClearEvent,
     ].filter(isNotNil);
 
-    if (events.length > 0) console.log(events);
-
     pushEvents(events);
     addProgress({
       points: events.map((e) => e.points).reduce((a, b) => a + b, 0),
