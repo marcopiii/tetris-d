@@ -380,12 +380,12 @@ export default function Game(props: Props) {
             .with('release', () => stopDAS())
             .otherwise(noop);
         })
-        .with(['press', 'X'], () => moveAction('rotateL'))
+        .with(['press', 'A'], () => moveAction('rotateL'))
         .with(['press', 'B'], () => moveAction('rotateR'))
+        .with(['press', 'X'], () => moveAction('hDrop'))
         .with(['press', 'LB'], () => moveAction('sDropStart'))
         .with([P.union('lift', 'release'), 'LB'], () => moveAction('sDropEnd'))
-        .with(['press', 'A'], () => moveAction('hDrop'))
-        .with(['press', 'Y'], () => bagAction('hold'))
+        .with(['press', 'RB'], () => bagAction('hold'))
         .with(['press', 'start'], () => togglePause())
         .otherwise(noop),
     (status, trigger) => {
