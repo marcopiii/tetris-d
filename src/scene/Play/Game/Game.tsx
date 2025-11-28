@@ -146,6 +146,7 @@ export default function Game(props: Props) {
 
   // every time the tetrimino moves, by player action or gravity
   React.useEffect(() => {
+    // if the tetrimino perfectly overlaps the ghost, it means it should lock
     const shouldLock = tetrimino.every((t) =>
       ghost.some((g) => g.x === t.x && g.y === t.y && g.z === t.z),
     );
