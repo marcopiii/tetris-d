@@ -50,7 +50,9 @@ export default function Scoreboard(props: Props) {
           <Word
             text={entry.rank.toString()}
             textStyle={
-              entry.editing ? 'scoreboardEntrySelected' : 'scoreboardEntry'
+              entry.editing
+                ? 'scoreboardScoreEntrySelected'
+                : 'scoreboardScoreEntry'
             }
             position={[-8, 0, 0]}
           />
@@ -65,7 +67,9 @@ export default function Scoreboard(props: Props) {
           <Word
             text={entry.score.toString()}
             textStyle={
-              entry.editing ? 'scoreboardEntrySelected' : 'scoreboardEntry'
+              entry.editing
+                ? 'scoreboardScoreEntrySelected'
+                : 'scoreboardScoreEntry'
             }
             alignX="center"
             position={[3.5, 0, 0]}
@@ -73,7 +77,9 @@ export default function Scoreboard(props: Props) {
           <Word
             text={entry.level.toString()}
             textStyle={
-              entry.editing ? 'scoreboardEntrySelected' : 'scoreboardEntry'
+              entry.editing
+                ? 'scoreboardScoreEntrySelected'
+                : 'scoreboardScoreEntry'
             }
             alignX="center"
             position={[9, 0, 0]}

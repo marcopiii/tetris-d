@@ -1,5 +1,5 @@
 import { colors } from '~/materials/colors';
-import { MINO_SIZE } from '~/scene/shared';
+import { MINO_SIZE } from '../params';
 
 type Style = {
   size: number;
@@ -16,7 +16,9 @@ export type Text =
   | 'hudFeedback'
   | 'scoreboardHeader'
   | 'scoreboardEntry'
-  | 'scoreboardEntrySelected';
+  | 'scoreboardEntrySelected'
+  | 'scoreboardScoreEntry'
+  | 'scoreboardScoreEntrySelected';
 
 export const textStyleConfig: Record<Text, Style> = {
   main: {
@@ -42,11 +44,11 @@ export const textStyleConfig: Record<Text, Style> = {
   hudScore: {
     size: 0.25 * MINO_SIZE,
     font: 'numbers',
-    color: 'secondary',
+    color: 'primary',
   },
   hudFeedback: {
     size: 0.15 * MINO_SIZE,
-    font: 'alphabet',
+    font: 'numbers',
     color: 'main',
   },
   scoreboardHeader: {
@@ -62,6 +64,16 @@ export const textStyleConfig: Record<Text, Style> = {
   scoreboardEntrySelected: {
     size: 0.15 * MINO_SIZE,
     font: 'alphabet',
+    color: 'primary',
+  },
+  scoreboardScoreEntry: {
+    size: 0.15 * MINO_SIZE,
+    font: 'numbers',
+    color: 'secondary',
+  },
+  scoreboardScoreEntrySelected: {
+    size: 0.15 * MINO_SIZE,
+    font: 'numbers',
     color: 'primary',
   },
 };

@@ -16,14 +16,15 @@ type Props = {
 };
 
 export default function Word(props: Props) {
-  const font = match(textStyleConfig[props.textStyle].font)
+  const fontName = textStyleConfig[props.textStyle].font;
+  const font = match(fontName)
     .with('alphabet', () => alphabet)
     .with('numbers', () => numbers)
     .exhaustive();
 
   const chars: Array<Char> = props.text.split('').map((char) => {
     if (!font[char]) {
-      throw new Error(`Character "${char}" not found in font "${font}"`);
+      throw new Error(`Character "${char}" not found in font "${fontName}"`);
     }
     return font[char]!;
   });
