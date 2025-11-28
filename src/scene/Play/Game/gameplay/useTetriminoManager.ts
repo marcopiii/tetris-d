@@ -3,7 +3,7 @@ import { Vector3Like } from 'three';
 import { calculateMatrix } from '~/scene/Play/Game/gameplay/calculateMatrix';
 import { detectCollision } from '~/scene/Play/Game/gameplay/detectCollision';
 import { Tetrimino, tetriminos } from '~/tetrimino';
-import { Plane } from '../types';
+import { MinoCoord, Plane } from '../types';
 import initPosition from './initPosition';
 import { type TetriminoState, drop } from './movement';
 
@@ -91,16 +91,17 @@ export default function useTetriminoManager(type: Tetrimino, plane: Plane) {
   };
 
   /**
-   * Projects the ghost of the current tetrimino onto the given board.
+   * Projects the ghost of the current tetrimino onto the given board. It is
+   * equivalent to the position the tetrimino would occupy if it were to hard drop.
    */
-  const projectGhost = (
-    boardMatrix: Vector3Like[],
-  ): { y: number; x: number; z: number }[] => {
+  const projectGhost = (boardMatrix: Vector3Like[]): MinoCoord[] => {
     const ghostPosition = { ...state.position };
     let ghostMatrix = calculateMatrix(state.shape, ghostPosition, state.plane);
     if (detectCollision(ghostMatrix, boardMatrix)) {
-      // if the current piece matrix is already in collision, it is because the piece
-      // is being fixed in the board, so we don't show any ghost
+      // this can happen only when we are in the phase where the active piece has been inserted into the board,
+      // but a new one has not yet spawned. In this phase the active piece is overlapping the board, and thus
+      // the starting projection point of the ghost is already compenetrating the board.
+      // In this case, we don't need a ghost at all.
       return [];
     }
     while (!detectCollision(ghostMatrix, boardMatrix)) {
@@ -110,9 +111,6 @@ export default function useTetriminoManager(type: Tetrimino, plane: Plane) {
     ghostPosition.y--;
     ghostMatrix = calculateMatrix(state.shape, ghostPosition, state.plane);
     return ghostMatrix;
-    // return ghostMatrix.filter(
-    //   (g) => !tetrimino.some((t) => t.x === g.x && t.y === g.y && t.z === g.z),
-    // );
   };
 
   return { tetrimino, attempt, hardDrop, projectGhost };

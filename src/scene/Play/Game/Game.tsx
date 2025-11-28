@@ -10,6 +10,7 @@ import {
 import { RelativeSide } from '~/scene/Play/Game/gameplay/cutter/types';
 import { spinDetector } from '~/scene/Play/Game/gameplay/score/spinDetector';
 import { zicDetector } from '~/scene/Play/Game/gameplay/score/zicDetector';
+import { subtract } from '~/scene/Play/Game/utils';
 import { VANISH_ZONE_ROWS } from './params';
 import { BagAction, CameraAction, Actions } from './types';
 import { useCamera } from '~/scene/shared';
@@ -146,6 +147,7 @@ export default function Game(props: Props) {
 
   // every time the tetrimino moves, by player action or gravity
   React.useEffect(() => {
+    // if the tetrimino perfectly overlaps the ghost, it means it should lock
     const shouldLock = tetrimino.every((t) =>
       ghost.some((g) => g.x === t.x && g.y === t.y && g.z === t.z),
     );
@@ -432,7 +434,7 @@ export default function Game(props: Props) {
         isPaused={isOnPause}
       />
       {!isOnPause && !isOnLineDeletionPhase && (
-        <Ghost type={bag.current} occupiedBlocks={ghost} />
+        <Ghost type={bag.current} occupiedBlocks={subtract(ghost, tetrimino)} />
       )}
       <ScoreEventStream
         camera={{ position: camera, relativeAxes }}
