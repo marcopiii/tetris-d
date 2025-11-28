@@ -1,3 +1,4 @@
 import translate from './translate';
+import subtract from './subtract';
 
-export { translate };
+export { subtract, translate };
