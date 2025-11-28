@@ -1,11 +1,13 @@
 import { match } from 'ts-pattern';
-import { COLS, ROWS } from '~/scene/Play/Game/params';
+import { COLS, ROWS } from '../params';
+import { Plane } from '../types';
 import { Tetrimino } from '~/tetrimino';
 import LabeledTetrimino from './LabeledTetrimino';
 
 type Props = {
   next: Tetrimino;
   hold?: Tetrimino;
+  currentPlane: Plane;
   camera: 'c1' | 'c2' | 'c3' | 'c4';
   isPaused: boolean;
 };
@@ -33,19 +35,28 @@ export default function BagPanel(props: Props) {
     .with('c4', () => [0, Math.PI, 0])
     .exhaustive();
 
+  const nextPlane = match(props.currentPlane)
+    .with('x', () => 'z' as const)
+    .with('z', () => 'x' as const)
+    .exhaustive();
+
   return (
     <group position={position} rotation={rotation}>
       <LabeledTetrimino
         position={[0, 0, 0]}
         label="next"
         tetrimino={props.next}
+        plane={nextPlane}
         isPaused={props.isPaused}
+        camera={props.camera}
       />
       <LabeledTetrimino
         position={[0, -5, 0]}
         label="hold"
         tetrimino={props.hold}
+        plane={props.currentPlane}
         isPaused={props.isPaused}
+        camera={props.camera}
       />
     </group>
   );
