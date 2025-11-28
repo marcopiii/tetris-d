@@ -16,8 +16,7 @@ export default function LabeledTetrimino(props: {
         alignX="center"
         alignZ="back"
         text={props.label}
-        type="secondary"
-        font="alphabet"
+        textStyle="hudLabel"
         disabled={props.isPaused}
       />
       {props.tetrimino && (

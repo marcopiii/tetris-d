@@ -1,34 +1,20 @@
-import { match } from 'ts-pattern';
 import * as Font from '~/font';
 import { textMaterials } from '~/materials';
-import { VOXEL_SIZE } from '../params';
+import { Text, textStyleConfig } from './textStyleConfig';
 import Voxel from '../Voxel';
 
 type Props = {
   position: [number, number, number];
   char: Font.Char;
-  type: 'main' | 'primary' | 'primary-half' | 'secondary' | 'secondary-half';
+  textStyle: Text;
   disabled?: boolean;
 };
 
 export default function Char(props: Props) {
-  const size = match(props.type)
-    .with('main', () => VOXEL_SIZE.main)
-    .with('primary', () => VOXEL_SIZE.primary)
-    .with('primary-half', () => VOXEL_SIZE['primary-half'])
-    .with('secondary', () => VOXEL_SIZE.secondary)
-    .with('secondary-half', () => VOXEL_SIZE.secondary)
-    .exhaustive();
-
+  const size = textStyleConfig[props.textStyle].size;
   const material = props.disabled
     ? textMaterials.disabled
-    : match(props.type)
-        .with('main', () => textMaterials.main)
-        .with('primary', () => textMaterials.primary)
-        .with('primary-half', () => textMaterials.primary)
-        .with('secondary', () => textMaterials.secondary)
-        .with('secondary-half', () => textMaterials.main)
-        .exhaustive();
+    : textMaterials[textStyleConfig[props.textStyle].color];
 
   return (
     <group position={props.position}>

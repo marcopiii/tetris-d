@@ -6,7 +6,7 @@ import { useCamera } from './camera';
 import Popup from './Popup';
 import { useInterpolatedValue } from './useInterpolatedValue';
 
-export { MINO_SIZE, VOXEL_SIZE } from './params';
+export { MINO_SIZE } from './params';
 export {
   Word,
   Popup,

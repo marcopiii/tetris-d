@@ -22,16 +22,14 @@ export default function LabeledNumber(props: {
         position={[0, 0, 0]}
         alignX="left"
         text={props.label}
-        type="secondary"
-        font="alphabet"
+        textStyle="hudLabel"
         disabled={props.isPaused}
       />
       <Word
         position={[0, -1.5, 0]}
         alignX="left"
         text={props.value.toString()}
-        type="primary"
-        font="numbers"
+        textStyle="hudScore"
         disabled={props.isPaused}
       />
     </Center>

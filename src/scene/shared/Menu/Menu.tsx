@@ -1,4 +1,4 @@
-import { VOXEL_SIZE } from '../params';
+import { textStyleConfig } from '~/scene/shared/Word/textStyleConfig';
 import Word from '../Word';
 import { SelectableMenuItem } from './types';
 
@@ -9,15 +9,14 @@ type MenuProps = {
 };
 
 export default function Menu(props: MenuProps) {
-  const lhMain = VOXEL_SIZE.main * 15;
-  const lhPrimary = VOXEL_SIZE.primary * 10;
+  const lhMain = textStyleConfig.main.size * 15;
+  const lhPrimary = textStyleConfig.menuSelected.size * 10;
 
   return (
     <group position={props.position}>
       <Word
         text={props.title}
-        type="main"
-        font="alphabet"
+        textStyle="main"
         alignX="center"
         position={[0, lhMain, 0]}
       />
@@ -25,14 +24,13 @@ export default function Menu(props: MenuProps) {
         <Word
           key={`${i}.${option.name}`}
           text={option.name}
-          type={option.selected ? 'primary' : 'secondary'}
-          font="alphabet"
+          textStyle={option.selected ? 'menuSelected' : 'menu'}
           alignX="center"
           alignY="center"
           position={[
             0,
             -(lhPrimary * i),
-            option.selected ? VOXEL_SIZE.primary * 3 : 0,
+            option.selected ? textStyleConfig.menuSelected.size * 3 : 0,
           ]}
         />
       ))}

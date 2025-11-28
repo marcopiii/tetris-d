@@ -1,15 +1,14 @@
 import { Center } from '@react-three/drei';
 import { match, P } from 'ts-pattern';
 import { alphabet, Char, numbers } from '~/font';
-import { VOXEL_SIZE } from '../params';
+import { textStyleConfig, Text } from './textStyleConfig';
 import Character from './Char';
 
 type Props = {
   position: [number, number, number];
   rotation?: number;
+  textStyle: Text;
   text: string;
-  type: 'main' | 'primary' | 'primary-half' | 'secondary' | 'secondary-half';
-  font: 'alphabet' | 'numbers';
   disabled?: boolean;
   alignX?: 'left' | 'center' | 'right';
   alignY?: 'top' | 'center' | 'bottom';
@@ -17,14 +16,15 @@ type Props = {
 };
 
 export default function Word(props: Props) {
-  const font = match(props.font)
+  const fontName = textStyleConfig[props.textStyle].font;
+  const font = match(fontName)
     .with('alphabet', () => alphabet)
     .with('numbers', () => numbers)
     .exhaustive();
 
   const chars: Array<Char> = props.text.split('').map((char) => {
     if (!font[char]) {
-      throw new Error(`Character "${char}" not found in font "${props.font}"`);
+      throw new Error(`Character "${char}" not found in font "${fontName}"`);
     }
     return font[char]!;
   });
@@ -57,8 +57,9 @@ export default function Word(props: Props) {
 
   const centerCacheKey = [
     props.text,
-    props.type,
-    props.font,
+    textStyleConfig[props.textStyle].color,
+    textStyleConfig[props.textStyle].size,
+    textStyleConfig[props.textStyle].font,
     props.disabled,
   ].join('-');
 
@@ -72,16 +73,12 @@ export default function Word(props: Props) {
       cacheKey={centerCacheKey}
     >
       {chars.map((char, i) => {
-        const offset =
-          charOffsets[i] *
-          VOXEL_SIZE[
-            props.type === 'secondary-half' ? 'secondary' : props.type
-          ];
+        const offset = charOffsets[i] * textStyleConfig[props.textStyle].size;
         return (
           <Character
             position={[offset, 0, 0]}
             char={char}
-            type={props.type}
+            textStyle={props.textStyle}
             disabled={props.disabled}
             key={i}
           />
