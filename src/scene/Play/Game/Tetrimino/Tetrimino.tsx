@@ -1,6 +1,7 @@
 import React from 'react';
+import { MinoCoord } from '~/scene/Play/Game/types';
 import { LOCK_DELAY_MS, LockTimer } from '../gameplay';
-import { COLS } from '../params';
+import { COLS, VANISH_ZONE_ROWS } from '../params';
 import Mino from '../Mino';
 import { translate } from '../utils';
 import MinoShade from './MinoShade';
@@ -9,14 +10,12 @@ import { useFrame } from '@react-three/fiber';
 
 type Props = {
   type: TetriminoType;
-  occupiedBlocks: { y: number; x: number; z: number }[];
+  occupiedBlocks: MinoCoord[];
   lockTimer: React.RefObject<LockTimer | undefined>;
   isPaused?: boolean;
 };
 
 export default function Tetrimino(props: Props) {
-  //todo(marco): change appearance of the blocks in the vanish zone
-
   const [lockProgress, setLockProgress] = React.useState(0);
 
   useFrame(() => {
@@ -43,30 +42,35 @@ export default function Tetrimino(props: Props) {
   return (
     <group>
       {props.occupiedBlocks.map(({ y, x, z }) => {
+        const isInVanishZone = y < VANISH_ZONE_ROWS;
         const [tx, ty, tz] = translate(x, y, z);
         return (
           <>
             <Mino type={props.type} position={[tx, ty, tz]} {...minoProps} />
-            <MinoShade
-              {...shadeProps}
-              rotation={[0, 0, 0]}
-              position={[tx, ty, -COLS / 2]}
-            />
-            <MinoShade
-              {...shadeProps}
-              rotation={[0, Math.PI / 2, 0]}
-              position={[-COLS / 2, ty, tz]}
-            />
-            <MinoShade
-              {...shadeProps}
-              rotation={[0, Math.PI, 0]}
-              position={[tx, ty, COLS / 2]}
-            />
-            <MinoShade
-              {...shadeProps}
-              rotation={[0, -Math.PI / 2, 0]}
-              position={[COLS / 2, ty, tz]}
-            />
+            {!isInVanishZone && (
+              <>
+                <MinoShade
+                  {...shadeProps}
+                  rotation={[0, 0, 0]}
+                  position={[tx, ty, -COLS / 2]}
+                />
+                <MinoShade
+                  {...shadeProps}
+                  rotation={[0, Math.PI / 2, 0]}
+                  position={[-COLS / 2, ty, tz]}
+                />
+                <MinoShade
+                  {...shadeProps}
+                  rotation={[0, Math.PI, 0]}
+                  position={[tx, ty, COLS / 2]}
+                />
+                <MinoShade
+                  {...shadeProps}
+                  rotation={[0, -Math.PI / 2, 0]}
+                  position={[COLS / 2, ty, tz]}
+                />
+              </>
+            )}
           </>
         );
       })}
