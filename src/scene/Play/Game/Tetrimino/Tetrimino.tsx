@@ -28,10 +28,48 @@ export default function Tetrimino(props: Props) {
     }
   });
 
+  return (
+    <group>
+      {props.occupiedBlocks.map((minoCoord) => {
+        const isInVanishZone = minoCoord.y < VANISH_ZONE_ROWS;
+        return isInVanishZone ? (
+          <MinoInVanishZone
+            coord={minoCoord}
+            type={props.type}
+            isPaused={props.isPaused}
+            lockProgress={lockProgress}
+          />
+        ) : (
+          <MinoInWell
+            coord={minoCoord}
+            type={props.type}
+            isPaused={props.isPaused}
+            lockProgress={lockProgress}
+          />
+        );
+      })}
+    </group>
+  );
+}
+
+function MinoInWell(props: {
+  coord: Props['occupiedBlocks'][number];
+  type: Props['type'];
+  isPaused: Props['isPaused'];
+  lockProgress: number;
+}) {
+  const { x, y, z } = props.coord;
+  const [tx, ty, tz] = translate(x, y, z);
+
   const minoProps =
-    lockProgress > 0
-      ? { status: 'locking' as const, lockProgress }
+    props.lockProgress > 0
+      ? {
+          type: props.type,
+          status: 'locking' as const,
+          lockProgress: props.lockProgress,
+        }
       : {
+          type: props.type,
           status: props.isPaused ? ('disabled' as const) : ('normal' as const),
         };
 
@@ -41,39 +79,71 @@ export default function Tetrimino(props: Props) {
 
   return (
     <group>
-      {props.occupiedBlocks.map(({ y, x, z }) => {
-        const isInVanishZone = y < VANISH_ZONE_ROWS;
-        const [tx, ty, tz] = translate(x, y, z);
-        return (
-          <>
-            <Mino type={props.type} position={[tx, ty, tz]} {...minoProps} />
-            {!isInVanishZone && (
-              <>
-                <MinoShade
-                  {...shadeProps}
-                  rotation={[0, 0, 0]}
-                  position={[tx, ty, -COLS / 2]}
-                />
-                <MinoShade
-                  {...shadeProps}
-                  rotation={[0, Math.PI / 2, 0]}
-                  position={[-COLS / 2, ty, tz]}
-                />
-                <MinoShade
-                  {...shadeProps}
-                  rotation={[0, Math.PI, 0]}
-                  position={[tx, ty, COLS / 2]}
-                />
-                <MinoShade
-                  {...shadeProps}
-                  rotation={[0, -Math.PI / 2, 0]}
-                  position={[COLS / 2, ty, tz]}
-                />
-              </>
-            )}
-          </>
-        );
-      })}
+      <Mino position={[tx, ty, tz]} {...minoProps} />
+      <group>
+        <MinoShade
+          {...shadeProps}
+          rotation={[0, 0, 0]}
+          position={[tx, ty, -COLS / 2]}
+        />
+        <MinoShade
+          {...shadeProps}
+          rotation={[0, Math.PI / 2, 0]}
+          position={[-COLS / 2, ty, tz]}
+        />
+        <MinoShade
+          {...shadeProps}
+          rotation={[0, Math.PI, 0]}
+          position={[tx, ty, COLS / 2]}
+        />
+        <MinoShade
+          {...shadeProps}
+          rotation={[0, -Math.PI / 2, 0]}
+          position={[COLS / 2, ty, tz]}
+        />
+      </group>
     </group>
   );
+}
+
+function MinoInVanishZone(props: {
+  coord: Props['occupiedBlocks'][number];
+  type: Props['type'];
+  isPaused: Props['isPaused'];
+  lockProgress: number;
+}) {
+  const { x, y, z } = props.coord;
+
+  const k = 0.25;
+  const fragmentsOffsets: [number, number, number][] = [
+    [+k, +k, +k],
+    [+k, +k, -k],
+    [+k, -k, +k],
+    [+k, -k, -k],
+    [-k, +k, +k],
+    [-k, +k, -k],
+    [-k, -k, +k],
+    [-k, -k, -k],
+  ];
+
+  const minoProps =
+    props.lockProgress > 0
+      ? {
+          type: props.type,
+          status: 'locking' as const,
+          lockProgress: props.lockProgress,
+          shrink: 0.55,
+        }
+      : {
+          type: props.type,
+          status: props.isPaused ? ('disabled' as const) : ('normal' as const),
+          shrink: 0.55,
+        };
+
+  const fragments = fragmentsOffsets.map(([ox, oy, oz]) => {
+    const [tx, ty, tz] = translate(x + ox, y + oy, z + oz);
+    return <Mino position={[tx, ty, tz]} {...minoProps} />;
+  });
+
+  return <group>{fragments}</group>;
 }
