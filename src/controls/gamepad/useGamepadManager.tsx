@@ -46,6 +46,7 @@ export default function useGamepadManager(
   const manageButton =
     (domButton: DOMGamepadButton, i: number) =>
     (buttonCode: Omit<GamepadButton, 'LT' | 'RT'>) => {
+      const isFirstFrame = buttonBufferRef.current.length === 0;
       const buffer = buttonBufferRef.current;
       const wasPressed = buffer[0]?.[i]?.pressed ?? false;
       const isHolding = buffer
@@ -53,7 +54,8 @@ export default function useGamepadManager(
         .every((b) => b[i]?.pressed ?? false);
       const wasHeld = buffer.every((b) => b[i]?.pressed ?? false);
 
-      if (domButton.pressed && !wasPressed) buttonHandler('press', buttonCode);
+      if (domButton.pressed && !wasPressed && !isFirstFrame)
+        buttonHandler('press', buttonCode);
       if (domButton.pressed && isHolding && !wasHeld)
         buttonHandler('hold', buttonCode);
       if (!domButton.pressed && wasPressed && !wasHeld)
@@ -71,7 +73,7 @@ export default function useGamepadManager(
         .with(P.union('LT', 'RT'), manageTrigger(button, i))
         .otherwise(manageButton(button, i));
     });
-    
+
     buttonBufferRef.current = [
       [...gamepad.buttons],
       ...buttonBufferRef.current,
