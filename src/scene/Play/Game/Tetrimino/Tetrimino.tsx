@@ -1,3 +1,4 @@
+import { clamp } from 'es-toolkit';
 import React from 'react';
 import { MinoCoord } from '~/scene/Play/Game/types';
 import { LOCK_DELAY_MS, LockTimer } from '../gameplay';
@@ -126,18 +127,23 @@ function MinoInVanishZone(props: {
     [-k, -k, -k],
   ];
 
+  const s0 = 0.8;
+  const sf = 0.55;
+  const t = clamp(y, 0, VANISH_ZONE_ROWS) / VANISH_ZONE_ROWS;
+  const shrink = s0 + (sf - s0) * t;
+
   const minoProps =
     props.lockProgress > 0
       ? {
           type: props.type,
           status: 'locking' as const,
           lockProgress: props.lockProgress,
-          shrink: 0.55,
+          shrink,
         }
       : {
           type: props.type,
           status: props.isPaused ? ('disabled' as const) : ('normal' as const),
-          shrink: 0.55,
+          shrink,
         };
 
   const fragments = fragmentsOffsets.map(([ox, oy, oz]) => {
