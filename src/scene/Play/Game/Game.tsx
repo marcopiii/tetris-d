@@ -412,7 +412,12 @@ export default function Game(props: Props) {
   // todo: avoid unnecessary re-renders
   return (
     <group>
-      <Tetrion />
+      <Tetrion
+        activePlane={{
+          type: plane.current,
+          i: tetrimino[0][plane.current],
+        }}
+      />
       <ProgressPanel
         camera={camera}
         progress={progress}
