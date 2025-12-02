@@ -46,7 +46,6 @@ export default function Tetrion(props: Props) {
 
   return (
     <group>
-      <axesHelper args={[5]} />
       <gridHelper
         args={[COLS * MINO_SIZE, COLS, colors.tetrion, colors.tetrion]}
         position={[0, -ROWS / 2, 0]}
