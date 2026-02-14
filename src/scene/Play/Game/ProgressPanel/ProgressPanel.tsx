@@ -1,7 +1,7 @@
 import { match } from 'ts-pattern';
 import { Popup } from '~/scene/shared';
 import { Progress, ScoreEvent } from '../gameplay';
-import { COLS, ROWS } from '../params';
+import { useGameParams } from '../params';
 import LabeledNumber from './LabeledNumber';
 
 type Props = {
@@ -12,9 +12,10 @@ type Props = {
 };
 
 export default function ProgressPanel(props: Props) {
-  const pY = (ROWS - 2) / 2;
-  const onEdge = COLS / 2;
-  const offEdge = (COLS + 2) / 2;
+  const { cols, rows } = useGameParams();
+  const pY = (rows - 2) / 2;
+  const onEdge = cols / 2;
+  const offEdge = (cols + 2) / 2;
 
   const position = match<typeof props.camera, [number, number, number]>(
     props.camera,

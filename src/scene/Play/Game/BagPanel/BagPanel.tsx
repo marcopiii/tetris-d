@@ -1,5 +1,5 @@
 import { match } from 'ts-pattern';
-import { COLS, ROWS } from '../params';
+import { useGameParams } from '../params';
 import { Plane } from '../types';
 import { Tetrimino } from '~/tetrimino';
 import LabeledTetrimino from './LabeledTetrimino';
@@ -13,9 +13,10 @@ type Props = {
 };
 
 export default function BagPanel(props: Props) {
-  const pY = (ROWS - 2) / 2;
-  const onEdge = COLS / 2;
-  const offEdge = (COLS + 5) / 2;
+  const { cols, rows } = useGameParams();
+  const pY = (rows - 2) / 2;
+  const onEdge = cols / 2;
+  const offEdge = (cols + 5) / 2;
 
   const position = match<typeof props.camera, [number, number, number]>(
     props.camera,

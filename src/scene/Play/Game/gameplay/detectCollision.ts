@@ -1,4 +1,4 @@
-import { COLS, ROWS, VANISH_ZONE_ROWS } from '~/scene/Play/Game/params';
+import { GameParams } from '~/scene/Play/Game/params';
 import { MinoCoord } from '~/scene/Play/Game/types';
 
 /**
@@ -10,12 +10,13 @@ import { MinoCoord } from '~/scene/Play/Game/types';
 export function detectCollision(
   tetriminoMatrix: MinoCoord[],
   boardMatrix: MinoCoord[],
+  { cols, rows, vanishZoneRows }: GameParams,
 ) {
   const floorCollision = tetriminoMatrix.some(
-    ({ y }) => y >= ROWS + VANISH_ZONE_ROWS,
+    ({ y }) => y >= rows + vanishZoneRows,
   );
   const wallCollision = tetriminoMatrix.some(
-    ({ x, z }) => x < 0 || x >= COLS || z < 0 || z >= COLS,
+    ({ x, z }) => x < 0 || x >= cols || z < 0 || z >= cols,
   );
   const stackCollision = tetriminoMatrix.some(({ y: ty, x: tx, z: tz }) =>
     boardMatrix.some(

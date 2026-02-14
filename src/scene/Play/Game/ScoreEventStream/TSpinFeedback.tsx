@@ -1,5 +1,5 @@
 import { match, P } from 'ts-pattern';
-import { COLS } from '../params';
+import { useGameParams } from '../params';
 import { translate } from '../utils';
 import { TSpinEvent } from '../gameplay';
 import { Popup, useCamera } from '~/scene/shared';
@@ -13,16 +13,19 @@ type Props = {
 };
 
 export default function TSpinFeedback(props: Props) {
+  const gameParams = useGameParams();
+  const { cols } = gameParams;
+
   const [xAnchor, zAnchor] = match(props.camera.position)
-    .with('c1', () => [-1, COLS])
-    .with('c2', () => [COLS, COLS])
-    .with('c3', () => [COLS, -1])
+    .with('c1', () => [-1, cols])
+    .with('c2', () => [cols, cols])
+    .with('c3', () => [cols, -1])
     .with('c4', () => [-1, -1])
     .exhaustive();
 
   const position = match(props.event.pivot)
-    .with({ x: P.number }, ({ x, y }) => translate(x, y, zAnchor))
-    .with({ z: P.number }, ({ z, y }) => translate(xAnchor, y, z))
+    .with({ x: P.number }, ({ x, y }) => translate(x, y, zAnchor, gameParams))
+    .with({ z: P.number }, ({ z, y }) => translate(xAnchor, y, z, gameParams))
     .exhaustive();
 
   const [rotation, alignment] = match([

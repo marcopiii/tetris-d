@@ -3,11 +3,12 @@ import { match, P } from 'ts-pattern';
 import { LineClearEvent } from '../gameplay';
 import comboName from './comboName';
 import useSlidingWindow from './useSlidingWindow';
-import { COLS } from '../params';
+import { useGameParams } from '../params';
 import { Popup, useCamera } from '~/scene/shared';
 import { PlaneCombo } from '../gameplay';
 import { LineCoord, Plane } from '../types';
 import { translate } from '../utils';
+import { GameParams } from '../params';
 
 type Props = {
   camera: {
@@ -18,6 +19,9 @@ type Props = {
 };
 
 export default function LineClearFeedback(props: Props) {
+  const gameParams = useGameParams();
+  const { cols } = gameParams;
+
   const primaryPlane =
     props.event.lines.filter((l) => 'x' in l).length >
     props.event.lines.filter((l) => 'z' in l).length
@@ -33,7 +37,7 @@ export default function LineClearFeedback(props: Props) {
   const popups: (ComponentProps<typeof Popup> & { id: string })[] =
     sortedLines.map((line, i) => {
       const id = [line.x ?? '_', line.y, line.z ?? '_'].join(':');
-      const layout = getPositioning(line, props.camera);
+      const layout = getPositioning(line, props.camera, cols, gameParams);
       const planeCombo: PlaneCombo = match([firstLine, line])
         .with([{ x: P.number }, { x: P.number }], ([first, thiz]) =>
           first.x !== thiz.x ? 'parallel' : 'mono',
@@ -86,17 +90,22 @@ const lineOrderCriteria =
       .exhaustive();
   };
 
-function getPositioning(line: LineCoord, camera: Props['camera']) {
+function getPositioning(
+  line: LineCoord,
+  camera: Props['camera'],
+  cols: number,
+  gameParams: GameParams,
+) {
   const [xAnchor, zAnchor] = match(camera.position)
-    .with('c1', () => [-1, COLS])
-    .with('c2', () => [COLS, COLS])
-    .with('c3', () => [COLS, -1])
+    .with('c1', () => [-1, cols])
+    .with('c2', () => [cols, cols])
+    .with('c3', () => [cols, -1])
     .with('c4', () => [-1, -1])
     .exhaustive();
 
   const position = match(line)
-    .with({ x: P.number }, ({ x, y }) => translate(x, y, zAnchor))
-    .with({ z: P.number }, ({ z, y }) => translate(xAnchor, y, z))
+    .with({ x: P.number }, ({ x, y }) => translate(x, y, zAnchor, gameParams))
+    .with({ z: P.number }, ({ z, y }) => translate(xAnchor, y, z, gameParams))
     .exhaustive();
 
   const [rotation, alignment] = match([line, camera.position])

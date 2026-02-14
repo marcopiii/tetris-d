@@ -1,5 +1,5 @@
 import { match, P } from 'ts-pattern';
-import { COLS, ROWS, VANISH_ZONE_ROWS } from '~/scene/Play/Game/params';
+import { useGameParams } from '~/scene/Play/Game/params';
 import { translate } from '~/scene/Play/Game/utils';
 import { PerfectClearEvent } from '../gameplay';
 import { Popup, useCamera } from '~/scene/shared';
@@ -13,24 +13,29 @@ type Props = {
 };
 
 export default function PerfectClearFeedback(props: Props) {
+  const gameParams = useGameParams();
+  const { cols, rows, vanishZoneRows } = gameParams;
   const flipX = props.camera.relativeAxes.x.rightInverted;
   const flipZ = props.camera.relativeAxes.z.rightInverted;
 
   return props.event.planes.map((plane) => {
-    const y = ROWS + VANISH_ZONE_ROWS - 1;
+    const y = rows + vanishZoneRows - 1;
     const [position, rotation] = match(plane)
       .with(
         { x: P.number },
         ({ x }) =>
           [
-            translate(x, y, (COLS - 1) / 2),
+            translate(x, y, (cols - 1) / 2, gameParams),
             flipZ ? Math.PI / 2 : -Math.PI / 2,
           ] as const,
       )
       .with(
         { z: P.number },
         ({ z }) =>
-          [translate((COLS - 1) / 2, y, z), flipX ? Math.PI : 0] as const,
+          [
+            translate((cols - 1) / 2, y, z, gameParams),
+            flipX ? Math.PI : 0,
+          ] as const,
       )
       .exhaustive();
 
@@ -42,7 +47,7 @@ export default function PerfectClearFeedback(props: Props) {
         position={position}
         rotation={rotation}
         toward="up"
-        distance={ROWS / 2}
+        distance={rows / 2}
       />
     );
   });

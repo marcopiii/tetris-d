@@ -4,6 +4,7 @@ import { MinoCoord } from '~/scene/Play/Game/types';
 import Mino from '../Mino';
 import { Tetrimino } from '~/tetrimino';
 import { checkCompletedLines } from '../gameplay';
+import { useGameParams } from '../params';
 import { translate } from '../utils';
 import CuttingShadow from './CuttingShadow';
 
@@ -14,7 +15,8 @@ type Props = {
 };
 
 export default function Board(props: Props) {
-  const completedLines = checkCompletedLines(props.occupiedBlocks);
+  const gameParams = useGameParams();
+  const completedLines = checkCompletedLines(props.occupiedBlocks, gameParams);
 
   const cuttingLevel = (block: MinoCoord) =>
     match(props.cutting.plane)
@@ -35,7 +37,7 @@ export default function Board(props: Props) {
   return (
     <group>
       {props.occupiedBlocks.map(({ type, y, x, z }) => {
-        const position = translate(x, y, z);
+        const position = translate(x, y, z, gameParams);
         const deleting = completedLines.some((line) =>
           match(line)
             .with(

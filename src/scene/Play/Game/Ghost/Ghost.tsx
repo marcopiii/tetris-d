@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { match } from 'ts-pattern';
 import Mino from '../Mino';
 import { Tetrimino } from '~/tetrimino';
+import { useGameParams } from '../params';
 import { translate } from '../utils';
 
 type Props = {
@@ -10,6 +11,8 @@ type Props = {
 };
 
 export default function Ghost(props: Props) {
+  const gameParams = useGameParams();
+
   const checkSideOf =
     ({ x, y, z }: THREE.Vector3Like) =>
     (side: 'x+' | 'x-' | 'y+' | 'y-' | 'z+' | 'z-') => {
@@ -40,7 +43,7 @@ export default function Ghost(props: Props) {
         return (
           <Mino
             type={props.type}
-            position={translate(x, y, z)}
+            position={translate(x, y, z, gameParams)}
             status="ghost"
             hideFace={hideFaces}
           />

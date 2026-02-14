@@ -1,13 +1,14 @@
 import { partition } from 'es-toolkit';
 import { match } from 'ts-pattern';
 import { TSpinData } from '~/scene/Play/Game/gameplay/score/TrackEvent';
-import { COLS } from '../../params';
+import { GameParams } from '../../params';
 import { TetriminoState } from '../../gameplay';
 import { LineCoord, MinoCoord } from '../../types';
 
 export function spinDetector(
   state: Omit<TetriminoState, 'shape'> | undefined,
   board: MinoCoord[],
+  { cols }: GameParams,
 ): TSpinData | undefined {
   if (!state) return undefined;
   if (state.type != 'T') return undefined;
@@ -38,7 +39,7 @@ export function spinDetector(
     board.some((b) => b.x === p.x && b.y === p.y && b.z === p.z);
 
   const isOutOfWalls = (p: { x: number; y: number; z: number }) =>
-    p.x < 0 || p.x >= COLS || p.z < 0 || p.z >= COLS;
+    p.x < 0 || p.x >= cols || p.z < 0 || p.z >= cols;
 
   const check = (p: { x: number; y: number; z: number }) =>
     isOutOfWalls(p) || isOccupied(p);

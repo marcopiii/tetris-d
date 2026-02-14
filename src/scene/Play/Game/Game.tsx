@@ -11,7 +11,7 @@ import { RelativeSide } from '~/scene/Play/Game/gameplay/cutter/types';
 import { spinDetector } from '~/scene/Play/Game/gameplay/score/spinDetector';
 import { zicDetector } from '~/scene/Play/Game/gameplay/score/zicDetector';
 import { overlaps, subtract } from '~/scene/Play/Game/utils';
-import { VANISH_ZONE_ROWS } from './params';
+import { useGameParams } from './params';
 import { BagAction, CameraAction, Actions } from './types';
 import { useCamera } from '~/scene/shared';
 import BagPanel from './BagPanel';
@@ -48,6 +48,7 @@ type Props = {
 };
 
 export default function Game(props: Props) {
+  const gameParams = useGameParams();
   const plane = usePlane();
   const bag = useBag();
 
@@ -78,8 +79,16 @@ export default function Game(props: Props) {
       });
     },
     onPieceFixed: (completedLines) => {
-      const spinData = spinDetector(lastMoveSpinDataRef.current, board);
-      const zicData = zicDetector(lastMoveZicDataRef.current, board);
+      const spinData = spinDetector(
+        lastMoveSpinDataRef.current,
+        board,
+        gameParams,
+      );
+      const zicData = zicDetector(
+        lastMoveZicDataRef.current,
+        board,
+        gameParams,
+      );
       lastMoveSpinDataRef.current = undefined;
       lastMoveZicDataRef.current = undefined;
       hasHardDroppedRef.current = false;
@@ -102,7 +111,9 @@ export default function Game(props: Props) {
   const lastMoveZicDataRef = React.useRef<TetriminoState>(undefined);
 
   const { triggerLock, cancelLock, canReset, lockTimer } = useLockDelay(() => {
-    const isInVanishZone = tetrimino.every(({ y }) => y < VANISH_ZONE_ROWS);
+    const isInVanishZone = tetrimino.every(
+      ({ y }) => y < gameParams.vanishZoneRows,
+    );
     if (isInVanishZone) {
       props.onGameOver(progress);
     } else {

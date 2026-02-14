@@ -2,10 +2,10 @@ import { cloneDeep, countBy, noop, uniqBy } from 'es-toolkit';
 import React, { useEffect } from 'react';
 import { match, P } from 'ts-pattern';
 import { PerfectClearData } from '~/scene/Play/Game/gameplay/score/TrackEvent';
-import { emptyMatrix } from './matrices';
+import { createEmptyMatrix } from './matrices';
 import { BoardMatrix } from './types';
 import { Tetrimino } from '~/tetrimino';
-import { COLS } from '../../params';
+import { useGameParams } from '../../params';
 import { LineCoord, MinoCoord, PlaneCoords } from '../../types';
 import checkCompletedLines from '../checkCompletedLines';
 
@@ -25,7 +25,10 @@ export function useBoardManager(effect: {
   ) => void;
   onPieceFixed: (completedLines: LineCoord[]) => void;
 }) {
-  const [matrix, setMatrix] = React.useState<BoardMatrix>(emptyMatrix);
+  const gameParams = useGameParams();
+  const [matrix, setMatrix] = React.useState<BoardMatrix>(() =>
+    createEmptyMatrix(gameParams),
+  );
   const triggerRef = React.useRef<TriggerData>(undefined);
 
   /**
@@ -61,9 +64,11 @@ export function useBoardManager(effect: {
    * returns their coordinates.
    */
   const deleteLines = () => {
-    const completedLines = checkCompletedLines(board);
+    const completedLines = checkCompletedLines(board, gameParams);
     if (completedLines.length > 0) {
-      const newMatrix = removeCompletedLines(matrix)(completedLines);
+      const newMatrix = removeCompletedLines(matrix, gameParams.cols)(
+        completedLines,
+      );
       triggerRef.current = {
         reason: 'line-clear',
         deletedLines: completedLines,
@@ -83,7 +88,7 @@ export function useBoardManager(effect: {
   }
 
   useEffect(() => {
-    const completedLines = checkCompletedLines(board);
+    const completedLines = checkCompletedLines(board, gameParams);
     match(triggerRef.current)
       .with({ reason: 'piece-fix' }, () => {
         effect.onPieceFixed(completedLines);
@@ -119,16 +124,16 @@ const deleteBlockOnMatrix =
     matrix[0][x][z] = null;
   };
 
-const linesToBlocks = (completedLines: LineCoord[]) =>
+const linesToBlocks = (completedLines: LineCoord[], cols: number) =>
   uniqBy(
     completedLines
       .map((line) =>
         match(line)
           .with({ y: P.number, x: P.number }, ({ y, x }) =>
-            Array.from({ length: COLS }, (_, z) => ({ y, x, z })),
+            Array.from({ length: cols }, (_, z) => ({ y, x, z })),
           )
           .with({ y: P.number, z: P.number }, ({ y, z }) =>
-            Array.from({ length: COLS }, (_, x) => ({ y, x, z })),
+            Array.from({ length: cols }, (_, x) => ({ y, x, z })),
           )
           .exhaustive(),
       )
@@ -136,13 +141,14 @@ const linesToBlocks = (completedLines: LineCoord[]) =>
     ({ x, y, z }) => `${y}.${x}.${z}`,
   );
 
-const removeCompletedLines = (matrix: BoardMatrix) => (lines: LineCoord[]) => {
-  const newMatriz = cloneDeep(matrix);
-  const deleteBlock = deleteBlockOnMatrix(newMatriz);
-  const blockToDelete = linesToBlocks(lines);
-  blockToDelete.forEach(deleteBlock);
-  return newMatriz;
-};
+const removeCompletedLines =
+  (matrix: BoardMatrix, cols: number) => (lines: LineCoord[]) => {
+    const newMatriz = cloneDeep(matrix);
+    const deleteBlock = deleteBlockOnMatrix(newMatriz);
+    const blockToDelete = linesToBlocks(lines, cols);
+    blockToDelete.forEach(deleteBlock);
+    return newMatriz;
+  };
 
 const planeCoord = (line: LineCoord): PlaneCoords =>
   match(line)

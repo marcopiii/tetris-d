@@ -3,9 +3,10 @@ import { match } from 'ts-pattern';
 import { useGamepadManager, useKeyboardManager } from '../../controls';
 import { Menu, useMenuNavigation } from '../shared/Menu';
 import { useCamera } from '~/scene/shared/camera';
+import { GameMode } from '~/scene/Play/Game/params';
 
 type Props = {
-  onPlay: () => void;
+  onPlay: (mode: GameMode) => void;
   onControls: () => void;
   onLeaderboard: () => void;
 };
@@ -17,7 +18,8 @@ export default function MainMenu(props: Props) {
   });
 
   const menuItems = [
-    { name: 'play', action: props.onPlay, terminal: true },
+    { name: 'play 7x7', action: () => props.onPlay('7x7'), terminal: true },
+    { name: 'play 5x5', action: () => props.onPlay('5x5'), terminal: true },
     // { name: 'controls', action: props.onControls, terminal: true },
     { name: 'leaderboard', action: props.onLeaderboard, terminal: true },
     {

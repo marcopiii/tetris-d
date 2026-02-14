@@ -1,7 +1,7 @@
 import { match } from 'ts-pattern';
 import { calculateMatrix } from '~/scene/Play/Game/gameplay/calculateMatrix';
 import { detectCollision } from '~/scene/Play/Game/gameplay/detectCollision';
-import { COLS, ROWS, VANISH_ZONE_ROWS } from '~/scene/Play/Game/params';
+import { GameParams } from '~/scene/Play/Game/params';
 import { MinoCoord } from '~/scene/Play/Game/types';
 import { ZicData } from './TrackEvent';
 import { shiftLeft, shiftRight, TetriminoState, undrop } from '../../gameplay';
@@ -9,6 +9,7 @@ import { shiftLeft, shiftRight, TetriminoState, undrop } from '../../gameplay';
 export function zicDetector(
   state: TetriminoState | undefined,
   board: MinoCoord[],
+  gameParams: GameParams,
 ): ZicData | undefined {
   if (!state) return undefined;
 
@@ -23,7 +24,7 @@ export function zicDetector(
     .with('z', () => fixedPieceMinos.map(({ y, x }) => ({ y, x })))
     .exhaustive();
 
-  const checkMino = checkMinoOn(board);
+  const checkMino = checkMinoOn(board, gameParams);
 
   const isPerfectFit = fixedPieceMinos.every((fp) => {
     const over = { x: fp.x, y: fp.y - 1, z: fp.z };
@@ -54,7 +55,7 @@ export function zicDetector(
       ),
   );
 
-  const testMove = testMoveOn(state, prevBoard);
+  const testMove = testMoveOn(state, prevBoard, gameParams);
   const canMoveOnPlane = [undrop, shiftLeft, shiftRight]
     .map(testMove)
     .some(Boolean);
@@ -62,21 +63,23 @@ export function zicDetector(
 }
 
 /** Check if a position is occupied by a mino or out of bound */
-const checkMinoOn = (board: MinoCoord[]) => (mino: MinoCoord) => {
-  return (
-    mino.y >= ROWS + VANISH_ZONE_ROWS ||
-    mino.x < 0 ||
-    mino.x >= COLS ||
-    mino.z < 0 ||
-    mino.z >= COLS ||
-    board.some((b) => b.x === mino.x && b.y === mino.y && b.z === mino.z)
-  );
-};
+const checkMinoOn =
+  (board: MinoCoord[], { cols, rows, vanishZoneRows }: GameParams) =>
+  (mino: MinoCoord) => {
+    return (
+      mino.y >= rows + vanishZoneRows ||
+      mino.x < 0 ||
+      mino.x >= cols ||
+      mino.z < 0 ||
+      mino.z >= cols ||
+      board.some((b) => b.x === mino.x && b.y === mino.y && b.z === mino.z)
+    );
+  };
 
 const testMoveOn =
-  (state: TetriminoState, board: MinoCoord[]) =>
+  (state: TetriminoState, board: MinoCoord[], gameParams: GameParams) =>
   (move: (state: TetriminoState) => TetriminoState) => {
     const { shape, position, plane } = move(state);
     const testingPosition = calculateMatrix(shape, position, plane);
-    return !detectCollision(testingPosition, board);
+    return !detectCollision(testingPosition, board, gameParams);
   };

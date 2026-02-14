@@ -1,6 +1,6 @@
 import React from 'react';
 import { LOCK_DELAY_MS, LockTimer } from '../gameplay';
-import { COLS } from '../params';
+import { useGameParams } from '../params';
 import Mino from '../Mino';
 import { translate } from '../utils';
 import MinoShade from './MinoShade';
@@ -16,6 +16,8 @@ type Props = {
 
 export default function Tetrimino(props: Props) {
   //todo(marco): change appearance of the blocks in the vanish zone
+  const gameParams = useGameParams();
+  const { cols } = gameParams;
 
   const [lockProgress, setLockProgress] = React.useState(0);
 
@@ -43,29 +45,29 @@ export default function Tetrimino(props: Props) {
   return (
     <group>
       {props.occupiedBlocks.map(({ y, x, z }) => {
-        const [tx, ty, tz] = translate(x, y, z);
+        const [tx, ty, tz] = translate(x, y, z, gameParams);
         return (
           <>
             <Mino type={props.type} position={[tx, ty, tz]} {...minoProps} />
             <MinoShade
               {...shadeProps}
               rotation={[0, 0, 0]}
-              position={[tx, ty, -COLS / 2]}
+              position={[tx, ty, -cols / 2]}
             />
             <MinoShade
               {...shadeProps}
               rotation={[0, Math.PI / 2, 0]}
-              position={[-COLS / 2, ty, tz]}
+              position={[-cols / 2, ty, tz]}
             />
             <MinoShade
               {...shadeProps}
               rotation={[0, Math.PI, 0]}
-              position={[tx, ty, COLS / 2]}
+              position={[tx, ty, cols / 2]}
             />
             <MinoShade
               {...shadeProps}
               rotation={[0, -Math.PI / 2, 0]}
-              position={[COLS / 2, ty, tz]}
+              position={[cols / 2, ty, tz]}
             />
           </>
         );

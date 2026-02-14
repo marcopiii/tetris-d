@@ -2,6 +2,7 @@ import React from 'react';
 import { Vector3Like } from 'three';
 import { calculateMatrix } from '~/scene/Play/Game/gameplay/calculateMatrix';
 import { detectCollision } from '~/scene/Play/Game/gameplay/detectCollision';
+import { useGameParams } from '~/scene/Play/Game/params';
 import { Tetrimino, tetriminos } from '~/tetrimino';
 import { MinoCoord, Plane } from '../types';
 import initPosition from './initPosition';
@@ -15,10 +16,12 @@ import { type TetriminoState, drop } from './movement';
  * @param plane
  */
 export default function useTetriminoManager(type: Tetrimino, plane: Plane) {
+  const gameParams = useGameParams();
+
   const [state, setState] = React.useState<TetriminoState>({
     type,
     plane,
-    position: initPosition(plane, tetriminos[type]),
+    position: initPosition(plane, tetriminos[type], gameParams),
     shape: tetriminos[type],
     rotationState: '0',
   });
@@ -27,7 +30,7 @@ export default function useTetriminoManager(type: Tetrimino, plane: Plane) {
     setState({
       type,
       plane,
-      position: initPosition(plane, tetriminos[type]),
+      position: initPosition(plane, tetriminos[type], gameParams),
       shape: tetriminos[type],
       rotationState: '0',
     });
@@ -56,7 +59,11 @@ export default function useTetriminoManager(type: Tetrimino, plane: Plane) {
         newState.position,
         newState.plane,
       );
-      const collision = detectCollision(newTetriminoMatrix, boardMatrix);
+      const collision = detectCollision(
+        newTetriminoMatrix,
+        boardMatrix,
+        gameParams,
+      );
       if (collision) {
         return undefined;
       } else {
@@ -73,7 +80,11 @@ export default function useTetriminoManager(type: Tetrimino, plane: Plane) {
         newState.position,
         newState.plane,
       );
-      const isValid = !detectCollision(newTetriminoMatrix, boardMatrix);
+      const isValid = !detectCollision(
+        newTetriminoMatrix,
+        boardMatrix,
+        gameParams,
+      );
       return isValid ? newState : undefined;
     };
     let currentState = state;
@@ -97,14 +108,14 @@ export default function useTetriminoManager(type: Tetrimino, plane: Plane) {
   const projectGhost = (boardMatrix: Vector3Like[]): MinoCoord[] => {
     const ghostPosition = { ...state.position };
     let ghostMatrix = calculateMatrix(state.shape, ghostPosition, state.plane);
-    if (detectCollision(ghostMatrix, boardMatrix)) {
+    if (detectCollision(ghostMatrix, boardMatrix, gameParams)) {
       // this can happen only when we are in the phase where the active piece has been inserted into the board,
       // but a new one has not yet spawned. In this phase the active piece is overlapping the board, and thus
       // the starting projection point of the ghost is already compenetrating the board.
       // In this case, we don't need a ghost at all.
       return [];
     }
-    while (!detectCollision(ghostMatrix, boardMatrix)) {
+    while (!detectCollision(ghostMatrix, boardMatrix, gameParams)) {
       ghostPosition.y++;
       ghostMatrix = calculateMatrix(state.shape, ghostPosition, state.plane);
     }

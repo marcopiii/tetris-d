@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { match, P } from 'ts-pattern';
 import { cuttingShadowMaterial } from '~/materials';
 import { MINO_SIZE } from '~/scene/shared';
-import { COLS, ROWS } from '../params';
+import { useGameParams } from '../params';
 import { PlaneCoords } from '../types';
 
 type Props = {
@@ -12,18 +12,20 @@ type Props = {
 };
 
 export default function CuttingShadow(props: Props) {
+  const { cols, rows } = useGameParams();
+
   const belowPosition = match(props.plane)
-    .with({ x: P.number }, ({ x }) => [(x - COLS) / 2, 0, 0] as const)
-    .with({ z: P.number }, ({ z }) => [0, (z - COLS) / 2, 0] as const)
+    .with({ x: P.number }, ({ x }) => [(x - cols) / 2, 0, 0] as const)
+    .with({ z: P.number }, ({ z }) => [0, (z - cols) / 2, 0] as const)
     .exhaustive();
   const belowGeometry = match(props.plane)
     .with(
       { x: P.number },
-      ({ x }) => [x * MINO_SIZE, COLS * MINO_SIZE] as const,
+      ({ x }) => [x * MINO_SIZE, cols * MINO_SIZE] as const,
     )
     .with(
       { z: P.number },
-      ({ z }) => [COLS * MINO_SIZE, z * MINO_SIZE] as const,
+      ({ z }) => [cols * MINO_SIZE, z * MINO_SIZE] as const,
     )
     .exhaustive();
   const abovePosition = match(props.plane)
@@ -33,16 +35,16 @@ export default function CuttingShadow(props: Props) {
   const aboveGeometry = match(props.plane)
     .with(
       { x: P.number },
-      ({ x }) => [(COLS - 1 - x) * MINO_SIZE, COLS * MINO_SIZE] as const,
+      ({ x }) => [(cols - 1 - x) * MINO_SIZE, cols * MINO_SIZE] as const,
     )
     .with(
       { z: P.number },
-      ({ z }) => [COLS * MINO_SIZE, (COLS - 1 - z) * MINO_SIZE] as const,
+      ({ z }) => [cols * MINO_SIZE, (cols - 1 - z) * MINO_SIZE] as const,
     )
     .exhaustive();
 
   return (
-    <group position={[0, -ROWS / 2, 0]} rotation={[Math.PI / 2, 0, 0]}>
+    <group position={[0, -rows / 2, 0]} rotation={[Math.PI / 2, 0, 0]}>
       {props.below && (
         <mesh position={belowPosition}>
           <planeGeometry args={belowGeometry} />

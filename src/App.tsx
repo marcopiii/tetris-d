@@ -2,26 +2,35 @@ import React from 'react';
 import { match } from 'ts-pattern';
 import { Canvas } from './Canvas';
 import { Leaderboard, MainMenu, Play } from '~/scene';
+import { GameMode } from '~/scene/Play/Game/params';
 import './style.css';
 
-type Scenario = 'main-menu' | 'play' | 'controls' | 'leaderboard';
+type Scenario =
+  | { kind: 'main-menu' }
+  | { kind: 'play'; mode: GameMode }
+  | { kind: 'controls' }
+  | { kind: 'leaderboard' };
 
 export default function App(props: { aspectRatio: number }) {
-  const [scenario, setScenario] = React.useState<Scenario>('main-menu');
+  const [scenario, setScenario] = React.useState<Scenario>({
+    kind: 'main-menu',
+  });
 
   const currentScenario = match(scenario)
-    .with('main-menu', () => (
+    .with({ kind: 'main-menu' }, () => (
       <MainMenu
-        onPlay={() => setScenario('play')}
-        onControls={() => setScenario('controls')}
-        onLeaderboard={() => setScenario('leaderboard')}
+        onPlay={(mode) => setScenario({ kind: 'play', mode })}
+        onControls={() => setScenario({ kind: 'controls' })}
+        onLeaderboard={() => setScenario({ kind: 'leaderboard' })}
       />
     ))
-    .with('play', () => <Play onBack={() => setScenario('main-menu')} />)
-    .with('leaderboard', () => (
-      <Leaderboard onBack={() => setScenario('main-menu')} />
+    .with({ kind: 'play' }, ({ mode }) => (
+      <Play mode={mode} onBack={() => setScenario({ kind: 'main-menu' })} />
     ))
-    .with('controls', () => <></>)
+    .with({ kind: 'leaderboard' }, () => (
+      <Leaderboard onBack={() => setScenario({ kind: 'main-menu' })} />
+    ))
+    .with({ kind: 'controls' }, () => <></>)
     .exhaustive();
 
   return <Canvas aspectRatio={props.aspectRatio}>{currentScenario}</Canvas>;
